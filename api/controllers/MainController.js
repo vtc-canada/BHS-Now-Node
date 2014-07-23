@@ -24,28 +24,41 @@ module.exports = {
      * MainController)
      */
     _config : {},
-    
+
     // Function for joining basic rooms
     // joins you to a room named after your own ID
     // this room is used to broadcast direct messages from user to user
-    joinrooms : function(req,res) {
-      //req.socket.join(req.session.user.id);
-      //req.socket.join('reference_time');
-      //req.socket.join('read_' + req.session.user.id);
-      //req.socket.join('flighttableupdate');
-      //res.json({
-      //  id : req.session.user.id
-      //});
+    joinrooms : function(req, res) {
+	//req.socket.join(req.session.user.id);
+	//req.socket.join('reference_time');
+	//req.socket.join('read_' + req.session.user.id);
+	//req.socket.join('flighttableupdate');
+	//res.json({
+	//  id : req.session.user.id
+	//});
+    },
+    get_cfg_global_settings : function(req,res) {
+	    sails.controllers.database.sp("BHS_UTIL_GetCfgGlobalSettings", [],
+	        function(err,settings) {
+	          if (err) {
+	            res.json('error');
+	            return;
+	          }
+	          res.json(settings);
+	        });
+	  },
+    get_fault_types : function(req, res) {
+	sails.controllers.database.sp("BHS_UTIL_GetFaultTypes", [], function(err, alarms_def) {
+	    if (err) {
+		res.json('error');
+		return;
+	    }
+	    res.json(alarms_def);
+	});
     },
     index : function(req, res) {
 	if (req.session.user) {
-	    res.view('dashboard/index', {
-		locale : req.session.user.locale,
-		title : 'Dashboard',
-		url : 'dashboard',
-		username : req.session.user.username,
-		id : req.session.user.id
-	    });
+	    res.view('dashboard/index', {});
 	} else {
 
 	    Users.find().limit(1).done(function(err, users) {
@@ -58,10 +71,6 @@ module.exports = {
 		    Users.create({
 			username : 'admin',
 			password : password,
-			admin : 1,
-			manager : 0,
-			operator : 0,
-			viewonly : 0,
 			locale : 'en'
 		    }).done(function(error, user) {
 			if (error) {
@@ -96,15 +105,12 @@ module.exports = {
 	    return false;
 	}
 
-	console.log("Requiring LDAPJS");
 	var ldap = require('ldapjs');
-	console.log("Loaded Ldapjs");
 
 	var client = ldap.createClient({
 	    url : 'ldap://192.168.1.180:389',
-	    connectTimeout : 1000
+	    connectTimeout : 200
 	});
-	console.log("Ldapjs client created");
 
 	client.bind(username, password, function(err, resource) {
 	    if (err) {
@@ -120,7 +126,7 @@ module.exports = {
 		    } else {
 			if (usr.length == 1) {
 			    usr = usr[0];
-			    console.log("requing password-hash");
+			    console.log("requiring password-hash");
 			    var hasher = require("password-hash");
 			    console.log("Loaded password-hash");
 			    if (hasher.verify(password, usr.password)) {
@@ -163,7 +169,7 @@ module.exports = {
 				    password : password
 				}, function(err) { // corrects OUR password!
 				    req.session.user = usr;
-					req.session.user.policy = {};
+				    req.session.user.policy = {};
 				    res.send(usr);
 				});
 			    }
@@ -180,24 +186,6 @@ module.exports = {
 					error : "DB Error"
 				    });
 				} else {
-				    if (sails.io.rooms['/sails_c_create_users'] !== undefined) {
-					for (var i = 0; i < sails.io.rooms['/sails_c_create_users'].length; i++) {
-					    sails.io.sockets.sockets[sails.io.rooms['/sails_c_create_users'][i]].emit('message', {
-						model : 'users',
-						verb : 'create',
-						data : {
-						    id : user.id,
-						    username : user.username,
-						    admin : user.admin,
-						    manager : user.manager,
-						    operator : user.operator,
-						    viewonly : user.viewonly,
-						    lastonline : user.lastonline
-						}
-					    });
-					    sails.io.sockets.sockets[sails.io.rooms['/sails_c_create_users'][i]].join('sails_c_users_' + user.id);
-					}
-				    }
 				    req.session.user = user;
 				    req.session.user.policy = {};
 				    res.send(user);

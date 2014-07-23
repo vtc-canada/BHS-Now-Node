@@ -26,11 +26,7 @@ module.exports = {
     //Dashboard View
     index : function(req, res) {
 
-	res.view({
-	    title : 'Dashboard',
-	    url : 'dashboard',
-	    username : req.session.user.username
-	});
+	res.view();
     }
 
 };

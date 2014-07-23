@@ -147,11 +147,7 @@ module.exports = {
     // displays the users page
     users : function(req, res) {
 	if (req.session.user.policy[req.route.path].read) { //if we had read access
-	    res.view({
-		title : 'Users',
-		username:req.session.user.uesrname,
-		url : 'admin/users'
-	    });
+	    res.view({});
 	}else{
 	    res.json(401, {
 		    error : "Unauthorized."

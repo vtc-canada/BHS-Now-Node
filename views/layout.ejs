@@ -6,7 +6,7 @@
       var translate = {
           'en' : {
                 'DefaultTitle':'CRED Now',
-                'Dashboard':'Dashboard',
+                '/dashboard':'Dashboard',
                 'Airport BHS':'Airport BHS',
                 'Web Portal':'Web Portal',
                 'My Account':'My Account',
@@ -41,10 +41,10 @@
                 'Password has been successfully changed.':'Password has been successfully changed.',
                 'pages':{
                     'Flight Table':'Flight Table',
-                    'Dashboard':'Dashboard',
-                    'Reports':'Reports',
+                    '/dashboard':'Dashboard',
+                    '/reports/create':'Reports',
                     'Search':'Search',
-                    'Users':'Users',
+                    '/admin/users':'Users',
                     'Airline Configuration':'Airline Configuration',
                     'Virtual to Physical Mapping':'Virtual to Physical Mapping',
                     'Messages':'Messages',
@@ -89,10 +89,10 @@
                 'Password has been successfully changed.':'Password has been successfully changed.',
                  'pages':{
                       'Flight Table':'Flight Table',
-                      'Dashboard':'Dashboard',
-                      'Reports':'Reports',
+                      '/dashboard':'Dashboard',
+                      '/reports/create':'Reports',
                       'Search':'Search',
-                      'Users':'Users',
+                      '/admin/users':'Users',
                       'Airline Configuration':'Airline Configuration',
                       'Virtual to Physical Mapping':'Virtual to Physical Mapping',
                       'Messages':'Messages',
@@ -102,7 +102,7 @@
           }
       }
     %>
-    <title><%= translate[locale]['DefaultTitle'] %> - <%= translate[locale]['pages'][title] %> </title>
+    <title><%= translate[req.session.user.locale]['DefaultTitle'] %> - <%= translate[req.session.user.locale]['pages'][req.url] %> </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -169,17 +169,17 @@
       <div id="changepasswordModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
           <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-              <h3 id="myModalLabelChange"><%= translate[locale]['Change Password']  %></h3>
+              <h3 id="myModalLabelChange"><%= translate[req.session.user.locale]['Change Password']  %></h3>
           </div>
           <div class="modal-body">
-              <div class="row-fluid"><p><%= translate[locale]['Enter a new password for']  %> <b><%=username%></b>.</p></div>
-              <div class="row-fluid"><label class="change-label" for="mycurrentpassword"><%= translate[locale]['Current Password']  %>:</label><input class="change-input" id="mycurrentpassword" type="password"></div>
-              <div class="row-fluid"><label class="change-label" for="mynewpassword"><%= translate[locale]['New Password']  %>:</label><input class="change-input" id="mynewpassword" type="password"></div>
-              <div class="row-fluid"><label class="change-label" for="confirmmypassword"><%= translate[locale]['Confirm Password']  %>:</label><input class="change-input"  id="confirmmypassword" type="password"> </div>
+              <div class="row-fluid"><p><%= translate[req.session.user.locale]['Enter a new password for']  %> <b><%=req.session.user.username%></b>.</p></div>
+              <div class="row-fluid"><label class="change-label" for="mycurrentpassword"><%= translate[req.session.user.locale]['Current Password']  %>:</label><input class="change-input" id="mycurrentpassword" type="password"></div>
+              <div class="row-fluid"><label class="change-label" for="mynewpassword"><%= translate[req.session.user.locale]['New Password']  %>:</label><input class="change-input" id="mynewpassword" type="password"></div>
+              <div class="row-fluid"><label class="change-label" for="confirmmypassword"><%= translate[req.session.user.locale]['Confirm Password']  %>:</label><input class="change-input"  id="confirmmypassword" type="password"> </div>
           </div>
           <div class="modal-footer">
-              <button class="btn" data-dismiss="modal" id="confirmmypasswordchangecancel" aria-hidden="true"><%= translate[locale]['Cancel']  %></button>
-              <button class="btn btn-primary" id="confirmmypasswordchange"><%= translate[locale]['Set']  %></button>
+              <button class="btn" data-dismiss="modal" id="confirmmypasswordchangecancel" aria-hidden="true"><%= translate[req.session.user.locale]['Cancel']  %></button>
+              <button class="btn btn-primary" id="confirmmypasswordchange"><%= translate[req.session.user.locale]['Set']  %></button>
           </div>
       </div>
 
@@ -206,24 +206,24 @@
                   <!-- <img src="/img/isyslogo.png" class="top-isys-logo pull-left"><span class="pull-left top-location-text">Airport BHS</span><i class="icon-plane icon-2x pull-right"></i><span class="pull-right webportal-top-text">Web Portal</span>
                   -->
 
-             <!-- <img src="/img/isyslogo.png" class="top-isys-logo pull-left"><span class="pull-left top-location-text"><%= translate[locale]['Airport BHS'] %></span><i class="icon-plane icon-2x pull-right"></i><span class="pull-right webportal-top-text"><%= translate[locale]['Web Portal'] %></span>
+             <!-- <img src="/img/isyslogo.png" class="top-isys-logo pull-left"><span class="pull-left top-location-text"><%= translate[req.session.user.locale]['Airport BHS'] %></span><i class="icon-plane icon-2x pull-right"></i><span class="pull-right webportal-top-text"><%= translate[req.session.user.locale]['Web Portal'] %></span>
              -->
              </a>
           <div class="nav-collapse collapse nav-collapse-topbar">
             <ul class="nav pull-right">
-              <li><form id="search-form" action="/search" method="post" style="margin-bottom: 0px;" ><input name="search_field" type="text" placeholder="<%= translate[locale]['Search'] %>" id="main-search" class="main-search"><i class="icon-search top-search-icon"></i></form></li>
-              <li class="myaccount-topmenu"><a id="myaccount" data-placement="bottom" data-content="Loading.." title="" data-original-title="" class="<% if (typeof(url)!=='undefined'&&url=='myaccount'){ %>active <% } %>accordion-toggle" data-toggle="collapse" href="#myaccountmobile" ><i class="icon-user"></i>&nbsp<%= username %></a>
+              <li><form id="search-form" action="/search" method="post" style="margin-bottom: 0px;" ><input name="search_field" type="text" placeholder="<%= translate[req.session.user.locale]['Search'] %>" id="main-search" class="main-search"><i class="icon-search top-search-icon"></i></form></li>
+              <li class="myaccount-topmenu"><a id="myaccount" data-placement="bottom" data-content="Loading.." title="" data-original-title="" class="<% if (typeof(req.url)!=='undefined'&&req.url=='myaccount'){ %>active <% } %>accordion-toggle" data-toggle="collapse" href="#myaccountmobile" ><i class="icon-user"></i>&nbsp<%= req.session.user.username %></a>
                   <!--[if lt IE 9]>
                   <![endif]-->
                   <ul id="myaccountmobile" class="collapse">
-                      <li class="<% if (typeof(url)!=='undefined'&&url=='myaccount'){ %>active<% } %>">
+                      <li class="<% if (typeof(req.url)!=='undefined'&&req.url=='myaccount'){ %>active<% } %>">
                           <a id="changemypasswordmobile">
-                              <i class="icon-gear"></i> <%= translate[locale]['Settings'] %>
+                              <i class="icon-gear"></i> <%= translate[req.session.user.locale]['Settings'] %>
                           </a>
                       </li>
                       <li class="">
                           <a href="/logout">
-                              <i class="icon-signout"></i> <%= translate[locale]['Log Out']  %>
+                              <i class="icon-signout"></i> <%= translate[req.session.user.locale]['Log Out']  %>
                           </a>
                       </li>
 
@@ -247,65 +247,65 @@
 	  <!-- Main nav -->
 	  <ul class="nav nav-collapse collapse nav-collapse-primary">
 
-            <li <% if (typeof(url)!=='undefined'&&url=='dashboard'){ %>class="active"<% } %>>
+            <li <% if (typeof(req.url)!=='undefined'&&req.url=='/dashboard'){ %>class="active"<% } %>>
               <span class="glow"></span>
               <a href="/dashboard">
                   <i class="icon-dashboard icon-2x"></i>
-                  <span><%= translate[locale]['Dashboard'] %></span>
+                  <span><%= translate[req.session.user.locale]['/dashboard'] %></span>
               </a>
             </li>
-            <li <% if (typeof(url)!=='undefined'&&url=='reports/create'){ %>class="active"<% } %>>
+            <li <% if (typeof(req.url)!=='undefined'&&req.url=='/reports/create'){ %>class="active"<% } %>>
             <span class="glow"></span>
             <a href="/reports/create">
               <i class="icon-copy icon-2x"></i>
-              <span><%= translate[locale]['Reports'] %></span>
+              <span><%= translate[req.session.user.locale]['Reports'] %></span>
             </a>
             </li>
           <li <% if (typeof(url)!=='undefined'&&url=='search'){ %>class="active"<% } %>>
           <span class="glow"></span>
           <a href="/search">
               <i class="icon-suitcase icon-2x"></i>
-              <span><%= translate[locale]['Searchmenu'] %></span>
+              <span><%= translate[req.session.user.locale]['Searchmenu'] %></span>
           </a>
           </li>
-          <li <% if (typeof(url)!=='undefined'&&url=='flighttable'){ %>class="active"<% } %>>
+          <li <% if (typeof(req.url)!=='undefined'&&req.url=='/flighttable'){ %>class="active"<% } %>>
           <span class="glow"></span>
           <a href="/flighttable">
               <i class="icon-calendar icon-2x"></i>
-              <span><%= translate[locale]['Flight Table'] %></span>
+              <span><%= translate[req.session.user.locale]['Flight Table'] %></span>
           </a>
           </li>
 
-            <li class="dark-nav <% if (typeof(url)!=='undefined'&&(url=='admin/users'||url=='airlineconfiguration'||url=='virtual2physical')){ %>active<% } %>">
+            <li class="dark-nav <% if (typeof(req.url)!=='undefined'&&(req.url=='/admin/users'||req.url=='/airlineconfiguration'||req.url=='/virtual2physical')){ %>active<% } %>">
 
               <span class="glow"></span>
-              <a class="accordion-toggle <% if (typeof(url)!=='undefined'&&url!='admin/users'&&url!='airlineconfiguration'&&url!='virtual2physical'){ %>collapsed<% } %>" data-toggle="collapse" href="#3hzyGPtrSk">
+              <a class="accordion-toggle <% if (typeof(req.url)!=='undefined'&&req.url!='/admin/users'&&req.url!='/airlineconfiguration'&&req.url!='/virtual2physical'){ %>collapsed<% } %>" data-toggle="collapse" href="#3hzyGPtrSk">
                   <i class="icon-cogs icon-2x"></i>
                     <span>
-                      <%= translate[locale]['System Config'] %>
+                      <%= translate[req.session.user.locale]['System Config'] %>
                       <!--<i class="icon-caret-up"></i>-->
                       <i class="icon-caret-down"></i>
                     </span>
               </a>
-              <ul id="3hzyGPtrSk" class="collapse <% if (typeof(url)!=='undefined'&&(url=='admin/users'||url=='airlineconfiguration'||url=='virtual2physical'||url=='engineering')){ %>in<% } %>">
-                    <li class="<% if (typeof(url)!=='undefined'&&url=='admin/users'){ %>active<% } %>">
+              <ul id="3hzyGPtrSk" class="collapse <% if (typeof(req.url)!=='undefined'&&(req.url=='/admin/users'||req.url=='/airlineconfiguration'||req.url=='/virtual2physical'||req.url=='/engineering')){ %>in<% } %>">
+                    <li class="<% if (typeof(req.url)!=='undefined'&&req.url=='/admin/users'){ %>active<% } %>">
                       <a href="/admin/users">
-                          <i class="icon-group"></i> <%= translate[locale]['Users'] %>
+                          <i class="icon-group"></i> <%= translate[req.session.user.locale]['Users'] %>
                       </a>
                     </li>
-                    <li class="<% if (typeof(url)!=='undefined'&&url=='airlineconfiguration'){ %>active<% } %>">
+                    <li class="<% if (typeof(req.url)!=='undefined'&&req.url=='/airlineconfiguration'){ %>active<% } %>">
                       <a href="/airlineconfiguration">
-                          <i class="icon-plane"></i> <%= translate[locale]['Airline Configuration'] %>
+                          <i class="icon-plane"></i> <%= translate[req.session.user.locale]['Airline Configuration'] %>
                       </a>
                     </li>                
-                    <li class="<% if (typeof(url)!=='undefined'&&url=='virtual2physical'){ %>active<% } %>">
+                    <li class="<% if (typeof(req.url)!=='undefined'&&req.url=='/virtual2physical'){ %>active<% } %>">
                       <a href="/virtual2physical">
-                          <i class="icon-sitemap"></i> <%= translate[locale]['Virtual to Physical'] %>
+                          <i class="icon-sitemap"></i> <%= translate[req.session.user.locale]['Virtual to Physical'] %>
                       </a>
                     </li>
-                    <li class="<% if (typeof(url)!=='undefined'&&url=='engineering'){ %>active<% } %>">
+                    <li class="<% if (typeof(req.url)!=='undefined'&&req.url=='/engineering'){ %>active<% } %>">
                       <a href="/engineering">
-                          <i class="icon-wrench"></i> <%= translate[locale]['Engineering'] %>
+                          <i class="icon-wrench"></i> <%= translate[req.session.user.locale]['Engineering'] %>
                       </a>
                     </li>
 
@@ -339,7 +339,7 @@
       // Client-side wide Configuration Values and variables.
       // these variables are accessable and used within the other view
       var alert_fadeout_time = 7000;
-      var username = '<%= username %>'; // username of the user, passed from serverside session
+      var username = '<%= req.session.user.username %>'; // username of the user, passed from serverside session
       var socket;      // Global variable for the socket
 
 
@@ -366,7 +366,7 @@
            // Creates Popover when you click on your name at the top right
           $('#myaccount').popover('hide').click(function(e) {
                 e.preventDefault();
-                $('#myaccount').next('.popover').find('.popover-content').html('<a class="pull-right close myaccount-close-x popover-close" sort_plan_id="myaccount">&times;</a><div class="row-fluid myaccount-popover-username" style="width:100px;"><%= username %></div><div class="row-fluid" style="width:120px;"><a onclick="showChangeMyPasswordModal();" class="span12 btn"><%= translate[locale]['Settings'] %></a></div><div class="row-fluid" style="width:120px;"><a href="/logout" class="span12 btn btn-danger"><%= translate[locale]['Log Out'] %></a></div>');
+                $('#myaccount').next('.popover').find('.popover-content').html('<a class="pull-right close myaccount-close-x popover-close" sort_plan_id="myaccount">&times;</a><div class="row-fluid myaccount-popover-username" style="width:100px;"><%= req.session.user.username %></div><div class="row-fluid" style="width:120px;"><a onclick="showChangeMyPasswordModal();" class="span12 btn"><%= translate[req.session.user.locale]['Settings'] %></a></div><div class="row-fluid" style="width:120px;"><a href="/logout" class="span12 btn btn-danger"><%= translate[req.session.user.locale]['Log Out'] %></a></div>');
                 setTimeout(function(){
                     $('.popover[sort_plan_id=myaccount]').css('left',0);
                 },0);
@@ -396,12 +396,12 @@
 
             if($('#mynewpassword').val()!=$('#confirmmypassword').val()){
                 $('#changepasswordModal div.modal-header').after(
-                        '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong><%= translate[locale]['Error'] %>:&nbsp;</strong><%= translate[locale]['Password fields do not match.'] %></div>');//' .error-message').html('Password fields do not match.');
+                        '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong><%= translate[req.session.user.locale]['Error'] %>:&nbsp;</strong><%= translate[req.session.user.locale]['Password fields do not match.'] %></div>');//' .error-message').html('Password fields do not match.');
 
             }else if($('#mynewpassword').val()==''){
 
                 $('#changepasswordModal div.modal-header').after(
-                        '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong><%= translate[locale]['Error'] %>:&nbsp;</strong><%= translate[locale]['Password must be at least 1 character long.'] %></div>');
+                        '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong><%= translate[req.session.user.locale]['Error'] %>:&nbsp;</strong><%= translate[req.session.user.locale]['Password must be at least 1 character long.'] %></div>');
 
             }else{
                 socket.get('/admin/checkandchangemypassword',{currentpassword:$('#mycurrentpassword').val(),newpassword:$('#mynewpassword').val()},function(data){
@@ -411,11 +411,11 @@
                     }
                     if(typeof(data.failure)!='undefined'){
                         $('#changepasswordModal div.modal-header').after(
-                                '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong><%= translate[locale]['Error'] %>:&nbsp;</strong><%= translate[locale]['Current password was incorrect.'] %></div>');
+                                '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong><%= translate[req.session.user.locale]['Error'] %>:&nbsp;</strong><%= translate[req.session.user.locale]['Current password was incorrect.'] %></div>');
                         return;
                     }
                     $('#changepasswordModal div.modal-header').after(
-                            '<div class="alert alert-success fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong><%= translate[locale]['Success'] %>:&nbsp;</strong><%= translate[locale]['Password has been successfully changed.'] %></div>');
+                            '<div class="alert alert-success fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong><%= translate[req.session.user.locale]['Success'] %>:&nbsp;</strong><%= translate[req.session.user.locale]['Password has been successfully changed.'] %></div>');
                     setTimeout(function(){
                         $('#changepasswordModal .alert-success').remove();
                         $('.alert-success').removeClass('in');

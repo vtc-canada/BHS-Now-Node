@@ -36,8 +36,8 @@ module.exports.sockets = {
   // The flashsocket transport is disabled by default
   // You can enable flashsockets by adding 'flashsocket' to this list:
   transports: [
-  'websocket',
   'htmlfile',
+  'websocket',
   'xhr-polling',
   'jsonp-polling'
   ],

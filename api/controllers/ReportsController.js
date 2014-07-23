@@ -40,11 +40,7 @@
 var ReportsController = {
 
     create : function(req, res) {
-	res.view({
-	    title : 'Reports',
-	    user : req.session.user,
-	    url : 'reports/create'
-	});
+	res.view({});
     },
     getdevicesbyeqpid : function(req, res) {
 	sails.controllers.database.sp("BHS_REPORTS_GetDevicesByEquipID", [ req.param('id') ], function(err, devices) {
@@ -626,32 +622,21 @@ function buildReportData(report, phantom_bool, cb) {
 
 function addAlarmFaultHistory(start_datetime, end_datetime, fault_type, eqp_ID, dev_ID, locale, cb) {
 
-    sails.adapters['sails-mysql'].query("users", "call BHS_REPORTS_AlarmHistoryReport('" + toUTCDateTimeString(start_datetime) + "','"
-	    + toUTCDateTimeString(end_datetime) + "'," + fault_type + "," + eqp_ID + "," + dev_ID + ",NULL);", function(err, result) {
-	if (typeof (result) == 'undefined') {
-	    cb(null);
-	    return;
-	}
-	var alarms = result[0]; // [0]
-
+    sails.controllers.database.sp("BHS_REPORTS_AlarmHistoryReport",["'" + toUTCDateTimeString(start_datetime) + "'","'"
+	    + toUTCDateTimeString(end_datetime) + "'", fault_type , eqp_ID , dev_ID , null], function(err, alarms) {
 	if (err || alarms.length < 1) {
 	    cb(null);
 	    return;
 	}
-	sails.adapters['sails-mysql'].query("users", "call BHS_REPORTS_AlarmHistoryReport(NULL,NULL,NULL,NULL,NULL,'" + locale + "');", function(err,
+	sails.controllers.database.sp("BHS_REPORTS_AlarmHistoryReport",[null,null,null,null,null,"'" + locale + "'"], function(err,
 		output_json) {
-	    // var jsonData = getJSONData(output_json);
-	    if (output_json == undefined) {
-		cb(null);
-		return;
-	    }
 
 	    if (err || output_json.length < 1) {
 		cb(null);
 		return;
 	    }
 	    // var jsonData = getJSONTitles(output_json);
-	    var jsonData = getJSONData(output_json);
+	    var jsonData = getJSONTitles(output_json);
 
 	    var section = new Object();
 	    section.startrow = true;
@@ -972,15 +957,6 @@ function toLocalISOString(date) {
     return date.toISOString();
 }
 
-function getJSONData(obj) {
-    obj = obj[0][0];
-    var str = '';
-    for ( var p in obj) {
-	if (obj.hasOwnProperty(p)) {
-	    return JSON.parse(obj[p]);
-	}
-    }
-}
 
 function getJSONTitles(obj) {
     obj = obj[0];
