@@ -1,0 +1,31 @@
+.row-fluid > div.page-controls-wrapper{
+    margin-left: 0px;
+    width: 100%;
+}
+.row-fluid > div.page-controls-wrapper:first-child {
+    margin-left: 0px;
+    width: 100%;
+}
+
+.mobile-label{
+    display: none;
+}
+
+#reportheader{
+    display: none;
+}
+
+.section-config-wrapper{
+    border: 1px solid;
+    height: 24px;
+    padding-top: 4px;
+    margin: 1%;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    width: 98%;
+    overflow: hidden;
+}
+
+#alarmsdiv > .section-config-wrapper > div > label.mobile-element{
+    font-weight: 600;
+}

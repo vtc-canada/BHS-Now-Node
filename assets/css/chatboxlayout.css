@@ -1,0 +1,19 @@
+.chatbox-load-previous{
+    margin-top:0px;
+    font-size: 12px;
+    font-style:italic;
+}
+
+
+.chatbox-load-previous a{
+    /*color:blue;*/
+}
+
+div.ui-widget > div.ui-widget-content > div.ui-widget-content > div.ui-chatbox-msg > i{
+    font-style:italic;
+    font-size: 12px;
+    color:#999999;
+}
+div.ui-widget > div.ui-widget-content > div.ui-widget-content > div.ui-chatbox-msg:first-child{
+    margin-top:4px;
+}

@@ -1,0 +1,13 @@
+
+i.icon.icon-cog.icon-spin,i.icon.icon-gear.icon-spin{
+    background-image: url('/img/elements/loading-wheel-blue.gif');
+    background-repeat: no-repeat;
+    width: 16px;
+    height: 18px;
+    background-position-y: 0px;
+    color: rgba(0, 0, 0, 0);
+}
+
+i.icon.icon-cog.icon-spin:before,i.icon.icon-gear.icon-spin:before {
+    content: none;
+}

@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <%
+      var translate = {
+          'en' : {
+                'DefaultTitle':'CRED Now',
+                'Dashboard':'Dashboard',
+                'Airport BHS':'Airport BHS',
+                'Web Portal':'Web Portal',
+                'My Account':'My Account',
+                'Reports':'Reports',
+                'Searchmenu':'Bag Search',
+                'Flight Table':'Flight Table',
+                'System Config':'System Config',
+                'Users':'Users',
+                'Airline Configuration':'Airline Configuration',
+                'Virtual to Physical':'Virtual to Physical',
+                'Engineering':'Engineering',
+                'Messaging':'Messaging',
+                'Search people':'Search people',
+                'Settings':'Change Password',
+                'Log Out':'Sign Out',
+                'Search':'Search',
+                'Load Earlier Messages':'Load Earlier Messages',
+                'End of messages': 'End of messages',
+                'Change Password':'Change Password',
+                'Enter a new password for':'Enter a new password for',
+                'Current Password':'Current Password',
+                'New Password':'New Password',
+                'Confirm Password':'Confirm Password',
+                'Cancel':'Cancel',
+                'Set':'Set',
+                'Messages':'Messages',
+                'Password fields do not match.':'Password fields do not match.',
+                'Password must be at least 1 character long.':'Password must be at least 1 character long.',
+                'Error':'Error',
+                'Success':'Success',
+                'Current password was incorrect.':'Current password was incorrect.',
+                'Password has been successfully changed.':'Password has been successfully changed.',
+                'pages':{
+                    'Flight Table':'Flight Table',
+                    'Dashboard':'Dashboard',
+                    'Reports':'Reports',
+                    'Search':'Search',
+                    'Users':'Users',
+                    'Airline Configuration':'Airline Configuration',
+                    'Virtual to Physical Mapping':'Virtual to Physical Mapping',
+                    'Messages':'Messages',
+                    'Engineering':'Engineering'
+                }
+
+          },
+          'es' : {
+                'DefaultTitle':'BHS Now',
+                'Dashboard':'Salpicadero',
+                'Airport BHS':'Aeropuerto SME',
+                'Web Portal':'Web Portal',
+                'My Account':'Mi Cuenta',
+                'Reports':'Informes',
+                'Searchmenu':'Search',
+                'Flight Table':'Cuadro de Vuelo',
+                'System Config':'Config System',
+                'Users':'Usuarios',
+                'Airline Configuration':'Configuración Airline',
+                'Virtual to Physical':'Virtual de Física',
+                'Engineering':'Engineering',
+                'Messaging':'Mensajería',
+                'Search people':'Buscar personas',
+                'Settings':'Configuración',
+                'Log Out':'Finalizar la Sesión',
+                'Search':'Buscar',
+                'Load Earlier Messages':'Cargar Mensajes Anteriores',
+                'End of messages': 'Fin de los mensajes',
+                'Change Password':'Change Password',
+                'Enter a new password for':'Enter a new password for',
+                'Current Password':'Current Password',
+                'New Password':'New Password',
+                'Confirm Password':'Confirm Password',
+                'Cancel':'Cancel',
+                'Set':'Set',
+                'Messages':'Messages',
+                'Password fields do not match.':'Password fields do not match.',
+                'Password must be at least 1 character long.':'Password must be at least 1 character long.',
+                'Error':'Error',
+                'Success':'Success',
+                'Current password was incorrect.':'Current password was incorrect.',
+                'Password has been successfully changed.':'Password has been successfully changed.',
+                 'pages':{
+                      'Flight Table':'Flight Table',
+                      'Dashboard':'Dashboard',
+                      'Reports':'Reports',
+                      'Search':'Search',
+                      'Users':'Users',
+                      'Airline Configuration':'Airline Configuration',
+                      'Virtual to Physical Mapping':'Virtual to Physical Mapping',
+                      'Messages':'Messages',
+                      'Engineering':'Engineering'
+
+                 }
+          }
+      }
+    %>
+    <title><%= translate[locale]['DefaultTitle'] %> - <%= translate[locale]['pages'][title] %> </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="/css/ui-lightness/jquery-ui-1.10.3.custom.min.css" rel="stylesheet">
+    <link href="/css/jquery.ui.chatbox.css" rel="stylesheet">
+    <link href="/css/bootstrap.css" rel="stylesheet">
+    <link href="/css/bootstrap-responsive.css" rel="stylesheet">
+	<link href="/css/minidash.css" rel="stylesheet">
+	<link href="/css/main.css" rel="stylesheet">
+    <link href="/css/chatboxlayout.css" rel="stylesheet">
+    <link href="/css/font-awesome.css" rel="stylesheet">
+    <link href="/css/flighttable.css" rel="stylesheet">
+    <link href="/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="/css/bootstrap-combobox.css" rel="stylesheet">
+
+
+
+    <link href="/css/messages.css" rel="stylesheet">
+      <link href="/css/create-reports.css" rel="stylesheet">
+      <link href="/css/dropdownpages.css" rel="stylesheet">
+      <link href="/css/dashboard.css" rel="stylesheet">
+
+
+      <!--[if lt IE 9]>
+      <link href="/css/oldie.css" rel="stylesheet">
+      <![endif]-->
+      <!--[if lt IE 10]>
+      <link href="/css/ie9andbelow.css" rel="stylesheet">
+      <![endif]-->
+
+      <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="/js/html5shiv.js"></script>
+    <![endif]-->
+
+
+    <!-- Pre-Minimized assets are loaded here -->
+<script type="text/javascript" src="/jsfirst/jquery.js"></script>
+<script type="text/javascript" src="/js/socket.io.js"></script>
+<script type="text/javascript" src="/js/sails.io.js"></script>
+<script type="text/javascript" src="/js/bootstrap-combobox.js"></script>
+<script type="text/javascript" src="/js/bootstrap.js"></script>
+<script type="text/javascript" src="/js/jquery-ui-1.10.3.custom.min.js"></script>
+<script type="text/javascript" src="/js/jquery.ui.chatbox.js"></script>
+<script type="text/javascript" src="/js/jquery.ui.chatboxManager.js"></script>
+
+
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/img/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/img/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" href="/img/favicon.png">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+    <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+
+  </head>
+
+  <body>
+
+      <!-- This Modal Dialog is displayed when the user goes to change his password from the myaccount dropdown -->
+      <div id="changepasswordModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+              <h3 id="myModalLabelChange"><%= translate[locale]['Change Password']  %></h3>
+          </div>
+          <div class="modal-body">
+              <div class="row-fluid"><p><%= translate[locale]['Enter a new password for']  %> <b><%=username%></b>.</p></div>
+              <div class="row-fluid"><label class="change-label" for="mycurrentpassword"><%= translate[locale]['Current Password']  %>:</label><input class="change-input" id="mycurrentpassword" type="password"></div>
+              <div class="row-fluid"><label class="change-label" for="mynewpassword"><%= translate[locale]['New Password']  %>:</label><input class="change-input" id="mynewpassword" type="password"></div>
+              <div class="row-fluid"><label class="change-label" for="confirmmypassword"><%= translate[locale]['Confirm Password']  %>:</label><input class="change-input"  id="confirmmypassword" type="password"> </div>
+          </div>
+          <div class="modal-footer">
+              <button class="btn" data-dismiss="modal" id="confirmmypasswordchangecancel" aria-hidden="true"><%= translate[locale]['Cancel']  %></button>
+              <button class="btn btn-primary" id="confirmmypasswordchange"><%= translate[locale]['Set']  %></button>
+          </div>
+      </div>
+
+
+      <!-- This is the top bar containing both the mobile and desktop responsive layouts-->
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse-topbar">
+            <span class="icon icon-gear"></span>
+          </button>
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse-primary">
+
+              <span class="icon-list"></span>
+          </button>
+            <a class="brand isys-a large" href="/auth" style="height:40px; width: 407px; padding-left: 12px !important;"><img src="/img/ISN-International-Airport-4.png" /></a>
+            </a>
+            <a class="brand isys-a small" href="/auth" style="height: 40px; width: 110px;background-image: url(&quot;/img/ISN-International-Airport-3.png&quot;);background-size: 140px;background-repeat: no-repeat;background-position-x: 11px;">
+
+                <!-- <img src="/img/isyslogo.png" class="top-isys-logo pull-left"><span class="pull-left top-location-text">Airport BHS</span><i class="icon-plane icon-2x pull-right"></i><span class="pull-right webportal-top-text">Web Portal</span>
+                -->
+
+
+                  <!-- <img src="/img/isyslogo.png" class="top-isys-logo pull-left"><span class="pull-left top-location-text">Airport BHS</span><i class="icon-plane icon-2x pull-right"></i><span class="pull-right webportal-top-text">Web Portal</span>
+                  -->
+
+             <!-- <img src="/img/isyslogo.png" class="top-isys-logo pull-left"><span class="pull-left top-location-text"><%= translate[locale]['Airport BHS'] %></span><i class="icon-plane icon-2x pull-right"></i><span class="pull-right webportal-top-text"><%= translate[locale]['Web Portal'] %></span>
+             -->
+             </a>
+          <div class="nav-collapse collapse nav-collapse-topbar">
+            <ul class="nav pull-right">
+              <li><form id="search-form" action="/search" method="post" style="margin-bottom: 0px;" ><input name="search_field" type="text" placeholder="<%= translate[locale]['Search'] %>" id="main-search" class="main-search"><i class="icon-search top-search-icon"></i></form></li>
+              <li class="myaccount-topmenu"><a id="myaccount" data-placement="bottom" data-content="Loading.." title="" data-original-title="" class="<% if (typeof(url)!=='undefined'&&url=='myaccount'){ %>active <% } %>accordion-toggle" data-toggle="collapse" href="#myaccountmobile" ><i class="icon-user"></i>&nbsp<%= username %></a>
+                  <!--[if lt IE 9]>
+                  <![endif]-->
+                  <ul id="myaccountmobile" class="collapse">
+                      <li class="<% if (typeof(url)!=='undefined'&&url=='myaccount'){ %>active<% } %>">
+                          <a id="changemypasswordmobile">
+                              <i class="icon-gear"></i> <%= translate[locale]['Settings'] %>
+                          </a>
+                      </li>
+                      <li class="">
+                          <a href="/logout">
+                              <i class="icon-signout"></i> <%= translate[locale]['Log Out']  %>
+                          </a>
+                      </li>
+
+                  </ul>
+
+
+              </li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-background">
+  		<div class="primary-sidebar-background"></div>
+	</div>
+
+      <!-- SideBar  -  the elements are styled and attached to the top bar buttons when in mobile layout -->
+	<div class="primary-sidebar">
+	  <div class="primary-sidebar-spacer"></div>
+	  <!-- Main nav -->
+	  <ul class="nav nav-collapse collapse nav-collapse-primary">
+
+            <li <% if (typeof(url)!=='undefined'&&url=='dashboard'){ %>class="active"<% } %>>
+              <span class="glow"></span>
+              <a href="/dashboard">
+                  <i class="icon-dashboard icon-2x"></i>
+                  <span><%= translate[locale]['Dashboard'] %></span>
+              </a>
+            </li>
+            <li <% if (typeof(url)!=='undefined'&&url=='reports/create'){ %>class="active"<% } %>>
+            <span class="glow"></span>
+            <a href="/reports/create">
+              <i class="icon-copy icon-2x"></i>
+              <span><%= translate[locale]['Reports'] %></span>
+            </a>
+            </li>
+          <li <% if (typeof(url)!=='undefined'&&url=='search'){ %>class="active"<% } %>>
+          <span class="glow"></span>
+          <a href="/search">
+              <i class="icon-suitcase icon-2x"></i>
+              <span><%= translate[locale]['Searchmenu'] %></span>
+          </a>
+          </li>
+          <li <% if (typeof(url)!=='undefined'&&url=='flighttable'){ %>class="active"<% } %>>
+          <span class="glow"></span>
+          <a href="/flighttable">
+              <i class="icon-calendar icon-2x"></i>
+              <span><%= translate[locale]['Flight Table'] %></span>
+          </a>
+          </li>
+
+            <li class="dark-nav <% if (typeof(url)!=='undefined'&&(url=='admin/users'||url=='airlineconfiguration'||url=='virtual2physical')){ %>active<% } %>">
+
+              <span class="glow"></span>
+              <a class="accordion-toggle <% if (typeof(url)!=='undefined'&&url!='admin/users'&&url!='airlineconfiguration'&&url!='virtual2physical'){ %>collapsed<% } %>" data-toggle="collapse" href="#3hzyGPtrSk">
+                  <i class="icon-cogs icon-2x"></i>
+                    <span>
+                      <%= translate[locale]['System Config'] %>
+                      <!--<i class="icon-caret-up"></i>-->
+                      <i class="icon-caret-down"></i>
+                    </span>
+              </a>
+              <ul id="3hzyGPtrSk" class="collapse <% if (typeof(url)!=='undefined'&&(url=='admin/users'||url=='airlineconfiguration'||url=='virtual2physical'||url=='engineering')){ %>in<% } %>">
+                    <li class="<% if (typeof(url)!=='undefined'&&url=='admin/users'){ %>active<% } %>">
+                      <a href="/admin/users">
+                          <i class="icon-group"></i> <%= translate[locale]['Users'] %>
+                      </a>
+                    </li>
+                    <li class="<% if (typeof(url)!=='undefined'&&url=='airlineconfiguration'){ %>active<% } %>">
+                      <a href="/airlineconfiguration">
+                          <i class="icon-plane"></i> <%= translate[locale]['Airline Configuration'] %>
+                      </a>
+                    </li>                
+                    <li class="<% if (typeof(url)!=='undefined'&&url=='virtual2physical'){ %>active<% } %>">
+                      <a href="/virtual2physical">
+                          <i class="icon-sitemap"></i> <%= translate[locale]['Virtual to Physical'] %>
+                      </a>
+                    </li>
+                    <li class="<% if (typeof(url)!=='undefined'&&url=='engineering'){ %>active<% } %>">
+                      <a href="/engineering">
+                          <i class="icon-wrench"></i> <%= translate[locale]['Engineering'] %>
+                      </a>
+                    </li>
+
+              </ul>
+            </li>
+      </ul>
+
+        
+	  </div>
+	
+
+    </div>
+
+
+
+    <!-- Scripts are loaded here at the latest possible place to allow the layout html to be rendered ASAP -->
+    <script src="/js/underscore-min.js"></script>
+    <script src="/js/backbone-min.js"></script>
+    <script src="/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="/js/autoNumeric.js"></script>
+    <script type="text/javascript" src="/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="/js/jquery.sparkline.min.js"></script>
+    <script type="text/javascript" src="/js/raphael.2.1.0.min.js"></script>
+    <script type="text/javascript" src="/js/justgage.1.0.1.min.js"></script>
+    <script type="text/javascript" src="/js/fastclick.js"></script>
+
+      <!-- MAIN LAYOUT Script-->
+      <!-- This Section contains the messaging scripts, socket calls, and many other utility functions for all the pages -->
+      <script>
+
+      // Client-side wide Configuration Values and variables.
+      // these variables are accessable and used within the other view
+      var alert_fadeout_time = 7000;
+      var username = '<%= username %>'; // username of the user, passed from serverside session
+      var socket;      // Global variable for the socket
+
+
+      // This underscore setting allows for "Templating within templating" of the EJS template engine and clientside templates
+      _.templateSettings = {
+          interpolate : /\{\{\=(.+?)\}\}/g,
+          evaluate: /\{\{(.+?)\}\}/g
+      };
+
+      // Fastclick ->  This speeds up the clicking of mobile devices.
+      $(function() {
+          FastClick.attach(document.body);
+      });
+
+      
+      // This is the first execution of $(document).ready().
+      // The body views also have $(document).ready(), but execute after this
+      $(document).ready(function(){
+
+          $('body').hide().show();   /// TODO: TERRIBLE TERRIBLE TERRIBLE TERRIBLE..  SERIOUS PROBLEM. AWEFUL.
+          // First thing to do, is connect the socket.
+          socket =  io.connect();
+          
+           // Creates Popover when you click on your name at the top right
+          $('#myaccount').popover('hide').click(function(e) {
+                e.preventDefault();
+                $('#myaccount').next('.popover').find('.popover-content').html('<a class="pull-right close myaccount-close-x popover-close" sort_plan_id="myaccount">&times;</a><div class="row-fluid myaccount-popover-username" style="width:100px;"><%= username %></div><div class="row-fluid" style="width:120px;"><a onclick="showChangeMyPasswordModal();" class="span12 btn"><%= translate[locale]['Settings'] %></a></div><div class="row-fluid" style="width:120px;"><a href="/logout" class="span12 btn btn-danger"><%= translate[locale]['Log Out'] %></a></div>');
+                setTimeout(function(){
+                    $('.popover[sort_plan_id=myaccount]').css('left',0);
+                },0);
+
+                $('#myaccount').next('.popover').attr('sort_plan_id','myaccount');
+                $('.ganntbar[sort_plan_id!=myaccount]').popover('hide');
+                $('#add_flight').popover('hide');
+
+                $('.myaccount-close-x').click(function(){
+                    $('#myaccount').popover('hide');
+                });
+        	});
+
+          // First Call of fixheight(); Makes the  main-content div the right height
+        fixheight();
+
+         //Change password Modal
+        $('#changemypasswordmobile').click(function(){
+            showChangeMyPasswordModal();
+        });
+
+        // Change Password Set Callback
+          // Makes necessary server and clientside checks and the associated error messages
+        $('#confirmmypasswordchange').click(function(){
+
+            $('#changepasswordModal div.alert-error').remove();
+
+            if($('#mynewpassword').val()!=$('#confirmmypassword').val()){
+                $('#changepasswordModal div.modal-header').after(
+                        '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong><%= translate[locale]['Error'] %>:&nbsp;</strong><%= translate[locale]['Password fields do not match.'] %></div>');//' .error-message').html('Password fields do not match.');
+
+            }else if($('#mynewpassword').val()==''){
+
+                $('#changepasswordModal div.modal-header').after(
+                        '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong><%= translate[locale]['Error'] %>:&nbsp;</strong><%= translate[locale]['Password must be at least 1 character long.'] %></div>');
+
+            }else{
+                socket.get('/admin/checkandchangemypassword',{currentpassword:$('#mycurrentpassword').val(),newpassword:$('#mynewpassword').val()},function(data){
+                    if(typeof(data.error)!='undefined'){
+                        location.reload(); // Will boot back to login screen
+                        return;
+                    }
+                    if(typeof(data.failure)!='undefined'){
+                        $('#changepasswordModal div.modal-header').after(
+                                '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong><%= translate[locale]['Error'] %>:&nbsp;</strong><%= translate[locale]['Current password was incorrect.'] %></div>');
+                        return;
+                    }
+                    $('#changepasswordModal div.modal-header').after(
+                            '<div class="alert alert-success fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong><%= translate[locale]['Success'] %>:&nbsp;</strong><%= translate[locale]['Password has been successfully changed.'] %></div>');
+                    setTimeout(function(){
+                        $('#changepasswordModal .alert-success').remove();
+                        $('.alert-success').removeClass('in');
+                        $('#changepasswordModal').modal('hide');
+                    },1000);
+                    $('#confirmmypasswordchange').attr('disabled','disabled');
+                    $('#confirmmypasswordchangecancel').attr('disabled','disabled');
+                });
+            }
+        });
+        
+
+    });
+
+      // Utility function re-sets up and blacks the form.
+    function showChangeMyPasswordModal(){
+        $('#changepasswordModal').modal('show');
+
+        $('#changepasswordModal div.alert-error').remove();
+        $('#mycurrentpassword').val('');
+        $('#mynewpassword').val('');
+        $('#confirmmypassword').val('');
+        $('#confirmmypasswordchange').removeAttr('disabled');
+        $('#confirmmypasswordchangecancel').removeAttr('disabled');
+
+
+    }
+
+
+    
+
+      // binds window resizing to fix the main content size
+    $(window).resize(function(){
+        fixheight();
+
+    });
+    function fixheight(){
+        $('.main-content').css('height',$(window).height()-$('.navbar').height()+'px');
+    }
+
+    function dateFromISO(s) {
+        s = s.split(/\D/);
+        return new Date(Date.UTC(s[0], --s[1]||'', s[2]||'', s[3]||'', s[4]||'', s[5]||'', s[6]||''));
+    }
+
+    function dateFromlocalISO(s) {
+        s = s.split(/\D/);
+        var datet= new Date(Date.UTC(s[0], --s[1]||'', s[2]||'', s[3]||'', s[4]||'', s[5]||'', s[6]||''));
+        datet.getTimezoneOffset()
+        return new Date(datet.getTime() + datet.getTimezoneOffset()*60000);
+    }
+
+    if ( !Date.prototype.toISOString ) {
+
+        ( function() {
+
+            function pad(number) {
+                var r = String(number);
+                if ( r.length === 1 ) {
+                    r = '0' + r;
+                }
+                return r;
+            }
+
+            Date.prototype.toISOString = function() {
+                return this.getUTCFullYear()
+                        + '-' + pad( this.getUTCMonth() + 1 )
+                        + '-' + pad( this.getUTCDate() )
+                        + 'T' + pad( this.getUTCHours() )
+                        + ':' + pad( this.getUTCMinutes() )
+                        + ':' + pad( this.getUTCSeconds() )
+                        + '.' + String( (this.getUTCMilliseconds()/1000).toFixed(3) ).slice( 2, 5 )
+                        + 'Z';
+            };
+
+        }() );
+    }
+
+    // Does Popup Hiding for popovers
+      // This makes popups hide when you click somewhere off them
+    $('body').on('click', function (e) {
+        //$('.ganntbar').each(function () {
+        //    if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0&&$('.bootstrap-datetimepicker-widget').has(e.target).length ===0) {
+        //        $(this).popover('hide');
+        //    }
+        //});
+
+        $('#myaccount').each(function () {
+            if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0&&$('.bootstrap-datetimepicker-widget').has(e.target).length ===0) {
+                $(this).popover('hide');
+            }
+        });
+    });
+
+
+    </script>
+
+
+
+     <!-- The MAIN DIV -- BODY SECTION -->
+      <!-- This is where the actual pages themselves get loaded in -->
+    <div class="main-content">
+   		<%- body %>
+    </div> <!-- /container -->
+
+
+
+
+  </body>
+</html>

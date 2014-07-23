@@ -1,0 +1,193 @@
+.clockblock{
+    color: gray;
+    float: left;
+    width: 3.33333333333%;
+    overflow: hidden;
+    height: 58px;
+}
+
+#ganttwrapper{
+    position:relative;
+}
+
+.current-time-line{
+    border-left:2px dashed rgb(15,117,188);
+    position: absolute;
+    top: 0px;
+}
+
+.static-virt-dest{
+    line-height: 30px;
+}
+
+.flight_number_create{
+    width:120px !important;
+}
+.current-time-block{
+    position: absolute;
+    top: -34px;
+    margin-left:-20px;
+}
+
+.time-spot{
+    text-align: center;
+
+    font-weight: 600;
+    color: black;
+}
+
+.icon-spot{
+    top: 18px;
+
+    position: absolute;
+    left: 15px;
+    color: rgb(15,117,188);
+}
+
+.search-gant-wrapper{
+    margin-left:2% !important;
+    margin-bottom: 14px;
+    width:200px !important;
+}
+
+.del_flight{
+    margin-right:20px;
+}
+
+#timepickerlabel{
+    line-height:30px;
+}
+
+.btn-add-flight-gantt{
+    float:right;
+    margin-right: 10px;
+}
+
+.btn-create-flight-gantt{
+    float:right;
+    margin-right: 10px;
+}
+
+#searchgantt{
+    width: 125px;
+}
+#gantttimescale{
+    border:1px solid gray;
+    background-color: #F1F1F2;
+}
+
+.gantt-outer-wrapper{
+    width:96% !important;
+    margin: 0% 2% !important;
+}
+#gantttimescale{
+    height:59px;
+}
+.timeblock{
+    height: 11px;
+    width: 60px;
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    /*filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);*/
+    border-top: 1px solid gray;
+    margin-top: 21px;
+    margin-left: -25px;
+    padding-left: 2px;
+    color: #666;
+    font-weight: 500;
+}
+
+.clockblock:first-child .timeblock{
+    border-top:none;
+}
+
+.gantblock{
+    height: 11px;
+    width: 36px;
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    /*filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3); */
+    border-top: 1px solid #E9E9E9;
+    margin-top: 9px;
+    margin-left: -13px;
+    padding-left: 2px;
+}
+
+a.progress.ganntbar{
+    cursor:pointer;
+}
+
+.ganttrow{
+    border-left: 1px solid gray;
+    border-right: 1px solid gray;
+    border-bottom: 1px solid #E9E9E9;
+    height:35px;
+    position:relative;
+    margin-left:0px !important;
+    /*overflow: hidden; */
+
+}
+
+.bottom-buttons-popover{
+    margin-top:20px;
+}
+
+.ganttrow:last-child{
+    border-bottom: 1px solid gray;
+}
+
+.ganttrow .clockblock{
+    height:35px;
+}
+
+.ganntbar{
+    position: absolute;
+}
+
+.ganntbar .bar-right{
+    float:right;
+}
+
+.popoverlabel{
+    line-height:30px;
+}
+
+#gantttimescale .clockblock{
+}
+
+.bootstrap-datetimepicker-widget > div > div.close-datetime{
+    padding-right: 4px;
+
+    padding-left: 4px;
+}
+
+.bootstrap-datetimepicker-widget.hide-before:before{
+    display:none;
+}
+.bootstrap-datetimepicker-widget.hide-before:after{
+    display:none;
+}
+
+.airline-config-titles{
+    width: 92%;
+    margin-left: 4%;
+}
+
+@media (max-width:767px){
+    #timepickerlabel{
+        margin-left:20px;
+    }
+    .input-datepicker-smallpad{
+        padding-left:20px;
+    }
+    .bootstrap-datetimepicker-widget.hide-before:before{
+        display:none;
+    }
+    .bootstrap-datetimepicker-widget.hide-before:after{
+        display:none;
+    }
+}
