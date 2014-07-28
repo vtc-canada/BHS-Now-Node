@@ -15,7 +15,7 @@
 
 module.exports.policies = {
 
-    '*' : false,
+    '*' : true,
     'public' : true,
     'main' : {
 	'index' : true,
@@ -39,7 +39,8 @@ module.exports.policies = {
 	'promptprint' : 'LoggedInPolicy',
 	'printreport' : true, // open for direct access
 	'view' : true
-    }
+    },
+    'upload':true
 
 };
 

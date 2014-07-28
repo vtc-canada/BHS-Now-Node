@@ -31,6 +31,13 @@ var localConnection = mysql.createConnection({
     host : 'localhost'
 });
 
+var credConnection = mysql.createConnection({
+    user : 'root',
+    password : 'Glasgow931',
+    database : 'cred',
+    host : '10.1.1.60'
+});
+
 module.exports = {
 
     /**
@@ -38,7 +45,18 @@ module.exports = {
      * DatabaseController)
      */
     _config : {},
-    localSproc : function(sprocName,data,cb){
+    credSproc : function(sprocName, data, cb) {
+	var sprocArgs = "(";
+	sprocArgs += BuildSproc(data);
+	sprocArgs += ");";
+	credConnection.query("call " + sprocName + sprocArgs, function(err, results) {
+	    if (results != undefined && results[0] != undefined) {
+		results = results[0];
+	    }
+	    cb(err, results || []);
+	});
+    },
+    localSproc : function(sprocName, data, cb) {
 	if (sails.config.adapters['default'] != "mssql") {
 
 	    var sprocArgs = "(";

@@ -7,6 +7,7 @@
           'en' : {
                 'DefaultTitle':'CRED Now',
                 '/dashboard':'Dashboard',
+                '/buildings':'Buildings',
                 'Airport BHS':'Airport BHS',
                 'Web Portal':'Web Portal',
                 'My Account':'My Account',
@@ -43,6 +44,7 @@
                     'Flight Table':'Flight Table',
                     '/dashboard':'Dashboard',
                     '/reports/create':'Reports',
+                    '/buildings':'Buildings',
                     'Search':'Search',
                     '/admin/users':'Users',
                     'Airline Configuration':'Airline Configuration',
@@ -55,6 +57,7 @@
           'es' : {
                 'DefaultTitle':'BHS Now',
                 'Dashboard':'Salpicadero',
+                '/buildings':'Buildings',
                 'Airport BHS':'Aeropuerto SME',
                 'Web Portal':'Web Portal',
                 'My Account':'Mi Cuenta',
@@ -91,6 +94,7 @@
                       'Flight Table':'Flight Table',
                       '/dashboard':'Dashboard',
                       '/reports/create':'Reports',
+                      '/buildings':'Buildings',
                       'Search':'Search',
                       '/admin/users':'Users',
                       'Airline Configuration':'Airline Configuration',
@@ -247,6 +251,13 @@
 	  <!-- Main nav -->
 	  <ul class="nav nav-collapse collapse nav-collapse-primary">
 
+            <li <% if (typeof(req.url)!=='undefined'&&req.url=='/buildings'){ %>class="active"<% } %>>
+              <span class="glow"></span>
+              <a href="/buildings">
+                  <i class="icon-building icon-2x"></i>
+                  <span><%= translate[req.session.user.locale]['/buildings'] %></span>
+              </a>
+            </li>
             <li <% if (typeof(req.url)!=='undefined'&&req.url=='/dashboard'){ %>class="active"<% } %>>
               <span class="glow"></span>
               <a href="/dashboard">

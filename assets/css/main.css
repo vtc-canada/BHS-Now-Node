@@ -111,6 +111,56 @@ table.dataTable > thead > tr > td:focus{
 }
 
 
+table.dataTable > thead > tr > th {
+    cursor: pointer;
+}
+
+table.dataTable > thead > tr > th > i{
+    display: none;
+    /*float: right;*/
+    padding-left: 10px;
+}
+
+table.dataTable > thead > tr > th[aria-sort=descending] i.icon-caret-down {
+    display: inline-block;
+}
+
+table.dataTable > thead > tr > th[aria-sort=ascending] i.icon-caret-up {
+    display: inline-block;
+}
+table.dataTable > thead > tr > th:focus{
+    outline: none;/*-webkit-focus-ring-color auto 5px;*/
+}
+
+table.dataTable > tbody > tr.selected{
+    background: #0F74BC;/*-webkit-focus-ring-color auto 5px;*/
+   color:white;
+}
+
+table.dataTable > tbody > tr{
+    cursor:pointer;
+}
+
+#buildings_wrapper{
+	margin-top: 10px;
+	width:96%;
+	margin-left:2%;
+	margin-right:2%;
+}
+#buildings_wrapper > table.dataTable > thead > tr > th{
+	font-weight:normal;
+}
+
+#buildings_wrapper > table.dataTable > thead > tr {
+	border-bottom: 1px solid gray;
+	line-height: 30px;
+	text-align: left;
+}
+
+#buildings_wrapper > table.dataTable > tfoot > td {
+	font-weight:normal;
+}
+
 .main-search{
     line-height: 15px !important;
 
