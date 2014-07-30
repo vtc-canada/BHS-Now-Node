@@ -124,7 +124,8 @@ FROM
 END IF;
 
 #Apply filtering to final results
-SELECT * 
+SELECT 
+	SQL_CALC_FOUND_ROWS *
 FROM Results
 WHERE 
 	(unitQuantityMax IS NULL OR units <= unitQuantityMax)
@@ -147,9 +148,11 @@ ORDER BY
 	CASE WHEN orderBy='units_desc' THEN units END DESC,
 	CASE WHEN orderBy='sale_date_asc' THEN sale_date END ASC,
 	CASE WHEN orderBy='sale_date_desc' THEN sale_date END DESC
-LIMIT recordCount OFFSET offsetIndex;
 
+LIMIT recordCount OFFSET offsetIndex;
 SET id = FOUND_ROWS();
+
+
 
 END$$
 DELIMITER ;
