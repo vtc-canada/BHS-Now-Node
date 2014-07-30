@@ -28,7 +28,7 @@ module.exports = {
 
   getPolicy:function(req,res){
 
-      var bucket='CRED-buiulding-images';
+      var bucket='credimages';
       var accesskey='AKIAJMQ2PJJK63JVPX6Q';
       var secret='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';
 
