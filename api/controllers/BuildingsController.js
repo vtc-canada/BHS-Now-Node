@@ -44,16 +44,9 @@ module.exports = {
 		    if (err) {
 			console.log(err.toString);
 		    } else {
-			sails.controllers.database.credQuery('SELECT * FROM ref_boiler_type', function(err, boiler_types) {
-			    if (err) {
-				console.log(err.toString);
-			    } else {
-				res.view({
-				    building_types : building_types,
-				    heat_types : heat_types,
-				    boiler_types : boiler_types
-				});
-			    }
+			res.view({
+			    building_types : building_types,
+			    heat_types : heat_types
 			});
 		    }
 		});

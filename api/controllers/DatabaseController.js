@@ -74,6 +74,9 @@ module.exports = {
 		    if (err) {
 			cb(err);
 		    } else {
+			if (typeof (results) != 'undefined'&&typeof(results.serverStatus)!='undefined') { 
+			    results = [[],results];// corrects controversial responses
+			}
 			function loop(i) {
 			    if (data[i] != null && data[i].length > 0 && data[i].substring(0, 1) == '@') {
 				connection.query('SELECT ' + data[i], function(outerr, outresult) {
@@ -83,11 +86,11 @@ module.exports = {
 					connection.release();
 					cb(err, results);
 				    } else {
-					if (typeof (results) == 'undefined') {
-					    console.log('undefined results[1]');
-
-					}
+					
 					results[1][data[i]] = outresult[0][data[i]];
+					
+					
+					
 					i++;
 					if (i < data.length) {
 					    loop(i);

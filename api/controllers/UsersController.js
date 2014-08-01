@@ -43,23 +43,34 @@ module.exports = {
     },
     update : function(req, res) {
 	var test = req;
-	sails.controllers.database.localSproc('getSecurityGroups', [], function(err, result) {
-	    if (err)
-		return res.json({
-		    error : 'Database Error:' + err
+	if (typeof (req.params.id) != 'undefined' && !isNaN(parseInt(req.params.id))) {
+	    sails.controllers.database.localSproc('getSecurityGroups', [], function(err, securityGroups) {
+		if (err)
+		    return res.json({
+			error : 'Database Error:' + err
+		    });
+		sails.controllers.database.localSproc('clearUserSecurityPolicies', [ parseInt(req.params.id) ], function() {
+		    if (err)
+			return res.json({
+			    error : 'Database Error:' + err
+			});
+		    for (var i = 0; i < securityGroups[0].length; i++) {
+			if (req.body[securityGroups[0][i].name] == 1) {
+			    sails.controllers.database.localSproc('addUserSecurityPolicy', [ req.body.id, securityGroups[0][i].id, '@id'], function(err, usp) {
+				if (err)
+				    return res.json({
+					error : 'Database Error:' + err
+				    });
+				res.json({
+				    success : 'succcess'
+				});
+			    });
+			}
+		    }
+
 		});
-
-	    for (var i = 0; i < result[0].length; i++) {
-		//console.log(result[0].id);
-		console.log(req.body);
-	    }
-
-	});
-	// sails.controllers.database.localSproc('update')
-	/*
-	 * Users.update({ id : req.param('id') }, { }, function(err, user) { if
-	 * (err) return res.send(err, 500); res.json({ success : 'success' }); })
-	 */
+	    });
+	}
     }
 
 };
