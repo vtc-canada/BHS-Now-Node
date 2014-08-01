@@ -4,8 +4,8 @@ module.exports = function(req,res,next) {
       sails.controllers.database.localSproc("AuthorizeResourcePolicy", [ req.session.user.id,"'"+path+"'"], function(err,policy) {
 	  if(err){
 	      res.json(500,{error:'Database Error'});
-	  }else if(policy.length==1){
-	      req.session.user.policy[path] = policy[0];
+	  }else if(policy[0]&&policy[0].length==1){
+	      req.session.user.policy[path] = policy[0][0];
 	      next();
 	  }else{
 	      res.json(500,{error:'Policy Missing!@'+req.session.user.id+':'+path});

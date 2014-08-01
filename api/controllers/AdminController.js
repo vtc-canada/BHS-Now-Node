@@ -24,6 +24,16 @@ module.exports = {
      * AdminController)
      */
     _config : {},
+    usersjoinedpolicies:function(req,res){
+	sails.controllers.database.localSproc('getUsersJoinedPolicies',[],function(err,result){
+	    if(err){
+		res.json({error:'Database Error:'+err},500);
+	    }else{
+		res.json(result[0])
+	    }
+	});
+	
+    },
 
     // Attempts to change users password.
     // broadcasts successful change to the appropriate User subscribed sockets
@@ -147,7 +157,14 @@ module.exports = {
     // displays the users page
     users : function(req, res) {
 	if (req.session.user.policy[req.route.path].read) { //if we had read access
-	    res.view({});
+	    sails.controllers.database.localSproc('getSecurityGroups',[],function(err,result){
+		if(err)
+		{
+		    res.json({error:'Database Error:'+err});
+		}else{
+		    res.view({securityGroups:result[0]});
+		}
+	    });
 	}else{
 	    res.json(401, {
 		    error : "Unauthorized."

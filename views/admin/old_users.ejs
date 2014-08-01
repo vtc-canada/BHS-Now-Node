@@ -81,7 +81,42 @@
 
  <!-- The Main page Users Section -->
 <div class="row-fluid" style="margin-top:20px;">
-    <div class="span10 offset1 page-controls-wrapper">
+    <div class="span4 offset1 page-controls-wrapper">
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%= translate[locale]['Users'] %></span>
+
+            <div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="add_user"><%= translate[locale]['New User'] %></div>
+        </div>
+        <div class="row-fluid" id="iframediv">
+            <div class="row-fluid">
+                <div class="adminusersheader">
+                    <div class="row-fluid rowflu">
+                        <!--<div class="span1 offset1">ID</div>-->
+                        <div class="span4 offset1"><%= translate[locale]['Username'] %></div>
+                        <div style="" class="span2"><%= translate[locale]['Security Level'] %></div>
+                        <div class="span3"></div>
+                        <div class="span2"></div>
+                    </div>
+                </div>
+                <div id="adminusers">
+                	<div class="row-fluid  odd" userid="1">
+				        <!--<div class="span1 offset1"><span class="mobilelabel">ID:</span> 1</div>-->
+				        <div class="span4 offset1"><span class="mobilelabel">Username:</span> admin</div>
+				        <div class="span7"></div>
+				    </div>
+                </div>
+                <div id="adminusers">
+                	<div class="row-fluid  even" userid="1">
+				        <!--<div class="span1 offset1"><span class="mobilelabel">ID:</span> 1</div>-->
+				        <div class="span4 offset1"><span class="mobilelabel">Username:</span> admin</div>
+				        <div class="span7"></div>
+				    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    
+    <div class="span6 offset0 page-controls-wrapper">
         <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%= translate[locale]['Users'] %></span>
 
             <div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="save_users"><%= translate[locale]['Save'] %></div>
@@ -105,6 +140,7 @@
             </div>
         </div>
     </div>
+    
 
     <!-- Modal - confirms you want to continue to delete users and complete other changes -->
     <div id="saveModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -155,9 +191,10 @@
             <h4><%= translate[locale]['Security Level'] %></h4>
             <div class="row-fluid"><label class="change-label" for="newsecuritylevel"><%= translate[locale]['Group'] %>:</label>
                 <select class="securityselect security-select-new change-input" style="margin-top:0px; height:30px;" id="newsecuritylevel">
-                	<% for(var i=0;i<securityGroups.length;i++){ %>
-                    	<option value="<%=securityGroups[i].id%>"><%=securityGroups[i].name%></option>
-                	<% } %>
+                    <option value="admin"><%= translate[locale]['Admin'] %></option>
+                    <option value="manager"><%= translate[locale]['Manager'] %></option>
+                    <option value="operator" selected="selected"><%= translate[locale]['Operator'] %></option>
+                    <option value="viewonly"><%= translate[locale]['View Only'] %></option>
                 </select>
             </div>
         </div>
@@ -173,27 +210,10 @@
 
 <!-- Admin Users Template - -->
 <script type="text/template" id="adminuserlist-template">
-    
     <div class="row-fluid {{ if(typeof(dodelete)!='undefined'){ }}user-delete{{ } }}" userid="{{= id}}">
+        <!--<div class="span1 offset1"><span class="mobilelabel">ID:</span> {{= id }}</div>-->
         <div class="span4 offset1"><span class="mobilelabel"><%= translate[locale]['Username'] %>:</span> {{= username }}</div>
         <div class="span2"><span class="mobilelabel"><%= translate[locale]['Security Level'] %>:</span>
-            <select class="securityselect">
-            	
-				<% for(var i=0;i<securityGroups.length;i++){ %>
-                	<option value="<%= securityGroups[i].name %>"{{ if(<%= securityGroups[i].name %>){ }} selected="selected"{{ } }}><%= securityGroups[i].name %></option>
-				<% } %>
-            </select>
-        </div>
-        <div class="span3 user-changepassword-span"><div class="pull-right change-password btn btn-primary"><%= translate[locale]['Change Password'] %>{{ if(typeof(dopassword)!='undefined'){ }} <i class="icon-time"></i>{{ } }}</div></div>
-        <div class="span2 user-delete-span"><div class="pull-right deleteadminuser btn {{ if(typeof(dodelete)!='undefined'){ }}btn-success{{ }else{ }}btn-danger{{ } }}">{{ if(typeof(dodelete)!='undefined'){ }}<%= translate[locale]['Cancel'] %>{{ }else{ }}<%= translate[locale]['Delete'] %>{{ } }}</div></div>
-    </div>
-</script>
-
-<!-- New Admin User Template - Different outer div template attributes -->
-<script type="text/template" id="new-adminuserlist-template">
-    <div class="row-fluid new-user" userid="new" newid="{{= newid }}">
-        <div class="span4 offset1"><span class="mobilelabel"><%= translate[locale]['Username'] %>:</span> {{= username }}</div>
-        <div class="span2 admin-users-checkbox"><span class="mobilelabel"><%= translate[locale]['Security Level'] %>:</span>
             <select class="securityselect">
                 <option value="admin"{{ if(admin){ }} selected="selected"{{ } }}><%= translate[locale]['Admin'] %></option>
                 <option value="manager"{{ if(manager){ }} selected="selected"{{ } }}><%= translate[locale]['Manager'] %></option>
@@ -205,7 +225,6 @@
         <div class="span2 user-delete-span"><div class="pull-right deleteadminuser btn {{ if(typeof(dodelete)!='undefined'){ }}btn-success{{ }else{ }}btn-danger{{ } }}">{{ if(typeof(dodelete)!='undefined'){ }}<%= translate[locale]['Cancel'] %>{{ }else{ }}<%= translate[locale]['Delete'] %>{{ } }}</div></div>
     </div>
 </script>
-
 
 <script>
 var translate = {
@@ -220,185 +239,11 @@ var translate = {
 }
 $(document).ready(function(){
 
-    ///////////////////////////////////////
-    /////   AdminUsers ////////////////////
-    ///////////////////////////////////////
-    /// Similar to users on the layout.ejs page
-    // Almost the same information
-    // triggered and updated seperately from users
-    // ie. adminusers ignores 'dialhome' updates about users last being logged in
-    //
-    // we create the collection, instantiate it, fetch it.
-    // the view is subsequently created after the first set is retreived.
-    // the view is also rendered when any updates come in.
-    var AdminUsersModel = Backbone.Model.extend({
-        urlRoot: '/users'
-    });
-
-    var SailsAdminUsersCollection = Backbone.Collection.extend({
-        sailsCollection: "",
-        socket: null,
-        sync: function(method, model, options){
-            var where = {};
-            if (options.where) {
-                where = {
-                    where: options.where
-                }
-            }
-            if(typeof this.sailsCollection === "string" && this.sailsCollection !== "") {
-                this.socket = socket;
-                this.socket.request("/" + this.sailsCollection, where, _.bind(function(usersmsg){
-                    if(usersmsg.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
-                        location.reload(); // Will boot back to login screen
-                    }
-                    this.set(usersmsg);
-                    adminusersView = new AdminUsersView({collection: adminusers});
-                }, this));
-            }
-        }
-    });
-
-    var AdminUsersCollection = SailsAdminUsersCollection.extend({
-        sailsCollection: 'admin/usersjoinedpolicies',
-        model: AdminUsersModel
-    });
-
-    adminusers = new AdminUsersCollection();
-    adminusers.fetch();
-
-
-
-
-
-
-
-
-
-
-
-    ////////////////////////
-    /// AdminUsers View ////
-    ////////////////////////
-    //
-    //  clicking change password, changing groups, etc. add 'dosync' and 'dodelete', 'dopassword' flags to the models
-    //  these flags are used when determining how to handle each model when SAVING the entire changes
-
-    var AdminUsersView = Backbone.View.extend({
-        el: '#adminusers',
-        events: {
-            "change select.securityselect"   : "changeSecurity",
-            "click div.deleteadminuser"   : "deleteUser",
-            "click div.change-password" : "changePassword"
-
-        },
-        // Clears the password modal
-        // passes in the userid / new user flag
-        // shows the modal
-        changePassword:function(event){
-
-            var newidtemp = '';
-            var idstring = $(event.currentTarget).parent().parent().attr('userid');
-            var modtemp;
-            if(idstring=='new'){
-                newidtemp = $(event.currentTarget).parent().parent().attr('newid');
-                modtemp  = this.collection.findWhere({newid:parseInt(newidtemp)});
-            }else{
-                modtemp  = this.collection.get(idstring);
-            }
-
-            if(idstring =='new'){
-                $('#changeModal').attr('userid','new');
-                $('#changeModal').attr('newid',newidtemp);
-            }
-            else
-            {
-                $('#changeModal').attr('userid',idstring);
-            }
-
-            $('#newpasswordprompt').html('<%= translate[locale]['Please enter a new password for'] %> <b>'+modtemp.get('username')+'</b>.');
-            $('#newpassword').val('');
-            $('#confirmpassword').val('');
-            $('#changeModal div.alert-error').remove();
-            $('#changeModal').modal('show');
-        },
-        // deletes the model from the collection if the user is new,
-        // if the user has an id, it sets the 'dodelete' flag, and makes the row transparent-like
-        deleteUser:function(event){
-            var newidtemp = '';
-            var idstring = $(event.currentTarget).parent().parent().attr('userid');
-            var modtemp;
-            if(idstring=='new'){
-                newidtemp = $(event.currentTarget).parent().parent().attr('newid');
-                modtemp  = this.collection.findWhere({newid:parseInt(newidtemp)});
-                adminusers.remove(modtemp);
-                adminusersView.render();
-                return;
-            }else{
-                modtemp  = this.collection.get(idstring);
-            }
-
-            if(typeof(modtemp.get('dodelete'))=='undefined'){
-                modtemp.set({dodelete:1});
-                $('#adminusers > div[userid='+idstring+'] > div > div.deleteadminuser').removeClass('btn-danger').addClass('btn-success').html('<%= translate[locale]['Cancel'] %>');
-                $('#adminusers > div[userid='+idstring+']').removeClass('user-delete').addClass('user-delete');
-            }else{
-                modtemp.unset('dodelete');
-                $('#adminusers > div[userid='+idstring+'] > div > div.deleteadminuser').removeClass('btn-success').addClass('btn-danger').html('<%= translate[locale]['Delete'] %>');
-                $('#adminusers > div[userid='+idstring+']').removeClass('user-delete');
-            }
-            setChangesPending();
-        },
-        // changes the modal, and sets the 'dosync' flag
-        changeSecurity:function(event){
-            var idstring = $(event.currentTarget).parent().parent().attr('userid');
-            var modtemp;
-            if(idstring=='new'){
-                modtemp  = this.collection.findWhere({newid:parseInt($(event.currentTarget).parent().parent().attr('newid'))});
-            }else{
-                modtemp  = this.collection.get(idstring);
-            }
-            modtemp.set({dosync:1});
-            $(event.currentTarget).children().each(function(i){
-            	modtemp.set($(this).val(),0);
-            });
-        	modtemp.set($(event.currentTarget).val(),1);
-            
-            setChangesPending();
-        },
-        initialize: function () {
-            this.render();
-        },
-        template: _.template($('#adminuserlist-template').html()), //$('#userlist-template').html()),
-        newusertemplate:  _.template($('#new-adminuserlist-template').html()),
-        render: function () {
-            this.$el.html("");
-
-            // sorts by username
-            var tcollection = this.collection.sortBy(function(message){
-                return message.get("username").toString().toUpperCase();
-            });
-
-            for(var i=0; i<tcollection.length; i++)
-            {
-                if(!tcollection[i].isNew()){
-                    this.$el.append(this.template(tcollection[i].toJSON()));
-                }else{
-                    this.$el.append(this.newusertemplate(tcollection[i].toJSON()));
-                }
-            }
-            $('#adminusers > div.row-fluid:even').addClass('odd');
-            $('#adminusers > div.row-fluid:odd').addClass('even');
-
-            setChangesPending();  // recalculates and displays if changes are pending
-        }
-    });
-    var adminusersView;
-
-
+    
     // this object keeps track of the number of successful changes that happen out of all the changes
     // this is iteratively updated as the .save() function is called on each of the models in the collection
     // it displays a success message if it completes all the required saves
-    saveObj = {
+    /*saveObj = {
         changetotal:0,
         changecount:0,
         addcount:function(){
@@ -416,11 +261,12 @@ $(document).ready(function(){
                 },alert_fadeout_time);
             }
         }
-    }
+    }*/
 
     // save password change event is attached to the button
     // it sets the dopassword and dosync flags on the model
     $('#confirmchange').click(function(event){
+    /*
         $('#changeModal div.alert-error').remove();
         if($('#newpassword').val()!=$('#confirmpassword').val()){
             $('#changeModal div.modal-header').after(
@@ -447,81 +293,33 @@ $(document).ready(function(){
                 $('#changeModal').modal('hide');
                 setChangesPending();
             });
-        }
+        }*/
     });
 
     // binds saveChanges function to Deletes confirmation dialog.
     $('#confirmdeletes').click(function(event){
-        saveChanges();
+    //    saveChanges();
     });
 
 
-    // This function iteratively goes through all the models in the adminusers collection
-    // if it's new, it creates it,
-    // if it's being deleted, it deletes it
-    // if we're changing the password, we do that
-    // if we are just updating security level, we simply call model.save().
-    // each successful response results in a  saveObj.addcount() -  once this hits 100%, the success message pops.
-    function saveChanges(){
-        _.chain(adminusers.models).clone().each(function(model){
-            if(model.isNew()){
-                socket.request('/admin/adduser',{username: model.get('username'), password:model.get('password'),admin:model.get('admin'),manager:model.get('manager'),operator:model.get('operator'),viewonly:model.get('viewonly')},function (data) {
-                        if(data.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
-                            location.reload(); // Will boot back to login screen
-                        }
-                        saveObj.addcount();
-                    }
-                );
-                model.destroy();
-            }
-            else
-            {
-                if(typeof(model.get('dodelete'))!='undefined'){   // Just save the ones we've interacted with :D
-                    model.unset('dodelete');
-                    model.unset('dopassword');
-                    model.unset('dosync');
-                    //socket.request('/admin/deleteusermessages',{userId:model.get('id')},function(data){
-                    //    if(data.error != undefined){  // USER NO LONGER LOGGED IN!!!!!  // failed to delete messages
-                    //        location.reload(); // Will boot back to login screen
-                    //        return;
-                    //    }
-                        model.destroy();
-                        saveObj.addcount();
-
-                    //});
-                }else if(typeof(model.get('dopassword'))!='undefined'){
-                    socket.request('/admin/updatepassword',{updateid:model.get('id'),password:model.get('password')},function(){
-                        model.unset('dosync');
-                        model.unset('dopassword');
-                        model.save();
-                        saveObj.addcount();
-                    });
-                }
-                else if(typeof(model.get('dosync'))!='undefined'){   // Just save the ones we've interacted with :D
-                    model.unset('dosync');
-                    model.save();
-                    saveObj.addcount();
-                }
-            }
-        });
-    }
+    
 
      // pops the add new user dialog.
     $('#add_user').click(function(event){
-        $('#addnewusername').val('');
-        $('#newsecuritylevel').val('operator');
-        $('#addnewpassword').val('');
-        $('#addconfirmpassword').val('');
-        //$('#addUserModal div.modal-body .error-message').html('');
-        $('#addUserModal div.alert-error').remove();
-        $('#addUserModal').modal('show');
+        //$('#addnewusername').val('');
+        //$('#newsecuritylevel').val('operator');
+        //$('#addnewpassword').val('');
+        //$('#addconfirmpassword').val('');
+        ////$('#addUserModal div.modal-body .error-message').html('');
+        //$('#addUserModal div.alert-error').remove();
+        //$('#addUserModal').modal('show');
 
     });
 
     // this makes sure the new user has a propper username and password.
     // it adds it to the collection if it's successful.
     $('#confirmadduser').click(function(event){
-        $('#addUserModal div.alert-error').remove();
+        /*$('#addUserModal div.alert-error').remove();
 
         if($('#addnewusername').val()==''){
             $('#addUserModal div.modal-header').after(
@@ -575,14 +373,14 @@ $(document).ready(function(){
 
 
         });
-
+		*/
     });
 
 
     // this initial click on save users sets up the saveObj to track all the successes it will need.
     // it pops the delete modal confirmation if we're wanting to delete users.
     $('#save_users').click(function(event){
-
+/*
         var changecount = 0;
         var deleteusersstring = '';
         $.each(adminusers.models,function(key,model){
@@ -605,14 +403,14 @@ $(document).ready(function(){
         }
         else{
             saveChanges();
-        }
+        }*/
 
     });
 
 
     // just shows the changes are pending, by scanning through the collection to see if that's the case.
     function setChangesPending(){
-        var change = false;
+        /*var change = false;
         $.each(adminusers.models,function(key,model){
             if(model.isNew()||typeof(model.get('dodelete'))!='undefined'||typeof(model.get('dosync'))!='undefined'){
                change= true;
@@ -624,7 +422,7 @@ $(document).ready(function(){
         }
         else{
             $('#changes_pending').css('display','none');
-        }
+        }*/
     }
 
 

@@ -24,14 +24,19 @@ var connection = mysql.createConnection({
     database : 'bhs_scada',
     host : 'localhost'
 });
-var localConnection = mysql.createConnection({
+
+
+
+var localPool = mysql.createPool({
+    connectionLimit : 10,
     user : 'root',
     password : 'Glasgow931',
     database : 'bhs_dummy',
     host : 'localhost'
 });
 
-var credConnection = mysql.createConnection({
+var credPool = mysql.createPool({
+    connectionLimit : 10,
     user : 'root',
     password : 'Glasgow931',
     database : 'cred',
@@ -45,71 +50,144 @@ module.exports = {
      * DatabaseController)
      */
     _config : {},
+    localQuery : function(query, cb) {
+	localPool.getConnection(function(err, connection) {
+	    if (err) {
+		cb(err);
+	    } else {
+		connection.query(query, function(err, results) {
+		    connection.release();
+		    cb(err, results);
+		});
+	    }
+	});
+    },
+    localSproc: function(sprocName, data, cb) {
+	var sprocArgs = "(";
+	sprocArgs += BuildSproc(data);
+	sprocArgs += ");";
+	localPool.getConnection(function(err, connection) {
+	    if (err) {
+		cb(err);
+	    } else {
+		connection.query("call " + sprocName + sprocArgs, function(err, results) {
+		    if (err) {
+			cb(err);
+		    } else {
+			function loop(i) {
+			    if (data[i] != null && data[i].length > 0 && data[i].substring(0, 1) == '@') {
+				connection.query('SELECT ' + data[i], function(outerr, outresult) {
+				    if (outerr) {
+					console.log('broke out of parameters early:' + outerr);
+
+					connection.release();
+					cb(err, results);
+				    } else {
+					if (typeof (results) == 'undefined') {
+					    console.log('undefined results[1]');
+
+					}
+					results[1][data[i]] = outresult[0][data[i]];
+					i++;
+					if (i < data.length) {
+					    loop(i);
+					} else {
+					    connection.release();
+					    cb(err, results);
+					}
+				    }
+				});
+			    } else {
+				i++;
+				if (i < data.length) {
+				    loop(i);
+				} else {
+				    connection.release();
+				    cb(err, results);
+				}
+			    }
+			}
+			if (!err && data.length > 0) {
+			    loop(0);
+			} else {
+			    connection.release();
+			    cb(err, results);
+			}
+		    }
+		});
+	    }
+
+	});
+    },
     credQuery : function(query, cb) {
-	credConnection.query(query, function(err, results) {
-	    cb(err, results);
+	credPool.getConnection(function(err, connection) {
+	    if (err) {
+		cb(err);
+	    } else {
+		connection.query(query, function(err, results) {
+		    connection.release();
+		    cb(err, results);
+		});
+	    }
 	});
     },
     credSproc : function(sprocName, data, cb) {
 	var sprocArgs = "(";
 	sprocArgs += BuildSproc(data);
 	sprocArgs += ");";
-	credConnection.query("call " + sprocName + sprocArgs, function(err, results) {
-	    function loop(i) {
-		if (data[i]!=null&&data[i].length>0&&data[i].substring(0, 1) == '@') {
-		    credConnection.query('SELECT ' + data[i], function(outerr, outresult) {
-			if (outerr) {
-			    console.log('broke out of parameters early:' + outerr);
-			    cb(err, results);
-			} else {
-			    if(typeof(results)=='undefined'){
-				console.log('undefined results[1]');
-				
-			    }
-			    results[1][data[i]] = outresult[0][data[i]];
-			    i++;
-			    if (i < data.length) {
-				loop(i);
+	credPool.getConnection(function(err, connection) {
+	    if (err) {
+		cb(err);
+	    } else {
+		connection.query("call " + sprocName + sprocArgs, function(err, results) {
+		    if (err) {
+			cb(err);
+		    } else {
+			function loop(i) {
+			    if (data[i] != null && data[i].length > 0 && data[i].substring(0, 1) == '@') {
+				connection.query('SELECT ' + data[i], function(outerr, outresult) {
+				    if (outerr) {
+					console.log('broke out of parameters early:' + outerr);
+
+					connection.release();
+					cb(err, results);
+				    } else {
+					if (typeof (results) == 'undefined') {
+					    console.log('undefined results[1]');
+
+					}
+					results[1][data[i]] = outresult[0][data[i]];
+					i++;
+					if (i < data.length) {
+					    loop(i);
+					} else {
+					    connection.release();
+					    cb(err, results);
+					}
+				    }
+				});
 			    } else {
-				cb(err, results);
+				i++;
+				if (i < data.length) {
+				    loop(i);
+				} else {
+				    connection.release();
+				    cb(err, results);
+				}
 			    }
 			}
-		    });
-		} else {
-		    i++;
-		    if (i < data.length) {
-			loop(i);
-		    } else {
-			cb(err, results);
+			if (!err && data.length > 0) {
+			    loop(0);
+			} else {
+			    connection.release();
+			    cb(err, results);
+			}
 		    }
-		}
+		});
 	    }
-	    if (!err&&data.length > 0) {
-		loop(0);
-	    } else {
-		cb(err, results);
-	    }
-	});
-    },
-    localSproc : function(sprocName, data, cb) {
-	if (sails.config.adapters['default'] != "mssql") {
 
-	    var sprocArgs = "(";
-	    sprocArgs += BuildSproc(data);
-	    sprocArgs += ");";
-	    localConnection.query("call " + sprocName + sprocArgs, function(err, results) {
-		if (results != undefined && results[0] != undefined) {
-		    results = results[0];
-		}
-		cb(err, results || []);
-	    });
-	} else if (sails.config.adapters['default'] == "mssql") {
-	    var sprocArgs = " ";
-	    sprocArgs += BuildSproc(data);
-	    sails.adapters["sails-mssql"].query("users", sprocName + sprocArgs, function(err, results) {
-		cb(err, results);
-	    });
-	}
+	});
+
     },
     sp : function(sprocName, data, cb) {
 

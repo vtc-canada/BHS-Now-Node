@@ -5,7 +5,7 @@ module.exports = function(req,res,next) {
 	  if(err){
 	      res.json(500,{error:'Database Error'});
 	  }else{
-	      req.session.user.policy[path] = policy[0];
+	      req.session.user.policy[path] = policy[0][0];
 	      next();
 	  }
       });

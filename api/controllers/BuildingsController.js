@@ -106,9 +106,10 @@ module.exports = {
 		    res.json({
 			error : 'Database Error'
 		    });
+		} else {
+		    building[0][0].buildingcontacts = buildingcontacts;
+		    res.json(building[0][0]);
 		}
-		building[0][0].buildingcontacts = buildingcontacts;
-		res.json(building[0][0]);
 	    });
 	});
 
