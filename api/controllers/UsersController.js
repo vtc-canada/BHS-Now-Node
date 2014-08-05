@@ -56,7 +56,8 @@ module.exports = {
 			});
 		    for (var i = 0; i < securityGroups[0].length; i++) {
 			if (req.body[securityGroups[0][i].name] == 1) {
-			    sails.controllers.database.localSproc('addUserSecurityPolicy', [ req.body.id, securityGroups[0][i].id, '@id'], function(err, usp) {
+			    var outid = '@id';
+			    sails.controllers.database.localSproc('addUserSecurityPolicy', [ req.body.id, securityGroups[0][i].id, outid], function(err, usp) {
 				if (err)
 				    return res.json({
 					error : 'Database Error:' + err
