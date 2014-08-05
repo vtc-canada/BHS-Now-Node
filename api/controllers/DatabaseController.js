@@ -1,19 +1,19 @@
 /**
  * DatabaseController
- * 
+ *
  * @module :: Controller
  * @description :: A set of functions called `actions`.
- * 
+ *
  * Actions contain code telling Sails how to respond to a certain type of
  * request. (i.e. do stuff, then send some JSON, show an HTML page, or redirect
  * to another URL)
- * 
+ *
  * You can configure the blueprint URLs which trigger these actions
  * (`config/controllers.js`) and/or override them with custom routes
  * (`config/routes.js`)
- * 
+ *
  * NOTE: The code you write here supports both HTTP and Socket.io automatically.
- * 
+ *
  * @docs :: http://sailsjs.org/#!documentation/controllers
  */
 
@@ -40,7 +40,7 @@ var credPool = mysql.createPool({
     user : 'root',
     password : 'Glasgow931',
     database : 'cred',
-    host : '10.1.1.60'
+    host : 'localhost'//10.1.1.60'
 });
 
 module.exports = {
@@ -74,6 +74,9 @@ module.exports = {
 		    if (err) {
 			cb(err);
 		    } else {
+			if (typeof (results) != 'undefined'&&typeof(results.serverStatus)!='undefined') {
+			    results = [[],results];// corrects controversial responses
+			}
 			function loop(i) {
 			    if (data[i] != null && data[i].length > 0 && data[i].substring(0, 1) == '@') {
 				connection.query('SELECT ' + data[i], function(outerr, outresult) {
@@ -83,11 +86,11 @@ module.exports = {
 					connection.release();
 					cb(err, results);
 				    } else {
-					if (typeof (results) == 'undefined') {
-					    console.log('undefined results[1]');
 
-					}
 					results[1][data[i]] = outresult[0][data[i]];
+
+
+
 					i++;
 					if (i < data.length) {
 					    loop(i);

@@ -156,7 +156,7 @@
             <div class="row-fluid"><label class="change-label" for="newsecuritylevel"><%= translate[locale]['Group'] %>:</label>
                 <select class="securityselect security-select-new change-input" style="margin-top:0px; height:30px;" id="newsecuritylevel">
                 	<% for(var i=0;i<securityGroups.length;i++){ %>
-                    	<option value="<%=securityGroups[i].id%>"><%=securityGroups[i].name%></option>
+                    	<option value="<%=securityGroups[i].name%>"><%=securityGroups[i].name%></option>
                 	<% } %>
                 </select>
             </div>
@@ -195,10 +195,9 @@
         <div class="span4 offset1"><span class="mobilelabel"><%= translate[locale]['Username'] %>:</span> {{= username }}</div>
         <div class="span2 admin-users-checkbox"><span class="mobilelabel"><%= translate[locale]['Security Level'] %>:</span>
             <select class="securityselect">
-                <option value="admin"{{ if(admin){ }} selected="selected"{{ } }}><%= translate[locale]['Admin'] %></option>
-                <option value="manager"{{ if(manager){ }} selected="selected"{{ } }}><%= translate[locale]['Manager'] %></option>
-                <option value="operator"{{ if(operator){ }} selected="selected"{{ } }}><%= translate[locale]['Operator'] %></option>
-                <option value="viewonly"{{ if(viewonly){ }} selected="selected"{{ } }}><%= translate[locale]['View Only'] %></option>
+                <% for(var i=0;i<securityGroups.length;i++){ %>
+                <option value="<%= securityGroups[i].name %>"{{ if(<%= securityGroups[i].name %>){ }} selected="selected"{{ } }}><%= securityGroups[i].name %></option>
+                <% } %>
             </select>
         </div>
         <div class="span3 user-changepassword-span"><div class="pull-right change-password btn btn-primary"><%= translate[locale]['Change Password'] %>{{ if(typeof(dopassword)!='undefined'){ }} <i class="icon-time"></i>{{ } }}</div></div>
@@ -414,6 +413,13 @@ $(document).ready(function(){
                     },500);
                     $('.alert-success').removeClass('in');
                 },alert_fadeout_time);
+                setTimeout(function(){
+                    //
+                    adminusers.fetch();
+                    //adminusers.reset();
+                    adminusersView = new AdminUsersView({collection: adminusers});
+                    //adminusers.sync();
+                },100);
             }
         }
     }
@@ -429,24 +435,20 @@ $(document).ready(function(){
             $('#changeModal div.modal-header').after(
                     '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong><%= translate[locale]['Error'] %>:&nbsp;</strong><%= translate[locale]['Password must be at least 1 character long.'] %></div>');
         }else{
-            socket.request('/admin/createhash',{password:$('#newpassword').val()},function(data){
-                if(typeof(data.error)!='undefined'){
-                    location.reload(); // Will boot back to login screen
-                    return;
-                }
-                var newidtemp = '';
-                var idstring = $(event.currentTarget).parent().parent().attr('userid');
-                if(idstring=='new'){
-                    newidtemp = $(event.currentTarget).parent().parent().attr('newid');
-                    adminusers.findWhere({newid:parseInt(newidtemp)}).set({password:data.hash,dosync:1,dopassword:1});
-                    $('#adminusers > div[userid='+idstring+'] div.user-changepassword-span div.change-password').html('<%= translate[locale]['Change Password'] %> <i class="icon-time"></i>');
-                }else{
-                    adminusers.get(idstring).set({password:data.hash,dosync:1,dopassword:1});
-                    $('#adminusers > div[userid='+idstring+'] div.user-changepassword-span div.change-password').html('<%= translate[locale]['Change Password'] %> <i class="icon-time"></i>');
-                }
-                $('#changeModal').modal('hide');
-                setChangesPending();
-            });
+            var newidtemp = '';
+            var idstring = $(event.currentTarget).parent().parent().attr('userid');
+            if(idstring=='new'){
+                newidtemp = $(event.currentTarget).parent().parent().attr('newid');
+                adminusers.findWhere({newid:parseInt(newidtemp)}).set({password:$('#newpassword').val(),dosync:1,dopassword:1});
+                $('#adminusers > div[userid='+idstring+'] div.user-changepassword-span div.change-password').html('<%= translate[locale]['Change Password'] %> <i class="icon-time"></i>');
+            }else{
+                adminusers.get(idstring).set({password:$('#newpassword').val(),dosync:1,dopassword:1});
+                $('#adminusers > div[userid='+idstring+'] div.user-changepassword-span div.change-password').html('<%= translate[locale]['Change Password'] %> <i class="icon-time"></i>');
+            }
+            $('#changeModal').modal('hide');
+            setChangesPending();
+
+
         }
     });
 
@@ -465,14 +467,8 @@ $(document).ready(function(){
     function saveChanges(){
         _.chain(adminusers.models).clone().each(function(model){
             if(model.isNew()){
-                socket.request('/admin/adduser',{username: model.get('username'), password:model.get('password'),admin:model.get('admin'),manager:model.get('manager'),operator:model.get('operator'),viewonly:model.get('viewonly')},function (data) {
-                        if(data.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
-                            location.reload(); // Will boot back to login screen
-                        }
-                        saveObj.addcount();
-                    }
-                );
-                model.destroy();
+                model.save();
+                saveObj.addcount();
             }
             else
             {
@@ -480,22 +476,14 @@ $(document).ready(function(){
                     model.unset('dodelete');
                     model.unset('dopassword');
                     model.unset('dosync');
-                    //socket.request('/admin/deleteusermessages',{userId:model.get('id')},function(data){
-                    //    if(data.error != undefined){  // USER NO LONGER LOGGED IN!!!!!  // failed to delete messages
-                    //        location.reload(); // Will boot back to login screen
-                    //        return;
-                    //    }
-                        model.destroy();
-                        saveObj.addcount();
+                    model.destroy();
+                    saveObj.addcount();
 
-                    //});
                 }else if(typeof(model.get('dopassword'))!='undefined'){
-                    socket.request('/admin/updatepassword',{updateid:model.get('id'),password:model.get('password')},function(){
-                        model.unset('dosync');
-                        model.unset('dopassword');
-                        model.save();
-                        saveObj.addcount();
-                    });
+                    model.unset('dosync');
+                    model.unset('dopassword');
+                    model.save();
+                    saveObj.addcount();
                 }
                 else if(typeof(model.get('dosync'))!='undefined'){   // Just save the ones we've interacted with :D
                     model.unset('dosync');
@@ -554,24 +542,19 @@ $(document).ready(function(){
                         '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong><%= translate[locale]['Error'] %>:&nbsp;</strong><%= translate[locale]['Password must be at least 1 character long.'] %></div>');
                 return;
             }
+            var newUser = {username:$('#addnewusername').val(),dosync:1, newid:Math.floor(Math.random()*65535),password:$('#addnewpassword').val()};
 
-            socket.request('/admin/createhash',{password:$('#addnewpassword').val()},function(data){
-                if(typeof(data.error)!='undefined'){
-                    location.reload(); // Will boot back to login screen
-                    return;
+            $('#newsecuritylevel option').each(function(){
+                if($(this).val()==$('#newsecuritylevel').val()){
+                    newUser[$(this).val()]=1;
+                }else{
+                    newUser[$(this).val()]=0;
                 }
-                if($('#newsecuritylevel').val()=='admin'){
-                    adminusers.add({username:$('#addnewusername').val(),dosync:1, newid:Math.floor(Math.random()*65535),password:data.hash,admin:1,manager:0,operator:0,viewonly:0});
-                }else if($('#newsecuritylevel').val()=='manager'){
-                    adminusers.add({username:$('#addnewusername').val(),dosync:1, newid:Math.floor(Math.random()*65535),password:data.hash,admin:0,manager:1,operator:0,viewonly:0});
-                }else if($('#newsecuritylevel').val()=='operator'){
-                    adminusers.add({username:$('#addnewusername').val(),dosync:1, newid:Math.floor(Math.random()*65535),password:data.hash,admin:0,manager:0,operator:1,viewonly:0});
-                }else if($('#newsecuritylevel').val()=='viewonly'){
-                    adminusers.add({username:$('#addnewusername').val(),dosync:1, newid:Math.floor(Math.random()*65535),password:data.hash,admin:0,manager:0,operator:0,viewonly:1});
-                }
-                $('#addUserModal').modal('hide');
-                adminusersView.render();
             });
+
+            adminusers.add(newUser);
+            $('#addUserModal').modal('hide');
+            adminusersView.render();
 
 
         });
