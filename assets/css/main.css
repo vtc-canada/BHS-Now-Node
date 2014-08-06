@@ -170,6 +170,29 @@ table.dataTable > tbody > tr{
 	font-weight: bold;
 }
 
+.building-contact-wrapper .segment-label{
+	text-align:right;
+	line-height: 28px;
+	font-weight: bold;
+}
+.building-contact-wrapper:first-child{
+	border-top: none;
+	margin-top: 0px;
+	padding-top: 0px;
+}
+.building-contact-wrapper{
+	border-top: 1px solid #696969;
+	margin-top: 16px;
+	padding-top: 6px;
+}
+.building-contact-wrapper .segment-label-value{
+	line-height: 30px;
+}
+
+.building-contact-delete{
+	opacity:0.4;
+}
+
 input.segment-form-radio{
 	margin-top:0px;
 	margin-bottom:2px;
@@ -701,7 +724,9 @@ div.language-flag.chile{
 	.building-segment-wrapper .segment-label{
 		text-align:left;
 	}
-
+	.building-contact-wrapper .segment-label{
+		text-align:left;
+	}
 
     .adminusersheader{
         display:none;
@@ -728,7 +753,7 @@ div.language-flag.chile{
     }
 
     #adminusers div[userid] > div.user-delete-span{
-        float:right;
+        float: left;
         width:auto;
     }
 
@@ -736,10 +761,15 @@ div.language-flag.chile{
         float:left ;
         margin: 10px;
     }
+	
+	#adminusers div[userid] > div > div.toggle-active{
+        float:left ;
+        margin: 10px;
+    }
 
     #adminusers div[userid] > div.user-changepassword-span{
         float:left;
-        width:auto;
+        /* width:auto; */
     }
 
 }

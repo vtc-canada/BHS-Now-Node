@@ -26,7 +26,7 @@ SELECT
 	,cur_buildings.bedroom1_price
 	,cur_buildings.bedroom1_units
 	,cur_buildings.bedroom2_price
-	,cur_buildings.bedroom2_price
+	,cur_buildings.bedroom2_units
 	,cur_buildings.bedroom3_price
 	,cur_buildings.bedroom3_units
 	,cur_buildings.assessed_value

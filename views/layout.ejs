@@ -40,6 +40,7 @@
                 'Success':'Success',
                 'Current password was incorrect.':'Current password was incorrect.',
                 'Password has been successfully changed.':'Password has been successfully changed.',
+                'Maps':'Maps',
                 'pages':{
                     'Flight Table':'Flight Table',
                     '/dashboard':'Dashboard',
@@ -90,6 +91,7 @@
                 'Success':'Success',
                 'Current password was incorrect.':'Current password was incorrect.',
                 'Password has been successfully changed.':'Password has been successfully changed.',
+                'Maps':'Maps',
                  'pages':{
                       'Flight Table':'Flight Table',
                       '/dashboard':'Dashboard',
@@ -117,6 +119,7 @@
     <link href="/css/bootstrap.css" rel="stylesheet">
     <link href="/css/bootstrap-responsive.css" rel="stylesheet">
 	<link href="/css/minidash.css" rel="stylesheet">
+	<link href="/css/slider.css" rel="stylesheet">
 	<link href="/css/main.css" rel="stylesheet">
     <link href="/css/chatboxlayout.css" rel="stylesheet">
     <link href="/css/font-awesome.css" rel="stylesheet">
@@ -153,6 +156,7 @@
 	<script type="text/javascript" src="/js/bootstrap.js"></script>
 	<script type="text/javascript" src="/js/jquery-ui-1.10.3.custom.min.js"></script>
 	<script type="text/javascript" src="/js/jquery.jeditable.js"></script>
+	<script type="text/javascript" src="/js/bootstrap-slider.js"></script>
 
 
     <!-- Fav and touch icons -->
@@ -278,11 +282,11 @@
               <span><%= translate[req.session.user.locale]['Searchmenu'] %></span>
           </a>
           </li>
-          <li <% if (typeof(req.url)!=='undefined'&&req.url=='/flighttable'){ %>class="active"<% } %>>
+          <li <% if (typeof(req.url)!=='undefined'&&req.url=='/maps'){ %>class="active"<% } %>>
           <span class="glow"></span>
-          <a href="/flighttable">
-              <i class="icon-calendar icon-2x"></i>
-              <span><%= translate[req.session.user.locale]['Flight Table'] %></span>
+          <a href="/maps">
+              <i class="icon-globe icon-2x"></i>
+              <span><%= translate[req.session.user.locale]['Maps'] %></span>
           </a>
           </li>
 
