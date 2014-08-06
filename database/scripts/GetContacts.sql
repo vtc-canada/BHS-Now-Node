@@ -1,8 +1,9 @@
 USE cred;
 DROP PROCEDURE if EXISTS `GetContacts` ;
 
-CREATE PROCEDURE `GetContacts`()
+DELIMITER $$
 
+CREATE PROCEDURE `GetContacts`()
 SELECT 
 	cur_contacts.id as 'contact_id'
 	,cur_contacts.name as 'contact'
@@ -21,3 +22,5 @@ FROM cur_contacts
 	LEFT JOIN cur_address ON (cur_address.id = cur_company_address_mapping.cur_address_id)
 
 GROUP BY cur_contacts.id
+END$$
+DELIMITER ;

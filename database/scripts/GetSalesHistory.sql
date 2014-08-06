@@ -3,6 +3,7 @@ DROP PROCEDURE if EXISTS `GetSalesHistory` ;
 
 CREATE PROCEDURE `GetSalesHistory`()
 
+DELIMITER $$
 SELECT 	
 		 cur_contacts.name as 'contact'
 		,cur_company.name as 'company'
@@ -33,3 +34,5 @@ FROM cur_sales_record_history
 	LEFT JOIN cur_company ON (cur_company.id = mapping.cur_company_id)
 	INNER JOIN ref_contact_type ON (ref_contact_type.id = mapping.ref_contact_type_id)
 ORDER BY cur_buildings.id, ref_contact_type.type ASC;
+END$$
+DELIMITER ;

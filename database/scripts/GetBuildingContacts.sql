@@ -1,6 +1,7 @@
 USE cred;
 DROP PROCEDURE if EXISTS `GetBuildingContacts` ;
 
+DELIMITER $$
 CREATE PROCEDURE `GetBuildingContacts`(IN buildingID int)
 
 SELECT
@@ -27,4 +28,5 @@ WHERE
 	cur_buildings.id = buildingID
 GROUP BY	
 	cur_contacts.id;
-	
+END$$
+DELIMITER ;	

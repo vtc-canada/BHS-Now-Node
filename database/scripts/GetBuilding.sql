@@ -1,6 +1,7 @@
 USE cred;
 DROP PROCEDURE if EXISTS `GetBuilding` ;
 
+DELIMITER $$
 CREATE PROCEDURE `GetBuilding`(IN buildingID int)
 
 SELECT
@@ -47,3 +48,5 @@ FROM
 
 WHERE
 	cur_buildings.id = buildingID;
+END$$
+DELIMITER ;
