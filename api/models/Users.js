@@ -14,6 +14,10 @@ module.exports = {
 	  email:{
 	      type:'STRING'
 	  },
+	  active:{
+	      type:'BOOLEAN',
+	      defaultsTo: 1
+	  },
 	  locale : 'STRING'
   }
 

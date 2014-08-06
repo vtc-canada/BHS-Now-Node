@@ -29,83 +29,93 @@ module.exports = {
     _config : {},
 
     notes : function(req, res) {
-        if (typeof (req.params.id) != 'undefined' && !isNaN(parseInt(req.params.id))) {
-            sails.controllers.database.credSproc('GetBuildingNotes', [ parseInt(req.params.id) ], function(err, result) {
-                res.json(result[0]);
-            });
-        }
+	if (typeof (req.params.id) != 'undefined' && !isNaN(parseInt(req.params.id))) {
+	    sails.controllers.database.credSproc('GetBuildingNotes', [ parseInt(req.params.id) ], function(err, result) {
+		res.json(result[0]);
+	    });
+	}
     },
     index : function(req, res) {
-        sails.controllers.database.credQuery('SELECT * FROM ref_building_type', function(err, building_types) {
-            if (err) {
-                console.log(err.toString);
-            } else {
-                sails.controllers.database.credQuery('SELECT * FROM ref_heat_system_type', function(err, heat_types) {
-                    if (err) {
-                        console.log(err.toString);
-                    } else {
-                        res.view({
-                            building_types : building_types,
-                            heat_types : heat_types
-                        });
-                    }
-                });
-            }
-        });
+	sails.controllers.database.credQuery('SELECT * FROM ref_building_type', function(err, building_types) {
+	    if (err) {
+		console.log(err.toString);
+	    } else {
+		sails.controllers.database.credQuery('SELECT * FROM ref_heat_system_type', function(err, heat_types) {
+		    if (err) {
+			console.log(err.toString);
+		    } else {
+			res.view({
+			    building_types : building_types,
+			    heat_types : heat_types
+			});
+		    }
+		});
+	    }
+	});
     },
     getajax : function(req, res) {
-        /*
-         * null req.query.search req.query.unitQuantityMin
-         * req.query.unitQuantityMax req.query.saleDateRangeStart
-         * req.query.saleDateRangeEnd req.query.start req.query.length
-         * req.query.order
-         */
+	/*
+	 * null req.query.search req.query.unitQuantityMin
+	 * req.query.unitQuantityMax req.query.saleDateRangeStart
+	 * req.query.saleDateRangeEnd req.query.start req.query.length
+	 * req.query.order
+	 */
 
-        // Append the asterisks
-        if (req.query.search != '') {
-            req.query.search = req.query.search.split(" ").join("* ") + "*";
-        }
+	// Append the asterisks
+	if (req.query.search != '') {
+	    req.query.search = req.query.search.split(" ").join("* ") + "*";
+	}
 
-        filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
-        sails.controllers.database.credSproc('GetBuildings', [ req.query.search == '' ? null : "'" + req.query.search + "'",
-                req.query.unitQuantityMin == '' ? null : parseInt(req.query.unitQuantityMin),
-                req.query.unitQuantityMax == '' ? null : parseInt(req.query.unitQuantityMax),
-                req.query.saleDateRangeStart == '' ? null : req.query.saleDateRangeStart, req.query.saleDateRangeEnd == '' ? null : req.query.saleDateRangeEnd,
-            req.query.start, req.query.length, null, filteredCount ], function(err, result) { // GetBuildings
-            if (err) {
-                res.json({
-                    error : 'Database Error'
-                }, 500);
-            } else {
-                sails.controllers.database.credSproc('GetBuildingsCount', [], function(err, buildingscount) {
-                    res.json({
-                        draw : req.query.draw,
-                        recordsTotal : buildingscount[0][0].number_of_buildings,
-                        recordsFiltered : result[1][filteredCount],
-                        data : result[0]
-                    });
-                });
-            }
+	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
+	sails.controllers.database.credSproc('GetBuildings', [ null,req.query.search == '' ? null : "'" + req.query.search + "'",
+		req.query.unitQuantityMin == '' ? null : parseInt(req.query.unitQuantityMin),
+		req.query.unitQuantityMax == '' ? null : parseInt(req.query.unitQuantityMax),
+		req.query.saleDateRangeStart == '' ? null : req.query.saleDateRangeStart, req.query.saleDateRangeEnd == '' ? null : req.query.saleDateRangeEnd,
+		null,null,null,
+		req.query.start, req.query.length, null, filteredCount ], function(err, result) { // GetBuildings
+	    if (err) {
+		res.json({
+		    error : 'Database Error'
+		}, 500);
+	    } else {
+		sails.controllers.database.credSproc('GetBuildingsCount', [], function(err, buildingscount) {
+		    res.json({
+			draw : req.query.draw,
+			recordsTotal : buildingscount[0][0].number_of_buildings,
+			recordsFiltered : result[1][filteredCount],
+			data : result[0]
+		    });
+		});
+	    }
 
-        });
+	});
 
     },
     getbuilding : function(req, res) {
 
-        sails.controllers.database.credSproc('GetBuilding', [ req.param('id') ], function(err, building) {
+	sails.controllers.database.credSproc('GetBuilding', [ req.param('id') ], function(err, building) {
 
-            sails.controllers.database.credSproc('GetBuildingContacts', [ req.param('id') ], function(err, buildingcontacts) {
-                if (err) {
-                    res.json({
-                        error : 'Database Error'
-                    });
-                } else {
-                    building[0][0].buildingcontacts = buildingcontacts;
-                    res.json(building[0][0]);
-                }
-            });
-        });
+	    sails.controllers.database.credSproc('GetBuildingContacts', [ req.param('id') ], function(err, buildingcontacts) {
+		if (err) {
+		    res.json({
+			error : 'Database Error'
+		    });
+		} else {
+		    building[0][0].buildingcontacts = buildingcontacts;
+		    res.json(building[0][0]);
+		}
+	    });
+	});
 
+    },
+    getcontacts : function(req, res) {
+	if (typeof (req.params.id) != 'undefined' && !isNaN(parseInt(req.params.id))) {
+	    sails.controllers.database.credSproc('GetBuildingContacts',[parseInt(req.params.id)],function(err,buildingContacts){
+		if(err)
+		    return res.json({error:'Database Error:'+err},500);
+		return res.json(buildingContacts);
+	    });
+	}
     }
 
 };

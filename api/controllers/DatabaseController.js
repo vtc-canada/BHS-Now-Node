@@ -40,7 +40,7 @@ var credPool = mysql.createPool({
     user : 'root',
     password : 'Glasgow931',
     database : 'cred',
-    host : 'localhost'//10.1.1.60'
+    host : '10.1.1.60'//10.1.1.60'
 });
 
 module.exports = {

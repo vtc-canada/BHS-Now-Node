@@ -35,6 +35,8 @@
             'Group':'Group',
             'Username already Taken':'Username already Taken',
             'Error':'Error'
+            ,'Locked':'Locked'
+            ,'Unlocked':'Unlocked'
         },
         'es' : {
             'Users Administration':'Users Administration',
@@ -71,6 +73,8 @@
             'Group':'Group'               ,
             'Username already Taken':'Username already Taken',
             'Error':'Error'
+            ,'Locked':'Locked'
+            ,'Unlocked':'Unlocked'
         }
     }
 %>
@@ -84,7 +88,7 @@
     <div class="span10 offset1 page-controls-wrapper">
         <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%= translate[locale]['Users'] %></span>
 
-            <div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="save_users"><%= translate[locale]['Save'] %></div>
+            <button style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="save_users"><%= translate[locale]['Save'] %></button>
 
             <div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="add_user"><%= translate[locale]['New User'] %></div>
             <div style="margin-right:10px; color:#990000; font-weight: 400; display:none;" class="pull-right save_pull" id="changes_pending">Changes Pending. &nbsp</div>
@@ -175,7 +179,7 @@
 <script type="text/template" id="adminuserlist-template">
     
     <div class="row-fluid {{ if(typeof(dodelete)!='undefined'){ }}user-delete{{ } }}" userid="{{= id}}">
-        <div class="span4 offset1"><span class="mobilelabel"><%= translate[locale]['Username'] %>:</span> {{= username }}</div>
+        <div class="span2 offset1"><span class="mobilelabel"><%= translate[locale]['Username'] %>:</span> {{= username }}</div>
         <div class="span2"><span class="mobilelabel"><%= translate[locale]['Security Level'] %>:</span>
             <select class="securityselect">
             	
@@ -184,6 +188,7 @@
 				<% } %>
             </select>
         </div>
+        <div class="span2 user-changepassword-span"><div class="pull-right toggle-active btn btn-{{ if(active==1){ }}primary{{ }else{ }}danger{{ } }}">{{ if(active==1){ }}<%= translate[locale]['Unlocked'] %>{{ }else{ }}<%= translate[locale]['Locked'] %>{{ } }}</div></div>
         <div class="span3 user-changepassword-span"><div class="pull-right change-password btn btn-primary"><%= translate[locale]['Change Password'] %>{{ if(typeof(dopassword)!='undefined'){ }} <i class="icon-time"></i>{{ } }}</div></div>
         <div class="span2 user-delete-span"><div class="pull-right deleteadminuser btn {{ if(typeof(dodelete)!='undefined'){ }}btn-success{{ }else{ }}btn-danger{{ } }}">{{ if(typeof(dodelete)!='undefined'){ }}<%= translate[locale]['Cancel'] %>{{ }else{ }}<%= translate[locale]['Delete'] %>{{ } }}</div></div>
     </div>
@@ -288,7 +293,23 @@ $(document).ready(function(){
             "change select.securityselect"   : "changeSecurity",
             "click div.deleteadminuser"   : "deleteUser",
             "click div.change-password" : "changePassword"
+            ,"click div.toggle-active" : "toggleActive"
 
+        },
+        toggleActive:function(event){
+        	var newidtemp = '';
+            var idstring = $(event.currentTarget).parent().parent().attr('userid');
+            var modtemp;
+            if(idstring=='new'){
+                newidtemp = $(event.currentTarget).parent().parent().attr('newid');
+                modtemp  = this.collection.findWhere({newid:parseInt(newidtemp)});
+            }else{
+                modtemp  = this.collection.get(idstring);
+            }
+            modtemp.set({active:modtemp.get('active')==1?0:1});
+            modtemp.set({dosync:1});
+            setChangesPending();
+            adminusersView.render();
         },
         // Clears the password modal
         // passes in the userid / new user flag
@@ -602,6 +623,7 @@ $(document).ready(function(){
                return;
             }
         });
+        $('#save_users')[0].disabled = !change;
         if(change){
             $('#changes_pending').css('display','block');
         }

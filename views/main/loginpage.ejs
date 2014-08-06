@@ -4,17 +4,17 @@
 <%
     var translate = {
         'en' : {
-            'DefaultTitle':'BHS Now - Sign In',
+            'DefaultTitle':'CRED Now - Sign In',
             'You are not logged into the system. Please log in.':'You are not signed into the system. Please sign in.',
-            'Manage your Baggage Handling System':'Manage your Baggage Handling System',
+            'Main Title':'Manage your Commercial Real Estate.',
             'Sign in':'Sign in',
             'User':'User',
             'Password':'Password'
         },
         'es' : {
-            'DefaultTitle':'BHS Now - Sign In',
+            'DefaultTitle':'CRED Now - Sign In',
             'You are not logged into the system. Please log in.':'Usted no se ha identificado en el sistema. Por favor, ingrese.',
-            'Manage your Baggage Handling System':'Administre su Sistema de Manejo de Equipaje',
+            'Main Title':'Administre su Sistema de Manejo de Equipaje',
             'Sign in':'Registrarse',
             'User':'Usuario',
             'Password':'Contraseña'
@@ -71,7 +71,7 @@ var translate = {
 
 <style>
 html, body {
-    background: #fff;
+    background: #000;
     margin: 0;
     padding: 0;
     border: 0;
@@ -303,7 +303,7 @@ input[type=url].form-error {
 .header .logo {
     margin: 17px 0 0;
     float: left;
-    width: 322px;
+    width: auto;
 }
 .header .secondary-link {
     margin: 28px 0 0;
@@ -573,7 +573,7 @@ input[type=url].form-error {
     }
     .banner h1 {
         -webkit-font-smoothing: antialiased;
-        color: #555;
+        color: #FFF;
         font-size: 32px;
         font-weight: 400;
         margin-top: 0;
@@ -581,7 +581,7 @@ input[type=url].form-error {
     }
     .banner h2 {
         -webkit-font-smoothing: antialiased;
-        color: #555;
+        color: #FFF;
         font-size: 18px;
         font-weight: 400;
         margin-bottom: 20px;
@@ -649,7 +649,7 @@ input[type=url].form-error {
     }
     .one-google p {
         margin: 0 0 10px;
-        color: #555;
+        color: #FFF;
         font-size: 14px;
         text-align: center;
     }
@@ -760,13 +760,16 @@ input[type=url].form-error {
 <div class="wrapper">
     <div class="google-header-bar  centered">
         <div class="header content clearfix">
-            <img alt="iSystemsNow" class="logo" src="/img/iSystemsNow-Logo-RGB-Black.png">
+            <img alt="iSystemsNow" class="logo" src="/img/principledlogo-Grey.png">
         </div>
     </div>
     <div class="main content clearfix">
         <div class="banner">
+            <h2 class="hidden-small">
+                 &nbsp
+            </h2>
             <h1>
-                <%= translate[locale]['Manage your Baggage Handling System'] %>
+                <%= translate[locale]['Main Title'] %>
             </h1>
             <h2 class="hidden-small">
                  &nbsp
@@ -774,7 +777,7 @@ input[type=url].form-error {
         </div>
         <div class="card signin-card clearfix">
             <div id="cc_iframe_parent"></div>
-            <div style="width:94px;margin:auto;"><i class="icon-user icon-5x" style="color: #B6B6B6;font-size: 120px;text-align: center;"></i> </div>
+            <div style="width:135px;margin:auto;"><i class="icon-building icon-5x" style="color: #B6B6B6;font-size: 170px;text-align: center;"></i> </div>
             <p class="profile-name"></p>
 
                 <label class="hidden-label" for="loginName">Email</label>
@@ -794,6 +797,21 @@ input[type=url].form-error {
             <% } %>
                 <button id="loginButton" class=" btn btn-primary" style="position:relative; width:100%;line-height: 25px;font-size: 18px;"><%= translate[locale]['Sign in'] %><span class="loading-gif pull-right" style="visibility:hidden; position: absolute; right: 8px;"><i class="icon icon-cog icon-spin"></i></span></button>
 
+        </div>
+        
+        <div class="banner" style="max-width: 497px; margin: auto;">
+            <h2 >
+                 &nbsp
+            </h2>
+            <hr style="border-top: 1px solid #c9c9c9;border-bottom: 1px solid #c9c9c9;">
+            <div style="color:#C9C9C9;">
+            	Powered By 
+            <img alt="iSystemsNow" style="width:130px;" class="logo" src="/img/iSystemsNow-Logo-RGB-Black.png">
+            's Now Management Studio. Version 1.0.019.
+            </div>
+            <h2 class="hidden-small">
+                 &nbsp
+            </h2>
         </div>
     </div>
 </div>
