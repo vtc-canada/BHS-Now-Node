@@ -2,11 +2,11 @@ USE cred;
 DROP PROCEDURE if EXISTS `CreateAddress` ;
 
 DELIMITER $$
-CREATE PROCEDURE `CreateAddress`(IN streetNumberBegin Int, IN streetNumberEnd INT, IN streetName VARCHAR(256), 
-	IN postalCode VARCHAR(32), city Varchar(64), addressType Int, province Varchar(45),  OUT id INT)
+CREATE PROCEDURE `CreateAddress`(IN streetNumberBegin VARCHAR(64), IN streetNumberEnd VARCHAR(64), IN streetName VARCHAR(256), 
+	IN postalCode VARCHAR(32), IN city VARCHAR(64), IN addressType Int, province VARCHAR(45),IN longitude FLOAT, IN latitude FLOAT, OUT id INT)
 BEGIN
-	INSERT INTO `cur_address`(`street_number_begin`,`street_number_end`,`street_name`,`postal_code`,`city`,`address_type_id`,`province`) 
-		VALUES (streetNumberBegin, streetNumberEnd, streetName, postalCode,city,addressType,province);
+	INSERT INTO `cur_address`(street_number_begin,street_number_end,street_name,postal_code,city,address_type_id,province, longitude, latitude) 
+		VALUES (streetNumberBegin, streetNumberEnd, streetName, postalCode,city,addressType,province, longituded, latitude);
 	SET id = LAST_INSERT_ID();
 END$$
 DELIMITER ;
