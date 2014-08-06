@@ -3,7 +3,7 @@ DROP PROCEDURE if EXISTS `GetBuildingNotes` ;
 
 DELIMITER $$
 CREATE PROCEDURE `GetBuildingNotes`(IN buildingID int)
-
+BEGIN
 SELECT
 	cur_notes.user
 	,cur_notes.timestamp

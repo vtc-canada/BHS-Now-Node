@@ -4,6 +4,7 @@ DROP PROCEDURE if EXISTS `GetBuildingsCount` ;
 DELIMITER $$
 
 CREATE PROCEDURE `GetBuildingsCount`()
+BEGIN
 SELECT
 	Count(cur_address.id) AS 'number_of_buildings' 
 FROM 

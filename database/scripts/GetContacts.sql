@@ -4,6 +4,7 @@ DROP PROCEDURE if EXISTS `GetContacts` ;
 DELIMITER $$
 
 CREATE PROCEDURE `GetContacts`()
+BEGIN
 SELECT 
 	cur_contacts.id as 'contact_id'
 	,cur_contacts.name as 'contact'
@@ -20,7 +21,6 @@ FROM cur_contacts
 	LEFT JOIN cur_company_address_mapping ON (cur_company_address_mapping.cur_contacts_id = cur_contacts.id)
 	LEFT JOIN cur_company on (cur_company.id = cur_company_address_mapping.cur_company_id)
 	LEFT JOIN cur_address ON (cur_address.id = cur_company_address_mapping.cur_address_id)
-
-GROUP BY cur_contacts.id
+GROUP BY cur_contacts.id;
 END$$
 DELIMITER ;

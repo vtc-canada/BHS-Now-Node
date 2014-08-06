@@ -3,7 +3,7 @@ DROP PROCEDURE if EXISTS `GetBuildingContacts` ;
 
 DELIMITER $$
 CREATE PROCEDURE `GetBuildingContacts`(IN buildingID int)
-
+BEGIN
 SELECT
 	cur_company.name as 'cur_company_name'
 	,ref_contact_type.type as 'contact_type'

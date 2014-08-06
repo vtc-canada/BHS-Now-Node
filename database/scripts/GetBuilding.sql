@@ -3,7 +3,7 @@ DROP PROCEDURE if EXISTS `GetBuilding` ;
 
 DELIMITER $$
 CREATE PROCEDURE `GetBuilding`(IN buildingID int)
-
+BEGIN
 SELECT
 	cur_buildings.id as 'building_id'
 	,cur_address.id as 'address_id'
