@@ -5,7 +5,8 @@ DELIMITER $$
 CREATE PROCEDURE `GetBuildingContacts`(IN buildingID int)
 
 SELECT
-	cur_company.name as 'cur_company_name'
+	mapping.id
+	,cur_company.name as 'cur_company_name'
 	,ref_contact_type.type as 'contact_type'
 	,cur_contacts.name as 'contact_name'	
 	,GROUP_CONCAT(DISTINCT cur_phone_numbers.phone_number) as 'phone_number' 
