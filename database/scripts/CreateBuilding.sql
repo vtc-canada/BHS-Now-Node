@@ -1,8 +1,8 @@
 USE cred;
-DROP PROCEDURE if EXISTS CreateBuilding ;
+DROP PROCEDURE if EXISTS `CreateBuilding` ;
 
 DELIMITER $$
-CREATE PROCEDURE CreateBuilding(IN addressID INT, IN buildingTypeID INT,IN heatSystemAge INT, IN windowsInstalledYear INT,IN elevatorInstalledYear INT
+CREATE PROCEDURE `CreateBuilding`(IN addressID INT, IN buildingTypeID INT,IN heatSystemAge INT, IN windowsInstalledYear INT,IN elevatorInstalledYear INT
 		,IN boilerInstalledYear INT, IN cableInternetProvider VARCHAR(45), IN assessedValue Varchar(45)
 		,IN heatSystemTypeID INT, IN unitQuantity INT, IN saleDate DATETIME,IN pricePerUnit float
 		,IN propertyMgmtCompany VARCHAR(45), IN prevPropertyMgmtCompany VARCHAR(45), IN lastSalePrice VARCHAR(45), IN images VARCHAR(1024)

@@ -1,6 +1,7 @@
 USE cred;
 DROP PROCEDURE if EXISTS `GetBuildingNotes` ;
 
+DELIMITER $$
 CREATE PROCEDURE `GetBuildingNotes`(IN buildingID int)
 
 SELECT
@@ -15,6 +16,7 @@ FROM
 	INNER JOIN cur_buildings ON (cur_buildings.cur_address_id = cur_address.id AND cur_buildings.id = buildingID)
 WHERE 
 	cur_notes.is_deleted = 0;
-	
+END$$
+DELIMITER ;	
 
 
