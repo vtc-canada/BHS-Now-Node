@@ -16,6 +16,7 @@ FROM cur_company_address_mapping as mapping
 LEFT JOIN cur_company ON (cur_company.id = mapping.cur_company_id)
 LEFT JOIN cur_contacts ON (mapping.cur_contacts_id = cur_contacts.id)
 LEFT JOIN cur_address ON (cur_address.id = mapping.cur_address_id)
-WHERE cur_contacts.id = contactID;
+WHERE cur_contacts.id = contactID
+	AND cur_contacts.is_deleted = 0;
 END$$
 DELIMITER ;

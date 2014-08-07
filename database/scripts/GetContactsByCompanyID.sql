@@ -16,6 +16,7 @@ FROM cur_contacts
 	LEFT JOIN cur_company on (cur_company.id = cur_company_address_mapping.cur_company_id)
 	LEFT JOIN cur_address ON (cur_address.id = cur_company_address_mapping.cur_address_id)
 WHERE cur_company.id = companyID
+	AND cur_contacts.is_deleted = 0
 GROUP BY cur_contacts.id;
 END$$
 DELIMITER ;

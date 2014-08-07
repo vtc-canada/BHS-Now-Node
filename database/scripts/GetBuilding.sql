@@ -47,6 +47,7 @@ FROM
 	LEFT JOIN ref_heat_system_type ON (ref_heat_system_type.id = cur_buildings.heat_system_type_id)
 
 WHERE
-	cur_buildings.id = buildingID;
+	cur_buildings.id = buildingID
+	AND cur_buildings.is_deleted = 0;
 END$$
 DELIMITER ;
