@@ -1,9 +1,13 @@
 USE cred;
 DROP PROCEDURE if EXISTS `GetBuildings` ;
 DELIMITER $$
-CREATE PROCEDURE `GetBuildings`(IN contactSearchTerms VARCHAR(128), IN addressSearchTerms VARCHAR(128),
+CREATE PROCEDURE `GetBuildings`(IN contactSearchTerms VARCHAR(128), IN addressSearchTerms VARCHAR(128),IN buildingSearchTerms VARCHAR(128),
 		IN unitQuantityMin int, IN unitQuantityMax int, IN saleDateRangeStart datetime, IN saleDateRangeEnd datetime,
-		IN centerLatitude FLOAT, IN centerLongitude FLOAT, IN rangeDistance FLOAT,
+		IN centerLatitude FLOAT, IN centerLongitude FLOAT, IN rangeDistance FLOAT,IN hasElevator BOOLEAN,
+		IN capRateMin FLOAT, IN capRateMax FLOAT, IN heatSystemType INT,
+		IN numOf1BedroomMin INT, IN numOf1BedroomMax INT, IN numOf2BedroomMin INT, IN numOf2BedroomMax INT, 
+		IN numOf3BedroomMin INT, IN numOf3BedroomMax INT, IN numOfBachelorMin INT, IN numOfBachelorMax INT, 
+		IN windowInstallYearMin INT, IN windowInstallYearMax INT, 
 		IN offsetIndex int, IN recordCount INT, IN orderBy VARCHAR (255), OUT id int)
 BEGIN
 
@@ -31,6 +35,7 @@ SELECT
 	,cur_address.latitude
 	,cur_address.longitude
 	,distance_radius.distance
+	,cur_buildings.windows_installed_year
 FROM 
 	cred.cur_owner_seller_property_mapping as mapping
 	LEFT JOIN cred.cur_contacts AS owner_contact on (owner_contact.id = mapping.contact_id AND mapping.contact_type_id = '1')
@@ -40,10 +45,26 @@ FROM
 WHERE
 	(addressSearchTerms IS NULL OR MATCH(street_name,postal_code,city,province) AGAINST (addressSearchTerms IN BOOLEAN MODE))
 	AND (contactSearchTerms IS NULL OR MATCH (owner_contact.name, owner_contact.email) AGAINST (contactSearchTerms IN BOOLEAN MODE))
-	AND (CASE WHEN unitQuantityMax IS NOT NULL THEN (cur_buildings.unit_quantity IS NULL OR cur_buildings.unit_quantity <= unitQuantityMax) ELSE 1 END)
-	AND (CASE WHEN unitQuantityMin IS NOT NULL THEN (cur_buildings.unit_quantity IS NULL OR cur_buildings.unit_quantity >= unitQuantityMin) ELSE 1 END)
+	AND (buildingSearchTerms IS NULL OR MATCH (property_mgmt_company,prev_property_mgmt_company) AGAINST (buildingSearchTerms IN BOOLEAN MODE))
+	AND (CASE WHEN unitQuantityMax IS NOT NULL THEN (cur_buildings.unit_quantity <= unitQuantityMax) ELSE 1 END)
+	AND (CASE WHEN unitQuantityMin IS NOT NULL THEN (cur_buildings.unit_quantity >= unitQuantityMin) ELSE 1 END)
 	AND (CASE WHEN saleDateRangeStart IS NOT NULL THEN (cur_buildings.sale_date BETWEEN saleDateRangeStart AND saleDateRangeEnd) ELSE 1 END)
 	AND (CASE WHEN rangeDistance IS NOT NULL THEN distance_radius.distance <= rangeDistance ELSE 1 END)
+	AND (CASE WHEN capRateMax IS NOT NULL THEN (cur_buildings.cap_rate <= capRateMax) ELSE 1 END)
+	AND (CASE WHEN capRateMin IS NOT NULL THEN (cur_buildings.cap_rate <= capRateMin) ELSE 1 END)
+	AND (CASE WHEN numOf1BedroomMax IS NOT NULL THEN (cur_buildings.bedroom1_price <= numOf1BedroomMax) ELSE 1 END)
+	AND (CASE WHEN numOf1BedroomMin IS NOT NULL THEN (cur_buildings.bedroom1_price >= numOf1BedroomMin) ELSE 1 END)
+	AND (CASE WHEN numOf2BedroomMax IS NOT NULL THEN (cur_buildings.bedroom2_price <= numOf2BedroomMax) ELSE 1 END)
+	AND (CASE WHEN numOf2BedroomMin IS NOT NULL THEN (cur_buildings.bedroom2_price >= numOf2BedroomMin) ELSE 1 END)
+	AND (CASE WHEN numOf3BedroomMax IS NOT NULL THEN (cur_buildings.bedroom3_price <= numOf3BedroomMax) ELSE 1 END)
+	AND (CASE WHEN numOf3BedroomMin IS NOT NULL THEN (cur_buildings.bedroom3_price >= numOf3BedroomMin) ELSE 1 END)
+	AND (CASE WHEN numOfBachelorMax IS NOT NULL THEN (cur_buildings.bachelor_price <= numOfBachelorMax) ELSE 1 END)
+	AND (CASE WHEN numOfBachelorMin IS NOT NULL THEN (cur_buildings.bachelor_price >= numOfBachelorMin) ELSE 1 END)
+	AND (CASE WHEN windowInstallYearMax IS NOT NULL THEN (cur_buildings.windows_installed_year <= windowInstallYearMax) ELSE 1 END)
+	AND (CASE WHEN windowInstallYearMin IS NOT NULL THEN (cur_buildings.windows_installed_year >= windowInstallYearMin) ELSE 1 END)
+	AND (CASE WHEN hasElevator IS NOT NULL THEN (cur_buildings.has_elevator = hasElevator) ELSE 1 END)
+	AND (CASE WHEN heatSystemType IS NOT NULL THEN (cur_buildings.heat_system_type_id = heatSystemType) ELSE 1 END)
+	AND (cur_buildings.is_deleted = 0)
 GROUP BY 
 	cur_address.id
 ORDER BY
