@@ -122,8 +122,9 @@
     filter: alpha(opacity=100);
 }
 .typeahead-long {
-    max-height: 300px;
-    overflow-y: auto;
+    max-height: 185px;
+	width: 246px;
+	overflow: hidden;
 }
 .control-group.error .combobox-container .add-on {
     color: #B94A48;

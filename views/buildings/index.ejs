@@ -27,7 +27,10 @@
             'Jam Rate':'Jam Rate',
             'ATR Read Rate':'ATR Read Rate',
             'Cancel':'Cancel',
-            'Delete':'Delete'
+            'Delete':'Delete',
+            'To create a new owner':'To create a new owner, select the contact and/or company associated with this building',
+            'Contact':'Contact',
+            'Company':'Company'
         },
         'es' : {
             'You do not have sufficient privileges to access':'Usted no tiene suficientes privilegios para acceder a',
@@ -56,7 +59,10 @@
             'Jam Rate':'Jam Rate',
             'ATR Read Rate':'ATR Read Rate',
             'Cancel':'Cancel',
-            'Delete':'Delete'
+            'Delete':'Delete',
+            'To create a new owner':'To create a new owner, select the contact and/or company associated with this building',
+            'Contact':'Contact',
+            'Company':'Company'
         }
     }
 %>
@@ -174,6 +180,71 @@
         </div>
     </div>
 </div>
+
+
+<!-- Modal  for creating new user -->
+<div id="addContactModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabelAdd">Add Contact to Building</h3>
+    </div>
+    <div class="modal-body">
+        <div class="row-fluid"><p><%= translate[locale]['To create a new owner'] %></p></div>
+        
+        <div class="row-fluid"> 
+        	<div class="span6"  style="min-height:90px;">
+        		<h4><%= translate[locale]['Contact'] %></h4>
+		        <select class="contactscombobox">
+				  <option></option>
+				</select>
+        	</div>
+        	<div class="span6"  style="min-height:90px;">
+        		<h4><%= translate[locale]['Company'] %></h4>
+		        <select class="companiescombobox">
+				  <option></option>
+				</select>
+        	</div>
+        </div>
+        <div>
+	        <div class="row-fluid building-contact-wrapper" style="min-height: 190px;">
+		
+				<div class="row-fluid">
+					<div class="span5 segment-label">Company:</div>
+					
+					<div class="span7 segment-label-value" id="mapping_new_company_name"></div>
+				</div>
+				<div class="row-fluid">
+					<div class="span5 segment-label">Address:</div>
+					<div class="span7" style="padding-top: 6px;" id="mapping_address">
+						<div class="row-fluid" id="mapping_new_company_address_1"></div>
+						<div class="row-fluid" id="mapping_new_company_address_2"></div>
+						<div class="row-fluid" id="mapping_new_company_address_3"></div>
+					</div>
+				</div>
+				<div class="row-fluid">
+					<div class="span5 segment-label">Contact:</div>
+					<div class="span7 segment-label-value" id="mapping_new_contact_name"></div>
+				</div>
+				<div class="row-fluid">
+					<div class="span5 segment-label">Phone:</div>
+					<div class="span7 segment-label-value" id="mapping_new_phone"></div>
+				</div>
+				<div class="row-fluid">
+					<div class="span5 segment-label">Email:</div>
+					<div class="span7 segment-label-value" id="mapping_new_email"></div>
+				</div>
+				
+			</div>
+		</div>
+        
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true"><%= translate[locale]['Cancel'] %></button>
+        <button class="btn btn-primary" id="confirmaddbuildingcontact"><%= translate[locale]['Company'] %></button>
+    </div>
+</div>
+
+
 
 <script type="text/template" id="building-photo-template">
 	<div class="span3 buildingimage">
@@ -498,7 +569,7 @@
 </script>
 
 <script type="text/template" id="building-contact-template">
-	<div class="row-fluid building-contact-wrapper" contact_mapping_id="{{=id}}">
+	<div class="row-fluid building-contact-wrapper  {{ if(typeof(dodelete)!='undefined'){ }}building-contact-delete{{ } }}" contact_mapping_id="{{=id}}">
 	
 		<div class="row-fluid">
 			<div class="span5 segment-label">Company:</div>
@@ -526,7 +597,7 @@
 			<div class="span7 segment-label-value">{{=email}}</div>
 		</div>
 		<div class="row-fluid">
-			<div class="span12 "><a class="btn btn-danger pull-right remove-building-contact">Remove</a></div>
+			<div class="span12 "><a class="btn {{ if(typeof(dodelete)!='undefined'){ }}btn-success{{ }else{ }}btn-danger{{ } }} pull-right remove-building-contact">{{ if(typeof(dodelete)!='undefined'){ }}Cancel{{ }else{ }}Delete{{ } }}</a></div>
 		</div>
 		
 	</div>
@@ -954,15 +1025,244 @@
 		        
 		        rebindDateTimePickerCloser();
 	            
+	            $('#add_owner').click(function(){
+			        $('#addContactModal div.alert-error').remove();
+			        $('#addContactModal').modal('show');
+			        $('#addContactModal #myModalLabelAdd').html('Add Owner to Building');
+			        $('#confirmaddbuildingcontact').unbind();
+			        
+			        bindAddBuildingContactModal();
+			        
+			        $('#confirmaddbuildingcontact').click(function(){
+	        	        $('#addContactModal div.alert-error').remove();
+						if(newContactId==null&&newCompanyId==null)
+						{
+							$('#addContactModal div.modal-header').after(
+	                    '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong>Error:&nbsp;</strong>Please select a Contact, Company or both.</div>');
+	            			return;
+						}
+						
+					
+						buildingcontacts.add({
+							id: 'new_'+Math.floor((Math.random() * 1000000) + 1)
+							,contact_name: $('#mapping_new_contact_name').html(), contact_type:'owner'
+							, cur_company_name:$('#mapping_new_company_name').html()
+							, email: $('#mapping_new_email').html()
+							, phone_number: $('#mapping_new_phone').html()
+							, street_number_begin:$('#mapping_address').attr('mapping_street_number_begin')
+							, street_number_end:$('#mapping_address').attr('mapping_street_number_end')
+							, street_name:$('#mapping_address').attr('mapping_street_name')
+							, city:$('#mapping_address').attr('mapping_city')
+							, province: $('#mapping_address').attr('mapping_province')
+							, postal_code: $('#mapping_address').attr('mapping_postal_code')
+						});
+						buildingcontactsView.render();
+            			$('#addContactModal').modal('hide');
+						
+					});
+		        });
 	            setChangesPending();
 	        }
 	    });
 	    var buildingView;
+	    var contactscombobox=null;	
+	   	var contactssearchtimer = null;
+	   	var curcontactsval = '';
+	   	var newCompanyId = null;
+	   	var companiescombobox=null;
+	   	var curcompaniesval = '';
+	   	var newContactId = null;
 	    	
+	    function bindAddBuildingContactModal(){
+	    	// get the original data
+	        socket.get('/buildings/getcontactsbycompanyid',{},function(res){
+	        	$('select.contactscombobox').empty();
+	        	for(var i=0;i<res.length;i++){
+	        		$('select.contactscombobox').append('<option email="'+res[i].email+'" phone_number="' + res[i].phone_number + '" contact_id="'+res[i].contact_id+'" value="'+res[i].contact+'">'+res[i].contact+'</option');
+	        	}
+		        if(contactscombobox==null){
+		        	contactscombobox = $('select.contactscombobox').combobox();
+		        	$('input.contactscombobox').val('');
+		        	$('input.contactscombobox').on('keyup',function(e){
+		        		if(curcontactsval!=$('input.contactscombobox').val()&&e.keyCode!=9&&e.keyCode!=13&&e.keyCode!=27)
+		        		{
+		        			curcontactsval =  $('input.contactscombobox').val();
+		        			updateContactsCombobox();
+	        			}
+		        		
+	        		});
+	        		
+	        		$('input.contactscombobox').change(function(){
+	        			var selectedoption = $('select.contactscombobox option[value="'+$('input.contactscombobox').val()+'"]');
+	        			if(selectedoption.length==1)
+	        			{
+	        				newContactId =  parseInt(selectedoption.attr('contact_id'));
+	        				console.log(newContactId);
+	        				
+	        				$('#mapping_new_contact_name').html(selectedoption.attr('value'));
+	        				$('#mapping_new_phone').html(selectedoption.attr('phone_number'));
+	        				$('#mapping_new_email').html(selectedoption.attr('email'));
+	        			}else{
+	        				newContactId = null;
+	        				console.log('cleared contact');
+	        				updateContactsCombobox();
+	        				
+	        				$('#mapping_new_contact_name').html('');
+	        				$('#mapping_new_phone').html('');
+	        				$('#mapping_new_email').html('');
+	        			}
+        			});
+        			$('.contactscombobox').siblings('.add-on').find('.icon-remove').click(function(){
+        				$('input.contactscombobox').val('');
+        				$('input.contactscombobox').change();
+    				});
+        			$('.contactscombobox').siblings('.add-on').find('.caret').click(function(){
+        				$('input.contactscombobox').val('');
+        				$('input.contactscombobox').change();
+    				});
+        			$('.contactscombobox').siblings('.add-on').click(function(){
+        				$('input.contactscombobox').val('');
+        				$('input.contactscombobox').change();
+    				});
+    				
+		        }else{
+		        
+					newCompanyId = null;
+		        	newContactId=null;
+		        	$('input.contactscombobox').val('');
+		        	contactscombobox.data('combobox').refresh(); 
+		        	$('input.contactscombobox').val('');
+					
+    				$('#mapping_new_contact_name').html('');
+    				$('#mapping_new_phone').html('');
+    				$('#mapping_new_email').html('');
+		        }
+	        });
+	        
+	        
+	        
+	        socket.get('/buildings/getcompaniesbycontactid',{},function(res){
+	        	$('select.companiescombobox').empty();
+	        	for(var i=0;i<res.length;i++){
+	        		$('select.companiescombobox').append(
+		        		'<option mapping_street_number_begin="'+res[i].street_number_begin+'" mapping_street_number_end="'+ res[i].street_number_end+'"'
+		        		+ ' mapping_street_name="'+res[i].street_name+'"'
+		        		+ ' mapping_city="'+res[i].city+'"' + ' mapping_province="'+res[i].province+'"'
+		        		+ ' mapping_postal_code="'+res[i].postal_code + '"'
+		        		+' company_id="'+res[i].company_id+'" value="'+res[i].company_name+'">'+res[i].company_name+'</option');
+	        	
+	        	}
+		        if(companiescombobox==null){
+		        	companiescombobox = $('select.companiescombobox').combobox();
+		        	$('input.companiescombobox').val('');
+		        	$('input.companiescombobox').on('keyup',function(e){
+		        		if(curcompaniesval!=$('input.companiescombobox').val()&&e.keyCode!=9&&e.keyCode!=13&&e.keyCode!=27)
+		        		{
+							curcompaniesval =  $('input.companiescombobox').val();
+							updateCompaniesCombobox();
+	        			}
+	        		});
+	        		$('input.companiescombobox').change(function(){
+	        			var selectedoption = $('select.companiescombobox option[value="'+$('input.companiescombobox').val()+'"]');
+	        			if(selectedoption.length==1)
+	        			{
+	        				newCompanyId = parseInt(selectedoption.attr('company_id'));
+	        				console.log(newCompanyId);
+	        				//updateContactsCombobox();
+	        				
+	        				$('#mapping_new_company_name').html(selectedoption.attr('value'));
+	        				$('#mapping_address').attr('mapping_street_number_begin',selectedoption.attr('mapping_street_number_begin'));
+	        				$('#mapping_address').attr('mapping_street_number_end',selectedoption.attr('mapping_street_number_end'));
+	        				$('#mapping_address').attr('mapping_street_name',selectedoption.attr('mapping_street_name'));
+	        				$('#mapping_address').attr('mapping_city',selectedoption.attr('mapping_city'));
+	        				$('#mapping_address').attr('mapping_province',selectedoption.attr('mapping_province'));
+	        				$('#mapping_address').attr('mapping_postal_code',selectedoption.attr('mapping_postal_code'));
+	        				
+	        				
+	        				$('#mapping_new_company_address_1').html(selectedoption.attr('mapping_street_number_begin')+" "+selectedoption.attr('mapping_street_number_end')+" "+selectedoption.attr('mapping_street_name'));
+	        				$('#mapping_new_company_address_2').html(selectedoption.attr('mapping_city')+", "+selectedoption.attr('mapping_province'));
+	        				$('#mapping_new_company_address_3').html(selectedoption.attr('mapping_postal_code'));
+	        			}else{
+        					newCompanyId = null;
+        					updateCompaniesCombobox();
+        					
+	        				$('#mapping_new_company_name').html('');
+	        				$('#mapping_address').attr('mapping_street_number_begin','');
+	        				$('#mapping_address').attr('mapping_street_number_end','');
+	        				$('#mapping_address').attr('mapping_street_name','');
+	        				$('#mapping_address').attr('mapping_city','');
+	        				$('#mapping_address').attr('mapping_province','');
+	        				$('#mapping_address').attr('mapping_postal_code','');
+	        				$('#mapping_new_company_address_1').html('');
+	        				$('#mapping_new_company_address_2').html('');
+	        				$('#mapping_new_company_address_3').html('');
+        				}
+        			});
+        			$('.companiescombobox').siblings('.add-on').find('.icon-remove').click(function(){
+        				$('input.companiescombobox').val('');
+        				$('input.companiescombobox').change();
+    				});
+        			$('.companiescombobox').siblings('.add-on').find('.caret').click(function(){
+        				$('input.companiescombobox').val('');
+        				$('input.companiescombobox').change();
+    				});
+        			$('.companiescombobox').siblings('.add-on').click(function(){
+        				$('input.companiescombobox').val('');
+        				$('input.companiescombobox').change();
+    				});
+        			
+		        }else{
+					newCompanyId = null;
+		        	newContactId=null;
+		        	$('input.companiescombobox').val('');
+		        	companiescombobox.data('combobox').refresh(); 
+		        	$('input.companiescombobox').val('');
+					
+    				$('#mapping_new_company_name').html('');
+    				$('#mapping_new_company_address_1').html('');
+    				$('#mapping_new_company_address_2').html('');
+    				$('#mapping_new_company_address_3').html('');
+		        }
+	        });
+        }
 	    	
+	    function updateContactsCombobox(){
+    		clearTimeout(contactssearchtimer);
+    		contactssearchtimer = setTimeout(function(){
+    			socket.get('/buildings/getcontactsbycompanyid',{search:curcontactsval,companyId:newCompanyId},function(res){
+    				var tempval = $('input.contactscombobox').val();
+        			$('select.contactscombobox').empty();
+		        	for(var i=0;i<res.length;i++){
+		        		$('select.contactscombobox').append('<option email="'+res[i].email+'" phone_number="'+res[i].phone_number+'" contact_id="'+res[i].contact_id+'" value="'+res[i].contact+'">'+res[i].contact+'</option');
+		        	}
+        			contactscombobox.data('combobox').refresh(); 
+        			$('input.contactscombobox').val(tempval);
+        			contactscombobox.data('combobox').lookup();
+    			});
+    		},100);
+	    }
 	    	
-	    	
-	    	
+	    function updateCompaniesCombobox(){
+	    	clearTimeout(contactssearchtimer);
+    		contactssearchtimer = setTimeout(function(){		        	
+    			socket.get('/buildings/getcompaniesbycontactid',{search:curcompaniesval,contactId:newContactId},function(res){
+        			var tempval = $('input.companiescombobox').val();
+        			$('select.companiescombobox').empty();
+		        	for(var i=0;i<res.length;i++){
+		        		
+		        		$('select.companiescombobox').append(
+			        		'<option mapping_street_number_begin="'+res[i].street_number_begin+'" mapping_street_number_end="'+ res[i].street_number_end+'"'
+			        		+ ' mapping_street_name="'+res[i].street_name+'"'
+			        		+ ' mapping_city="'+res[i].city+'"' + ' mapping_province="'+res[i].province+'"'
+			        		+ ' mapping_postal_code="'+res[i].postal_code + '"'
+			        		+' company_id="'+res[i].company_id+'" value="'+res[i].company_name+'">'+res[i].company_name+'</option');
+		        	}
+        			companiescombobox.data('combobox').refresh(); 
+        			$('input.companiescombobox').val(tempval);
+        			companiescombobox.data('combobox').lookup();
+    			});
+			},100);
+		}
 	    	
 	    	
 	    	

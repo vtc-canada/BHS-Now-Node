@@ -1,19 +1,19 @@
 /**
  * BuildingsController
- *
+ * 
  * @module :: Controller
  * @description :: A set of functions called `actions`.
- *
+ * 
  * Actions contain code telling Sails how to respond to a certain type of
  * request. (i.e. do stuff, then send some JSON, show an HTML page, or redirect
  * to another URL)
- *
+ * 
  * You can configure the blueprint URLs which trigger these actions
  * (`config/controllers.js`) and/or override them with custom routes
  * (`config/routes.js`)
- *
+ * 
  * NOTE: The code you write here supports both HTTP and Socket.io automatically.
- *
+ * 
  * @docs :: http://sailsjs.org/#!documentation/controllers
  */
 var filteredCount; // This is here because struggles with scope issues...
@@ -53,6 +53,20 @@ module.exports = {
 	    }
 	});
     },
+    getcompaniesbycontactid:function(req,res){
+	sails.controllers.database.credSproc('GetCompaniesByContactID',[typeof(req.body.search)!='undefined'?"'"+req.body.search+"'":null,typeof(req.body.contactId)!='undefined'?req.body.contactId:null],function(err,result){
+	    if(err)
+		return res.json({error:'Database Error:'+err});
+	    res.json(result[0]);
+	});
+    },
+    getcontactsbycompanyid:function(req,res){
+	sails.controllers.database.credSproc('GetContactsByCompanyID',[typeof(req.body.search)!='undefined'?"'"+req.body.search+"'":null,typeof(req.body.companyId)!='undefined'?req.body.companyId:null],function(err,result){
+	   if(err)
+	       return res.json({error:'Database Error:'+err});
+	   res.json(result[0]);
+	});
+    },
     getajax : function(req, res) {
 	/*
 	 * null req.query.search req.query.unitQuantityMin
@@ -67,11 +81,15 @@ module.exports = {
 	}
 
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
-	sails.controllers.database.credSproc('GetBuildings', [ null,req.query.search == '' ? null : "'" + req.query.search + "'",
+	sails.controllers.database.credSproc('GetBuildings', [ null,req.query.search == '' ? null : "'" + req.query.search + "'",null,
 		req.query.unitQuantityMin == '' ? null : parseInt(req.query.unitQuantityMin),
 		req.query.unitQuantityMax == '' ? null : parseInt(req.query.unitQuantityMax),
 		req.query.saleDateRangeStart == '' ? null : req.query.saleDateRangeStart, req.query.saleDateRangeEnd == '' ? null : req.query.saleDateRangeEnd,
-		null,null,null,
+		null,null,null,false, // centerlat, centerlng, range,heattype
+		null,null,null, // capmin,capmax,heattype
+		null,null,null,null,// bedroom1min,bedroom1max,bedroom2min,bedroom2max
+		null,null,null,null,// bedroom3min,bedroom3max,bachelormin,bachelormax
+		null,null, // windowmin,windowmax
 		req.query.start, req.query.length, null, filteredCount ], function(err, result) { // GetBuildings
 	    if (err) {
 		res.json({
