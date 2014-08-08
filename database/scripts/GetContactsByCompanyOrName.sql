@@ -1,9 +1,9 @@
 USE cred;
-DROP PROCEDURE if EXISTS `GetContactsByCompanyID` ;
+DROP PROCEDURE if EXISTS `GetContactsByCompanyOrName` ;
 
 DELIMITER $$
 
-CREATE PROCEDURE `GetContactsByCompanyID`(IN companyID INT)
+CREATE PROCEDURE `GetContactsByCompanyOrName`(IN contactSearchTerms VARCHAR(128), IN companyID INT)
 BEGIN
 SELECT 
 	cur_contacts.id as 'contact_id'
@@ -15,8 +15,10 @@ FROM cur_contacts
 	LEFT JOIN cur_company_address_mapping ON (cur_company_address_mapping.cur_contacts_id = cur_contacts.id)
 	LEFT JOIN cur_company on (cur_company.id = cur_company_address_mapping.cur_company_id)
 	LEFT JOIN cur_address ON (cur_address.id = cur_company_address_mapping.cur_address_id)
-WHERE cur_company.id = companyID
+WHERE (cur_company.id = companyID OR companyID IS NULL)
+	AND (contactSearchTerms IS NULL OR cur_contacts.name LIKE CONCAT('%', contactSearchTerms, '%'))
 	AND cur_contacts.is_deleted = 0
-GROUP BY cur_contacts.id;
+GROUP BY cur_contacts.id
+LIMIT 10;
 END$$
 DELIMITER ;

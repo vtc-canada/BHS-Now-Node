@@ -54,14 +54,14 @@ module.exports = {
 	});
     },
     getcompaniesbycontactid:function(req,res){
-	sails.controllers.database.credSproc('GetCompaniesByContactID',[typeof(req.body.search)!='undefined'?"'"+req.body.search+"'":null,typeof(req.body.contactId)!='undefined'?req.body.contactId:null],function(err,result){
+	sails.controllers.database.credSproc('GetCompaniesByContactOrName',[typeof(req.body.search)!='undefined'?"'"+req.body.search+"'":null,typeof(req.body.contactId)!='undefined'?req.body.contactId:null],function(err,result){
 	    if(err)
 		return res.json({error:'Database Error:'+err});
 	    res.json(result[0]);
 	});
     },
     getcontactsbycompanyid:function(req,res){
-	sails.controllers.database.credSproc('GetContactsByCompanyID',[typeof(req.body.search)!='undefined'?"'"+req.body.search+"'":null,typeof(req.body.companyId)!='undefined'?req.body.companyId:null],function(err,result){
+	sails.controllers.database.credSproc('GetContactsByCompanyOrName',[typeof(req.body.search)!='undefined'?"'"+req.body.search+"'":null,typeof(req.body.companyId)!='undefined'?req.body.companyId:null],function(err,result){
 	   if(err)
 	       return res.json({error:'Database Error:'+err});
 	   res.json(result[0]);
