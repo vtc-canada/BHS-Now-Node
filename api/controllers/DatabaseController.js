@@ -147,6 +147,9 @@ module.exports = {
 		    if (err) {
 			cb(err);
 		    } else {
+			if (typeof (results) != 'undefined'&&typeof(results.serverStatus)!='undefined') {
+			    results = [[],results];// corrects controversial responses
+			}
 			function loop(i) {
 			    if (data[i] != null && data[i].length > 0 && data[i].substring(0, 1) == '@') {
 				connection.query('SELECT ' + data[i], function(outerr, outresult) {

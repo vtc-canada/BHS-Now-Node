@@ -3,7 +3,7 @@ DROP PROCEDURE if EXISTS `GetBuildings` ;
 DELIMITER $$
 CREATE PROCEDURE `GetBuildings`(IN contactSearchTerms VARCHAR(128), IN addressSearchTerms VARCHAR(128),IN buildingSearchTerms VARCHAR(128),
 		IN unitQuantityMin int, IN unitQuantityMax int, IN saleDateRangeStart datetime, IN saleDateRangeEnd datetime,
-		IN centerLatitude FLOAT, IN centerLongitude FLOAT, IN rangeDistance FLOAT,IN hasElevator BOOLEAN,
+		IN centerLatitude FLOAT, IN centerLongitude FLOAT, IN boundsLatitudeMin FLOAT, IN boundsLatitudeMax FLOAT, IN boundsLongitudeMin FLOAT, IN boundsLongitudeMax FLOAT,IN hasElevator BOOLEAN,
 		IN capRateMin FLOAT, IN capRateMax FLOAT, IN heatSystemType INT,
 		IN numOf1BedroomMin INT, IN numOf1BedroomMax INT, IN numOf2BedroomMin INT, IN numOf2BedroomMax INT, 
 		IN numOf3BedroomMin INT, IN numOf3BedroomMax INT, IN numOfBachelorMin INT, IN numOfBachelorMax INT, 
@@ -14,12 +14,13 @@ BEGIN
 
 DROP TABLE IF EXISTS distance_radius;
 
-CREATE TEMPORARY TABLE distance_radius(
-		#6371 is KM, Miles is 3959 for miles
-SELECT cur_address.id, ( 6371 * acos( cos( radians(centerLatitude) ) * cos( radians( latitude ) )
-		* cos( radians( longitude ) - radians(centerLongitude) ) + sin( radians(centerLatitude) ) * sin( radians( latitude ) ) ) ) AS distance 
-FROM cur_address
-WHERE latitude IS NOT NULL);
+#CREATE TEMPORARY TABLE distance_radius(
+		#6371 is KM, Miles is 3959 for miles accessible
+
+#SELECT cur_address.id, ( 6371 * acos( cos( radians(centerLatitude) ) * cos( radians( latitude ) )
+#		* cos( radians( longitude ) - radians(centerLongitude) ) + sin( radians(centerLatitude) ) * sin( radians( latitude ) ) ) ) AS distance 
+#FROM cur_address
+#WHERE latitude IS NOT NULL AND );
 
 SELECT 
 	 SQL_CALC_FOUND_ROWS GROUP_CONCAT(owner_contact.name SEPARATOR ', ') as 'owner'
@@ -34,22 +35,24 @@ SELECT
 	,cur_buildings.sale_date
 	,cur_address.latitude
 	,cur_address.longitude
-	,distance_radius.distance
+	#,distance_radius.distance
 	,cur_buildings.windows_installed_year
 FROM 
 	cred.cur_owner_seller_property_mapping as mapping
 	LEFT JOIN cred.cur_contacts AS owner_contact on (owner_contact.id = mapping.contact_id AND mapping.contact_type_id = '1')
 	INNER JOIN cred.cur_address ON (cur_address.id = mapping.property_address_id)
 	INNER JOIN cur_buildings ON (cur_buildings.cur_address_id = cur_address.id)	
-	LEFT JOIN distance_radius ON (distance_radius.id = cur_address.id)
+#	LEFT JOIN distance_radius ON (distance_radius.id = cur_address.id)
 WHERE
 	(addressSearchTerms IS NULL OR MATCH(street_name,postal_code,city,province) AGAINST (addressSearchTerms IN BOOLEAN MODE))
 	AND (contactSearchTerms IS NULL OR MATCH (owner_contact.name, owner_contact.email) AGAINST (contactSearchTerms IN BOOLEAN MODE))
 	AND (buildingSearchTerms IS NULL OR MATCH (property_mgmt_company,prev_property_mgmt_company) AGAINST (buildingSearchTerms IN BOOLEAN MODE))
 	AND (CASE WHEN unitQuantityMax IS NOT NULL THEN (cur_buildings.unit_quantity <= unitQuantityMax) ELSE 1 END)
 	AND (CASE WHEN unitQuantityMin IS NOT NULL THEN (cur_buildings.unit_quantity >= unitQuantityMin) ELSE 1 END)
-	AND (CASE WHEN saleDateRangeStart IS NOT NULL THEN (cur_buildings.sale_date BETWEEN saleDateRangeStart AND saleDateRangeEnd) ELSE 1 END)
-	AND (CASE WHEN rangeDistance IS NOT NULL THEN distance_radius.distance <= rangeDistance ELSE 1 END)
+	AND (CASE WHEN saleDateRangeStart IS NOT NULL THEN (cur_buildings.sale_date >= saleDateRangeStart ) ELSE 1 END)
+	AND (CASE WHEN saleDateRangeEnd IS NOT NULL THEN (cur_buildings.sale_date <= saleDateRangeEnd) ELSE 1 END)
+	AND (CASE WHEN boundsLatitudeMin IS NOT NULL THEN cur_address.latitude BETWEEN boundsLatitudeMin AND boundsLatitudeMax ELSE 1 END)
+	AND (CASE WHEN boundsLongitudeMin IS NOT NULL THEN cur_address.longitude BETWEEN boundsLongitudeMin AND boundsLongitudeMax ELSE 1 END)
 	AND (CASE WHEN capRateMax IS NOT NULL THEN (cur_buildings.cap_rate <= capRateMax) ELSE 1 END)
 	AND (CASE WHEN capRateMin IS NOT NULL THEN (cur_buildings.cap_rate <= capRateMin) ELSE 1 END)
 	AND (CASE WHEN numOf1BedroomMax IS NOT NULL THEN (cur_buildings.bedroom1_price <= numOf1BedroomMax) ELSE 1 END)
@@ -68,6 +71,7 @@ WHERE
 GROUP BY 
 	cur_address.id
 ORDER BY
+	#CASE WHEN boundsLatitudeMin IS NOT NULL THEN distance END ASC,
 	CASE WHEN orderBy='owner_asc' THEN name END ASC,
 	CASE WHEN orderBy='owner_desc' THEN name END DESC,
 	CASE WHEN orderBy='street_number_begin_asc' THEN street_number_begin END ASC,

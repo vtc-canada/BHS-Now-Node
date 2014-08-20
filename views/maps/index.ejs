@@ -3,7 +3,7 @@
         'en' : {
             'You do not have sufficient privileges to access':'You do not have sufficient privileges to access',
             'Error':'Error',
-            'Maps':'Maps',
+            'Buildings':'Buildings',
             'Date':'Date',
             'Equipment':'Equipment',
             'Device':'Device',
@@ -25,12 +25,19 @@
             'Throughput (bph)':'Throughput (bph)',
             'State':'State',
             'Jam Rate':'Jam Rate',
-            'ATR Read Rate':'ATR Read Rate'
+            'ATR Read Rate':'ATR Read Rate',
+            'Cancel':'Cancel',
+            'Delete':'Delete',
+            'To create a new owner':'To create a new owner, select the contact and/or company associated with this building',
+            'To create a new sale':'To create a new sale, click create',
+            'Create':'Create',
+            'Contact':'Contact',
+            'Company':'Company'
         },
         'es' : {
             'You do not have sufficient privileges to access':'Usted no tiene suficientes privilegios para acceder a',
             'Error':'Error',
-            'Maps':'Salpicadero',
+            'Buildings':'Salpicadero',
             'Date':'Date',
             'Equipment':'Equipment',
             'Device':'Device',
@@ -52,15 +59,22 @@
             'Throughput (bph)':'Throughput (bph)',
             'State':'State',
             'Jam Rate':'Jam Rate',
-            'ATR Read Rate':'ATR Read Rate'
+            'ATR Read Rate':'ATR Read Rate',
+            'Cancel':'Cancel',
+            'Delete':'Delete',
+            'To create a new owner':'To create a new owner, select the contact and/or company associated with this building',
+            'To create a new sale':'To create a new sale, click create',
+            'Create':'Create',
+            'Contact':'Contact',
+            'Company':'Company'
         }
     }
 %>
 
-<div class="row-fluid page-banner">
-    <div class="banner-div"><i class="icon-globe icon-1x banner-icon-top"></i><div class="banner-div-text"><%= translate[req.session.user.locale]['Maps'] %></div></div>
+<!--<div class="row-fluid page-banner">
+    <div class="banner-div"><i class="icon-building icon-1x banner-icon-top"></i><div class="banner-div-text"><%= translate[req.session.user.locale]['Buildings'] %></div></div>
 </div>
-
+-->
         <!-- Throws in Error messages if they were passed in from the controller -->
 <% if(typeof(errormessage)!='undefined'){ %>
 <div class="alert alert-error" style="border-radius:0px;">
@@ -70,41 +84,78 @@
 </div>
 <% } %>
 
+<div id="map_wrapper" style="width:100%;">
+
+</div>
+
+<div id="building_slideup_wrapper" style="width:100%;">
+
+</div>
 
 
-<div class="row-fluid create-report-controls-wrapper">
-    <div class="row">
-        <div class="span8 offset2 create-report-controls" style="padding-top: 60px;">
+<!--<div class="row-fluid edit-item-section" style="margin-top:19px;">
+    <div class="span10 offset1 page-controls-wrapper">
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;" id="building-section-title">Apartments</span>
+        	<div class="pull-right" style="margin-right:10px;">Constrain Building Results to Visible Map Area</div>
+        	<div class="pull-right"><input id="constrain_gps" type="checkbox" style="margin-right: 10px;margin-top: -3px;"></div>
+  		 </div>
+        <div class="row-fluid " id="iframediv">
+        	<div class="content-wrapper map-wrapper" >
+
+            </div>
+        </div>
+    </div>
+</div>
+-->
+
+<div id="search_controls" class="row-fluid" id="search_controls">
+	
+	<div class="row-fluid" id="search_toggler" style="position:relative" scrollstate="top">
+		<div class="arrow-down search-toggler-arrow"><i class="icon-chevron-down icon-3x"></i></div>
+		<div class="arrow-down scroll-icon"><i class="icon-search icon-3x"></i></div>
+		<div class="arrow-up search-toggler-arrow"><i class="icon-chevron-up icon-3x"></i></div>
+		<div class="arrow-up scroll-icon"><i class="icon-globe icon-3x"></i></div>
+		
+	</div>
+
+    <div class="row-fluid">
+        <div class="span8 offset2 create-report-controls" style="padding-top: 10px;">
            <div class="row-fluid">
                <div class="row">
-                   <div class="span3 report-control-left-label" style="min-height: 20px;"><label for="reporttype">Quick Search:</label></div>
+                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_address">Search Address:</label></div>
                    <div class="span8 report-control-right-control">
-                       <input type="text" id="searchfield" value="York">
+                       <input type="text" id="search_address" value="York">
                    </div>
                </div>
-               <div class="row" style="margin-top:15px;">
+               <div class="row">
+                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_contact">Search Contact:</label></div>
+                   <div class="span8 report-control-right-control">
+                       <input type="text" id="search_contact" value="">
+                   </div>
+               </div>
+               <div class="row" style="margin-top:15px; display:none;">
                    <div class="span7 report-control-left-label">
                    		<a id="advanced_criteria_toggler" data-toggle="collapse" data-target="#collapseadvanced" style="text-decoration: none; color: #5a6573;">
 							<div style="float:left;"></i><i class="icon-plus-sign icon-2x"></i></div><div style="float: left; padding-bottom: 20px;margin-top: -6px;margin-left: 20px;"><h4>Advanced Criteria</h4></div>
 						</a>
                    </div>
                </div>
-               <div class="row collapse" id="collapseadvanced">
-	               <div class="">
-	                   <div class="span3 report-control-left-label" ><label for="reporttype">Units:</label></div>
-	                   <div class="span3 report-control-right-control">
-	                       <input type="text" style="width:120px; max-width:70%" id="unitsmin">
+               <div class="row " id="collapseadvanced">
+	               <div class="row-fluid" style="min-height: 40px;">
+	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="reporttype">Units:</label></div>
+	                   <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
+	                   		<div class="row-fluid">
+	                   			<div class="pull-left" style="width:35px;"><span id="units_min">0</span></div>
+	                   			
+	                   			<input id="units_slider" type="text" class="" value="" data-slider-min="0" data-slider-max="250" data-slider-step="5" data-slider-value="[0,250]"/>
+	                   			&nbsp&nbsp
+	                   			<span id="units_max">250+</span>
+	                   		</div>
 	                   </div>
-	                   <div class="span1 report-control-right-control">
-	                       <span style="display: inline-block;width: auto;height: 20px;min-width: 16px;padding: 4px 5px;font-size: 14px;font-weight: normal;line-height: 20px;">to</span>
-	
-	                   </div>
-	                   <div class="span3 report-control-right-control">
-	                       <input type="text" style="width:120px; max-width:70%" id="unitsmax">
-	                   </div>
+	                   
 	               </div>
-	               <div class="">
-	               		<div class="span3 report-control-left-label" style="">
+	               <div class="row-fluid">
+	               		<div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;">
 	               			<label for="start_time">Sale Date:</label>
 	           			</div>
 	           			<div class="input-append span3 report-control-right-control" id="start_time_gen">
@@ -131,13 +182,13 @@
 <!-- In order, they represent the columns across the diagram -->
 
 
-<div class="row-fluid" style="margin-top:19px;">
+<div id="table_controls" class="row-fluid" style="margin-top:0px;">
     <div class="span10 offset1 page-controls-wrapper">
         <div class="row-fluid" id="reportheader"><span style="padding-left:10px;">Buildings</span>
-             <div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="create_building">Create New</div>
+             <!--<div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="create_building">Create New</div>-->
         
         </div>
-        <div class="row-fluid key-indicaters-frame" id="iframediv">
+        <div class="row-fluid " id="iframediv">
             <div class="row-fluid">
                 <table id="buildings" class="display" cellspacing="0" width="100%">
 			        <thead>
@@ -158,426 +209,741 @@
 </div>
 
 
-<div class="row-fluid edit-item-section" style="display:none; margin-top:19px;">
-    <div class="span10 offset1 page-controls-wrapper">
-        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;">Edit Building Details</span>
-         	<div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="save_building">Save</div>
-         	<div style="margin-right: 10px; color: rgb(153, 0, 0); font-weight: 400; display: none;" class="pull-right save_pull" id="changes_pending">Changes Pending. &nbsp;</div>
-  		 </div>
-        <div class="row-fluid " id="iframediv">
-        	<div class="content-wrapper building-details-frame">
-            </div>
-        </div>
-    </div>
-</div>
 
-<script type="text/template" id="building-photo-template">
-	<div class="span3 buildingimage">
-		<div class="row-fluid" style="position:relative;">
-			<img src="">
-			<div class="buildingimagetrash"><i class="icon-trash icon-2x"></i></div>
-			
-			<div id="UploadGif" style="margin: auto; display: none;">
-                <div id="blockG_1" class="UploadGif_block">
-                </div>
-                <div id="blockG_2" class="UploadGif_block">
-                </div>
-                <div id="blockG_3" class="UploadGif_block">
-                </div>
-            </div>
-			
+<script type="text/template" id="building-template">
+	<div class="row-fluid building-map-details" style="position:relative; cursor:default;" building_id="{{=building_id}}">
+		<div style="position: absolute;top: 0px;right: 0px;color: #C52D22;cursor: pointer;margin-right: 12px;margin-top: 7px;">
+		<i class="icon-remove-sign icon-2x close-building-map-details"></i>
 		</div>
-		<div class="row-fluid">
-			<div class="progress" style="display: none; margin-bottom: 0px;">
-				<div class="bar" style="width: 0%;"></div>
-			</div>
-		</div>
-	</div>
-</script>
-
-<script type="text/template" id="building-details-template">
-	<div class="row-fluid">
-		<div class="span12">
+		<div class="building-details-padder">	
 			<div class="row-fluid">
-				<div class="row-category">
-					<i class="icon-camera"></i> &nbsp&nbsp<b>Photo</b>
-					<div class="pull-right" style="height:40px;">
-						<span class="row-category-button-wrapper">
-						
-							<span class="btn btn-success fileinput-button">
-			                    <i class="glyphicon glyphicon-plus"></i>
-			                    <span>Add files...</span>
-			                </span>
-						
-							<div style='height: 0px;width:0px; overflow:hidden;'><input type="file" name="filesToUpload[]" id="filesToUpload" multiple="multiple"/></div>
-    
-						</span>
+				
+				{{ var images = JSON.parse(images); for( key in images){ }}
+				
+				 <div class="span2 building-overlay-block-picture"><img style="margin:10px;" src="{{=images[key].thumb}}"></div>
+				
+				{{ } }}
+				<div class="span3 pull-right building-overlay-block-address">
+					<div class="row-fluid">Address:</div>
+					<div class="row-fluid block-value">{{=street_number_begin}}{{=street_number_end?' '+street_number_end:''}} {{=street_name}}</div>
+					<div class="row-fluid block-value">{{=city}}, {{=province}}</div>
+					<div class="row-fluid block-value"><a href="/buildings/{{=building_id}}">View History</a></div>
+				</div>
+				
+			</div>
+			<div class="row-fluid">
+				<div class="span4 building-overlay-block-details">
+					{{ for(var i=0; i<contacts.length; i++){ if(contacts[i].contact_type=='owner'){ }}
+					<div class="row-fluid" contact_id="{{=contacts[i].contact_id}}">
+						<div class="pull-left">Owner:</div>
+						<div class="pull-right">{{=contacts[i].contact_name}}</div>
+					</div>
+					{{ } } }}
+					{{ for(var i=0; i<contacts.length; i++){ if(contacts[i].contact_type=='seller'){ }}
+					<div class="row-fluid" contact_id="{{=contacts[i].contact_id}}">
+						<div class="pull-left">Seller:</div>
+						<div class="pull-right">{{=contacts[i].contact_name}}</div>
+					</div>
+					{{ } } }}
+					<div class="row-fluid">
+						<div class="pull-left">Prop. Mngr:</div>
+						<div class="pull-right">{{=property_mgmt_company}}</div>
+					</div>
+					<div class="row-fluid">
+						<div class="pull-left">Price:</div>
+						<div class="pull-right block-value">{{=last_sale_price}}</div>
 					</div>
 				</div>
-			</div>
-		</div>
-	
-	</div>
-	<div class="row-fluid building-photo-wrapper">
-	
-	</div>	
-	
-	
-	
-	<div class="row-fluid">
-		<div class="span12">
-			<div class="row-fluid">
-				<div class="row-category">
-					<i class="icon-home"></i> &nbsp&nbsp<b>Address</b>
-				</div>
-			</div>
-		</div>
-	
-	</div>
-	
-	
-	
-    		
-    		
-	
-	<div class="row-fluid building-segment-wrapper">
-		<div class="row-fluid">
-			<div class="span5 segment-label">Street Number Begin:</div>
-			
-			<div class="span7"><input type="hidden" id="building_id" value="{{=building_id}}"><input type="text" id="street_number_begin" value="{{=street_number_begin}}"></div>
-		</div>
-		<div class="row-fluid">
-			<div class="span5 segment-label">Street Number End:</div>
-			<div class="span7"><input type="text" id="street_number_end" value="{{=street_number_end}}"></div>
-		</div>
-		<div class="row-fluid">
-			<div class="span5 segment-label">Street Name:</div>
-			<div class="span7"><input type="text" id="street_name" value="{{=street_name}}"></div>
-		</div>
-		<div class="row-fluid">
-			<div class="span5 segment-label">Postal Code:</div>
-			<div class="span7"><input type="text" id="postal_code" value="{{=postal_code}}"></div>
-		</div>
-		<div class="row-fluid">
-			<div class="span5 segment-label">City:</div>
-			<div class="span7"><input type="text" id="city" value="{{=city}}"></div>
-		</div>
-		<div class="row-fluid">
-			<div class="span5 segment-label">Province:</div>
-			<div class="span7"><input type="text" id="province" value="{{=province}}"></div>
-		</div>
-	</div>	
-	
-	
-	
-		
-	<div class="row-fluid">
-		<div class="span12">
-			<div class="row-fluid">
-				<div class="row-category">
-					<i class="icon-credit-card"></i> &nbsp&nbsp<b>Owners</b>
-					<div class="pull-right" style="height:40px;">
-						<span class="row-category-button-wrapper">
-							<span id="add_owner" class="btn btn-primary">
-			                    <i class="glyphicon glyphicon-plus"></i>
-			                    <span>Add Owner</span>
-			                </span>
-						</span>
+				<div class="span4 building-overlay-block-details">
+					<div class="row-fluid">
+						<div class="pull-left">Amount of Suites:</div>
+						<div class="pull-right block-value">{{=unit_quantity}}</div>
 					</div>
-				</div>
-			</div>
-		</div>
-	
-	</div>
-	
-	
-		
-	<div class="row-fluid">
-		<div class="span12">
-			<div class="row-fluid">
-				<div class="row-category">
-					<i class="icon-legal"></i> &nbsp&nbsp<b>Sellers</b>
-					<div class="pull-right" style="height:40px;">
-						<span class="row-category-button-wrapper">
-							<span id="add_seller" class="btn btn-primary">
-			                    <i class="glyphicon glyphicon-plus"></i>
-			                    <span>Add Seller</span>
-			                </span>
-						</span>
+					<div class="row-fluid">
+						<div class="pull-left">Sale Date:</div>
+						<div class="pull-right block-value">{{=sale_date}}</div>
 					</div>
+					<div class="row-fluid">
+						<div class="pull-left">Price Per Unit:</div>
+						<div class="pull-right block-value">{{=unit_price}}</div>
+					</div>
+					<div class="row-fluid">
+						<div class="pull-left">Price:</div>
+						<div class="pull-right block-value">{{=last_sale_price}}</div>
+					</div>
+					
 				</div>
-			</div>
-		</div>
-	
-	</div>
-	
-	
-	
-	
-	<div class="row-fluid">
-		<div class="span12">
-			<div class="row-fluid">
-				<div class="row-category">
-					<i class="icon-building"></i> &nbsp&nbsp<b>Building Details</b>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="row-fluid building-segment-wrapper">
-		<div class="row-fluid">
-			<div class="span5 segment-label">Building Type:</div>
-			<div class="span7"><select type="text" id="building_type"><% for(var i=0;i<building_types.length;i++){ %><%-'<option value="'+building_types[i].id+'" {{ if(building_type=='+building_types[i].id+'){ }} selected="selected"{{ } }}  >'+building_types[i].type+'</option>'%><% } %></select>
-		</div>
-		<div class="row-fluid">
-			<div class="span5 segment-label">Property Management:</div>
-			<div class="span7"><input type="text" id="property_mgmt_company" value="{{=property_mgmt_company}}"></div>
-		</div>
-		<div class="row-fluid">
-			<div class="span5 segment-label">Previous Property Management:</div>
-			<div class="span7"><input type="text" id="prev_property_mgmt_company" value="{{=prev_property_mgmt_company}}"></div>
-		</div>
-		<div class="row-fluid">
-			<div class="span5 segment-label">Heat System:</div>
-			<div class="span7"><select type="text" id="heat_system"><% for(var i=0;i<heat_types.length;i++){ %><%-'<option value="'+heat_types[i].id+'">'+heat_types[i].type+'</option>'%><% } %></select>
-
-		</div>
-		<div class="row-fluid">
-			<div class="span5 segment-label">Heat Age:</div>
-			<div class="span7"><input type="text" id="heat_system_age" value="{{=heat_system_age}}"></div>
-		</div>
-		<div class="row-fluid">
-			<div class="span5 segment-label">Boiler Age:</div>
-			<div class="span7"><input type="text" id="boilers_age" value="{{=boiler_installed_year}}"></div>
-		</div>
-		<div class="row-fluid">
-			<div class="span5 segment-label">Cable Internet Provider:</div>
-			<div class="span7"><input type="text" id="cable_internet_provider" value="{{=cable_internet_provider}}"></div>
-		</div>
-		<div class="row-fluid">
-			<div class="span5 segment-label">Total Units:</div>
-			<div class="span7"><input type="text" id="unit_quantity" value=""></div>
-		</div>
-	</div>
-	
-	
-	
-	<div class="row-fluid">
-		<div class="span12">
-			<div class="row-fluid">
-				<div class="row-category">
-					<i class="icon-money"></i> &nbsp&nbsp<b>Equity Details</b>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="row-fluid building-segment-wrapper">
-		<div class="row-fluid">
-			<div class="span5 segment-label">Assessed Value:</div>
-			<div class="span7"><input type="text" id="assessed_value" value="{{=assessed_value}}"></div>
-		</div>
-		<div class="row-fluid">
-			<div class="span5 segment-label">Bachelor Rent Price:</div>
-			<div class="span7"><input type="text" id="bachelor_price" value="{{=bachelor_price}}"></div>
-		</div>
-		<div class="row-fluid">
-			<div class="span5 segment-label">1 Bedroom Rent Price:</div>
-			<div class="span7"><input type="text" id="bedroom1_price" value="{{=bedroom1_price}}"></div>
-		</div>
-		<div class="row-fluid">
-			<div class="span5 segment-label">2 Bedroom Rent Price:</div>
-			<div class="span7"><input type="text" id="bedroom2_price" value="{{=bedroom2_price}}"></div>
-		</div>
-		<div class="row-fluid">
-			<div class="span5 segment-label">3 Bedroom Rent Price:</div>
-			<div class="span7"><input type="text" id="bedroom3_price" value="{{=bedroom3_price}}"></div>
-		</div>
-		<div class="row-fluid">
-			<div class="span5 segment-label">Bachelor Units:</div>
-			<div class="span7"><input type="text" id="bachelor_units" value="{{=bachelor_units}}"></div>
-		</div>
-		<div class="row-fluid">
-			<div class="span5 segment-label">1 Bedroom Units:</div>
-			<div class="span7"><input type="text" id="bedroom1_units" value="{{=bedroom1_units}}"></div>
-		</div>
-		<div class="row-fluid">
-			<div class="span5 segment-label">2 Bedroom Units:</div>
-			<div class="span7"><input type="text" id="bedroom2_units" value="{{=bedroom2_units}}"></div>
-		</div>
-		<div class="row-fluid">
-			<div class="span5 segment-label">3 Bedroom Units:</div>
-			<div class="span7"><input type="text" id="bedroom3_units" value="{{=bedroom3_units}}"></div>
-		</div>
-		<div class="row-fluid">
-			<div class="span5 segment-label">Building Income:</div>
-			<div class="span7" style="margin-bottom:10px;">
-				<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="building-income-radio" id="income_calculated_radio">&nbsp&nbsp&nbspCalculated - <span id="income_calculated_radio_label"></span></div>
-				<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="building-income-radio" id="income_manual_radio">&nbsp&nbsp&nbspManual - <input style="width:118px; margin-bottom:0px;" type="text" class="" id="income_manual"></div>
-			</div>
-		</div>
-		<div class="row-fluid">
-			<div class="span5 segment-label">CAP Rate:</div>
-			<div class="span7"><input type="text" id="cap_rate"></div>
-		</div>
-		<div class="row-fluid">
-			<div class="span5 segment-label">Last Sale Date:</div>
-			<div class="span7">
-				<div class="input-append span3 report-control-right-control" id="last_sale_date_gen">
-       				<input class="" data-format="yyyy-MM-dd" style="width: 179px;" id="sale_date" type="text" value="{{=sale_date}}">
-   					<span class="add-on"><i data-time-icon="icon-time" data-date-icon="icon-calendar" class="icon-calendar"> </i> </span>
-   				</div>
-			</div>
-		</div>
-		<div class="row-fluid">
-			<div class="span5 segment-label">Last Sale Price:</div>
-			<div class="span7"><input type="text" id="last_sale_price" value="{{=last_sale_price}}"></div>
-		</div>
-	</div>
-	
-	<div class="row-fluid">
-		<div class="span12">
-			<div class="row-fluid">
-				<div class="row-category">
-					<i class="icon-pencil"></i> &nbsp&nbsp<b>Note History</b>
-					<div class="pull-right" style="height:40px;">
-						<span class="row-category-button-wrapper">
-							<span id="create_note" class="btn btn-primary">
-			                    <i class="glyphicon glyphicon-plus"></i>
-			                    <span>Create Note</span>
-			                </span>
-						</span>
+				<div class="span4 building-overlay-block-details">
+					<div class="row-fluid">
+						<div class="pull-left">Bachelor Rent:</div>
+						<div class="pull-right block-value">{{=bachelor_price}}</div>
+					</div>
+					<div class="row-fluid">
+						<div class="pull-left">1 Bdrm Rent:</div>
+						<div class="pull-right block-value">{{=bedroom1_price}}</div>
+					</div>
+					<div class="row-fluid">
+						<div class="pull-left">2 Bdrm Rent:</div>
+						<div class="pull-right block-value">{{=bedroom2_price}}</div>
+					</div>
+					<div class="row-fluid">
+						<div class="pull-left">3 Bdrm Rent:</div>
+						<div class="pull-right block-value">{{=bedroom3_price}}</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	
-	<div class="tableheader row-fluid">
-		<div class="span2">
-			Timestamp
-		</div>
-		<div class="span2">
-			User
-		</div>
-		<div class="span6">
-			Details
-		</div>
-		<div class="span2">
-			Modify
-		</div>
-	</div>
-	<div id="building-notes-wrapper" class="row-fluid">
-	
-	</div>
-
 </script>
 
-
-<script type="text/template" id="building-notes-template">
-	<div class="row-fluid building-note" noteid="{{=id}}">
-		<div class="span2">
-			<b>{{=timestamp}}</b>
-		</div>
-		<div class="span2">
-			{{=user}}
-		</div>
-		<div class="span6"><div class="note-editable">{{=note}}</div></div>
-		<div class="span2">
-			<div class="row-fluid" style="padding:6px;">
-				<a class="edit-note" style="color:#0F74BC;cursor:pointer;padding-right:6px;"><i class="icon-edit icon-2x"></i></a>
-				<a class="delete-note" style="color:red;cursor:pointer;"><i class="icon-remove-sign icon-2x"></i></a>
-			</div>
-		</div>
-	</div>
-</script>
-
-<script type="text/template" id="building-contact-template">
-	<div class="row-fluid building-note" noteid="{{=id}}">
-		<div class="span2">
-			<b>{{=timestamp}}</b>
-		</div>
-		<div class="span2">
-			{{=user}}
-		</div>
-		<div class="span6"><div class="note-editable">{{=note}}</div></div>
-		<div class="span2">
-			<div class="row-fluid" style="padding:6px;">
-				<a class="edit-note" style="color:#0F74BC;cursor:pointer;padding-right:6px;"><i class="icon-edit icon-2x"></i></a>
-				<a class="delete-note" style="color:red;cursor:pointer;"><i class="icon-remove-sign icon-2x"></i></a>
-			</div>
-		</div>
-	</div>
-</script>
-
-
-
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAbxXYHzi3ypnRymTns27yE_o-fEyj6cIE"></script>
 
 <script>
 
 
+
+	var markers,map;
     var alarms;
+    var minimumTableSize = 120;
+    var layers = {}
+        
+    
     $(document).ready(function(){
     
-    	var bucketPrefix = "https://s3-us-west-2.amazonaws.com/credimages/";
-    	var lastImageUrl = "";
-    	var lastThumbUrl = "";
+    	var unitsMax = null;
+    	var unitsMin = null;
+    	var sliderLimit = 250;
+        var leaveSalesExpanded = false;
     
-    	var buildingphototemplate = _.template($('#building-photo-template').html());
+    	var buildingtemplate = _.template($('#building-template').html());
     	
-    	//var buildingtemplate = _.template($('#building-details-template').html());
-    	//$('.building-details-frame').append(buildingtemplate());
+    	
+    	function buildingSelected(building_id){
+    		//$('#building_slideup_wrapper').empty();
+			setMapSize();
+    		socket.get('/buildings/getbuilding/'+building_id,{},function(responseBuilding){
+    			socket.get('/buildings/getcontacts/'+building_id,{},function(responseContacts){
+    				if(typeof(responseContacts[0])!='undefined'){
+    					responseBuilding.contacts = responseContacts[0];
+    				}else{
+    					responseBuilding.contacts = [];
+    				}
+    				$('#building_slideup_wrapper').empty();
+	    			$('#building_slideup_wrapper').append(buildingtemplate(responseBuilding));
+	    			$('.close-building-map-details').click(function(){
+	    				$(this).parents('.building-map-details').remove();
+	    				setMapSize();
+	    			});
+	    			setTimeout(function(){
+						setMapSize();
+	    			},500);
+					setMapSize();
+					
+					markers.blockIdleEvent = true;
+					map.panTo(markers.getPosition(building_id));
+    			});
+    			
+    		});
+    	
+    		// if it's being filled for the first time:
+    		//if($('#building_slideup_wrapper').html()!=''){
+    		//	$('#map_wrapper').height($('#map_wrapper').height()-$('#building_slideup_wrapper').height()); //shrink the map height
+    		//}
+    	}
+    	
+    	$('#search_toggler').click(function(){
+    		snapFar();
+    	});
+    
+    
+    	function Markers(){
+    		var self = this;
+    		
+    		this.constrainGPS = false;
+    		this.blockIdleEvent = true;
+    		this.collection = {};
+    		
+    		this.clearMarkers = function (){
+    			for(marker in self.collection){
+    				self.collection[marker].destroy();
+    			}
+    			self.collection = {};
+    		}
+    		
+    		this.addMarker = function(building)
+    		{
+    			if(building.latitude !=null)
+    			{
+    				self.collection[building.building_id] = (new ActiveMarker(building,map));
+				}
+    			//if(!constrainGPS&&!map.getBounds().contains(self.collection[building.building_id].googleMarker.getPosition())){
+    				
+    			//}
+    		}
+    		
+    		this.checkMarkersBounded = function(){
+    			for(marker in self.collection){
+    				if(typeof(self.collection[marker].googleMarker)!='undefined'){
+	    				if(!map.getBounds().contains(self.collection[marker].googleMarker.getPosition())){
+	    					return false;
+	    				}
+    				}
+    			}
+    			return true;
+    		}
+    		
+    		this.verifyBounds = function(){
+				//  Create a new viewpoint bound
+				if(!self.constrainGPS&&!self.checkMarkersBounded()){  // only attempting to check and correct position if we're not in lat/lng mode
+    				self.blockIdleEvent = true;
+    				var bounds = new google.maps.LatLngBounds ();
+	    			for(marker in self.collection){
+	    				if(typeof(self.collection[marker].googleMarker)!='undefined'){
+	    					bounds.extend(self.collection[marker].googleMarker.getPosition());
+	    				}
+	    			}
+					map.fitBounds(bounds);
+				}
+    		}
+    		
+			this.clearSelected = function(){
+				for(marker in self.collection){
+    				self.collection[marker].clearSelected();
+    			}
+			}
+    		
+    		this.toggle = function(building_id){
+    			self.collection[building_id].toggle();
+    		}
+    		
+    		this.getPosition = function(building_id){
+    			return self.collection[building_id].getPosition();
+    		}
+    		
+    	} 
+    	
+    	function ActiveMarker(building){
+    		var self = this;
+    		this.building = building;
+    		this.googleMarker;
+    		this.selected = false;
+    		
+    		var blueColor = "2F76EE"; // a random blue color that i picked
+			this.blueImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + blueColor,
+            new google.maps.Size(21, 34),
+            new google.maps.Point(0,0),
+            new google.maps.Point(10, 34));
+            var redColor = "F75448"
+            this.redImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + redColor,
+            new google.maps.Size(21, 34),
+            new google.maps.Point(0,0),
+            new google.maps.Point(10, 34));
+			this.pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
+            new google.maps.Size(40, 37),
+            new google.maps.Point(0, 0),
+            new google.maps.Point(12, 35));
+            
+            this.getPosition = function(){
+            	return self.googleMarker.getPosition();
+            }
+    		
+    		if(building.latitude!=null)
+			{
+    			self.googleMarker = new google.maps.Marker({
+				    position: new google.maps.LatLng(building.latitude,building.longitude),
+				    map: map,
+				    icon:this.redImage,
+				    title:(typeof(building.street_number_begin)!='undefined'?building.street_number_begin:'')+(typeof(building.street_number_end)!='undefined'?'-'+building.street_number_end:'')+(typeof(building.street_name)!='undefined'?' '+building.street_name:'')
+				});
+				google.maps.event.addListener(self.googleMarker,'click',function(){
+					self.toggle();
+				});
+			}
+			this.clearSelected = function(){
+				self.selected = false;
+				$('#buildings > tbody > tr[building_id='+self.building.building_id+']').removeClass('selected');
+				self.googleMarker.setIcon(self.redImage);
+			}
+			this.toggle = function(){
+				self.selected = !self.selected;
+				if(self.selected){
+					markers.clearSelected();
+					$('#buildings > tbody > tr[building_id='+self.building.building_id+']').addClass('selected');
+					self.googleMarker.setIcon(self.blueImage);
+					buildingSelected(self.building.building_id);
+				}else{
+					$('#buildings > tbody > tr[building_id='+self.building.building_id+']').removeClass('selected');
+					self.googleMarker.setIcon(self.redImage);
+				}
+			}
+			this.destroy = function(){
+    				google.maps.event.clearListeners(self.googleMarker, 'click');
+    				self.googleMarker.setMap(null);
+    				self.googleMarker = null;
+			}
+    	}
+    
+    
+    	function initMap(){
+	    	var mapOptions = {
+	          center: new google.maps.LatLng(43.7, -79.4),
+	          zoom: 10,
+	          panControl:false,
+	          streetViewControl:false
+	        };
+    		
+    		//$('#map_wrapper').height($('body').height()-$('.navbar-fixed-top').height()-50);
+    		setMapSize();
+    		
+    		map = new google.maps.Map($('#map_wrapper')[0],mapOptions);
+    		
+    		layers.go = new google.maps.KmlLayer('http://isystemsnow.com/layers/go.kmz',{preserveViewport: true});
+			layers.ttc = new google.maps.KmlLayer('http://isystemsnow.com/layers/ttc.kmz',{preserveViewport: true});
+			layers.viva = new google.maps.KmlLayer('http://isystemsnow.com/layers/viva.kmz',{preserveViewport: true});
+			
+    		  // Create the DIV to hold the control and call the HomeControl() constructor
+			  // passing in this DIV.
+		  	var homeControlDiv = document.createElement('div');
+		  	var homeControl = new HomeControl(homeControlDiv, map);
+		
+		  	homeControlDiv.index = 1;
+		  	map.controls[google.maps.ControlPosition.RIGHT_CENTER].push(homeControlDiv);
+			  
+    		
+			//var layerGo = new google.maps.KmlLayer('http://isystemsnow.com/layers/ttc.kmz');
+			//layerGo.setMap(map);
+    		
+    		google.maps.event.addListener(map, 'tilesloaded', function() {
+    			google.maps.event.clearListeners(map, 'tilesloaded');
+    			initDataTable();
+	        });
+	        google.maps.event.addListener(map, 'idle', function() {  
+	        	if(typeof(datatable)!='undefined')
+	        	{
+        			if(!markers.blockIdleEvent){
+        				markers.constrainGPS = true;
+        				$('#constrain_gps').prop('checked',true);
+						datatable.api().ajax.reload();
+        			}else{
+        				markers.blockIdleEvent = false;
+    				}
+    			}
+	        });
+    		markers = new Markers();
+    	}
+    
+    	google.maps.event.addDomListener(window, 'load', initMap);
+    
+	    $('#buildings').on('draw.dt',function(event,datatable){
+	    		//if($('#building_slideup_wrapper').html()!='')
+	    		//{
+	    		
+	    		//}
+	    		$('#building_slideup_wrapper').empty();
+				setMapSize();
+				setMapTableSize();
+	    		markers.clearMarkers();
+		    	if(datatable.json.data instanceof Array)
+		    	{
+		    		for(var i=0; i< datatable.json.data.length; i++){
+		    			markers.addMarker(datatable.json.data[i]);
+		    		}
+		    	}
+		    	markers.verifyBounds();
+    	});
+    
+    
+    	
+    
+    
+    
+    
+    	
     	
 		
 		
 		
+		var datatable 
+		function initDataTable(){
+			//return;
+			//$('.main-content').animate({scrollTop:$(document).height()}, 'fast');
+			
+			//var calc_datatable_scroll_height = $('body').height()-$('.navbar-fixed-top').height()-$('#search_controls').height()-$('#table_controls').height()+$('#buildings_wrapper div.dataTables_scrollBody').height()-48;
 
-		var datatable = $('#buildings').dataTable({
-		        "processing": true,
-		        "serverSide": true,
-		        "dom":"tipr",
-		        "ajax": {
-		        	"url":"/buildings/getajax",
-	        		"data":function(d){
-	        			d.search = $("#searchfield").val();
-	        			d.unitQuantityMin = $('#unitsmin').val();
-	        			d.unitQuantityMax = $('#unitsmax').val();
-	        			d.saleDateRangeStart = $('#start_time').val();
-	        			d.saleDateRangeEnd = $('#end_time').val();
-	        			console.log($("#searchfield").val());
-	        		}
-	        	},
-		        "aoColumns":[
-		        	{"mData":"building_id","visible":false}
-		         	,{"mData":function(data,b){ 
-			        	return "<b>"+data.street_number_begin+" "+data.street_name+", "+data.city+"</b>"; }
+        	//setMapSize();
+			//$('#map_wrapper').height()
+    		//search_controls
+			
+			datatable = $('#buildings').dataTable({
+					"scrollY":        0+ "px",
+			        "processing": true,
+			        "serverSide": true,
+			        "dom":"tipr",
+			        "ajax": {
+			        	"url":"/buildings/getajax",
+		        		"data":function(d){
+		        			d.address_search = $("#search_address").val();
+		        			d.contact_search = $("#search_contact").val();
+		        			d.unitQuantityMin = unitsMin==0?null:unitsMin;
+		        			d.unitQuantityMax = unitsMax==sliderLimit?null:unitsMax;
+		        			d.saleDateRangeStart = $('#start_time').val();
+		        			d.saleDateRangeEnd = $('#end_time').val();
+		        			d.length = $('#result_size').val();
+		        			if(markers.constrainGPS)
+		        			{
+			        			d.centerLatitude = map.getCenter().k;
+			        			d.centerLongitude = map.getCenter().B;
+			        			d.boundsLatitudeMin = map.getBounds().getSouthWest().lat();
+			        			d.boundsLatitudeMax = map.getBounds().getNorthEast().lat();
+			        			d.boundsLongitudeMin = map.getBounds().getSouthWest().lng();
+			        			d.boundsLongitudeMax = map.getBounds().getNorthEast().lng();
+		        			}else{
+			        			d.centerLatitude = null;
+			        			d.centerLongitude = null;
+			        			d.boundsLatitudeMin = null;
+			        			d.boundsLatitudeMax = null;
+			        			d.boundsLongitudeMin = null;
+			        			d.boundsLongitudeMax = null;
+		        			}
+		        		},
+		        		error: function(xhr, error, thrown){
+		        			
+		        		}
+		        		
+		        	},
+			        "aoColumns":[
+			        	{"mData":"building_id","visible":false}
+			         	,{"mData":function(data,b){ 
+				        	return "<b>"+data.street_number_begin+" "+data.street_name+", "+data.city+"</b>"; }
+				        }
+				        ,{"mData":"units"}
+				        ,{"mData":"owner"}
+				        ,{"mData":"property_mgmt_company"}
+				        ,{"mData":"sale_date"}
+			        ],
+			        "rowCallback": function( row, data, displayIndex ) {
+						$(row).attr('building_id',data['building_id']);
+						$(row).click(function(){
+							console.log($(row).attr('building_id'));
+							markers.toggle(parseInt($(row).attr('building_id')));
+	    					//building.fetch({id:parseInt($(row).attr('building_id'))});
+	               		});
+		               
 			        }
-			        ,{"mData":"units"}
-			        ,{"mData":"owner"}
-			        ,{"mData":"property_mgmt_company"}
-			        ,{"mData":"sale_date"}
-		        ],
-		        "rowCallback": function( row, data, displayIndex ) {
-					$(row).attr('building_id',data['building_id']);
-					$(row).click(function(){
-	               		//selectBuilding($(row).attr('building_id'));
-    					building.fetch({id:parseInt($(row).attr('building_id'))});
-               		});
-	               
-		        }
-	    });
+		    });
+		    
+        
+	        $('#buildings tbody').on('click', 'tr', function () {
+	       // 	$(this).siblings().removeClass('selected');
+	       // 	$(this).removeClass('selected').addClass('selected');
+		    });
+		    
+			//$('#constrain_gps').click(function(){
+				
+			//});
+	    }
+	    
+	    
+	    function HomeControl(controlDiv, map) {
+		
+			  // Set CSS styles for the DIV containing the control
+			  // Setting padding to 5 px will offset the control
+			  // from the edge of the map.
+			  controlDiv.style.padding = '5px';
+			
+			  // Set CSS for the control border.
+			  var controlUI = document.createElement('div');
+			  controlUI.style.backgroundColor = 'white';
+			  controlUI.style.borderStyle = 'solid';
+			  controlUI.style.borderWidth = '2px';
+			  controlUI.style.width = '100px';
+			  controlUI.style.height = '300px';
+			  //controlUI.style.textAlign = 'center';
+			  controlUI.title = 'Click to set the map to Home';
+			  controlDiv.appendChild(controlUI);
+			
+			  // Set CSS for the control interior.
+			  var constrainLabel = document.createElement('label');
+			  constrainLabel.htmlFor  = 'constrain_gps';
+			  constrainLabel.style.fontFamily = 'Open Sans';
+			  constrainLabel.style.cursor = 'pointer';
+			  constrainLabel.style.fontSize = '12px';
+			  constrainLabel.style.paddingLeft = '4px';
+			  constrainLabel.style.paddingRight = '4px';
+			  constrainLabel.innerHTML = '<strong>Constrain result to map bounds:</strong>';
+			  controlUI.appendChild(constrainLabel);
+			  
+			  // Set CSS for the control interior.
+			  var constrainGPSCheckbox = document.createElement('input');
+			  constrainGPSCheckbox.id = 'constrain_gps'
+			  constrainGPSCheckbox.type = 'checkbox';
+			  constrainGPSCheckbox.style.cursor = 'pointer';
+			  constrainGPSCheckbox.style.fontSize = '12px';
+			  constrainGPSCheckbox.style.paddingLeft = '4px';
+			  constrainGPSCheckbox.style.paddingRight = '4px';
+			  controlUI.appendChild(constrainGPSCheckbox);
+			  
+			  
+			  
+			  // Set CSS for the control interior.
+			  var layerGo = document.createElement('label');
+			  layerGo.htmlFor  = 'layer_go';
+			  layerGo.style.fontFamily = 'Open Sans';
+			  layerGo.style.cursor = 'pointer';
+			  layerGo.style.fontSize = '12px';
+			  layerGo.style.paddingLeft = '4px';
+			  layerGo.style.paddingRight = '4px';
+			  layerGo.innerHTML = '<strong>Go Transit:</strong>';
+			  controlUI.appendChild(layerGo);
+			  
+			  // Set CSS for the control interior.
+			  var inputGo = document.createElement('input');
+			  inputGo.id = 'layer_go'
+			  inputGo.type = 'checkbox';
+			  inputGo.style.cursor = 'pointer';
+			  inputGo.style.fontSize = '12px';
+			  inputGo.style.paddingLeft = '4px';
+			  inputGo.style.paddingRight = '4px';
+			  controlUI.appendChild(inputGo);
+			  
+			  // Set CSS for the control interior.
+			  var layerTTC = document.createElement('label');
+			  layerTTC.htmlFor  = 'layer_ttc';
+			  layerTTC.style.fontFamily = 'Open Sans';
+			  layerTTC.style.cursor = 'pointer';
+			  layerTTC.style.fontSize = '12px';
+			  layerTTC.style.paddingLeft = '4px';
+			  layerTTC.style.paddingRight = '4px';
+			  layerTTC.innerHTML = '<strong>TTC:</strong>';
+			  controlUI.appendChild(layerTTC);
+			  
+			  // Set CSS for the control interior.
+			  var inputTTC = document.createElement('input');
+			  inputTTC.id = 'layer_ttc'
+			  inputTTC.type = 'checkbox';
+			  inputTTC.style.cursor = 'pointer';
+			  inputTTC.style.fontSize = '12px';
+			  inputTTC.style.paddingLeft = '4px';
+			  inputTTC.style.paddingRight = '4px';
+			  controlUI.appendChild(inputTTC);
+			  
+			   // Set CSS for the control interior.
+			  var layerViva = document.createElement('label');
+			  layerViva.htmlFor  = 'layer_viva';
+			  layerViva.style.fontFamily = 'Open Sans';
+			  layerViva.style.cursor = 'pointer';
+			  layerViva.style.fontSize = '12px';
+			  layerViva.style.paddingLeft = '4px';
+			  layerViva.style.paddingRight = '4px';
+			  layerViva.innerHTML = '<strong>VIVA:</strong>';
+			  controlUI.appendChild(layerViva);
+			  
+			  // Set CSS for the control interior.
+			  var inputViva = document.createElement('input');
+			  inputViva.id = 'layer_viva'
+			  inputViva.type = 'checkbox';
+			  inputViva.style.cursor = 'pointer';
+			  inputViva.style.fontSize = '12px';
+			  inputViva.style.paddingLeft = '4px';
+			  inputViva.style.paddingRight = '4px';
+			  controlUI.appendChild(inputViva);
+			  
+			  
+			  var resultSizeLabel = document.createElement('label');
+			  resultSizeLabel.htmlFor  = 'result_size';
+			  resultSizeLabel.style.fontFamily = 'Open Sans';
+			  resultSizeLabel.style.cursor = 'pointer';
+			  resultSizeLabel.style.fontSize = '12px';
+			  resultSizeLabel.style.paddingLeft = '4px';
+			  resultSizeLabel.style.paddingRight = '4px';
+			  resultSizeLabel.innerHTML = '<strong>Result Size:</strong>';
+			  controlUI.appendChild(resultSizeLabel);
+			  
+			  
+			  var resultSizeSelect = document.createElement('select');
+			  resultSizeSelect.id = 'result_size'
+			  resultSizeSelect.style.cursor = 'pointer';
+			  resultSizeSelect.style.width = '80px';
+			  resultSizeSelect.style.fontSize = '12px';
+			  resultSizeSelect.style.paddingLeft = '4px';
+			  resultSizeSelect.style.paddingRight = '4px';			  
+			  controlUI.appendChild(resultSizeSelect);
+			  
+			  var option = document.createElement("option");
+			  option.text = "10";
+			  resultSizeSelect.add(option);
+			  option = document.createElement("option");
+			  option.text = "25";
+			  resultSizeSelect.add(option);
+			  option = document.createElement("option");
+			  option.text = "50";
+			  resultSizeSelect.add(option);
+			  option = document.createElement("option");
+			  option.text = "100";
+			  resultSizeSelect.add(option);
+			  
+			  resultSizeSelect.value=50;
+			
+			  
+			google.maps.event.addDomListener(inputGo, 'change', function() {
+				if(layers.go.getMap()==null){
+					layers.go.setMap(map);
+				}else{
+					layers.go.setMap(null);
+				}
+			});
+			google.maps.event.addDomListener(inputTTC, 'change', function() {
+				if(layers.ttc.getMap()==null){
+					layers.ttc.setMap(map);
+				}else{
+					layers.ttc.setMap(null);
+				}
+			});
+			google.maps.event.addDomListener(inputViva, 'change', function() {
+				if(layers.viva.getMap()==null){
+					layers.viva.setMap(map);
+				}else{
+					layers.viva.setMap(null);
+				}
+			});
+			
+			  google.maps.event.addDomListener(resultSizeSelect, 'change', function() {
+					datatable.api().ajax.reload();
+			  });
+			  // Setup the click event listeners: simply set the map to Chicago.
+			  google.maps.event.addDomListener(constrainGPSCheckbox, 'click', function() {
+				    markers.constrainGPS = $('#constrain_gps').is(':checked');
+					if(markers.constrainGPS&&!markers.checkMarkersBounded()) //markers aren't bounded correct.
+					{
+						datatable.api().ajax.reload();
+					}else if(!markers.constrainGPS){  // this is the case where maybe you've typed in new search terms.
+						datatable.api().ajax.reload();
+					}
+			  });
+		}
 
-		$('#searchfield').keydown(function(){
+		$('#search_address').keydown(function(){
 			setTimeout(function(){
 				datatable.api().ajax.reload();
 			},10);
 		});
-
+		$('#search_contact').keydown(function(){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		});
+		
+    	$('#units_slider').attr('data-slider-max',sliderLimit); // corrects limit
+		$('#units_slider').slider({tooltip: 'disabled'});
+		$('#units_slider').on('slide',function(slideEvt){
+			unitsMin = slideEvt.value[0];
+			unitsMax = slideEvt.value[1]
+			$('#units_min').html(unitsMin);
+			
+			if(unitsMax==sliderLimit)
+			{
+				$('#units_max').html(unitsMax+'+');
+			}else{
+				$('#units_max').html(unitsMax);
+			}
+		});
+		$('#units_slider').on('slideStop',function(slideEvt){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		});
         $(window).resize(function(){
+        	if(typeof(markers)!='undefined'&&$('#building_slideup_wrapper').html()!=''){
+				markers.blockIdleEvent = true;
+				google.maps.event.trigger(map, "resize");
+			}
+        	setMapSize();
+			setMapTableSize();
+			
+			snapClose();
+			
         });
         
-        $('#buildings tbody').on('click', 'tr', function () {
-        	$(this).siblings().removeClass('selected');
-        	$(this).removeClass('selected').addClass('selected');
-	    });
+        $(window).scroll(function(){
+        	if($('body').scrollTop()>($('#map_wrapper').height()+$('#building_slideup_wrapper').height())/2){
+        		$('#search_toggler').attr('scrollstate','bottom');
+			}else{
+				$('#search_toggler').attr('scrollstate','top');
+			}
+        });
+        
+        $('.main-content').scroll(function(){
+        	if($('.main-content').scrollTop()>($('#map_wrapper').height()+$('#building_slideup_wrapper').height())/2){
+        		$('#search_toggler').attr('scrollstate','bottom');
+			}else{
+				$('#search_toggler').attr('scrollstate','top');
+			}
+    	});
+        
+        function snapFar(){
+        	if($('body').width()>979){
+    			if($('.main-content').scrollTop()>($('#map_wrapper').height()+$('#building_slideup_wrapper').height())/2){
+    				//$('.main-content').scrollTop(0)
+    				$('.main-content').animate({scrollTop:0}, 'fast');
+    			}else{
+    				//$('.main-content').scrollTop($('#map_wrapper').height()+$('#building_slideup_wrapper').height());
+    				$('.main-content').animate({scrollTop:$('#map_wrapper').height()+$('#building_slideup_wrapper').height()}, 'fast');
+    			}
+    		}else{
+    			if($('body').scrollTop()>($('#map_wrapper').height()+$('#building_slideup_wrapper').height())/2){
+    				//$('body').scrollTop(0);
+    				$('body').animate({scrollTop:0}, 'fast');
+    			}else{
+    				//$('body').scrollTop($('#map_wrapper').height()+$('#building_slideup_wrapper').height()+$('.navbar-fixed-top').height());
+    				$('body').animate({scrollTop:$('#map_wrapper').height()+$('#building_slideup_wrapper').height()+$('.navbar-fixed-top').height()},'fast');
+    			}
+    		}
+        }
+        
+        function snapClose(){
+        	if($('body').width()>979){
+    			if($('.main-content').scrollTop()<($('#map_wrapper').height()+$('#building_slideup_wrapper').height())/2){
+    				$('#search_toggler').attr('scrollstate','top');
+					$('.main-content').animate({scrollTop:0}, 'fast');
+    				//$('.main-content').scrollTop(0);
+    			}else{
+    				$('#search_toggler').attr('scrollstate','bottom');
+    				$('.main-content').animate({scrollTop:$('#map_wrapper').height()+$('#building_slideup_wrapper').height()}, 'fast');
+    				//$('.main-content').scrollTop($('#map_wrapper').height()+$('#building_slideup_wrapper').height());
+    			}
+    		}else{
+    			if($('body').scrollTop()<($('#map_wrapper').height()+$('#building_slideup_wrapper').height())/2){
+    				$('#search_toggler').attr('scrollstate','top');
+    				//$('body').scrollTop(0);
+    				$('body').animate({scrollTop:0}, 'fast');
+    			}else{
+    				$('#search_toggler').attr('scrollstate','bottom');
+    				//$('body').scrollTop($('#map_wrapper').height()+$('#building_slideup_wrapper').height()+$('.navbar-fixed-top').height());    				
+    				$('body').animate({scrollTop:$('#map_wrapper').height()+$('#building_slideup_wrapper').height()+$('.navbar-fixed-top').height()}, 'fast');
+    			}
+    		}        
+        }
+        
+        function setMapTableSize(){
+			var h = $('body').height()-$('#search_controls').height()-$('#table_controls').height()+$('#buildings_wrapper div.dataTables_scrollBody').height();
+			if($('body').width()>979){
+				h = h - $('.navbar-fixed-top').height();
+			}
+			$('#buildings_wrapper div.dataTables_scrollBody').height(h>=minimumTableSize?h:minimumTableSize+'px');
+        }
+        
+        function setMapSize(){
+        	//if(typeof(markers)!='undefined'){
+			//	markers.blockIdleEvent = true;
+			//	google.maps.event.trigger(map, "resize");
+			//	markers.blockIdleEvent = false;
+			//}
+			var mapheightval = $('body').height()-$('#building_slideup_wrapper').height()-$('.navbar-fixed-top').height()-50;
+			$('#map_wrapper').height(mapheightval);
+
+			
+			
+        }
 	    
 	    
         $("#start_time_gen" ).datetimepicker({
@@ -594,605 +960,30 @@
             pickSeconds: false
         }).data('datetimepicker');
         
-        $("#last_sale_date_gen" ).datetimepicker({
-            language: 'en',
-            format: 'yyyy-MM-dd hh:mm',
-            pick12HourFormat: false,
-            pickSeconds: false
-        }).data('datetimepicker');
         
-        $('.bootstrap-datetimepicker-widget > div > div.close-datetime').click(function(){
-            $("#end_time_gen" ).data('datetimepicker').hide();
-            $("#start_time_gen" ).data('datetimepicker').hide();
-            $('#last_sale_date_gen').data('datetimepicker').hide();
-        });
-        
-        $('#advanced_criteria_toggler').click(function(){
-        	if($('#advanced_criteria_toggler > div > i').hasClass('icon-plus-sign')){
-        		$('#advanced_criteria_toggler > div > i').removeClass('icon-plus-sign').addClass('icon-minus-sign');
-        	}else{
-        		$('#advanced_criteria_toggler > div > i').removeClass('icon-minus-sign').addClass('icon-plus-sign');
-        	}
-        	//selectBuilding(8);
-    	});
-    	
-    	function createBuilding(){
-    	
-    	
-    	
-    	}
-    	
-    	function setPending(pending){
-    		if(pending)
-    		{
-    			$('#changes_pending').css('display','');
-    		}else{
-    			$('#changes_pending').css('display','none');
-    		}
-    	}
-    	
-    	function selectBuilding(buildingId){
-    		socket.get('/buildings/getbuilding/'+buildingId,{},function(building){
-    		
-    			$('.edit-item-section').css('display','block');
-    		// Address
-    			$('#building_id').val(building.id);
-    			$('#street_number_begin').val(building.street_number_begin);
-    			$('#street_number_end').val(building.street_number_end);
-    			$('#street_name').val(building.street_name);
-    			$('#postal_code').val(building.postal_code);
-    			$('#city').val(building.city);
-    			$('#province').val(building.province).change(function(){
-    				setPending(true)
-    			});
-    		
-    		
-    		
-    		//Building Details
-    			$('#building_type').val(building.building_type);
-    			$('#property_mgmt_company').val(building.property_mgmt_company);
-    			$('#prev_property_mgmt_company').val(building.prev_property_mgmt_company);
-    			$('#heat_system').val(building.heat_system);
-    			$('#heat_system_age').val(building.heat_system_age);
-    			$('#boilers').val(building.boilers);
-    			$('#boiler_age').val(building.boiler_age);
-    			$('#cable_internet_provider').val(building.cable_internet_provider);
-    			$('#unit_quantity').val(building.unit_quantity);
-    			
-			//Equity Details
-    			$('#assessed_value').val(building.assessed_value);
-    			$('#sale_date').val(building.sale_date);
-    			$('#last_sale_price').val(building.last_sale_price);
-				
-    			
-    		});
-    	}
-    	
-    	function fileSelect(evt) {
-		   if (window.File && window.FileReader && window.FileList && window.Blob) {
-		        var files = document.getElementById('filesToUpload').files;
-		        for(var i = 0; i < files.length; i++) {
-		            resizeAndUpload(files[i]);
-		        }
-			} else {
-				var files = document.getElementById('filesToUpload').files;
-		        for(var i = 0; i < files.length; i++) {
-		            upload(files[i]);
-		        }
-			}
-		}
-		
-		function upload(file,cb){
-			socket.get('/upload/getPolicy',{},function(policy){
-			 		
-	 			lastImageUrl =  bucketPrefix + policy.filename+'.jpg';	 		
-			 	var xhr =  new XMLHttpRequest();
-				fd = new FormData();
-			 
-	    		
-	    		xhr.upload.addEventListener("progress", uploadProgress, false);
-				xhr.upload.addEventListener("load", transferComplete, false);
-				xhr.upload.addEventListener("error", transferFailed, false);
-	    		xhr.upload.addEventListener("loadstart", transferStart, false);
-				
-				// Populate the Post paramters.
-				fd.append('key', policy.filename+'.jpg');
-				fd.append('AWSAccessKeyId', policy.key);
-				fd.append('acl', 'private');
-				fd.append('success_action_status', "200");
-				fd.append('policy', policy.policy);
-				fd.append('signature',policy.signature);
-				fd.append('file', file);
-				xhr.open('POST', '//s3-us-west-2.amazonaws.com/credimages', true);
-				xhr.send(fd);
-				
-				cb();
-	 		});
-		}
-		
-		function resizeAndUpload(file) {
-			var reader = new FileReader();
-		    reader.onloadend = function() {
-			 
-			    var tempImg = new Image();
-			    tempImg.src = reader.result;
-			    tempImg.onload = function() {
-			 
-			        var MAX_WIDTH = 500; //125
-			        var MAX_HEIGHT = 400; //125
-			        var tempW = tempImg.width;
-			        var tempH = tempImg.height;
-			        if (tempW > tempH) {
-			            if (tempW > MAX_WIDTH) {
-			               tempH *= MAX_WIDTH / tempW;
-			               tempW = MAX_WIDTH;
-			            }
-			        } else {
-			            if (tempH > MAX_HEIGHT) {
-			               tempW *= MAX_HEIGHT / tempH;
-			               tempH = MAX_HEIGHT;
-			            }
-			        }
-			 
-			        var canvas = document.createElement('canvas');
-			        canvas.width = tempW;
-			        canvas.height = tempH;
-			        var ctx = canvas.getContext("2d");
-			        ctx.drawImage(tempImg, 0, 0, tempW, tempH);
-			        //var imageData = ctx.getImageData(0, 0, tempW, tempH);
-					//var typedArray = imageData.data;
-			        
-			        var dataURL = dataURItoBlob(canvas.toDataURL("image/jpeg"));
-			 
-			 		upload(dataURL,function(){
-			 		
-			 		});
-			 		
-				}
-		   }
-		   reader.readAsDataURL(file);
-		}
-		
-		function uploadProgress(evt){
-			if (evt.lengthComputable) {
-				$('.building-photo-wrapper > .span3:last').find('.progress > .bar').css('width',Math.round(evt.loaded * 100 / evt.total)+'%');
-				console.log('computable');
-			}
-			else{
-				console.log('progress');
-			}
-		}
-		
-		function transferStart(evt){
-			$('.building-photo-wrapper').append(buildingphototemplate());
-			$('.building-photo-wrapper > .span3:last').find('#UploadGif').css('display','block');
-			$('.building-photo-wrapper > .span3:last').find('.progress').css('display','block');
-			console.log('transfer Started');
-		}
-		
-		function transferComplete(evt){
+		$("#start_time_gen" ).data('datetimepicker').$element.on('changeDate',function(e,y){
 			setTimeout(function(){
-				$('.building-photo-wrapper > .span3:last').css('min-height',$('.building-photo-wrapper > .span3:last').height());
-				$('.building-photo-wrapper > .span3:last').find('#UploadGif').css('display','none');
-				$('.building-photo-wrapper > .span3:last').find('.progress').css('display','none');
-				$('.building-photo-wrapper > .span3:last').find('img').attr('src',lastImageUrl);
-				$('.building-photo-wrapper > .span3:last').find('.buildingimagetrash').click(function(){
-					$(this).parents('.buildingimage').remove();
-				});
-				
-			},2000);
-			console.log('transfer completed');
-		}
-		
-		function transferFailed(evt){
-			console.log('transfer failed');
-		
-		}
-		
-		
-		function dataURItoBlob(dataURI) {
-		    var binary = atob(dataURI.split(',')[1]);
-		    var array = [];
-		    for(var i = 0; i < binary.length; i++) {
-		        array.push(binary.charCodeAt(i));
-		    }
-		    return new Blob([new Uint8Array(array)], {type: 'image/jpeg'});
-		}
-    	
-    	
-    	
-    	
-	///////////////////////////
-    /// BUILDING       ////////
-    ///////////////////////////
-    	
-    	
-	var BuildingModel = Backbone.Model.extend({
-        urlRoot: '/buildings/getbuilding',
-        socket:null,
-        sync:function(method,model,options){
-        	var where = {};
-            if (options.where) {
-                where = {
-                    where: options.where
-                }
-            }
-            if(options.id){
-            	where.id = options.id;
-        	}
-            if(typeof this.urlRoot === "string" && this.urlRoot !== "") {
-                this.socket = socket;
-            	var collectionid = where.id?'/'+where.id:'';
-                this.socket.request(this.urlRoot+collectionid, where, _.bind(function(building){
-                    if(building.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
-                        location.reload(); // Will boot back to login screen
-                    }
-                    this.set(building);
-                    buildingView = new BuildingBackboneView({model: building});
-                }, this));
-            }
-        
-        }
-    });
-
-
-    var building = new BuildingModel();
-
-
-
-
-
-    	//var buildingtemplate = _.template($('#building-details-template').html());
-    	//$('.building-details-frame').append(buildingtemplate());
-    	
-    ///////////////////////////
-    /// Building      View ////
-    ///////////////////////////
-
-    var BuildingBackboneView = Backbone.View.extend({
-        el: '.building-details-frame',
-        events: {
-            //"change select.securityselect"   : "changeSecurity",
-
-        },
-        
-        initialize: function () {
-            this.render();
-        },
-        template: _.template($('#building-details-template').html()),
-        render: function () {
-            this.$el.html("");
-            
-            this.$el.append(this.template(this.model));
-            $('.edit-item-section').css('display','block');
-            
-            
-			buildingnotes.fetch({id:this.model.building_id});
-            
-            
-	    	$('.fileinput-button').click(function(){
-	    		$('#filesToUpload').click();
-	    	});
-	    	
-			$('#filesToUpload').change(function(){
-				fileSelect();
-			});
-			
-				
-		    $('#create_note').click(function(){
-		    	if(typeof(buildingnotes)!='undefined'){
-		    		var noteid = 'new_'+Math.floor((Math.random() * 1000000) + 1);
-		    		var newbuildingnote = new BuildingNotesModel({id:noteid,note:'',timestamp:'now',user:1});
-		    		buildingnotes.add(newbuildingnote);
-		    		buildingnotesView.render();
-		    		
-		        	
-		    		$('.building-note[noteid='+noteid+'] .edit-note').click();
-		    	}	
-			});	
-            
-        }
-    });
-    var buildingView;
-    	
-    	
-    	
-    ///////////////////////////
-    /// BUILDING NOTES ////////
-    ///////////////////////////
-    	
-	var BuildingNotesModel = Backbone.Model.extend({
-        urlRoot: '/buildings/note'
-    });
-
-    var BuildingNotesCollection = Backbone.Collection.extend({
-        sailsCollection: "",
-        socket: null,
-        sync: function(method, model, options){
-            var where = {};
-            if (options.where) {
-                where = {
-                    where: options.where
-                }
-            }
-            if(options.id){
-            	where.id = options.id;
-        	}
-            if(typeof this.sailsCollection === "string" && this.sailsCollection !== "") {
-                this.socket = socket;
-            	var collectionid = where.id?'/'+where.id:'';
-                this.socket.request("/" + this.sailsCollection+collectionid, where, _.bind(function(notes){
-                    if(notes.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
-                        location.reload(); // Will boot back to login screen
-                    }
-                    this.set(notes);
-                    buildingnotesView = new BuildingNotesBackboneView({collection: buildingnotes});
-                }, this));
-            }
-        }
-    });
-
-    var BuildingNotesCollection = BuildingNotesCollection.extend({
-        sailsCollection: 'buildings/notes',
-        model: BuildingNotesModel
-    });
-
-    var buildingnotes = new BuildingNotesCollection();
-    buildingnotes.fetch({id:11});
-
-
-
-
-
-    ///////////////////////////
-    /// BuildingNotes View ////
-    ///////////////////////////
-
-    var BuildingNotesBackboneView = Backbone.View.extend({
-        el: '#building-notes-wrapper',
-        events: {
-            //"change select.securityselect"   : "changeSecurity",
-            "click a.delete-note"   : "deleteNote",
-            "click a.edit-note" : "editNote"
-
-        },
-        editNote:function(event){
-        	var self = this;
-        	var blurTimeout;
-        	//event.target.parent('.building-note').find();
-        	var $notelement = $(event.target).parents('.building-note');
-        	var noteid= $notelement.attr('noteid');
-        	//var currentnote = $(event.target).parents('.building-note').find('.note-editable').html();
-        	//this.collection.get(noteid)
-        	$notelement.find('.note-editable').replaceWith('<textarea class="note-textarea-editable">'+this.collection.get(noteid).get('note')+'</textarea><button class="save-note-textarea-editable btn btn-primary">Save</button><button class="cancel-note-textarea-editable btn ">Cancel</button>');
-        	
-        	$notelement.find('.save-note-textarea-editable').click(function(){
-        		self.collection.get(noteid).set('note', $notelement.find('.note-textarea-editable').val());
-        		self.collection.get(noteid).set('modified', true);
-    		});
-        	
-        	$notelement.find('.note-textarea-editable').blur(function(){
-	        	blurTimeout = setTimeout(function(){
-	        		self.render();
-	        	},100);
-        	});
-        	$notelement.find('.note-textarea-editable').focus();
-        },
-        deleteNote:function(event){
+				datatable.api().ajax.reload();
+			},10);
+		});
+		$("#end_time_gen" ).data('datetimepicker').$element.on('changeDate',function(e,y){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		});
         
         
-        	var $notelement = $(event.target).parents('.building-note');
-        	var noteid= $notelement.attr('noteid');
-        	if($notelement.attr('noteid').indexOf("new")>-1){
-        		this.collection.remove(noteid);
-        		this.render();
-        	}else{
-        		this.collection.get(noteid).set('deleted',true);
-        		this.render();
-        	}
-        },
-        initialize: function () {
-            this.render();
-        },
-        template: _.template($('#building-notes-template').html()),
-        render: function () {
-            this.$el.html("");
-            
-            var tcollection = this.collection.sortBy(function(notes){
-                return notes.get("note").toString().toUpperCase();
-            });
-
-            for(var i=0; i<tcollection.length; i++)
-            {
-                //if(!tcollection[i].isNew()){
-                if(typeof(tcollection[i].get('deleted'))=='undefined'){
-                
-                	this.$el.append(this.template(tcollection[i].toJSON()));
-            	}
-                //}else{
-                //    this.$el.append(this.newusertemplate(tcollection[i].toJSON()));
-                //}
-            }
-            
-            
-            
-/*
-            // sorts by username
-            var tcollection = this.collection.sortBy(function(message){
-                return message.get("username").toString().toUpperCase();
-            });
-
-            for(var i=0; i<tcollection.length; i++)
-            {
-                if(!tcollection[i].isNew()){
-                    this.$el.append(this.template(tcollection[i].toJSON()));
-                }else{
-                    this.$el.append(this.newusertemplate(tcollection[i].toJSON()));
-                }
-            }
-            $('#adminusers > div.row-fluid:even').addClass('odd');
-            $('#adminusers > div.row-fluid:odd').addClass('even');
-*/
-            //setChangesPending();  // recalculates and displays if changes are pending
-        }
-    });
-    var buildingnotesView;
-    
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    /////////////////////////////////////////
-    ////// BUiLDING CONTACTS ////////////////
-    /////////////////////////////////////////
-    
-    
-    
-    var BuildingContactsModel = Backbone.Model.extend({
-        urlRoot: '/buildings/getcontacts'
-    });
-
-    var BuildingContactsCollection = Backbone.Collection.extend({
-        sailsCollection: "",
-        socket: null,
-        sync: function(method, model, options){
-            var where = {};
-            if (options.where) {
-                where = {
-                    where: options.where
-                }
-            }
-            if(options.id){
-            	where.id = options.id;
-        	}
-            if(typeof this.sailsCollection === "string" && this.sailsCollection !== "") {
-                this.socket = socket;
-            	var collectionid = where.id?'/'+where.id:'';
-                this.socket.request("/" + this.sailsCollection+collectionid, where, _.bind(function(contacts){
-                    if(contacts.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
-                        location.reload(); // Will boot back to login screen
-                    }
-                    this.set(contacts);
-                    buildingcontactsView = new BuildingContactsBackboneView({collection: buildingcontacts});
-                }, this));
-            }
-        }
-    });
-
-    var BuildingContactsCollection = BuildingContactsCollection.extend({
-        sailsCollection: 'buildings/contacts',
-        model: BuildingContactsModel
-    });
-
-    var buildingcontacts = new BuildingContactsCollection();
-
-
-
-
-
-    //////////////////////////////
-    /// BuildingContacts View ////
-    //////////////////////////////
-
-    var BuildingContactsBackboneView = Backbone.View.extend({
-        elowners: '#building-owners-wrapper',
-        elsellers: '#building-sellers-wrapper',
-        events: {
-            //"change select.securityselect"   : "changeSecurity",
-            "click a.delete-note"   : "deleteNote",
-            "click a.edit-note" : "editNote"
-
-        },
-       /* editNote:function(event){
-        	var self = this;
-        	var blurTimeout;
-        	//event.target.parent('.building-note').find();
-        	var $notelement = $(event.target).parents('.building-note');
-        	var noteid= $notelement.attr('noteid');
-        	//var currentnote = $(event.target).parents('.building-note').find('.note-editable').html();
-        	//this.collection.get(noteid)
-        	$notelement.find('.note-editable').replaceWith('<textarea class="note-textarea-editable">'+this.collection.get(noteid).get('note')+'</textarea><button class="save-note-textarea-editable btn btn-primary">Save</button><button class="cancel-note-textarea-editable btn ">Cancel</button>');
-        	
-        	$notelement.find('.save-note-textarea-editable').click(function(){
-        		self.collection.get(noteid).set('note', $notelement.find('.note-textarea-editable').val());
-        		self.collection.get(noteid).set('modified', true);
-    		});
-        	
-        	$notelement.find('.note-textarea-editable').blur(function(){
-	        	blurTimeout = setTimeout(function(){
-	        		self.render();
-	        	},100);
-        	});
-        	$notelement.find('.note-textarea-editable').focus();
-        },
-        deleteNote:function(event){
         
         
-        	var $notelement = $(event.target).parents('.building-note');
-        	var noteid= $notelement.attr('noteid');
-        	if($notelement.attr('noteid').indexOf("new")>-1){
-        		this.collection.remove(noteid);
-        		this.render();
-        	}else{
-        		this.collection.get(noteid).set('deleted',true);
-        		this.render();
-        	}
-        },*/
-        initialize: function () {
-            this.render();
-        },
-        template: _.template($('#building-contact-template').html()),
-        render: function () {
-            this.$elowners.html("");
-            this.$elsellers.html("");
-            
-            var tcollection = this.collection.sortBy(function(contacts){
-                return notes.get("owner_name").toString().toUpperCase();
-            });
-
-            for(var i=0; i<tcollection.length; i++)
-            {
-                //if(!tcollection[i].isNew()){
-               // if(typeof(tcollection[i].get('deleted'))=='undefined'){
-                
-                	this.$elowners.append(this.template(tcollection[i].toJSON()));
-            	//}
-                //}else{
-                //    this.$el.append(this.newusertemplate(tcollection[i].toJSON()));
-                //}
-            }
-            
-            
-            
-
-            // sorts by username
-            //var tcollection = this.collection.sortBy(function(message){
-            //    return message.get("username").toString().toUpperCase();
-            //});
-
-            //for(var i=0; i<tcollection.length; i++)
-            //{
-            //    if(!tcollection[i].isNew()){
-            //        this.$el.append(this.template(tcollection[i].toJSON()));
-            //    }else{
-            //        this.$el.append(this.newusertemplate(tcollection[i].toJSON()));
-            //    }
-            //}
-            //$('#adminusers > div.row-fluid:even').addClass('odd');
-            //$('#adminusers > div.row-fluid:odd').addClass('even');
-
-            //setChangesPending();  // recalculates and displays if changes are pending
+        function rebindDateTimePickerCloser(){
+	        $('.bootstrap-datetimepicker-widget > div > div.close-datetime').unbind();
+	        $('.bootstrap-datetimepicker-widget > div > div.close-datetime').click(function(){
+	            $("#end_time_gen" ).data('datetimepicker').hide();
+	            $("#start_time_gen" ).data('datetimepicker').hide();
+	        });
         }
-    });
-    var buildingcontactsView;	
-    	
+        rebindDateTimePickerCloser();
+        
     	
     	
         

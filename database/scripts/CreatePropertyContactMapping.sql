@@ -2,11 +2,11 @@ USE cred;
 DROP PROCEDURE if EXISTS `CreatePropertyContactMapping` ;
 
 DELIMITER $$
-CREATE PROCEDURE `CreatePropertyContactMapping`(IN contactID INT, IN buildingID INT,IN companyID INT, IN contactTypeID INT,OUT id INT)
+CREATE PROCEDURE `CreatePropertyContactMapping`(IN contactID INT, IN companyID INT,IN addressID INT, IN contactTypeID INT,OUT id INT)
 BEGIN
-	INSERT INTO cur_buildings(contact_id, company_id, property_address_id, contact_type_id)
+	INSERT INTO cur_owner_seller_property_mapping(contact_id, company_id, property_address_id, contact_type_id)
 	
-	VALUES (contactID, buildingID, companyID, contactTypeID);
+	VALUES (contactID, companyID, addressID , contactTypeID);
 
 	SET id = LAST_INSERT_ID();
 END$$

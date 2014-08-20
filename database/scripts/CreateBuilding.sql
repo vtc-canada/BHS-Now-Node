@@ -12,7 +12,7 @@ CREATE PROCEDURE `CreateBuilding`(IN addressID INT, IN buildingTypeID INT,IN hea
 BEGIN
 	INSERT INTO cur_buildings(cur_address_id,ref_building_type_id,is_deleted,heat_system_age,windows_installed_year
 		,elevator_installed_year,boiler_installed_year,cable_internet_provider,assessed_value
-		,heat_system_type_id,unit_quantity,sale_date,price_per_unit,property_mgmt_company
+		,heat_system_type_id,unit_quantity,sale_date,unit_price,property_mgmt_company
 		,prev_property_mgmt_company, last_sale_price,images,bachelor_price,bedroom1_price,bedroom2_price,bedroom3_price 
 		,bachelor_units ,bedroom1_units ,bedroom2_units ,bedroom3_units,building_income ,has_elevator ,last_elevator_upgrade_year,last_boiler_upgrade_year  ) 
 	

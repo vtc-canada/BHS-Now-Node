@@ -32,7 +32,7 @@ SELECT
 	,cur_buildings.bedroom3_units
 	,cur_buildings.assessed_value
 	,cur_buildings.building_income
-	,cur_buildings.price_per_unit
+	,cur_buildings.unit_priceGetBuildings
 	,cur_buildings.last_sale_price
 	,cur_buildings.sale_date
 	,cur_buildings.images

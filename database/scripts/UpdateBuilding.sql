@@ -22,7 +22,7 @@ BEGIN
 			,heat_system_type_id = heatSystemTypeID
 			,unit_quantity = unitQuantity
 			,sale_date = saleDate
-			,price_per_unit = pricePerUnit
+			,unit_price = pricePerUnit
 			,property_mgmt_company = propertyMgmtCompany
 			,prev_property_mgmt_company = prevPropertyMgmtCompany
 			,last_sale_price = lastSalePrice

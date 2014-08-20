@@ -29,6 +29,8 @@
             'Cancel':'Cancel',
             'Delete':'Delete',
             'To create a new owner':'To create a new owner, select the contact and/or company associated with this building',
+            'To create a new sale':'To create a new sale, click create',
+            'Create':'Create',
             'Contact':'Contact',
             'Company':'Company'
         },
@@ -61,6 +63,8 @@
             'Cancel':'Cancel',
             'Delete':'Delete',
             'To create a new owner':'To create a new owner, select the contact and/or company associated with this building',
+            'To create a new sale':'To create a new sale, click create',
+            'Create':'Create',
             'Contact':'Contact',
             'Company':'Company'
         }
@@ -87,22 +91,28 @@
         <div class="span8 offset2 create-report-controls" style="padding-top: 60px;">
            <div class="row-fluid">
                <div class="row">
-                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="reporttype">Quick Search:</label></div>
+                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_address">Search Address:</label></div>
                    <div class="span8 report-control-right-control">
-                       <input type="text" id="searchfield" value="York">
+                       <input type="text" id="search_address" value="">
                    </div>
                </div>
-               <div class="row" style="margin-top:15px;">
+               <div class="row">
+                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_contact">Search Contact:</label></div>
+                   <div class="span8 report-control-right-control">
+                       <input type="text" id="search_contact" value="">
+                   </div>
+               </div>
+               <div class="row" style="margin-top:15px; display:none;">
                    <div class="span7 report-control-left-label">
                    		<a id="advanced_criteria_toggler" data-toggle="collapse" data-target="#collapseadvanced" style="text-decoration: none; color: #5a6573;">
 							<div style="float:left;"></i><i class="icon-plus-sign icon-2x"></i></div><div style="float: left; padding-bottom: 20px;margin-top: -6px;margin-left: 20px;"><h4>Advanced Criteria</h4></div>
 						</a>
                    </div>
                </div>
-               <div class="row collapse" id="collapseadvanced">
-	               <div class="row-fluid">
+               <div class="row " id="collapseadvanced">
+	               <div class="row-fluid" style="min-height: 40px;">
 	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="reporttype">Units:</label></div>
-	                   <div class="span7 report-control-right-control">
+	                   <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
 	                   		<div class="row-fluid">
 	                   			<div class="pull-left" style="width:35px;"><span id="units_min">0</span></div>
 	                   			
@@ -170,17 +180,91 @@
 
 <div class="row-fluid edit-item-section" style="display:none; margin-top:19px;">
     <div class="span10 offset1 page-controls-wrapper">
-        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;">Edit Building Details</span>
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;" id="building-section-title">Edit Building Details</span>
          	<button style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="save_building">Save</button>
          	<div style="margin-right: 10px; color: rgb(153, 0, 0); font-weight: 400; display: none;" class="pull-right save_pull" id="changes_pending">Changes Pending. &nbsp;</div>
   		 </div>
         <div class="row-fluid " id="iframediv">
         	<div class="content-wrapper building-details-frame">
+        		<div id="building-sales">
+        			<div class="row-fluid">
+						<div class="span12">
+							<div class="row-fluid">
+								<div class="row-category">
+									<span class="" id="sales_title">
+										<i class="icon-plus-sign" style="margin-right:10px; display:none;"></i>
+										<i class="icon-pencil"></i> &nbsp&nbsp<b>Sales History</b>
+									</span>
+									<div class="pull-right" style="height:40px;">
+										<span class="row-category-button-wrapper">
+											<span id="create_sale" class="btn btn-primary">
+							                    <i class="glyphicon glyphicon-plus"></i>
+							                    <span>Create Sale</span>
+							                </span>
+										</span>
+									</div>
+									<div class="pull-right" style="height:40px; display:none;">
+										<span  id="delete_sale" class="row-category-button-wrapper">
+											<span class="btn btn-danger">
+							                    <i class="glyphicon glyphicon-plus"></i>
+							                    <span>Delete Sale</span>
+							                </span>
+										</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				
+					<div id="building-sales-wrapper" class="row-fluid">
+					
+					</div>
+        		</div>
+        		<div id="main-building-details">
+        		
+        		</div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Modal  for creating new user -->
+<div id="addSaleModal" class="modal hide fade " tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabelAdd">Create Sale</h3>
+    </div>
+    <div class="modal-body building-segment-wrapper">
+        <div class="row-fluid"><p><%= translate[locale]['To create a new sale'] %></p></div>
+        
+		<div class="row-fluid">
+			<div class="span5 segment-label">Sale Price:</div>
+			<div class="span7"><input type="text" id="sale_price" value=""></div>
+		</div>
+		<div class="row-fluid">
+			<div class="span5 segment-label">Sale Date:</div>
+			
+			<div class="span7">
+				<div class="input-append span3 report-control-right-control" id="new_sale_date_gen">
+       				<input class="" data-format="yyyy-MM-dd" style="width: 179px;" id="new_sale_date" type="text" value="">
+   					<span class="add-on"><i data-time-icon="icon-time" data-date-icon="icon-calendar" class="icon-calendar"> </i> </span>
+   				</div>
+   			</div>
+		</div>
+		
+		<div class="row-fluid">
+			<div class="span5 segment-label">Unit Price:</div>
+			<div class="span7" style="margin-bottom:10px;">
+				<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="new-unit-price-radio" id="new_unit_price_calculated_radio" checked="checked">&nbsp&nbsp&nbspCalculated - <span id="new_unit_price_calculated_radio_label"></span></div>
+				<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="new-unit-price-radio" id="new_unit_price_manual_radio">&nbsp&nbsp&nbspManual - <input style="width:118px; margin-bottom:0px;" type="text" class="" id="new_unit_price"></div>
+			</div>
+		</div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true"><%= translate[locale]['Cancel'] %></button>
+        <button class="btn btn-primary" id="confirmaddsale"><%= translate[locale]['Create'] %></button>
+    </div>
+</div>
 
 <!-- Modal  for creating new user -->
 <div id="addContactModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -223,7 +307,7 @@
 				</div>
 				<div class="row-fluid">
 					<div class="span5 segment-label">Contact:</div>
-					<div class="span7 segment-label-value" id="mapping_new_contact_name"></div>
+					<div class="span7 segment-label-value" contact_id="" id="mapping_new_contact_name"></div>
 				</div>
 				<div class="row-fluid">
 					<div class="span5 segment-label">Phone:</div>
@@ -249,8 +333,8 @@
 <script type="text/template" id="building-photo-template">
 	<div class="span3 buildingimage">
 		<div class="row-fluid" style="position:relative;">
-			<img src="">
-			<div class="buildingimagetrash"><i class="icon-trash icon-2x"></i></div>
+			<img src="{{=image}}" thumb="{{=thumb}}">
+			{{if(enabled){ }}<div class="buildingimagetrash"><i class="icon-trash icon-2x"></i></div>{{ } }}
 			
 			<div id="UploadGif" style="margin: auto; display: none;">
                 <div id="blockG_1" class="UploadGif_block">
@@ -271,6 +355,10 @@
 </script>
 
 <script type="text/template" id="building-details-template">
+
+
+
+	
 	<div class="row-fluid">
 		<div class="span12">
 			<div class="row-fluid">
@@ -319,27 +407,27 @@
 		<div class="row-fluid">
 			<div class="span5 segment-label">Street Number Begin:</div>
 			
-			<div class="span7"><input type="hidden" id="building_id" value="{{=building_id}}"><input type="text" id="street_number_begin" value="{{=street_number_begin}}"></div>
+			<div class="span7"><input type="hidden" id="building_id" value="{{=building_id}}"><input type="text" id="street_number_begin" {{=typeof(sale_id)!='undefined'?'disabled="disabled"':''}} value="{{=street_number_begin}}"></div>
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">Street Number End:</div>
-			<div class="span7"><input type="text" id="street_number_end" value="{{=street_number_end}}"></div>
+			<div class="span7"><input type="text" id="street_number_end" value="{{=street_number_end}}"  {{=typeof(sale_id)!='undefined'?'disabled="disabled"':''}}></div>
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">Street Name:</div>
-			<div class="span7"><input type="text" id="street_name" value="{{=street_name}}"></div>
+			<div class="span7"><input type="text" id="street_name" value="{{=street_name}}"  {{=typeof(sale_id)!='undefined'?'disabled="disabled"':''}}></div>
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">Postal Code:</div>
-			<div class="span7"><input type="text" id="postal_code" value="{{=postal_code}}"></div>
+			<div class="span7"><input type="text" id="postal_code" value="{{=postal_code}}"  {{=typeof(sale_id)!='undefined'?'disabled="disabled"':''}}></div>
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">City:</div>
-			<div class="span7"><input type="text" id="city" value="{{=city}}"></div>
+			<div class="span7"><input type="text" id="city" value="{{=city}}"  {{=typeof(sale_id)!='undefined'?'disabled="disabled"':''}}></div>
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">Province:</div>
-			<div class="span7"><input type="text" id="province" value="{{=province}}"></div>
+			<div class="span7"><input type="text" id="province" value="{{=province}}"  {{=typeof(sale_id)!='undefined'?'disabled="disabled"':''}}></div>
 		</div>
 	</div>	
 	
@@ -488,8 +576,15 @@
 		<div class="row-fluid">
 			<div class="span5 segment-label">Building Income:</div>
 			<div class="span7" style="margin-bottom:10px;">
-				<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="building-income-radio" id="income_calculated_radio">&nbsp&nbsp&nbspCalculated - <span id="income_calculated_radio_label"></span></div>
-				<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="building-income-radio" id="income_manual_radio">&nbsp&nbsp&nbspManual - <input style="width:118px; margin-bottom:0px;" type="text" class="" id="income_manual"></div>
+				<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="building-income-radio" id="income_calculated_radio" {{ if(building_income==null){ }}checked="checked"{{ } }}>&nbsp&nbsp&nbspCalculated - <span id="income_calculated_radio_label"></span></div>
+				<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="building-income-radio" id="income_manual_radio" {{ if(building_income!=null){ }}checked="checked"{{ } }}>&nbsp&nbsp&nbspManual - <input style="width:118px; margin-bottom:0px;" type="text" class="" id="building_income" {{ if(building_income==null){ }}disabled="disabled" {{ }else{ }}value="{{=building_income}}"{{ } }}></div>
+			</div>
+		</div>
+		<div class="row-fluid">
+			<div class="span5 segment-label">Unit Price:</div>
+			<div class="span7" style="margin-bottom:10px;">
+				<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="unit-price-radio" id="unit_price_calculated_radio" {{ if(unit_price==null){ }}checked="checked"{{ } }}>&nbsp&nbsp&nbspCalculated - <span id="unit_price_calculated_radio_label"></span></div>
+				<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="unit-price-radio" id="unit_price_manual_radio" {{ if(unit_price!=null){ }}checked="checked"{{ } }}>&nbsp&nbsp&nbspManual - <input style="width:118px; margin-bottom:0px;" type="text" class="" id="unit_price" {{ if(unit_price==null){ }}disabled="disabled" {{ }else{ }}value="{{=unit_price}}"{{ } }}></div>
 			</div>
 		</div>
 		<div class="row-fluid">
@@ -510,7 +605,7 @@
 			<div class="span7"><input type="text" id="last_sale_price" value="{{=last_sale_price}}"></div>
 		</div>
 	</div>
-	
+	{{ if(typeof(sale_id)=='undefined'&&building_id!='new'){ }}
 	<div class="row-fluid">
 		<div class="span12">
 			<div class="row-fluid">
@@ -546,9 +641,29 @@
 	<div id="building-notes-wrapper" class="row-fluid">
 	
 	</div>
-
+	{{ } }}
 </script>
 
+
+<script type="text/template" id="building-sales-template">
+	<div class="row-fluid building-sale" noteid="{{=id}}">
+		<div class="span3">
+			<b>{{=timestamp}}</b>
+		</div>
+		<div class="span3">
+			{{=buyer}}
+		</div>
+		<div class="span2">
+			{{=seller}}
+		</div>
+		<div class="span2">
+			{{=property_mgmt_company}}
+		</div>
+		<div class="span2">
+			{{=sale_price}}
+		</div>
+	</div>
+</script>
 
 <script type="text/template" id="building-notes-template">
 	<div class="row-fluid building-note" noteid="{{=id}}">
@@ -569,7 +684,7 @@
 </script>
 
 <script type="text/template" id="building-contact-template">
-	<div class="row-fluid building-contact-wrapper" contact_mapping_id="{{=id}}" {{ if(typeof(dodelete)!='undefined'){ }}style="display:none;"{{ } }}>
+	<div class="row-fluid building-contact-wrapper" contact_mapping_id="{{=mapping_id}}" contact_id="{{=contact_id}}" {{ if(typeof(dodelete)!='undefined'){ }}style="display:none;"{{ } }}>
 	
 		<div class="row-fluid">
 			<div class="span5 segment-label">Company:</div>
@@ -604,6 +719,18 @@
 </script>
 
 
+<script type="text/template" id="building-sale-template">
+	<div class="row-fluid building-sale-wrapper generic-table-styling {{=typeof(selected)!='undefined'&&selected?'table-row-selected':''}}" sale_id="{{=sale_id}}" building_id="{{=building_id}}">
+		<div class="row-fluid">
+			<div class="span3">{{=sale_date}}</div>
+			<div class="span2">{{=owner}}</div>
+			<div class="span2">{{=seller}}</div>
+			<div class="span2">{{=property_mgmt_company}}</div>
+			<div class="span3">{{=sale_price}}</div>
+		</div>
+	</div>
+</script>
+
 
 
 <script>
@@ -612,16 +739,57 @@
     var alarms;
     $(document).ready(function(){
     
+    	var unitsMax = null;
+    	var unitsMin = null;
+    	var sliderLimit = 250;
     	var bucketPrefix = "https://s3-us-west-2.amazonaws.com/credimages/";
+    	var tempImg = null;
     	var lastImageUrl = "";
     	var lastThumbUrl = "";
+        var MAX_WIDTH = 500;
+        var MAX_HEIGHT = 400;
+        var THMB_WIDTH = 125;
+        var THMB_HEIGHT = 125;
+        var leaveSalesExpanded = false;
+        var triggerScroll = false;
+    	var init_id = <%=typeof(init_id)!='undefined'?init_id:null%>;
+    	
+    	
     
     	var buildingphototemplate = _.template($('#building-photo-template').html());
     	
     	//var buildingtemplate = _.template($('#building-details-template').html());
     	//$('.building-details-frame').append(buildingtemplate());
     	
+		$('#create_building').click(function(){
 		
+			$('#buildings tbody tr.selected').removeClass('selected');
+			building.clear();
+			building = new BuildingModel({building_id:'new',street_number_begin:'',street_number_end:'',street_name:'',city:'',province:'',postal_code:'',building_type:1
+										,property_mgmt_company:'',prev_property_mgmt_company:'',heat_system_age:'',boiler_installed_year:'',elevator_installed_year:'',windows_installed_year:'',cable_internet_provider:'',assessed_value:''
+										,bachelor_price:'',bedroom1_price:'',bedroom2_price:'',bedroom3_price:'',bachelor_units:'',bedroom1_units:'',bedroom2_units:'',bedroom3_units:'',building_income:''
+										,unit_price:'',sale_date:'',last_sale_price:'',images:''});
+			$('#building-sales').css('display','none');
+			buildingcontacts.reset();
+			if(buildingcontactsView==null)
+            {
+            	buildingcontactsView = new BuildingContactsBackboneView({collection: buildingcontacts});
+        	}
+        	buildingnotes.reset();
+        	//if(buildingnotesView==null)
+        	//{
+        	//	buildingnotesView = new BuildingNotesBackboneView({collection: buildingnotes});
+        	//}         
+        	
+			
+            if(buildingView==null){
+            	buildingView = new BuildingBackboneView();
+            	buildingView.render();
+            }else{
+            	buildingView.render();
+            }
+		
+		});
 		
 		
 
@@ -632,12 +800,15 @@
 		        "ajax": {
 		        	"url":"/buildings/getajax",
 	        		"data":function(d){
-	        			d.search = $("#searchfield").val();
-	        			d.unitQuantityMin = $('#units_min').val();
-	        			d.unitQuantityMax = $('#units_max').val();
+	        			d.address_search = $("#search_address").val();
+	        			d.contact_search = $("#search_contact").val();
+	        			d.unitQuantityMin = unitsMin==0?null:unitsMin;
+	        			d.unitQuantityMax = unitsMax==sliderLimit?null:unitsMax;
 	        			d.saleDateRangeStart = $('#start_time').val();
 	        			d.saleDateRangeEnd = $('#end_time').val();
-	        			console.log($("#searchfield").val());
+	        		},
+	        		error: function(xhr, error, thrown){
+	        			
 	        		}
 	        	},
 		        "aoColumns":[
@@ -653,30 +824,54 @@
 		        "rowCallback": function( row, data, displayIndex ) {
 					$(row).attr('building_id',data['building_id']);
 					$(row).click(function(){
-	               		//selectBuilding($(row).attr('building_id'));
     					building.fetch({id:parseInt($(row).attr('building_id'))});
                		});
 	               
 		        }
 	    });
+	    
+	    
+	     $('#buildings').on('draw.dt',function(event,datatable){
+	     	if(init_id){
+				building.fetch({id:init_id});
+	     		init_id = null;
+	     		leaveSalesExpanded = true;
+	     		triggerScroll = true;
+	     	}
+    	});
+    	
+    	
 
-		$('#searchfield').keydown(function(){
+		$('#search_address').keydown(function(){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		});
+		$('#search_contact').keydown(function(){
 			setTimeout(function(){
 				datatable.api().ajax.reload();
 			},10);
 		});
 		
+    	$('#units_slider').attr('data-slider-max',sliderLimit); // corrects limit
 		$('#units_slider').slider({tooltip: 'disabled'});
 		$('#units_slider').on('slide',function(slideEvt){
-			$('#units_min').html(slideEvt.value[0]);
-			if(slideEvt.value[1]==250)
+			unitsMin = slideEvt.value[0];
+			unitsMax = slideEvt.value[1]
+			$('#units_min').html(unitsMin);
+			
+			if(unitsMax==sliderLimit)
 			{
-				$('#units_max').html('250+');
+				$('#units_max').html(unitsMax+'+');
 			}else{
-				$('#units_max').html(slideEvt.value[1]);
+				$('#units_max').html(unitsMax);
 			}
 		});
-
+		$('#units_slider').on('slideStop',function(slideEvt){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		});
         $(window).resize(function(){
         });
         
@@ -700,64 +895,86 @@
             pickSeconds: false
         }).data('datetimepicker');
         
+        
+		$("#start_time_gen" ).data('datetimepicker').$element.on('changeDate',function(e,y){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		});
+		$("#end_time_gen" ).data('datetimepicker').$element.on('changeDate',function(e,y){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		});
+        
+        
+        
+        
+        $("#new_sale_date_gen" ).datetimepicker({
+            language: 'en',
+            format: 'yyyy-MM-dd hh:mm',
+            pick12HourFormat: false,
+            pickSeconds: false
+        }).data('datetimepicker');
+        
+        $('#sale_price').change(function(){
+          	var priceperunit = 0 ;
+	        if(!isNaN(parseInt(building.get('unit_quantity')))&&!isNaN(parseInt($('#sale_price').val()))){
+	        	priceperunit = (parseInt($('#sale_price').val()) / parseInt(building.get('unit_quantity'))).toFixed(2);			        	
+	        }
+        	$('#new_unit_price_calculated_radio_label').html(priceperunit);
+    	});
+    	
+    	$('#confirmaddsale').click(function(){
+    		//var options = {
+    		//	sale_price : $('#sale_price').val();
+    		//	sale_date : $('#new_sale_date').val();
+    		//	unit_price : $('#new_unit_price_manual_radio').is(':checked')?$('#new_unit_price').val():null;
+    		//	building : building.toJSON();
+    		//}
+    		building.set('sale_id','new');
+    		building.set('last_sale_price',parseInt($('#sale_price').val()));
+    		building.set('sale_date',$('#new_sale_date').val());
+    		//building.set('buildingcontacts',buildingcontacts);
+    		if($('#new_unit_price_manual_radio').is(':checked')&&!isNaN(parseFloat($('#new_unit_price').val()))){
+    			building.set('unit_price', parseFloat($('#new_unit_price').val()));
+    		}else{
+    			building.set('unit_price',null);
+    		}
+    		//new_unit_price
+    		
+    		$('#save_building').click();
+    		
+			//socket.request('/building/edit',options,function(response){
+			
+			//});
+			$('#addSaleModal').modal('hide');
+		});
+        
         function rebindDateTimePickerCloser(){
 	        $('.bootstrap-datetimepicker-widget > div > div.close-datetime').unbind();
 	        $('.bootstrap-datetimepicker-widget > div > div.close-datetime').click(function(){
 	            $("#end_time_gen" ).data('datetimepicker').hide();
 	            $("#start_time_gen" ).data('datetimepicker').hide();
 	            $('#last_sale_date_gen').data('datetimepicker').hide();
+	            $('#new_sale_date_gen').data('datetimepicker').hide();
 	        });
         }
         rebindDateTimePickerCloser();
         
-        $('#advanced_criteria_toggler').click(function(){
+        /*$('#advanced_criteria_toggler').click(function(){
         	if($('#advanced_criteria_toggler > div > i').hasClass('icon-plus-sign')){
         		$('#advanced_criteria_toggler > div > i').removeClass('icon-plus-sign').addClass('icon-minus-sign');
         	}else{
         		$('#advanced_criteria_toggler > div > i').removeClass('icon-minus-sign').addClass('icon-plus-sign');
         	}
-        	//selectBuilding(8);
     	});
+    	*/
     	
     	function createBuilding(){
     	
     	
     	
-    	}
-    	
-    	function selectBuilding(buildingId){
-    		socket.get('/buildings/getbuilding/'+buildingId,{},function(building){
-    		
-    			$('.edit-item-section').css('display','block');
-    		// Address
-    			$('#building_id').val(building.id);
-    			$('#street_number_begin').val(building.street_number_begin);
-    			$('#street_number_end').val(building.street_number_end);
-    			$('#street_name').val(building.street_name);
-    			$('#postal_code').val(building.postal_code);
-    			$('#city').val(building.city);
-    			$('#province').val(building.province);
-    		
-    		
-    		
-    		//Building Details
-    			$('#building_type').val(building.building_type);
-    			$('#property_mgmt_company').val(building.property_mgmt_company);
-    			$('#prev_property_mgmt_company').val(building.prev_property_mgmt_company);
-    			$('#heat_system').val(building.heat_system);
-    			$('#heat_system_age').val(building.heat_system_age);
-    			$('#boilers').val(building.boilers);
-    			$('#boiler_age').val(building.boiler_age);
-    			$('#cable_internet_provider').val(building.cable_internet_provider);
-    			$('#unit_quantity').val(building.unit_quantity);
-    			
-			//Equity Details
-    			$('#assessed_value').val(building.assessed_value);
-    			$('#sale_date').val(building.sale_date);
-    			$('#last_sale_price').val(building.last_sale_price);
-				
-    			
-    		});
     	}
     	
     	function fileSelect(evt) {
@@ -777,7 +994,12 @@
 		function upload(file,cb){
 			socket.get('/upload/getPolicy',{},function(policy){
 			 		
-	 			lastImageUrl =  bucketPrefix + policy.filename+'.jpg';	 		
+		 		if(lastImageUrl==''){
+		 			lastImageUrl =  bucketPrefix + policy.filename+'.jpg';
+		 		}else{
+		 			lastThumbUrl = bucketPrefix + policy.filename+'.jpg';
+		 		}
+	 				 		
 			 	var xhr =  new XMLHttpRequest();
 				fd = new FormData();
 			 
@@ -802,43 +1024,41 @@
 	 		});
 		}
 		
+		function canvasResize(width,height){
+		 	var tempW = tempImg.width;
+	        var tempH = tempImg.height;
+	        if (tempW > tempH) {
+	            if (tempW > width) {
+	               tempH *= width / tempW;
+	               tempW = width;
+	            }
+	        } else {
+	            if (tempH > height) {
+	               tempW *= height / tempH;
+	               tempH = height;
+	            }
+	        }
+	 
+	        var canvas = document.createElement('canvas');
+	        canvas.width = tempW;
+	        canvas.height = tempH;
+	        var ctx = canvas.getContext("2d");
+	        ctx.drawImage(tempImg, 0, 0, tempW, tempH);
+	        
+	        return dataURItoBlob(canvas.toDataURL("image/jpeg"));
+		}
+		
 		function resizeAndUpload(file) {
 			var reader = new FileReader();
 		    reader.onloadend = function() {
 			 
-			    var tempImg = new Image();
+			    tempImg = new Image();
 			    tempImg.src = reader.result;
 			    tempImg.onload = function() {
-			 
-			        var MAX_WIDTH = 500; //125
-			        var MAX_HEIGHT = 400; //125
-			        var tempW = tempImg.width;
-			        var tempH = tempImg.height;
-			        if (tempW > tempH) {
-			            if (tempW > MAX_WIDTH) {
-			               tempH *= MAX_WIDTH / tempW;
-			               tempW = MAX_WIDTH;
-			            }
-			        } else {
-			            if (tempH > MAX_HEIGHT) {
-			               tempW *= MAX_HEIGHT / tempH;
-			               tempH = MAX_HEIGHT;
-			            }
-			        }
-			 
-			        var canvas = document.createElement('canvas');
-			        canvas.width = tempW;
-			        canvas.height = tempH;
-			        var ctx = canvas.getContext("2d");
-			        ctx.drawImage(tempImg, 0, 0, tempW, tempH);
-			        //var imageData = ctx.getImageData(0, 0, tempW, tempH);
-					//var typedArray = imageData.data;
-			        
-			        var dataURL = dataURItoBlob(canvas.toDataURL("image/jpeg"));
-			 
-			 		upload(dataURL,function(){
-			 		
-			 		});
+			    
+			    	upload(canvasResize(MAX_WIDTH,MAX_HEIGHT),function(){
+			    	
+			    	});
 			 		
 				}
 		   }
@@ -847,38 +1067,63 @@
 		
 		function uploadProgress(evt){
 			if (evt.lengthComputable) {
-				$('.building-photo-wrapper > .span3:last').find('.progress > .bar').css('width',Math.round(evt.loaded * 100 / evt.total)+'%');
-				console.log('computable');
-			}
-			else{
-				console.log('progress');
+			
+				if(lastThumbUrl==''){ //(uploading main image)
+					$('.building-photo-wrapper > .span3:last').find('.progress > .bar').css('width',Math.round(evt.loaded * 75 / evt.total)+'%');
+				}else{
+					$('.building-photo-wrapper > .span3:last').find('.progress > .bar').css('width',(75+Math.round(evt.loaded * 25 / evt.total))+'%');
+				}
 			}
 		}
 		
 		function transferStart(evt){
-			$('.building-photo-wrapper').append(buildingphototemplate());
-			$('.building-photo-wrapper > .span3:last').find('#UploadGif').css('display','block');
-			$('.building-photo-wrapper > .span3:last').find('.progress').css('display','block');
-			console.log('transfer Started');
+			if(lastThumbUrl==''){
+				$('.building-photo-wrapper').append(buildingphototemplate({image:'',thumb:'',enabled:true}));
+				$('.building-photo-wrapper > .span3:last').find('#UploadGif').css('display','block');
+				$('.building-photo-wrapper > .span3:last').find('.progress').css('display','block');
+				$('.building-photo-wrapper > .span3:last').find('.UploadGif_block').css('height',(parseInt($('.building-photo-wrapper').css('width'))/11) +'px');
+				
+			}
 		}
 		
 		function transferComplete(evt){
-			setTimeout(function(){
-				$('.building-photo-wrapper > .span3:last').css('min-height',$('.building-photo-wrapper > .span3:last').height());
-				$('.building-photo-wrapper > .span3:last').find('#UploadGif').css('display','none');
-				$('.building-photo-wrapper > .span3:last').find('.progress').css('display','none');
-				$('.building-photo-wrapper > .span3:last').find('img').attr('src',lastImageUrl);
-				$('.building-photo-wrapper > .span3:last').find('.buildingimagetrash').click(function(){
-					$(this).parents('.buildingimage').remove();
-				});
-				
-			},2000);
-			console.log('transfer completed');
+			if(lastThumbUrl==''){
+		    	upload(canvasResize(THMB_WIDTH,THMB_HEIGHT),function(){
+		    	});
+			}else{
+				setTimeout(function(){
+					
+					$('.building-photo-wrapper > .span3:last').css('min-height',$('.building-photo-wrapper > .span3:last').height());
+					
+					$('.building-photo-wrapper > .span3:last').find('img').css('display','none');
+					$('.building-photo-wrapper > .span3:last').find('img').attr('src',lastImageUrl);
+					$('.building-photo-wrapper > .span3:last').find('img').attr('thumb',lastThumbUrl);
+					
+					var tmpSlide = new Image();
+		            tmpSlide.onload = function () {
+						$('.building-photo-wrapper > .span3:last').find('#UploadGif').css('display','none');
+						$('.building-photo-wrapper > .span3:last').find('.progress').css('display','none');
+						$('.building-photo-wrapper > .span3:last').find('img').css('display','block');
+		            	$('.building-photo-wrapper > .span3:last').css('min-height','');
+		            };
+		            tmpSlide.src = $('.building-photo-wrapper > .span3:last').find('img').attr('src');
+					
+					building.set('dosync',true);
+					setChangesPending();
+					
+					lastThumbUrl = '';  // reset the thumbnail url's for next uploads
+					lastImageUrl = '';
+					$('.fileinput-button').removeAttr('disabled');
+					$('.building-photo-wrapper > .span3:last').find('.buildingimagetrash').click(function(){
+						$(this).parents('.buildingimage').remove();
+					});
+				},500);
+			}
+			
 		}
 		
 		function transferFailed(evt){
 			console.log('transfer failed');
-		
 		}
 		
 		
@@ -914,6 +1159,40 @@
 	        }
 	    }
     	
+    	function parseBuildingImages(){
+    		var response = [];
+    		$('.buildingimage img').each(function(){
+    			response.push({image:$(this).attr('src'),thumb:$(this).attr('thumb')});
+    		});
+    		return response;
+    	}
+    	
+    	$('#save_building').click(function(){
+    	
+    		building.set('images',parseBuildingImages());
+    		var sendobj = {building:building, buildingnotes : buildingnotes, buildingcontacts:buildingcontacts};
+    		socket.get('/buildings/savebuilding',sendobj,function(response){
+    		
+                $('.alert-success').remove();
+                $('.page-banner').after('<div class="alert alert-success fade in" style="border-radius:0px;">'+
+                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+                        '<strong>'+'Success'+':&nbsp</strong>'+'Changes have been saved'+'</div>');
+                $('.main-content')[0].scrollTop=0;
+                
+                if(typeof(building.get('sale_id'))!='undefined'){
+                	building.fetch({id:response.building_id, sale_id: building.get('sale_id')=='new'?response.sale_id:parseInt(building.get('sale_id'))});  
+                }else{
+                	building.fetch({id:response.building_id});  
+                }
+                        
+                setTimeout(function(){
+                    setTimeout(function(){
+                        $('.alert-success').remove();
+                    },500);
+                    $('.alert-success').removeClass('in');
+                },alert_fadeout_time);
+    		});
+		});
     	
     	
 		///////////////////////////
@@ -925,15 +1204,7 @@
 	        urlRoot: '/buildings/getbuilding',
 	        socket:null,
 	        sync:function(method,model,options){
-	        	var where = {};
-	            if (options.where) {
-	                where = {
-	                    where: options.where
-	                }
-	            }
-	            if(options.id){
-	            	where.id = options.id;
-	        	}
+	        	var where = options;
 	            if(typeof this.urlRoot === "string" && this.urlRoot !== "") {
 	                this.socket = socket;
 	            	var collectionid = where.id?'/'+where.id:'';
@@ -945,6 +1216,7 @@
 	                    this.set(building);
 	                    if(buildingView==null){
 	                    	buildingView = new BuildingBackboneView();
+	                    	buildingView.render();
 	                    }else{
 	                    	buildingView.render();
 	                    }
@@ -969,33 +1241,94 @@
 	    ///////////////////////////
 	
 	    var BuildingBackboneView = Backbone.View.extend({
-	        el: '.building-details-frame',
+	        el: '#main-building-details',
 	        events: {
 	            "change .building-segment-wrapper input" : "inputChange",
 	            "change .building-segment-wrapper select" : "inputChange"
 	        },
-	        inputChange:function(){
+	        inputChange:function(event){
 	        	building.set('dosync',true);
-	        	//this.model.set('dosync',true);
+	        	if(typeof(building.get($(event.target).attr('id')))!='undefined'){
+	        		building.set($(event.target).attr('id'),$(event.target).val());
+	        	}else if($(event.target).attr('id')=='income_calculated_radio'){
+	        		building.set('building_income',null);
+	        		$('#building_income').attr('disabled','disabled');
+	        	}else if($(event.target).attr('id')=='income_manual_radio'){
+	        		$('#building_income').removeAttr('disabled');
+	        	}else if($(event.target).attr('id')=='unit_price_calculated_radio'){
+	        		building.set('unit_price',null);
+	        		$('#unit_price').attr('disabled','disabled');
+	        	}else if($(event.target).attr('id')=='unit_price_manual_radio'){
+	        		$('#unit_price').removeAttr('disabled');
+	        	}
 	        	setChangesPending();
 	        },
 	        initialize: function () {
-	            this.render();
+	            //this.render();
 	        },
 	        template: _.template($('#building-details-template').html()),
 	        render: function () {
+	        
+	        	if($("#last_sale_date_gen").data('datetimepicker')!=null){
+	        		$("#last_sale_date_gen").data('datetimepicker').destroy();
+        		}
 	            this.$el.html("");
+	            
+	            if(typeof(building.get('sale_id'))!='undefined'){
+	            	$('#building-section-title').html('SALE MODE');
+	            }else if(building.get('building_id')=='new'){
+	            	$('#building-section-title').html('Create Building');
+	            }else{
+	            	$('#building-section-title').html('Edit Building Details');
+	            }
+	            
 	            
 	            this.$el.append(this.template(building.toJSON()));
 	            $('.edit-item-section').css('display','block');
+	         
+	         	if(triggerScroll){
+		            if($('body').width()>979){
+						$('.main-content').animate({
+					        scrollTop: $(".edit-item-section").offset().top - $('.navbar-fixed-top').height()
+					    }, 1000);
+					}else{
+						$('html, body').animate({
+					        scrollTop: $(".edit-item-section").offset().top
+					    }, 1000);
+					}
+					triggerScroll = false;
+				}
 	            
 	            
-				buildingnotes.fetch({id:building.get('building_id')});
-				buildingcontacts.fetch({id:building.get('building_id')});
+	            if(typeof(building.get('sale_id'))=='undefined'){
+					buildingnotes.fetch({id:building.get('building_id')});
+					buildingcontacts.fetch({id:building.get('building_id')});
+					$('.fileinput-button').removeAttr('disabled');
+	            }else{
+					buildingcontacts.fetch({id:building.get('building_id'),sale_id:building.get('sale_id')});
+					$('.fileinput-button').attr('disabled','disabled');
+	            }
+				buildingsales.fetch({id:building.get('building_id')});
 	            
+	            if(building.get('images')!=''&&building.get('images')!='images'){
+		            var images = $.parseJSON(building.get('images'));
+		            for(var image in images){
+						$('.building-photo-wrapper').append(buildingphototemplate({image:images[image].image,thumb:images[image].thumb,enabled:typeof(building.get('sale_id'))=='undefined'}));
+						$('.building-photo-wrapper > .span3:last').find('.buildingimagetrash').click(function(){
+							$(this).parents('.buildingimage').remove();
+							building.set('dosync',true);
+							setChangesPending();
+						});
+		            }
+	            }
+	        
 	            
 		    	$('.fileinput-button').click(function(){
-		    		$('#filesToUpload').click();
+		    		if(typeof($(this).attr('disabled'))=='undefined')
+		    		{
+			    		$(this).attr('disabled','disabled');
+			    		$('#filesToUpload').click();
+		    		}
 		    	});
 		    	
 				$('#filesToUpload').change(function(){
@@ -1006,7 +1339,7 @@
 			    $('#create_note').click(function(){
 			    	if(typeof(buildingnotes)!='undefined'){
 			    		var noteid = 'new_'+Math.floor((Math.random() * 1000000) + 1);
-			    		var newbuildingnote = new BuildingNotesModel({id:noteid,note:'',timestamp:'now',user:1});
+			    		var newbuildingnote = new BuildingNotesModel({id:noteid,note:'',timestamp:'now',user:'<%=req.session.user.username%>'});
 			    		buildingnotes.add(newbuildingnote);
 			    		buildingnotesView.render();
 			    		
@@ -1016,7 +1349,7 @@
 				});	
 				
 				
-		        $("#last_sale_date_gen" ).datetimepicker({
+		        $("#last_sale_date_gen").datetimepicker({
 		            language: 'en',
 		            format: 'yyyy-MM-dd hh:mm',
 		            pick12HourFormat: false,
@@ -1030,6 +1363,19 @@
 		         });
 		        
 		        rebindDateTimePickerCloser();
+		        
+		        $('#create_sale').click(function(){
+		        	$('#addSaleModal div.alert-error').remove();
+			        $('#addSaleModal').modal('show');
+			        $('#addSaleModal #myModalLabelAdd').html('Add Sale to Building');
+			        $('#sale_price').val(building.get('last_sale_price'));
+			        $('#new_sale_date').val(new Date().toLocaleString());
+			        $('#new_unit_price').val('');
+			        $('#new_unit_price_calculated_radio')[0].checked = true;
+			        
+			        $('#sale_price').change();
+			      
+	        	});
 	            
 	            $('#add_owner').click(function(){
 			        $('#addContactModal div.alert-error').remove();
@@ -1050,10 +1396,13 @@
 						
 					
 						buildingcontacts.add({
-							id: 'new_'+Math.floor((Math.random() * 1000000) + 1)
+							mapping_id: 'new_'+Math.floor((Math.random() * 1000000) + 1)
+							,contact_id: $('#mapping_new_contact_name').attr('contact_id')
 							,dosync : true
-							,contact_name: $('#mapping_new_contact_name').html(), contact_type:'owner'
+							,contact_name: $('#mapping_new_contact_name').html()
+							, contact_type:'owner'
 							, cur_company_name:$('#mapping_new_company_name').html()
+							, company_id : newCompanyId
 							, email: $('#mapping_new_email').html()
 							, phone_number: $('#mapping_new_phone').html()
 							, street_number_begin:$('#mapping_address').attr('mapping_street_number_begin')
@@ -1087,10 +1436,13 @@
 						
 					
 						buildingcontacts.add({
-							id: 'new_'+Math.floor((Math.random() * 1000000) + 1)
+							mapping_id: 'new_'+Math.floor((Math.random() * 1000000) + 1)
+							,contact_id: $('#mapping_new_contact_name').attr('contact_id')
 							,dosync : true
-							,contact_name: $('#mapping_new_contact_name').html(), contact_type:'seller'
+							,contact_name: $('#mapping_new_contact_name').html()
+							, contact_type:'seller'
 							, cur_company_name:$('#mapping_new_company_name').html()
+							, company_id : newCompanyId
 							, email: $('#mapping_new_email').html()
 							, phone_number: $('#mapping_new_phone').html()
 							, street_number_begin:$('#mapping_address').attr('mapping_street_number_begin')
@@ -1105,6 +1457,7 @@
 						
 					});
 		        });
+		        
 	            setChangesPending();
 	        }
 	    });
@@ -1144,6 +1497,7 @@
 	        				console.log(newContactId);
 	        				
 	        				$('#mapping_new_contact_name').html(selectedoption.attr('value'));
+	        				$('#mapping_new_contact_name').attr('contact_id',selectedoption.attr('contact_id'));
 	        				$('#mapping_new_phone').html(selectedoption.attr('phone_number'));
 	        				$('#mapping_new_email').html(selectedoption.attr('email'));
 	        			}else{
@@ -1151,6 +1505,7 @@
 	        				console.log('cleared contact');
 	        				updateContactsCombobox();
 	        				
+	        				$('#mapping_new_contact_name').attr('contact_id','');
 	        				$('#mapping_new_contact_name').html('');
 	        				$('#mapping_new_phone').html('');
 	        				$('#mapping_new_email').html('');
@@ -1177,6 +1532,7 @@
 		        	contactscombobox.data('combobox').refresh(); 
 		        	$('input.contactscombobox').val('');
 					
+    				$('#mapping_new_contact_name').attr('contact_id','');
     				$('#mapping_new_contact_name').html('');
     				$('#mapping_new_phone').html('');
     				$('#mapping_new_email').html('');
@@ -1237,6 +1593,7 @@
 	        				$('#mapping_address').attr('mapping_city','');
 	        				$('#mapping_address').attr('mapping_province','');
 	        				$('#mapping_address').attr('mapping_postal_code','');
+	        				$('#mapping_address').attr('mapping_contact_id','');
 	        				$('#mapping_new_company_address_1').html('');
 	        				$('#mapping_new_company_address_2').html('');
 	        				$('#mapping_new_company_address_3').html('');
@@ -1351,7 +1708,7 @@
 	    });
 	
 	    var buildingnotes = new BuildingNotesCollection();
-	    buildingnotes.fetch({id:11});
+	    //buildingnotes.fetch({id:11});
 	
 	
 	
@@ -1372,6 +1729,7 @@
 	        editNote:function(event){
 	        	var self = this;
 	        	var blurTimeout;
+	        	var trackdetailstyping = '';
 	        	//event.target.parent('.building-note').find();
 	        	var $notelement = $(event.target).parents('.building-note');
 	        	var noteid= $notelement.attr('noteid');
@@ -1379,17 +1737,29 @@
 	        	//this.collection.get(noteid)
 	        	$notelement.find('.note-editable').replaceWith('<textarea class="note-textarea-editable">'+this.collection.get(noteid).get('note')+'</textarea><button class="save-note-textarea-editable btn btn-primary">Save</button><button class="cancel-note-textarea-editable btn ">Cancel</button>');
 	        	
-	        	$notelement.find('.save-note-textarea-editable').click(function(){
-	        		self.collection.get(noteid).set('note', $notelement.find('.note-textarea-editable').val());
-	        		self.collection.get(noteid).set('modified', true);
-	    		});
+	        	//setTimeout(function(){
+	        		$notelement.find('.save-note-textarea-editable').unbind();
+		        	$notelement.find('.save-note-textarea-editable').click(function(){
+		        		self.collection.get(noteid).set('note', trackdetailstyping);//$notelement.find('.note-textarea-editable').val());
+		        		self.collection.get(noteid).set('modified', true);
+		        		building.set('dosync',true);
+		        		setChangesPending();
+		    		});
+		    		$notelement.find('.note-textarea-editable').unbind();
+		        	$notelement.find('.note-textarea-editable').blur(function(){
+			        	blurTimeout = setTimeout(function(){
+			        		self.render();
+			        	},500);
+		        	});
+		        	$notelement.find('.note-textarea-editable').keyup(function(){
+		        		trackdetailstyping = $notelement.find('.note-textarea-editable').val();
+		        	});
+		        	
+		        	trackdetailstyping = $notelement.find('.note-textarea-editable').val();
+		        	$notelement.find('.note-textarea-editable').focus();
+		        	
+	    		//},100);
 	        	
-	        	$notelement.find('.note-textarea-editable').blur(function(){
-		        	blurTimeout = setTimeout(function(){
-		        		self.render();
-		        	},100);
-	        	});
-	        	$notelement.find('.note-textarea-editable').focus();
 	        },
 	        deleteNote:function(event){
 	        
@@ -1403,6 +1773,8 @@
 	        		this.collection.get(noteid).set('deleted',true);
 	        		this.render();
 	        	}
+	        	building.set('dosync',true);
+        		setChangesPending();
 	        },
 	        initialize: function () {
 	            this.render();
@@ -1411,6 +1783,9 @@
 	        render: function () {
 	            this.$el.html("");
 	            
+	        	if(building.get('building_id')!='new'){
+	        		//$('#building-sales').css('display','')
+	        	}
 	            var tcollection = this.collection.sortBy(function(notes){
 	                return notes.get("note").toString().toUpperCase();
 	            });
@@ -1476,15 +1851,7 @@
 	        sailsCollection: "",
 	        socket: null,
 	        sync: function(method, model, options){
-	            var where = {};
-	            if (options.where) {
-	                where = {
-	                    where: options.where
-	                }
-	            }
-	            if(options.id){
-	            	where.id = options.id;
-	        	}
+	            var where = options;
 	            if(typeof this.sailsCollection === "string" && this.sailsCollection !== "") {
 	                this.socket = socket;
 	            	var collectionid = where.id?'/'+where.id:'';
@@ -1555,7 +1922,7 @@
 	            $('a.remove-building-contact').click(function(){
 	            	var newidtemp = '';
 	            	var idstring = $(this).parents('.building-contact-wrapper').attr('contact_mapping_id');	            	
-		            var modtemp  = buildingcontacts.get(idstring);
+		            var modtemp  = buildingcontacts.findWhere({'mapping_id':idstring.indexOf('new')>-1?idstring:parseInt(idstring)});
 		            if(idstring.indexOf('new')>-1){
 		                buildingcontacts.remove(modtemp);
 		            }else{
@@ -1573,6 +1940,195 @@
 	    var buildingcontactsView;	
 	    	
     	
+    	
+    	
+    	/////////////////////////////////////////
+	    ////// BUiLDING SALES    ////////////////
+	    /////////////////////////////////////////
+	    
+	    
+	    
+	    var BuildingSalesModel = Backbone.Model.extend({
+	        urlRoot: '///'
+	    });
+	
+	    var BuildingSalesCollection = Backbone.Collection.extend({
+	        sailsCollection: "",
+	        socket: null,
+	        sync: function(method, model, options){
+	            var where = {};
+	            if (options.where) {
+	                where = {
+	                    where: options.where
+	                }
+	            }
+	            if(options.id){
+	            	where.id = options.id;
+	        	}
+	            if(typeof this.sailsCollection === "string" && this.sailsCollection !== "") {
+	                this.socket = socket;
+	            	var collectionid = where.id?'/'+where.id:'';
+	                this.socket.request("/" + this.sailsCollection+collectionid, where, _.bind(function(sales){
+	                    if(sales.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
+	                        location.reload(); // Will boot back to login screen
+	                    }
+	                    this.set(sales[0]);
+	                    if(buildingsalesView==null)
+	                    {
+	                    	buildingsalesView = new BuildingSalesBackboneView({collection: buildingsales});
+	                    
+	                    }else{
+	                    	buildingsalesView.render();
+	                    }
+
+	                }, this));
+	            }
+	        }
+	    });
+	
+	    var BuildingSalesCollection = BuildingSalesCollection.extend({
+	        sailsCollection: 'buildings/getsales',
+	        model: BuildingSalesModel
+	    });
+	
+	    var buildingsales = new BuildingSalesCollection();
+	
+	
+	
+	
+	
+	    //////////////////////////////
+	    /// BuildingSales View ////
+	    //////////////////////////////
+	
+	    var BuildingSalesBackboneView = Backbone.View.extend({
+	        el: '#building-sales-wrapper',
+	        events: {
+	            //"change select.securityselect"   : "changeSecurity",
+	            "click div.building-sale-wrapper" : "selectedSale"
+	
+	        },
+	        selectedSale : function(event){
+	        	$('.building-sale-wrapper').removeClass('table-row-selected');
+	        	$(event.target).parents('.building-sale-wrapper').addClass('table-row-selected');
+	        	
+				building.fetch({id:parseInt($(event.target).parents('.building-sale-wrapper').attr('building_id'))
+				,sale_id:parseInt($(event.target).parents('.building-sale-wrapper').attr('sale_id'))}); // fetches the building (with the attached sale info)
+	        	
+	        },
+	        initialize: function () {
+	            this.render();
+	        },
+	        template: _.template($('#building-sale-template').html()),
+	        render: function () {
+	        	$(this.el).html('');
+	        	
+	        	if(building.get('building_id')!='new'){
+	        		$('#building-sales').css('display','')
+	        	}
+	        	
+	        	var tcollection = this.collection.sortBy(function(sales){
+	                return sales.get("sale_id").toString().toUpperCase();
+	            });
+	            for(var i=0; i<tcollection.length; i++)
+	            {
+	            	if(typeof(building.get('sale_id'))!='undefined'&&parseInt(building.get('sale_id'))==tcollection[i].get('sale_id')){
+	            		tcollection[i].set('selected',true);
+	            	}
+                	$(this.el).append(this.template(tcollection[i].toJSON()));
+	            }
+	            
+	            
+	            $('#sales_title > i.icon-minus-sign').removeClass('icon-minus-sign').addClass('icon-plus-sign'); // resets the sign
+	            $('#sales_title').unbind();
+		        $('#delete_sale').unbind();
+		        $('#delete_sale').click(function(){
+		        	socket.get('/buildings/deletesale/'+building.get('sale_id'),[],function(deleteResponse){
+		        	
+		        		leaveSalesExpanded = true;
+		        		building.fetch({id:parseInt(building.get('building_id'))});
+		        	});
+	        	});
+		        
+		        // If the sales wrapper has data
+	        	if($('#building-sales-wrapper').html()!=''){
+	        		$('#sales_title > i.icon-plus-sign').css('display','');
+	        		$('#sales_title').css('cursor','pointer');
+			        $('#sales_title').click(function(){
+			        	if($('#building-sales-wrapper').css('display')=='none'){  //currently empty
+			        		$('#sales_title > i.icon-plus-sign').removeClass('icon-plus-sign').addClass('icon-minus-sign');
+			        	}else{  // currently shown
+			        		$('#sales_title > i.icon-minus-sign').removeClass('icon-minus-sign').addClass('icon-plus-sign');
+			        	}
+			        	$('#building-sales-wrapper').slideToggle('medium',function(){
+			        		if(typeof(building.get('sale_id'))!='undefined'&&$('#building-sales-wrapper').css('display')=='none'){ // sale mode
+			        			//alert('YOU ARE LEAVING SALE MODE - youre guna lose your changes');
+			        			building.fetch({id:parseInt(building.get('building_id'))});
+			        		}
+			        	});
+			        });
+	        	}else{
+	        		$('#sales_title > i.icon-plus-sign').css('display','none');
+	        		$('#sales_title').css('cursor','default');
+	        	}
+	        	if(typeof(building.get('sale_id'))!='undefined')
+	        	{
+	        		$('#delete_sale').parent().css('display','');
+	        		$('#create_sale').parent().css('display','none');
+	        		$('#sales_title > i.icon-plus-sign').removeClass('icon-plus-sign').addClass('icon-minus-sign');
+	        	}else{
+	        		$('#delete_sale').parent().css('display','none');
+	        		$('#create_sale').parent().css('display','');
+	        		if(leaveSalesExpanded){
+	        			leaveSalesExpanded=false;
+	        			if($('#building-sales-wrapper').html()!=''){
+	        				$('#sales_title > i.icon-plus-sign').removeClass('icon-plus-sign').addClass('icon-minus-sign');
+	        			}
+	        		}else{
+			       		$('#building-sales-wrapper').css('display','none');
+		       		}
+	        	}
+		        
+		        
+	            
+	        	/*
+	            $(this.elowners).html("");
+	            $(this.elsellers).html("");
+	            
+	            var tcollection = this.collection.sortBy(function(sales){
+	                return sales.get("sale_name").toString().toUpperCase();
+	            });
+	
+	            for(var i=0; i<tcollection.length; i++)
+	            {
+	               if(tcollection[i].get('sale_type')=='owner'){
+	                	$(this.elowners).append(this.template(tcollection[i].toJSON()));
+	            	}else if(tcollection[i].get('sale_type')=='seller'){
+	                   $(this.elsellers).append(this.template(tcollection[i].toJSON()));
+	                }
+	            }
+	            
+	            $('a.remove-building-sale').unbind();
+	            
+	            $('a.remove-building-sale').click(function(){
+	            	var newidtemp = '';
+	            	var idstring = $(this).parents('.building-sale-wrapper').attr('sale_mapping_id');	            	
+		            var modtemp  = buildingsales.get(idstring);
+		            if(idstring.indexOf('new')>-1){
+		                buildingsales.remove(modtemp);
+		            }else{
+		                modtemp.set({dodelete:1});
+		            }
+	                buildingsalesView.render();
+		
+		            setChangesPending();
+	            	
+	            	
+            	});
+            	setChangesPending();*/
+	        }
+	    });
+	    var buildingsalesView;	
     	
         
     });
