@@ -25,10 +25,8 @@ FROM
 	INNER JOIN cur_owner_seller_property_mapping AS mapping ON (mapping.property_address_id = cur_address.id)
 	LEFT JOIN cur_contacts  ON (cur_contacts.id = mapping.contact_id)
 	LEFT JOIN cur_company AS cur_company ON (cur_company.id = mapping.company_id)
-/* Added these two lines to make the correct company address come through */
-	LEFT JOIN cur_owner_seller_property_mapping AS company_mapping ON (company_mapping.property_address_id = cur_address.id AND company_mapping.company_id = cur_company.id)
-	LEFT JOIN cur_address AS company_address ON (cur_address.id = company_mapping.property_address_id)
-/* end fix */
+	LEFT JOIN cur_company_address_mapping ON (cur_company_address_mapping.cur_company_id = cur_company.id)
+	LEFT JOIN cur_address AS company_address ON (company_address.id = cur_company_address_mapping.cur_address_id)
 	LEFT JOIN cur_phone_numbers  ON (cur_phone_numbers.contact_ID = cur_contacts.id)
 	INNER JOIN ref_contact_type ON (ref_contact_type.id = mapping.contact_type_id)
 WHERE 
