@@ -32,6 +32,10 @@ module.exports.routes = {
 	    controller : 'main',
 	    action : 'index'
 	  },
+	  '/buildings.html':{
+	      controller: 'buildings',
+	      action: 'find'
+	  },
 	  '/auth' : {
 	    controller : 'main',
 	    action : 'index'

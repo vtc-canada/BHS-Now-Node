@@ -796,7 +796,7 @@
 		var datatable = $('#buildings').dataTable({
 		        "processing": true,
 		        "serverSide": true,
-		        "dom":"tipr",
+		        "dom":"ltipr",
 		        "ajax": {
 		        	"url":"/buildings/getajax",
 	        		"data":function(d){
@@ -829,7 +829,8 @@
 	               
 		        }
 	    });
-	    
+	    $('select[name=buildings_length]').css('margin-top','10px');
+	    $('#buildings_length label').css('margin-bottom','0px');
 	    
 	     $('#buildings').on('draw.dt',function(event,datatable){
 	     	if(init_id){
@@ -986,7 +987,9 @@
 			} else {
 				var files = document.getElementById('filesToUpload').files;
 		        for(var i = 0; i < files.length; i++) {
-		            upload(files[i]);
+		            upload(files[i],function(){
+		            
+		            });
 		        }
 			}
 		}
@@ -1003,7 +1006,7 @@
 			 	var xhr =  new XMLHttpRequest();
 				fd = new FormData();
 			 
-	    		
+	    		console.log('here');
 	    		xhr.upload.addEventListener("progress", uploadProgress, false);
 				xhr.upload.addEventListener("load", transferComplete, false);
 				xhr.upload.addEventListener("error", transferFailed, false);
@@ -1087,12 +1090,12 @@
 		}
 		
 		function transferComplete(evt){
-			if(lastThumbUrl==''){
+			if(lastThumbUrl==''&&window.File && window.FileReader && window.FileList && window.Blob){
 		    	upload(canvasResize(THMB_WIDTH,THMB_HEIGHT),function(){
 		    	});
 			}else{
 				setTimeout(function(){
-					
+					$('.building-photo-wrapper > .span3:last').find('.progress > .bar').css('width',100+'%');
 					$('.building-photo-wrapper > .span3:last').css('min-height',$('.building-photo-wrapper > .span3:last').height());
 					
 					$('.building-photo-wrapper > .span3:last').find('img').css('display','none');

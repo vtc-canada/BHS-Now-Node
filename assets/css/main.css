@@ -430,6 +430,7 @@ input.segment-form-radio{
 	width:96%;
 	margin-left:2%;
 	margin-right:2%;
+	margin-bottom: 5px;
 }
 #buildings_wrapper  table.dataTable > thead > tr > th{
 	font-weight:normal;
@@ -686,6 +687,48 @@ div.language-flag.chile{
     max-width: none;
 }
 
+
+.map-overlay-controls{
+	background-color:rgba(255,255,255,.7);
+	border:1px solid #696969;
+	width:140px;
+	height:195px;
+	font-family:"OpenSans";
+}
+
+.map-control-row-wrapper{
+	
+}
+
+.map-overlay-results-label{
+	font-size:11px;
+	font-weight:600;
+	margin-bottom:0px;
+}
+.map-overlay-title-label{
+	text-align:center;
+	font-weight:600;
+}
+
+.map-overlay-label{
+	cursor:pointer;
+	float:left;
+	width:112px;
+	margin-left:10px;
+}
+
+.map-overlay-checkbox{
+	float:left;
+	margin-left:4px !important;
+}
+
+.map-control-row-wrapper #building_length_select{
+	width: 132px;
+	margin-left: 4px;
+}
+
+
+
 @media (min-width: 980px){
     body {
         /* padding-top: 41px; 60px to make the container go all the way to the bottom of the topbar */
@@ -820,12 +863,12 @@ div.language-flag.chile{
 	}
 	
 	.row-fluid .building-overlay-block-address{
-		border: 1px solid #AAAAAA;
+		/*border: 1px solid #AAAAAA;*/
 		padding-left: 4px;
 	}
 	
 	.row-fluid .building-overlay-block-details{
-		border: 1px solid #AAAAAA;
+		/*border: 1px solid #AAAAAA;*/
 		padding-left: 4px;
 		margin-top: 6px;
 		padding-right: 4px;

@@ -99,7 +99,7 @@
         	<div class="pull-right" style="margin-right:10px;">Constrain Building Results to Visible Map Area</div>
         	<div class="pull-right"><input id="constrain_gps" type="checkbox" style="margin-right: 10px;margin-top: -3px;"></div>
   		 </div>
-        <div class="row-fluid " id="iframediv">
+        <div class="row-fluid " id="iframediv" >
         	<div class="content-wrapper map-wrapper" >
 
             </div>
@@ -188,7 +188,7 @@
              <!--<div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="create_building">Create New</div>-->
         
         </div>
-        <div class="row-fluid " id="iframediv">
+        <div class="row-fluid " id="iframediv" style="padding: 0px;">
             <div class="row-fluid">
                 <table id="buildings" class="display" cellspacing="0" width="100%">
 			        <thead>
@@ -489,7 +489,9 @@
 	          center: new google.maps.LatLng(43.7, -79.4),
 	          zoom: 10,
 	          panControl:false,
-	          streetViewControl:false
+	          streetViewControl:false,
+	          mapTypeControl:false,
+	          overviewMapControl:false
 	        };
     		
     		//$('#map_wrapper').height($('body').height()-$('.navbar-fixed-top').height()-50);
@@ -507,7 +509,7 @@
 		  	var homeControl = new HomeControl(homeControlDiv, map);
 		
 		  	homeControlDiv.index = 1;
-		  	map.controls[google.maps.ControlPosition.RIGHT_CENTER].push(homeControlDiv);
+		  	map.controls[google.maps.ControlPosition.RIGHT_TOP].push(homeControlDiv);
 			  
     		
 			//var layerGo = new google.maps.KmlLayer('http://isystemsnow.com/layers/ttc.kmz');
@@ -578,7 +580,8 @@
 					"scrollY":        0+ "px",
 			        "processing": true,
 			        "serverSide": true,
-			        "dom":"tipr",
+			        "iDisplayLength": 50,
+			        "dom":"ltipr",
 			        "ajax": {
 			        	"url":"/buildings/getajax",
 		        		"data":function(d){
@@ -588,7 +591,7 @@
 		        			d.unitQuantityMax = unitsMax==sliderLimit?null:unitsMax;
 		        			d.saleDateRangeStart = $('#start_time').val();
 		        			d.saleDateRangeEnd = $('#end_time').val();
-		        			d.length = $('#result_size').val();
+		        			//d.length = $('#result_size').val();
 		        			if(markers.constrainGPS)
 		        			{
 			        			d.centerLatitude = map.getCenter().k;
@@ -631,6 +634,11 @@
 		               
 			        }
 		    });
+		    $('#buildings_length select').attr('id','building_length_select');
+		    
+		    $('#result_size_wrapper').append($('#building_length_select'));
+		    $('#buildings_length').remove();
+		    //datatable.api().fnLengthChange($('#result_size').val());
 		    
         
 	        $('#buildings tbody').on('click', 'tr', function () {
@@ -653,137 +661,102 @@
 			
 			  // Set CSS for the control border.
 			  var controlUI = document.createElement('div');
-			  controlUI.style.backgroundColor = 'white';
-			  controlUI.style.borderStyle = 'solid';
-			  controlUI.style.borderWidth = '2px';
-			  controlUI.style.width = '100px';
-			  controlUI.style.height = '300px';
-			  //controlUI.style.textAlign = 'center';
-			  controlUI.title = 'Click to set the map to Home';
+			  controlUI.id = 'map_control';
+			  controlUI.className="map-overlay-controls";
 			  controlDiv.appendChild(controlUI);
+			  
+			  var mapcontrolstitlediv = document.createElement('div');
+			  mapcontrolstitlediv.className = 'map-overlay-title-label';
+			  mapcontrolstitlediv.innerHTML = 'Map Controls';
+			  controlUI.appendChild(mapcontrolstitlediv);
 			
 			  // Set CSS for the control interior.
 			  var constrainLabel = document.createElement('label');
 			  constrainLabel.htmlFor  = 'constrain_gps';
-			  constrainLabel.style.fontFamily = 'Open Sans';
-			  constrainLabel.style.cursor = 'pointer';
-			  constrainLabel.style.fontSize = '12px';
-			  constrainLabel.style.paddingLeft = '4px';
-			  constrainLabel.style.paddingRight = '4px';
-			  constrainLabel.innerHTML = '<strong>Constrain result to map bounds:</strong>';
-			  controlUI.appendChild(constrainLabel);
+			  constrainLabel.className= 'map-overlay-label';
+			  constrainLabel.innerHTML = 'Constrain result to map bounds';
 			  
 			  // Set CSS for the control interior.
 			  var constrainGPSCheckbox = document.createElement('input');
 			  constrainGPSCheckbox.id = 'constrain_gps'
 			  constrainGPSCheckbox.type = 'checkbox';
-			  constrainGPSCheckbox.style.cursor = 'pointer';
-			  constrainGPSCheckbox.style.fontSize = '12px';
-			  constrainGPSCheckbox.style.paddingLeft = '4px';
-			  constrainGPSCheckbox.style.paddingRight = '4px';
-			  controlUI.appendChild(constrainGPSCheckbox);
+			  constrainGPSCheckbox.className = 'map-overlay-checkbox';
+			  var condiv = document.createElement('div');
+			  condiv.className = 'map-control-row-wrapper';
+			  condiv.appendChild(constrainGPSCheckbox);
+			  condiv.appendChild(constrainLabel);
+			  controlUI.appendChild(condiv);
 			  
 			  
 			  
 			  // Set CSS for the control interior.
 			  var layerGo = document.createElement('label');
 			  layerGo.htmlFor  = 'layer_go';
-			  layerGo.style.fontFamily = 'Open Sans';
-			  layerGo.style.cursor = 'pointer';
-			  layerGo.style.fontSize = '12px';
-			  layerGo.style.paddingLeft = '4px';
-			  layerGo.style.paddingRight = '4px';
-			  layerGo.innerHTML = '<strong>Go Transit:</strong>';
-			  controlUI.appendChild(layerGo);
-			  
+			  layerGo.className= 'map-overlay-label';
+			  layerGo.innerHTML = 'Go Transit';
 			  // Set CSS for the control interior.
 			  var inputGo = document.createElement('input');
 			  inputGo.id = 'layer_go'
 			  inputGo.type = 'checkbox';
-			  inputGo.style.cursor = 'pointer';
-			  inputGo.style.fontSize = '12px';
-			  inputGo.style.paddingLeft = '4px';
-			  inputGo.style.paddingRight = '4px';
-			  controlUI.appendChild(inputGo);
+			  inputGo.className = 'map-overlay-checkbox';
+			  
+			  var godiv = document.createElement('div');
+			  godiv.className = 'map-control-row-wrapper';
+			  godiv.appendChild(inputGo);
+			  godiv.appendChild(layerGo);
+			  controlUI.appendChild(godiv);
+			  
+			  
 			  
 			  // Set CSS for the control interior.
 			  var layerTTC = document.createElement('label');
 			  layerTTC.htmlFor  = 'layer_ttc';
-			  layerTTC.style.fontFamily = 'Open Sans';
-			  layerTTC.style.cursor = 'pointer';
-			  layerTTC.style.fontSize = '12px';
-			  layerTTC.style.paddingLeft = '4px';
-			  layerTTC.style.paddingRight = '4px';
-			  layerTTC.innerHTML = '<strong>TTC:</strong>';
-			  controlUI.appendChild(layerTTC);
+			  layerTTC.className= 'map-overlay-label';
+			  layerTTC.innerHTML = 'TTC';
 			  
 			  // Set CSS for the control interior.
 			  var inputTTC = document.createElement('input');
 			  inputTTC.id = 'layer_ttc'
 			  inputTTC.type = 'checkbox';
-			  inputTTC.style.cursor = 'pointer';
-			  inputTTC.style.fontSize = '12px';
-			  inputTTC.style.paddingLeft = '4px';
-			  inputTTC.style.paddingRight = '4px';
-			  controlUI.appendChild(inputTTC);
+			  inputTTC.className = 'map-overlay-checkbox';
+			  
+			  var ttcdiv = document.createElement('div');
+			  ttcdiv.className = 'map-control-row-wrapper';
+			  ttcdiv.appendChild(inputTTC);
+			  ttcdiv.appendChild(layerTTC);
+			  controlUI.appendChild(ttcdiv);
+			  
 			  
 			   // Set CSS for the control interior.
 			  var layerViva = document.createElement('label');
 			  layerViva.htmlFor  = 'layer_viva';
-			  layerViva.style.fontFamily = 'Open Sans';
-			  layerViva.style.cursor = 'pointer';
-			  layerViva.style.fontSize = '12px';
-			  layerViva.style.paddingLeft = '4px';
-			  layerViva.style.paddingRight = '4px';
-			  layerViva.innerHTML = '<strong>VIVA:</strong>';
-			  controlUI.appendChild(layerViva);
+			  layerViva.className= 'map-overlay-label';
+			  layerViva.innerHTML = 'VIVA';
 			  
 			  // Set CSS for the control interior.
 			  var inputViva = document.createElement('input');
 			  inputViva.id = 'layer_viva'
 			  inputViva.type = 'checkbox';
-			  inputViva.style.cursor = 'pointer';
-			  inputViva.style.fontSize = '12px';
-			  inputViva.style.paddingLeft = '4px';
-			  inputViva.style.paddingRight = '4px';
-			  controlUI.appendChild(inputViva);
+			  inputViva.className = 'map-overlay-checkbox';
+			  
+			  var vivadiv = document.createElement('div');
+			  vivadiv.className = 'map-control-row-wrapper';
+			  vivadiv.appendChild(inputViva);
+			  vivadiv.appendChild(layerViva);
+			  controlUI.appendChild(vivadiv);
 			  
 			  
 			  var resultSizeLabel = document.createElement('label');
-			  resultSizeLabel.htmlFor  = 'result_size';
-			  resultSizeLabel.style.fontFamily = 'Open Sans';
-			  resultSizeLabel.style.cursor = 'pointer';
-			  resultSizeLabel.style.fontSize = '12px';
-			  resultSizeLabel.style.paddingLeft = '4px';
-			  resultSizeLabel.style.paddingRight = '4px';
-			  resultSizeLabel.innerHTML = '<strong>Result Size:</strong>';
-			  controlUI.appendChild(resultSizeLabel);
+			  resultSizeLabel.htmlFor  = 'building_length_select';
+			  resultSizeLabel.className= 'map-overlay-label map-overlay-results-label';
+			  resultSizeLabel.innerHTML = 'Result Size:';
 			  
-			  
-			  var resultSizeSelect = document.createElement('select');
-			  resultSizeSelect.id = 'result_size'
-			  resultSizeSelect.style.cursor = 'pointer';
-			  resultSizeSelect.style.width = '80px';
-			  resultSizeSelect.style.fontSize = '12px';
-			  resultSizeSelect.style.paddingLeft = '4px';
-			  resultSizeSelect.style.paddingRight = '4px';			  
-			  controlUI.appendChild(resultSizeSelect);
-			  
-			  var option = document.createElement("option");
-			  option.text = "10";
-			  resultSizeSelect.add(option);
-			  option = document.createElement("option");
-			  option.text = "25";
-			  resultSizeSelect.add(option);
-			  option = document.createElement("option");
-			  option.text = "50";
-			  resultSizeSelect.add(option);
-			  option = document.createElement("option");
-			  option.text = "100";
-			  resultSizeSelect.add(option);
-			  
-			  resultSizeSelect.value=50;
-			
+			  var resultsizediv = document.createElement('div');
+			  resultsizediv.className = 'map-control-row-wrapper';
+			  resultsizediv.id = 'result_size_wrapper';
+			  resultsizediv.appendChild(resultSizeLabel);
+			  controlUI.appendChild(resultsizediv);
+			  			
 			  
 			google.maps.event.addDomListener(inputGo, 'change', function() {
 				if(layers.go.getMap()==null){
@@ -806,20 +779,15 @@
 					layers.viva.setMap(null);
 				}
 			});
-			
-			  google.maps.event.addDomListener(resultSizeSelect, 'change', function() {
+			google.maps.event.addDomListener(constrainGPSCheckbox, 'click', function() {
+				markers.constrainGPS = $('#constrain_gps').is(':checked');
+				if(markers.constrainGPS&&!markers.checkMarkersBounded()) //markers aren't bounded correct.
+				{
 					datatable.api().ajax.reload();
-			  });
-			  // Setup the click event listeners: simply set the map to Chicago.
-			  google.maps.event.addDomListener(constrainGPSCheckbox, 'click', function() {
-				    markers.constrainGPS = $('#constrain_gps').is(':checked');
-					if(markers.constrainGPS&&!markers.checkMarkersBounded()) //markers aren't bounded correct.
-					{
-						datatable.api().ajax.reload();
-					}else if(!markers.constrainGPS){  // this is the case where maybe you've typed in new search terms.
-						datatable.api().ajax.reload();
-					}
-			  });
+				}else if(!markers.constrainGPS){  // this is the case where maybe you've typed in new search terms.
+					datatable.api().ajax.reload();
+				}
+			});
 		}
 
 		$('#search_address').keydown(function(){
