@@ -4,48 +4,19 @@ DROP PROCEDURE if EXISTS `GetBuildingSales` ;
 DELIMITER $$
 CREATE PROCEDURE `GetBuildingSales`(IN buildingID int)
 BEGIN
-SELECT 
-	tempContactMappingBase.* 
-	,tempContactMappingOwners.owner
-	,tempContactMappingSellers.seller
-	
-FROM
-(SELECT cur_sales_record_history.id AS 'sale_id', cur_sales_record_history.sale_price, cur_sales_history_contact_mapping.cur_buildings_id AS 'building_id', cur_sales_record_history.property_mgmt_company, cur_sales_record_history.sale_date
-FROM cur_sales_history_contact_mapping
-INNER JOIN cur_sales_record_history
-	ON (cur_sales_history_contact_mapping.cur_sales_record_history_id = cur_sales_record_history.id)
-WHERE cur_buildings_id = buildingID
-GROUP BY cur_sales_history_contact_mapping.cur_sales_record_history_id) AS tempContactMappingBase
-
-LEFT OUTER JOIN
-(SELECT 
-cur_sales_history_contact_mapping.cur_sales_record_history_id,
-GROUP_CONCAT(DISTINCT cur_contacts.name) AS 'owner'
-FROM cur_sales_history_contact_mapping
-INNER JOIN ref_contact_type 
-	ON (cur_sales_history_contact_mapping.ref_contact_type_id = ref_contact_type.id)
-INNER JOIN cur_contacts
-	ON (cur_sales_history_contact_mapping.contact_id = cur_contacts.id)
-WHERE cur_buildings_id = buildingID 
-	AND ref_contact_type.type = 'owner'
-GROUP BY	
-	cur_sales_history_contact_mapping.cur_sales_record_history_id) AS tempContactMappingOwners
-ON (tempContactMappingBase.sale_id = tempContactMappingOwners.cur_sales_record_history_id)
-
-LEFT OUTER JOIN
-(SELECT 
-cur_sales_history_contact_mapping.cur_sales_record_history_id ,
-GROUP_CONCAT(DISTINCT cur_contacts.name) AS 'seller'
-FROM cur_sales_history_contact_mapping
-INNER JOIN ref_contact_type 
-	ON (cur_sales_history_contact_mapping.ref_contact_type_id = ref_contact_type.id)
-INNER JOIN cur_contacts
-	ON (cur_sales_history_contact_mapping.contact_id = cur_contacts.id)
-WHERE cur_buildings_id = buildingID 
-	AND ref_contact_type.type = 'seller'
-GROUP BY	
-	cur_sales_history_contact_mapping.cur_sales_record_history_id) AS tempContactMappingSellers
-
-ON (tempContactMappingBase.sale_id = tempContactMappingSellers.cur_sales_record_history_id);
+SELECT cur_sales_record_history.id AS 'sale_id'
+	,cur_sales_record_history.sale_price
+	,owner_sale.cur_buildings_id AS 'building_id'
+	,cur_sales_record_history.property_mgmt_company
+	,cur_sales_record_history.sale_date
+	,GROUP_CONCAT(DISTINCT owner_contact.name SEPARATOR ', ') AS 'owner'
+	,GROUP_CONCAT(DISTINCT seller_contact.name SEPARATOR ', ') AS 'seller'
+FROM cur_sales_record_history
+LEFT JOIN cur_sales_history_contact_mapping AS owner_sale ON (owner_sale.cur_sales_record_history_id = cur_sales_record_history.id AND owner_sale.ref_contact_type_id = 1) 
+LEFT JOIN cur_sales_history_contact_mapping AS seller_sale ON (seller_sale.cur_sales_record_history_id = cur_sales_record_history.id AND seller_sale.ref_contact_type_id = 2) 
+LEFT JOIN cur_contacts AS owner_contact ON (owner_contact.id = owner_sale.contact_id)
+LEFT JOIN cur_contacts AS seller_contact ON (seller_contact.id = seller_sale.contact_id)
+WHERE (owner_sale.cur_buildings_id IS NULL OR owner_sale.cur_buildings_id = buildingID)
+GROUP BY cur_sales_record_history.id;
 END$$
 DELIMITER ;	
