@@ -12,11 +12,12 @@ SELECT
 FROM 
 	cur_note_mapping
 	INNER JOIN cur_notes ON (cur_notes.id = cur_note_mapping.cur_notes_id)
-	INNER JOIN cur_address ON (cur_address.id = cur_note_mapping.cur_address_id)
+	INNER JOIN cur_address ON (cur_address.id = cur_note_mapping.entity_id)
 	INNER JOIN cur_buildings ON (cur_buildings.cur_address_id = cur_address.id AND cur_buildings.id = buildingID)
 WHERE 
 	cur_notes.is_deleted = 0
-	AND cur_buildings.is_deleted = 0;
+	AND cur_buildings.is_deleted = 0
+	AND cur_note_mapping.ref_entity_type_id = 3; #Property Type
 END$$
 DELIMITER ;	
 

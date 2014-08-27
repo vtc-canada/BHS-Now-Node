@@ -16,10 +16,11 @@ SELECT
 		,cur_address.province
 FROM cur_company_address_mapping as mapping
 LEFT JOIN cur_company ON (cur_company.id = mapping.cur_company_id)
-LEFT JOIN cur_contacts ON (mapping.cur_contacts_id = cur_contacts.id)
+LEFT JOIN cur_contact_company_mapping ON (cur_contact_company_mapping.cur_company_id = cur_company.id)
+LEFT JOIN cur_contacts ON (cur_contact_company_mapping.cur_contacts_id = cur_contacts.id)
 LEFT JOIN cur_address ON (cur_address.id = mapping.cur_address_id)
 WHERE (cur_contacts.id = contactID OR contactID IS NULL)
-	AND (companySearchTerms IS NULL OR cur_company.name LIKE CONCAT('%', companySearchTerms, '%'))
+	AND (companySearchTerms IS NULL OR MATCH(cur_company.name) AGAINST (companySearchTerms IN BOOLEAN MODE))
 	AND cur_contacts.is_deleted = 0
 LIMIT 10;
 END$$
