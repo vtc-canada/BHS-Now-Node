@@ -8,6 +8,8 @@
                 'DefaultTitle':'CRED Now',
                 '/dashboard':'Dashboard',
                 '/buildings':'Buildings',
+                '/contacts':'Contacts',
+                '/companies':'Companies',
                 'Airport BHS':'Airport BHS',
                 'Web Portal':'Web Portal',
                 'My Account':'My Account',
@@ -46,6 +48,8 @@
                     '/dashboard':'Dashboard',
                     '/reports/create':'Reports',
                     '/buildings':'Buildings',
+                    '/contacts':'Contacts',
+                	'/companies':'Companies',
                     '/maps':'Maps',
                     'Search':'Search',
                     '/admin/users':'Users',
@@ -60,6 +64,8 @@
                 'DefaultTitle':'BHS Now',
                 'Dashboard':'Salpicadero',
                 '/buildings':'Buildings',
+                '/contacts':'Contacts',
+                '/companies':'Companies',
                 'Airport BHS':'Aeropuerto SME',
                 'Web Portal':'Web Portal',
                 'My Account':'Mi Cuenta',
@@ -99,6 +105,8 @@
                       '/reports/create':'Reports',
                       '/buildings':'Buildings',
                       '/maps':'Maps',
+                      '/contacts':'Contacts',
+                		'/companies':'Companies',
                       'Search':'Search',
                       '/admin/users':'Users',
                       'Airline Configuration':'Airline Configuration',
@@ -205,9 +213,9 @@
 
               <span class="icon-list"></span>
           </button>
-            <a class="brand isys-a large" href="/auth" style="height:40px; width: 407px; padding-left: 12px !important;"><img src="/img/ISN-International-Airport-4.png" /></a>
+            <a class="brand isys-a large" href="/maps" style="height:40px; width: 407px; padding-left: 12px !important;"><img style="padding-top: 3px; padding-left: 3px;"src="/img/CRED-Application-Logo-Desktop.png" /></a>
             </a>
-            <a class="brand isys-a small" href="/auth" style="height: 40px; width: 110px;background-image: url(&quot;/img/ISN-International-Airport-3.png&quot;);background-size: 140px;background-repeat: no-repeat;background-position-x: 11px;">
+            <a class="brand isys-a small" href="/maps" style="height: 40px; width: 130px;background-image: url(&quot;/img/CRED-Application-Logo-Mobile.png&quot;);background-size: 140px;background-repeat: no-repeat;background-position-x: 11px;">
 
                 <!-- <img src="/img/isyslogo.png" class="top-isys-logo pull-left"><span class="pull-left top-location-text">Airport BHS</span><i class="icon-plane icon-2x pull-right"></i><span class="pull-right webportal-top-text">Web Portal</span>
                 -->
@@ -221,7 +229,7 @@
              </a>
           <div class="nav-collapse collapse nav-collapse-topbar">
             <ul class="nav pull-right">
-              <li><form id="search-form" action="/search" method="post" style="margin-bottom: 0px;" ><input name="search_field" type="text" placeholder="<%= translate[req.session.user.locale]['Search'] %>" id="main-search" class="main-search"><i class="icon-search top-search-icon"></i></form></li>
+              <!--<li><form id="search-form" action="/search" method="post" style="margin-bottom: 0px;" ><input name="search_field" type="text" placeholder="<%= translate[req.session.user.locale]['Search'] %>" id="main-search" class="main-search"><i class="icon-search top-search-icon"></i></form></li>-->
               <li class="myaccount-topmenu"><a id="myaccount" data-placement="bottom" data-content="Loading.." title="" data-original-title="" class="<% if (typeof(req.url)!=='undefined'&&req.url=='myaccount'){ %>active <% } %>accordion-toggle" data-toggle="collapse" href="#myaccountmobile" ><i class="icon-user"></i>&nbsp<%= req.session.user.username %></a>
                   <!--[if lt IE 9]>
                   <![endif]-->
@@ -257,34 +265,6 @@
 	  <!-- Main nav -->
 	  <ul class="nav nav-collapse collapse nav-collapse-primary">
 
-            <li <% if (typeof(req.url)!=='undefined'&&req.url=='/buildings'){ %>class="active"<% } %>>
-              <span class="glow"></span>
-              <a href="/buildings">
-                  <i class="icon-building icon-2x"></i>
-                  <span><%= translate[req.session.user.locale]['/buildings'] %></span>
-              </a>
-            </li>
-            <li <% if (typeof(req.url)!=='undefined'&&req.url=='/dashboard'){ %>class="active"<% } %>>
-              <span class="glow"></span>
-              <a href="/dashboard">
-                  <i class="icon-dashboard icon-2x"></i>
-                  <span><%= translate[req.session.user.locale]['/dashboard'] %></span>
-              </a>
-            </li>
-            <li <% if (typeof(req.url)!=='undefined'&&req.url=='/reports/create'){ %>class="active"<% } %>>
-            <span class="glow"></span>
-            <a href="/reports/create">
-              <i class="icon-copy icon-2x"></i>
-              <span><%= translate[req.session.user.locale]['Reports'] %></span>
-            </a>
-            </li>
-          <li <% if (typeof(url)!=='undefined'&&url=='search'){ %>class="active"<% } %>>
-          <span class="glow"></span>
-          <a href="/search">
-              <i class="icon-suitcase icon-2x"></i>
-              <span><%= translate[req.session.user.locale]['Searchmenu'] %></span>
-          </a>
-          </li>
           <li <% if (typeof(req.url)!=='undefined'&&req.url=='/maps'){ %>class="active"<% } %>>
           <span class="glow"></span>
           <a href="/maps">
@@ -292,6 +272,29 @@
               <span><%= translate[req.session.user.locale]['Maps'] %></span>
           </a>
           </li>
+          
+            <li <% if (typeof(req.url)!=='undefined'&&req.url=='/buildings'){ %>class="active"<% } %>>
+              <span class="glow"></span>
+              <a href="/buildings">
+                  <i class="icon-building icon-2x"></i>
+                  <span><%= translate[req.session.user.locale]['/buildings'] %></span>
+              </a>
+            </li>
+            <li <% if (typeof(req.url)!=='undefined'&&req.url=='/contacts'){ %>class="active"<% } %>>
+              <span class="glow"></span>
+              <a href="/contacts">
+                  <i class="icon-group icon-2x"></i>
+                  <span><%= translate[req.session.user.locale]['/contacts'] %></span>
+              </a>
+            </li>
+            <li <% if (typeof(req.url)!=='undefined'&&req.url=='/companies'){ %>class="active"<% } %>>
+              <span class="glow"></span>
+              <a href="/companies">
+                  <i class="icon-briefcase icon-2x"></i>
+                  <span><%= translate[req.session.user.locale]['/companies'] %></span>
+              </a>
+            </li>
+            
 
             <li class="dark-nav <% if (typeof(req.url)!=='undefined'&&(req.url=='/admin/users'||req.url=='/airlineconfiguration'||req.url=='/virtual2physical')){ %>active<% } %>">
 
@@ -310,21 +313,7 @@
                           <i class="icon-group"></i> <%= translate[req.session.user.locale]['Users'] %>
                       </a>
                     </li>
-                    <li class="<% if (typeof(req.url)!=='undefined'&&req.url=='/airlineconfiguration'){ %>active<% } %>">
-                      <a href="/airlineconfiguration">
-                          <i class="icon-plane"></i> <%= translate[req.session.user.locale]['Airline Configuration'] %>
-                      </a>
-                    </li>                
-                    <li class="<% if (typeof(req.url)!=='undefined'&&req.url=='/virtual2physical'){ %>active<% } %>">
-                      <a href="/virtual2physical">
-                          <i class="icon-sitemap"></i> <%= translate[req.session.user.locale]['Virtual to Physical'] %>
-                      </a>
-                    </li>
-                    <li class="<% if (typeof(req.url)!=='undefined'&&req.url=='/engineering'){ %>active<% } %>">
-                      <a href="/engineering">
-                          <i class="icon-wrench"></i> <%= translate[req.session.user.locale]['Engineering'] %>
-                      </a>
-                    </li>
+                    
 
               </ul>
             </li>
@@ -484,6 +473,75 @@
         datet.getTimezoneOffset()
         return new Date(datet.getTime() + datet.getTimezoneOffset()*60000);
     }
+    function padLeft(nr, n, str){
+	    return Array(n-String(nr).length+1).join(str||'0')+nr;
+	}
+    
+    function toDateTimeString(date){   // takes date object or date string.
+		if(typeof(date)!=='object'){
+	        date = new Date(date.toString());
+	    }else if(date==null){
+	    	return '';
+	    }
+	   // else
+	   // {
+	    //    date = new Date(date.toString());
+	        //date = new Date(date.setMinutes(date.getMinutes() + date.getTimezoneOffset()));
+	    //}
+	
+	    return date.getFullYear()+'-'+padLeft((date.getMonth()+1).toString(),2)+'-'+ padLeft(date.getDate(),2) + ' ' + padLeft(date.getHours(),2)+':'+padLeft(date.getMinutes(),2);//+':'+padLeft(date.getSeconds(),2);
+	}
+	
+	function buildStreetString(street_number_begin,street_number_end,street_name){
+        	street_number_begin = street_number_begin==null?'':street_number_begin;
+        	street_number_end = street_number_end==''||street_number_end==null||street_number_end=='null'?'':(street_number_begin==null?'':' - ')+street_number_end;
+    		street_name= street_name==''||street_name==null||street_name=='null'?'':' '+street_name;
+     
+        	return street_number_begin + street_number_end +street_name;
+	}
+	
+	function buildCityProvinceString(city,province){
+    		city = city==''||city==null||city=='null'?'':city;
+    		province = province==''||province==null||province=='null'?'':(city==''||city==null||city=='null'?'':', ')+province;
+    		return city + province;
+	}
+	function buildPostalCodeString(postal_code){
+    		return postal_code==null||postal_code=='null'||postal_code==''?'':postal_code;
+	}	
+	function buildAddressString(data){
+	    	var street_number_begin = '';
+        	var street_number_end = '';
+        	var street_name = '';
+        	var city = '';
+        	var province = '';
+        	var postal_code = '';
+        	
+        	if(data.street_number_begin!=null){
+        		street_number_begin = data.street_number_begin;
+        	}
+        	if(data.street_number_end!=null&&data.street_number_end!=''){
+        		street_number_end = data.street_number_end==null||data.street_number_end=='null'?'':' - '+data.street_number_end;
+        	}
+        	if(data.street_name!=null&&data.street_name!='')
+        	{
+        		street_name= data.street_name==null||data.street_name=='null'?'':' '+data.street_name;
+        	}
+        	if(data.city != null && data.city != '')
+        	{
+        		city = data.city==null||data.city=='null'?'':', '+data.city;
+        	}
+        	if(data.province != null && data.province != '')
+        	{
+        		province = data.province==null||data.province=='null'?'':', '+data.province;
+        	}
+        	if(data.postal_code != null && data.postal_code != '')
+        	{
+        		postal_code =  data.postal_code==null||data.postal_code=='null'?'':', '+data.postal_code; 
+        	}
+        	return street_number_begin+street_number_end+street_name+city+province+postal_code; 
+	    
+	    }
+
 
     if ( !Date.prototype.toISOString ) {
 

@@ -6,7 +6,7 @@
         'en' : {
             'DefaultTitle':'CRED Now - Sign In',
             'You are not logged into the system. Please log in.':'You are not signed into the system. Please sign in.',
-            'Main Title':'Manage your Commercial Real Estate.',
+            'Main Title':'Manage your Real Estate.',
             'Sign in':'Sign in',
             'User':'User',
             'Password':'Password'
@@ -280,7 +280,7 @@ input[type=url].form-error {
     padding: 0 44px;
 }
 .main {
-    padding-bottom: 100px;
+    padding-bottom: 30px;
 }
     /* For modern browsers */
 .clearfix:before,
@@ -806,8 +806,7 @@ input[type=url].form-error {
             <hr style="border-top: 1px solid #c9c9c9;border-bottom: 1px solid #c9c9c9;">
             <div style="color:#C9C9C9;">
             	Powered By 
-            <img alt="iSystemsNow" style="width:130px;" class="logo" src="/img/iSystemsNow-Logo-RGB-Black.png">
-            's Now Management Studio. Version 1.0.019.
+            <img alt="iSystemsNow" style="width:130px;" class="logo" src="/img/iSystemsNow-Logo-RGB-White.png">'s Now Management Studio. Version 2014.0008.0028.
             </div>
             <h2 class="hidden-small">
                  &nbsp
@@ -837,7 +836,7 @@ input[type=url].form-error {
                     '/login',
                     {username: username, password:password},
                     function () {
-                        window.location = "/dashboard";
+                        window.location = "/maps";
                     }
             ).fail(function(res){
 

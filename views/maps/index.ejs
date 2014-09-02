@@ -124,7 +124,7 @@
                <div class="row">
                    <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_address">Search Address:</label></div>
                    <div class="span8 report-control-right-control">
-                       <input type="text" id="search_address" value="York">
+                       <input type="text" id="search_address" value="">
                    </div>
                </div>
                <div class="row">
@@ -225,8 +225,8 @@
 				{{ } }}
 				<div class="span3 pull-right building-overlay-block-address">
 					<div class="row-fluid">Address:</div>
-					<div class="row-fluid block-value">{{=street_number_begin}}{{=street_number_end?' '+street_number_end:''}} {{=street_name}}</div>
-					<div class="row-fluid block-value">{{=city}}, {{=province}}</div>
+					<div class="row-fluid block-value">{{=address_1}}</div>
+					<div class="row-fluid block-value">{{=address_2}}</div>
 					<div class="row-fluid block-value"><a href="/buildings/{{=building_id}}">View History</a></div>
 				</div>
 				
@@ -329,6 +329,8 @@
     					responseBuilding.contacts = [];
     				}
     				$('#building_slideup_wrapper').empty();
+    				responseBuilding.address_1=buildStreetString(responseBuilding.street_number_begin,responseBuilding.street_number_end,responseBuilding.street_name);
+	    			responseBuilding.address_2=buildCityProvinceString(responseBuilding.city,responseBuilding.province);
 	    			$('#building_slideup_wrapper').append(buildingtemplate(responseBuilding));
 	    			$('.close-building-map-details').click(function(){
 	    				$(this).parents('.building-map-details').remove();
@@ -617,12 +619,14 @@
 			        "aoColumns":[
 			        	{"mData":"building_id","visible":false}
 			         	,{"mData":function(data,b){ 
-				        	return "<b>"+data.street_number_begin+" "+data.street_name+", "+data.city+"</b>"; }
+				        	return "<b>"+buildAddressString(data)+"</b>"; }
 				        }
 				        ,{"mData":"units"}
 				        ,{"mData":"owner"}
 				        ,{"mData":"property_mgmt_company"}
-				        ,{"mData":"sale_date"}
+				        ,{"mData":function(data,b){ 
+				        	return "<b>"+toDateTimeString(data.sale_date)+"</b>"; }
+				        	}
 			        ],
 			        "rowCallback": function( row, data, displayIndex ) {
 						$(row).attr('building_id',data['building_id']);
@@ -833,7 +837,7 @@
         });
         
         $(window).scroll(function(){
-        	if($('body').scrollTop()>($('#map_wrapper').height()+$('#building_slideup_wrapper').height())/2){
+        	if($('body,html').scrollTop()>($('#map_wrapper').height()+$('#building_slideup_wrapper').height())/2){
         		$('#search_toggler').attr('scrollstate','bottom');
 			}else{
 				$('#search_toggler').attr('scrollstate','top');
@@ -858,12 +862,12 @@
     				$('.main-content').animate({scrollTop:$('#map_wrapper').height()+$('#building_slideup_wrapper').height()}, 'fast');
     			}
     		}else{
-    			if($('body').scrollTop()>($('#map_wrapper').height()+$('#building_slideup_wrapper').height())/2){
+    			if($('body,html').scrollTop()>($('#map_wrapper').height()+$('#building_slideup_wrapper').height())/2){
     				//$('body').scrollTop(0);
-    				$('body').animate({scrollTop:0}, 'fast');
+    				$('body,html').animate({scrollTop:0}, 'fast');
     			}else{
     				//$('body').scrollTop($('#map_wrapper').height()+$('#building_slideup_wrapper').height()+$('.navbar-fixed-top').height());
-    				$('body').animate({scrollTop:$('#map_wrapper').height()+$('#building_slideup_wrapper').height()+$('.navbar-fixed-top').height()},'fast');
+    				$('body,html').animate({scrollTop:$('#map_wrapper').height()+$('#building_slideup_wrapper').height()+$('.navbar-fixed-top').height()},'fast');
     			}
     		}
         }
@@ -897,7 +901,12 @@
 			if($('body').width()>979){
 				h = h - $('.navbar-fixed-top').height();
 			}
-			$('#buildings_wrapper div.dataTables_scrollBody').height(h>=minimumTableSize?h:minimumTableSize+'px');
+			if($('#buildings_wrapper div.dataTables_scrollBody').height()<1){
+				setTimeout(function(){
+					setMapTableSize();
+				},100);
+			}
+			$('#buildings_wrapper div.dataTables_scrollBody').height(h>=minimumTableSize?h+1:minimumTableSize+'px');
         }
         
         function setMapSize(){

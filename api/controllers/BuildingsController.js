@@ -30,9 +30,15 @@ module.exports = {
 
     notes : function(req, res) {
 	if (typeof (req.params.id) != 'undefined' && !isNaN(parseInt(req.params.id))) {
-	    sails.controllers.database.credSproc('GetBuildingNotes', [ parseInt(req.params.id) ], function(err, result) {
-		res.json(result[0]);
-	    });
+	    //return res.json([]);
+	     sails.controllers.database.credSproc('GetBuildingNotes', [
+	     parseInt(req.params.id) ], function(err, result) {
+		 if(err)
+		    return res.json({error:'Database Error:'+err},500);
+		 res.json(result[0]);
+	     });
+		   
+		    
 	}
     },
     find : function(req, res) {
@@ -59,7 +65,20 @@ module.exports = {
 	});
     },
     getcompaniesbycontactid : function(req, res) {
-	sails.controllers.database.credSproc('GetCompaniesByContactOrName', [ typeof (req.body.search) != 'undefined' ? "'" + req.body.search + "'" : null,
+
+	var address_search = null;
+	if (req.body.search != '') {
+	    adr = req.body.search.trim().split(" ");
+	    address_search = '';
+	    for(var i=0;i<adr.length;i++){
+		if(adr[i].trim()!=''){
+		    address_search=address_search+ "+"+adr[i].trim()+"* ";
+		}
+	    }
+	    address_search = "'"+address_search.trim()+"'";
+	}
+	
+	sails.controllers.database.credSproc('GetCompaniesByContactOrName', [ address_search,
 		typeof (req.body.contactId) != 'undefined' ? req.body.contactId : null ], function(err, result) {
 	    if (err)
 		return res.json({
@@ -69,7 +88,20 @@ module.exports = {
 	});
     },
     getcontactsbycompanyid : function(req, res) {
-	sails.controllers.database.credSproc('GetContactsByCompanyOrName', [ typeof (req.body.search) != 'undefined' ? "'" + req.body.search + "'" : null,
+	
+	var address_search = null;
+	if (req.body.search != '') {
+	    adr = req.body.search.trim().split(" ");
+	    address_search = '';
+	    for(var i=0;i<adr.length;i++){
+		if(adr[i].trim()!=''){
+		    address_search=address_search+ "+"+adr[i].trim()+"* ";
+		}
+	    }
+	    address_search = "'"+address_search.trim()+"'";
+	}
+	
+	sails.controllers.database.credSproc('GetContactsByCompanyOrName', [ address_search,
 		typeof (req.body.companyId) != 'undefined' ? req.body.companyId : null ], function(err, result) {
 	    if (err)
 		return res.json({
@@ -105,11 +137,11 @@ module.exports = {
 
 	    if (building.sale_id == 'new') {
 		new_sale_id = '@out' + Math.floor((Math.random() * 1000000) + 1);
-		sails.controllers.database.credSproc('CreateSalesRecord', [ building.last_sale_price, "'" + building.sale_date + "'", building.heat_system_age,
+		sails.controllers.database.credSproc('CreateSalesRecord', [ building.last_sale_price, "'" + toUTCDateTimeString(building.sale_date) + "'", building.heat_system_age,
 			building.windows_installed_year, building.elevator_installed_year, building.boiler_installed_year,
 			"'" + building.cable_internet_provider + "'", building.assessed_value, building.heat_system_type, building.unit_quantity,
 			building.unit_price, building.bachelor_price, building.bedroom1_price, building.bedroom2_price, building.bedroom3_price,
-			building.bachelor_units, building.bedroom1_units, building.bedroom2_units, building.bedroom3_units, building.property_mgmt_company,
+			building.bachelor_units, building.bedroom1_units, building.bedroom2_units, building.bedroom3_units, "'"+building.property_mgmt_company+"'",
 			new_sale_id ], function(err, responseSalesRecord) {
 		    if (err) {
 			console.log(err);
@@ -155,7 +187,7 @@ module.exports = {
 		});
 
 	    } else if (!isNaN(parseInt(building.sale_id))) { // saving sale
-		sails.controllers.database.credSproc('UpdateSalesRecord', [ building.sale_id, building.sale_price, building.sale_date,
+		sails.controllers.database.credSproc('UpdateSalesRecord', [ building.sale_id, building.sale_price, "'"+toUTCDateTimeString(building.sale_date)+"'",
 			building.heat_system_age, building.windows_installed_year, building.elevator_installed_year, building.boiler_installed_year,
 			building.cable_internet_provider, building.assessed_value, building.heat_system, building.unit_quantity, building.unit_price,
 			building.bachelor_units, building.bedroom1_units, building.bedroom2_units, building.bedroom3_units, building.bachelor_price,
@@ -208,7 +240,7 @@ module.exports = {
 					    tryParseInt(building.building_type), tryParseInt(building.heat_system_age), building.windows_installed_year,
 					    building.elevator_installed_year, building.boiler_installed_year, "'" + building.cable_internet_provider + "'",
 					    "'" + building.assessed_value + "'", tryParseInt(building.heat_system), tryParseInt(building.unit_quantity),
-					    "'" + building.sale_date + "'", building.unit_price, "'" + building.property_mgmt_company + "'",
+					    "'" + toUTCDateTimeString(building.sale_date) + "'", building.unit_price, "'" + building.property_mgmt_company + "'",
 					    "'" + building.prev_property_mgmt_company + "'", "'" + building.last_sale_price + "'",
 					    "'" + JSON.stringify(building.images) + "'", building.bachelor_price, building.bedroom1_price,
 					    building.bedroom2_price, building.bedroom3_price, tryParseInt(building.bachelor_units),
@@ -233,7 +265,8 @@ module.exports = {
 			                        				, "'" + building.street_name + "'"
 			                        				, "'" + building.postal_code + "'"
 			                        				,"'" + building.city + "'"
-			                        				,1 // Type Asset
+			                        				,1 // Type
+										    // Asset
 			                        				, "'" + building.province + "'"
 			                        				, responseGeocode[0].latitude
 			                        				, responseGeocode[0].longitude
@@ -248,7 +281,7 @@ module.exports = {
 			                 					    tryParseInt(building.building_type), tryParseInt(building.heat_system_age), tryParseInt(building.windows_installed_year),
 			                 					   tryParseInt(building.elevator_installed_year), tryParseInt(building.boiler_installed_year), "'" + building.cable_internet_provider + "'",
 			                					    "'" + building.assessed_value + "'", tryParseInt(building.heat_system), tryParseInt(building.unit_quantity),
-			                					    "'" + building.sale_date + "'", tryParseFloat(building.unit_price), "'" + building.property_mgmt_company + "'",
+			                					    "'" + toUTCDateTimeString(building.sale_date) + "'", tryParseFloat(building.unit_price), "'" + building.property_mgmt_company + "'",
 			                					    "'" + building.prev_property_mgmt_company + "'", "'" + building.last_sale_price + "'",
 			                					    "'" + JSON.stringify(building.images) + "'", tryParseFloat(building.bachelor_price), tryParseFloat(building.bedroom1_price),
 			                					    tryParseFloat(building.bedroom2_price), tryParseFloat(building.bedroom3_price), tryParseInt(building.bachelor_units),
@@ -256,7 +289,8 @@ module.exports = {
 			                					    tryParseFloat(building.building_income), building.has_elevator, building.last_elevator_upgrade_year,
 			                					    building.last_boiler_upgrade_year,tempBuildingId], function(err, responseBuilding) {
 				building.building_id = responseBuilding[1][tempBuildingId];
-					//sails.controllers.database.credSproc('CreateCompanyAddressMapping',[null, ])
+					// sails.controllers.database.credSproc('CreateCompanyAddressMapping',[null,
+					// ])
 				processContacts(function(){
 				    res.json({
 					success : true,
@@ -329,7 +363,7 @@ module.exports = {
 				error : 'Database Error:' + err
 			    }, 500);
 			
-			sails.controllers.database.credSproc('CreateNoteMapping',[null, responseNote[1][tempOutNoteVar], building.address_id, null,'@outId'],function(err,responseNoteMapping){
+			sails.controllers.database.credSproc('CreateNoteMapping',[building.address_id, responseNote[1][tempOutNoteVar], 3,'@outId'],function(err,responseNoteMapping){
 			    if (err)
 				return res.json({
 					error : 'Database Error:' + err
@@ -344,7 +378,7 @@ module.exports = {
 			});
 			
 		    });
-		}else if (typeof (buildingnotes[i].delete) != 'undefined') { // delete
+		}else if (typeof (buildingnotes[i].deleted) != 'undefined') { // delete
 		    sails.controllers.database.credSproc('DeleteNote', [ buildingnotes[i].id ], function(err, responseNote) {
 			if (err)
 			    return res.json({
@@ -464,7 +498,7 @@ module.exports = {
 
 			for ( var element in responseSale[0][0]) {
 			    // console.log(element.toString());
-			    if (element != 'id' && typeof (building[0][0][element]) != 'undefined') {
+			    if (element != 'id' && typeof (building[0][0]) != 'undefined'&&typeof (building[0][0][element]) != 'undefined') {
 				building[0][0][element] = responseSale[0][0][element];
 			    }
 			}
@@ -490,7 +524,6 @@ module.exports = {
 			}, 500);
 		    return res.json(buildingContacts);
 		});
-
 	    } else {
 		sails.controllers.database.credSproc('GetBuildingContacts', [ parseInt(req.params.id) ], function(err, buildingContacts) {
 		    if (err)
@@ -525,3 +558,20 @@ function tryParseFloat(input) {
 
     return isNaN(parseFloat(input)) ? null : parseFloat(input);
 }
+
+function toUTCDateTimeString(date){
+    if(date==null){
+	date = new Date();
+    }else if(typeof(date)!=='object'){
+	date = new Date(date);
+	date = new Date(date.setMinutes(date.getMinutes() - date.getTimezoneOffset()));
+    }
+	
+    
+    return date.getUTCFullYear()+'-'+padLeft((date.getUTCMonth()+1).toString(),2)+'-'+ padLeft(date.getUTCDate(),2) + ' ' + padLeft(date.getUTCHours(),2)+':'+padLeft(date.getUTCMinutes(),2)+':'+padLeft(date.getUTCSeconds(),2);
+}
+
+function padLeft(nr, n, str){
+    return Array(n-String(nr).length+1).join(str||'0')+nr;
+}
+  

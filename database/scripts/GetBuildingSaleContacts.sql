@@ -26,7 +26,8 @@ FROM
 	INNER JOIN cur_contacts  ON (cur_contacts.id = cur_sales_history_contact_mapping.contact_id)	
 	LEFT OUTER JOIN cur_phone_numbers  ON (cur_phone_numbers.contact_ID = cur_sales_history_contact_mapping.contact_id)
 	INNER JOIN cur_buildings ON (cur_buildings.id = cur_sales_history_contact_mapping.cur_buildings_id)
-	INNER JOIN cur_address ON (cur_address.id = cur_buildings.cur_address_id)
+	LEFT JOIN cur_company_address_mapping ON (cur_company_address_mapping.cur_company_id = cur_sales_history_contact_mapping.cur_company_id)
+	LEFT JOIN cur_address ON (cur_address.id = cur_company_address_mapping.cur_address_id)
 WHERE 
 	cur_buildings.id = buildingID
 	AND cur_sales_history_contact_mapping.cur_sales_record_history_id = saleID

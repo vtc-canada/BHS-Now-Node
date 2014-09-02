@@ -425,12 +425,67 @@ input.segment-form-radio{
 
 }
 
+#companies_wrapper{
+	width:96%;
+	margin-left:2%;
+	margin-right:2%;
+	margin-bottom: 12px;
+}
+#companies_wrapper  table.dataTable > thead > tr > th{
+	font-weight:normal;
+}
+
+#companies_wrapper .dataTables_scrollHead table.dataTable > thead > tr {
+	border-bottom: 1px solid #828282;
+	line-height: 30px;
+	text-align: left;
+}
+
+#companies_wrapper > table.dataTable > thead > tr {
+	border-bottom: 1px solid #828282;
+	line-height: 30px;
+	text-align: left;
+}
+
+#companies_wrapper  table.dataTable > tfoot > td {
+	font-weight:normal;
+}
+
+
+#contacts_wrapper{
+	width:96%;
+	margin-left:2%;
+	margin-right:2%;
+	margin-bottom: 12px;
+}
+#contacts_wrapper  table.dataTable > thead > tr > th{
+	font-weight:normal;
+}
+
+#contacts_wrapper .dataTables_scrollHead table.dataTable > thead > tr {
+	border-bottom: 1px solid #828282;
+	line-height: 30px;
+	text-align: left;
+}
+
+#contacts_wrapper > table.dataTable > thead > tr {
+	border-bottom: 1px solid #828282;
+	line-height: 30px;
+	text-align: left;
+}
+
+#contacts_wrapper  table.dataTable > tfoot > td {
+	font-weight:normal;
+}
+
+
+
 
 #buildings_wrapper{
 	width:96%;
 	margin-left:2%;
 	margin-right:2%;
-	margin-bottom: 5px;
+	margin-bottom: 12px;
 }
 #buildings_wrapper  table.dataTable > thead > tr > th{
 	font-weight:normal;
@@ -512,7 +567,7 @@ a.isys-a.small{
 
 .popover[sort_plan_id=myaccount]{
     top: 31px !important;
-    left: 163px !important;
+    left: -57px !important;
     display: block;
     width: 185px;
     border-radius: 0px 0px 0px 6px;
@@ -571,6 +626,20 @@ a.isys-a.small{
     /* background-color:#C2AEAE !important; */
     opacity: 0.4;
     filter: alpha(opacity=40);
+}
+
+#companies-div > div.user-delete{
+    /* border-color: #990000 !important; */
+    /* background-color:#C2AEAE !important; */
+    opacity: 0.4;
+    filter: alpha(opacity=40);
+}
+
+
+#adminusers .btn{
+	line-height: 20px;
+	margin-top: 3px;
+	margin-right: 4px;
 }
 
 #adminusers div[userid] > div > span.mobilelabel{
@@ -749,6 +818,9 @@ div.language-flag.chile{
         visibility:hidden;
     }
 
+	#myaccountmobile{
+		display:none;	
+	}
     .main-content-padder{
         height:41px;
     }

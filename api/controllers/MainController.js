@@ -58,7 +58,7 @@ module.exports = {
     },
     index : function(req, res) {
         if (req.session.user) {
-            res.view('dashboard/index', {});
+            res.view('maps/index', {});
         } else {
 
             Users.find().limit(1).done(function(err, users) {

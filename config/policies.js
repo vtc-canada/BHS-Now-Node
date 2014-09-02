@@ -40,6 +40,7 @@ module.exports.policies = {
         'printreport' : true, // open for direct access
         'view' : true
     },
+    'companies':true,
     'upload':true
 
 };

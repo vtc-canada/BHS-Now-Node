@@ -28,7 +28,7 @@ var connection = mysql.createConnection({
 
 
 var localPool = mysql.createPool({
-    connectionLimit : 10,
+    connectionLimit : 1000,
     user : 'root',
     password : 'Glasgow931',
     database : 'bhs_dummy',
@@ -36,11 +36,11 @@ var localPool = mysql.createPool({
 });
 
 var credPool = mysql.createPool({
-    connectionLimit : 10,
+    connectionLimit : 1000,
     user : 'root',
     password : 'Glasgow931',
     database : 'cred',
-    host : '10.1.1.60'//10.1.1.60'
+    host : '10.1.1.60'//10.1.1.60'//10.1.1.60'
 });
 
 module.exports = {
@@ -229,7 +229,7 @@ function BuildSproc(data) {
 	if (curArg > 0) {
 	    sprocArgs += ",";
 	}
-	if (data[curArg] == null) {
+	if (data[curArg] == null||data[curArg]=="'null'") {
 	    sprocArgs += "NULL";
 	} else {
 	    sprocArgs += data[curArg].toString();
