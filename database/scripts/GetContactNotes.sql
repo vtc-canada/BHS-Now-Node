@@ -1,8 +1,8 @@
 USE cred;
-DROP PROCEDURE if EXISTS `GetBuildingNotes` ;
+DROP PROCEDURE if EXISTS `GetContactNotes` ;
 
 DELIMITER $$
-CREATE PROCEDURE `GetBuildingNotes`(IN buildingID int)
+CREATE PROCEDURE `GetContactNotes`(IN contactID int)
 BEGIN
 SELECT
 	cur_notes.user
@@ -13,11 +13,10 @@ FROM
 	cur_note_mapping
 	INNER JOIN cur_notes ON (cur_notes.id = cur_note_mapping.cur_notes_id)
 	INNER JOIN cur_address ON (cur_address.id = cur_note_mapping.entity_id)
-	INNER JOIN cur_buildings ON (cur_buildings.cur_address_id = cur_address.id AND cur_buildings.id = buildingID)
+	INNER JOIN cur_contacts ON (cur_note_mapping.entity_id= cur_contacts.id AND cur_contacts.id = contactID)
 WHERE 
 	cur_notes.is_deleted = 0
-	AND cur_buildings.is_deleted = 0
-	AND cur_note_mapping.ref_entity_type_id = 3; #Property Type
+	AND cur_note_mapping.ref_entity_type_id = 1; #Contact Type
 END$$
 DELIMITER ;	
 
