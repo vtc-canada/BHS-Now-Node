@@ -4,11 +4,13 @@ DROP PROCEDURE if EXISTS `SearchNotes` ;
 DELIMITER $$
 CREATE PROCEDURE `SearchNotes`(IN contactSearchTerms VARCHAR(128), IN addressSearchTerms VARCHAR(128), IN companySearchTerms VARCHAR(128)
 							,IN noteSearchTerms VARCHAR(128), IN startDate TIMESTAMP, IN endDate TIMESTAMP
-							,IN offsetIndex int, IN recordCount INT, IN orderBy VARCHAR (255),OUT filteredCount INT)
+							,IN offsetIndex int, IN recordCount INT, IN orderBy VARCHAR (255),OUT filteredCount INT,OUT totalCount INT)
 BEGIN
 	DROP TABLE IF EXISTS tmp_notes;
 	CREATE TEMPORARY TABLE tmp_notes(
-		SELECT cur_notes.note
+		SELECT 
+			cur_notes.id as 'note_id'
+			,cur_notes.note
 			,cur_notes.user
 			,cur_notes.timestamp
 			,GROUP_CONCAT(DISTINCT cur_contacts.id SEPARATOR ', ') as 'contact_id'
@@ -60,7 +62,9 @@ BEGIN
 		);
 
 	#Building Final Results
-	Select SQL_CALC_FOUND_ROWS tmp_notes.note
+	Select SQL_CALC_FOUND_ROWS 
+			tmp_notes.note_id
+			,tmp_notes.note
 			,tmp_notes.user
 			,tmp_notes.timestamp
 			,tmp_notes.contact 
@@ -97,5 +101,10 @@ BEGIN
 
 	LIMIT recordCount OFFSET offsetIndex;
 	SET filteredCount = FOUND_ROWS();
+
+	SELECT COUNT(*) as 'totalCount' INTO totalCount
+	FROM cur_notes
+	WHERE 
+		cur_notes.is_deleted = 0;
 END$$
 DELIMITER ;
