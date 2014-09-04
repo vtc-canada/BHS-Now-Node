@@ -10,6 +10,7 @@
                 '/buildings':'Buildings',
                 '/contacts':'Contacts',
                 '/companies':'Companies',
+                '/notes':'Notes',
                 'Airport BHS':'Airport BHS',
                 'Web Portal':'Web Portal',
                 'My Account':'My Account',
@@ -51,6 +52,7 @@
                     '/contacts':'Contacts',
                 	'/companies':'Companies',
                     '/maps':'Maps',
+                	'/notes':'Notes',
                     'Search':'Search',
                     '/admin/users':'Users',
                     'Airline Configuration':'Airline Configuration',
@@ -66,6 +68,7 @@
                 '/buildings':'Buildings',
                 '/contacts':'Contacts',
                 '/companies':'Companies',
+                '/notes':'Notes',
                 'Airport BHS':'Aeropuerto SME',
                 'Web Portal':'Web Portal',
                 'My Account':'Mi Cuenta',
@@ -107,6 +110,7 @@
                       '/maps':'Maps',
                       '/contacts':'Contacts',
                 		'/companies':'Companies',
+                		'/notes':'Notes',
                       'Search':'Search',
                       '/admin/users':'Users',
                       'Airline Configuration':'Airline Configuration',
@@ -292,6 +296,13 @@
               <a href="/companies">
                   <i class="icon-briefcase icon-2x"></i>
                   <span><%= translate[req.session.user.locale]['/companies'] %></span>
+              </a>
+            </li>
+            <li <% if (typeof(req.url)!=='undefined'&&req.url=='/notes'){ %>class="active"<% } %>>
+              <span class="glow"></span>
+              <a href="/notes">
+                  <i class="icon-file-alt icon-2x"></i>
+                  <span><%= translate[req.session.user.locale]['/notes'] %></span>
               </a>
             </li>
             

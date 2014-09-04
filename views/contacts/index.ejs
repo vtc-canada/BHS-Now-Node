@@ -192,6 +192,7 @@
         <div class="row-fluid" id="reportheader"><span style="padding-left:10px;" id="building-section-title">Edit Contact Details</span>
          	<button style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="save_contact">Save</button>
          	<button style="margin-right:10px;font-weight: 400;" class="btn btn-danger pull-right save_pull" id="delete_contact">Delete</button>
+         	<button style="margin-right:10px;font-weight: 400;" class="btn pull-right save_pull" id="cancel_contact">Cancel</button>
          	<div style="margin-right: 10px; color: rgb(153, 0, 0); font-weight: 400; display: none;" class="pull-right save_pull" id="changes_pending">Changes Pending. &nbsp;</div>
   		 </div>
         <div class="row-fluid " id="iframediv">
@@ -251,7 +252,42 @@
         		<div id="companies-div" style="width:100%; margin:0px; line-height: 35px; margin-top: 5px;">
         		</div>
         		
-        		
+        		<div class="row-fluid">
+					<div class="span12">
+						<div class="row-fluid">
+							<div class="row-category">
+								<i class="icon-pencil"></i> &nbsp&nbsp<b>Note History</b>
+								<div class="pull-right" style="height:40px;">
+									<span class="row-category-button-wrapper">
+										<span id="create_note" class="btn btn-success">
+						                    <i class="glyphicon glyphicon-plus"></i>
+						                    <span>Create Note</span>
+						                </span>
+									</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div id="notes-table-header" class="tableheader row-fluid">
+					<div class="span2">
+						Timestamp
+					</div>
+					<div class="span2">
+						User
+					</div>
+					<div class="span6">
+						Details
+					</div>
+					<div class="span2">
+						Modify
+					</div>
+				</div>
+				<div id="notes-wrapper" class="row-fluid css-notes-wrapper">
+				
+				</div>
+	        		
             </div>
         </div>
     </div>
@@ -271,6 +307,25 @@
         <button class="btn btn-danger" data-dismiss="modal" aria-hidden="true" id="confirmdelete"><%= translate[locale]['Delete'] %></button>
     </div>
 </div>
+
+
+<script type="text/template" id="notes-template">
+	<div class="row-fluid note" noteid="{{=id}}">
+		<div class="span2">
+			<span class="mobilelabel">Timestamp:</span>{{=note_datetime}}
+		</div>
+		<div class="span2">
+			<span class="mobilelabel">User:</span>{{=user}}
+		</div>
+		<div class="span6"><span class="mobilelabel">Details:</span><div class="note-editable">{{=note}}</div></div>
+		<div class="span2" style="padding-top:0px;">
+			<div class="row-fluid" style="padding:6px;">
+				<a class="edit-note" style="color:#0F74BC;cursor:pointer;padding-right:6px;"><i class="icon-edit icon-2x"></i></a>
+				<a class="delete-note" style="color:red;cursor:pointer;"><i class="icon-remove-sign icon-2x"></i></a>
+			</div>
+		</div>
+	</div>
+</script>
 
 <script>
 
@@ -292,6 +347,7 @@
         		}
         	}
         	companycombobox = $('select.companycombobox').combobox();
+        	$('.combobox-container .icon-remove').click();
         	$('input.companycombobox').on('keyup',function(e){
         		if(curcompanyval!=$('input.companycombobox').val()&&e.keyCode!=9&&e.keyCode!=13&&e.keyCode!=27){
     				curcompanyval =  $('input.companycombobox').val();
@@ -392,11 +448,17 @@
 		$('#create_contact').click(function(){
 			$('#delete_contact').css('display','none');
 			$('.edit-item-section').css('display','');			
+			notes.reset();
 			contact = new ContactModel({contact_id:'new',contact_name:'',email:'',phone_number:''});
 			contactView.render();
 			companies.reset();
 			companyView.render();
 		
+		});
+		
+		$('#cancel_contact').click(function(){
+			$('#delete_contact').css('display','none');
+			$('.edit-item-section').css('display','none');	
 		});
 		
 		$('#delete_contact').click(function(){
@@ -412,6 +474,17 @@
 			}
 		});
 		
+			
+	    $('#create_note').click(function(){
+	    	if(typeof(notes)!='undefined'){
+	    		var noteid = 'new_'+Math.floor((Math.random() * 1000000) + 1);
+	    		var newnote = new NotesModel({id:noteid,note:'',timestamp:new Date(),user:'<%=req.session.user.username%>'});
+	    		notes.add(newnote);
+	    		notesView.render();
+	    		$('.note[noteid='+noteid+'] .edit-note').click();
+	    	}	
+		});	
+		
 		$('#confirmdelete').click(function(){
 			socket.get('/contacts/deletecontact',{contact_id:contact.get('contact_id')},function(response){
 				datatable.api().ajax.reload(function(){},false);
@@ -425,7 +498,7 @@
 		});
 		
     	$('#save_contact').click(function(){
-    		socket.get('/contacts/updatecontact/' + contact.get('contact_id'), {contact:contact.toJSON(), companies : companies.toJSON()},function(response){
+    		socket.get('/contacts/updatecontact/' + contact.get('contact_id'), {contact:contact.toJSON(), companies : companies.toJSON(), notes : notes.toJSON()},function(response){
     			if(typeof(response.success)!='undefined'){
     				if(contact.get('contact_id')=='new'){
     					contact.set('contact_id',response.contact_id);
@@ -472,14 +545,14 @@
 	    		$('#new_contact_pending').css('display','none');
 	    		$('#mapped_contact_pending').css('display','none');
 	    		$('#modified_contact_pending').css('display','block');
-	    	}else if(typeof(contact.get('dosync'))!='undefined'){
+	    	}else if(typeof(contact.get('modified'))!='undefined'){
 	    		$('#new_contact_pending').css('display','none');
 	    		$('#mapped_contact_pending').css('display','block');
 	    		$('#modified_contact_pending').css('display','none');
 	    	}
 	    	return;*/
             //buildingcontacts.each(function(bcontact){
-           //	if(typeof(bcontact.get('dodelete'))!='undefined'||typeof(bcontact.get('dosync'))!='undefined')
+           //	if(typeof(bcontact.get('dodelete'))!='undefined'||typeof(bcontact.get('modified'))!='undefined')
             //	{
             //		change = true;
             //	}
@@ -564,6 +637,7 @@
 	        	
 	        	setChangesPending();
 				
+				notes.fetch({id:contact.get('contact_id')});
 	        }
 	    });
 	    var contactView = new ContactBackboneView();
@@ -687,242 +761,145 @@
 	   
 	   
 	   
-	   
-	   
-	   
-	   
-	   
-	   
-	   
-	   
-	    /*
-	    function resetContactFields(){
-			$('input.contact_name').val('');
-			$('input#phone_number').val('');
-			$('input#email').val('');
-			enableContactFields(false);
-			$('input.contact_name').removeAttr('disabled');
-			$('input.contact_name').change();
-			$('.editmode-save').css('display','none');
-			$('.editmode-edit').css('display','none');
-			$('.editmode-create').css('display','');
-			
-	    }
-	    function enableContactFields(editmode){
-	    	if(editmode){
-		    	$('input#phone_number').removeAttr('disabled');
-		    	$('input#email').removeAttr('disabled');
-	    	}else{
-		    	$('input#phone_number').attr('disabled','disabled');
-		    	$('input#email').attr('disabled','disabled');
-	    	}
-	    }
-	    
-	    function updateContactsCombobox(){
-    		clearTimeout(contactssearchtimer);
-    		contactssearchtimer = setTimeout(function(){
-    			socket.get('/contacts/getcontactsbyname',{search:curcontactsval},function(res){
-    				var tempval = $('input.contact_name').val();
-        			$('select.contact_name').empty();
-        			if(typeof(contact.get('editmode'))!='undefined')
-        			{
-        				contact.set('modified',true);
-		        		$('select#contact_name').append('<option '+(typeof(contact.get('dosync'))!='undefined'?'dosync="'+contact.get('dosync')+'"':'') +' email="'+contact.get('email')+'" phone_number="' + contact.get('phone_number') + '" contact_id="'+contact.get('contact_id')+'" value="'+contact.get('contact_id')+'" contact_name="'+contact.get('contact_name')+'">'+contact.get('contact_name')+'</option>');
-		        	}
-		        	for(var i=0;i<res.length;i++){
-		        		if($('select#contact_name option[contact_id='+parseInt(res[i].contact_id)+']').length==0){//   parseInt(contact.get('contact_id'))!=parseInt(res[i].contact_id)){
-			        		$('select.contact_name').append('<option email="'+res[i].email+'" phone_number="' + res[i].phone_number + '" contact_id="'+res[i].contact_id+'" value="'+res[i].contact_id+'" contact_name="'+res[i].contact_name+'">'+res[i].contact_name+'</option>');
-		        		}
-		        	}
-        			contactscombobox.data('combobox').refresh(); 
-        			$('input.contact_name').val(tempval);
-        			contactscombobox.data('combobox').lookup();
-        			
-    			});
-    		},100);
-	    }
-	    */
-	    /*
+	   ///////////////////////////
+	    ///  NOTES ////////
 	    ///////////////////////////
-	    /// Company        ////////
-	    ///////////////////////////    	
 	    	
-		var CompanyModel = Backbone.Model.extend({
-	        urlRoot: '/contacts/getcompany',
-	        socket:null,
-	        sync:function(method,model,options){
-	        	var where = options;
-	            if(typeof this.urlRoot === "string" && this.urlRoot !== "") {
+		var NotesModel = Backbone.Model.extend({
+	        urlRoot: '/contacts/note'
+	    });
+	
+	    var NotesCollection = Backbone.Collection.extend({
+	        sailsCollection: "",
+	        socket: null,
+	        sync: function(method, model, options){
+	            var where = {};
+	            if (options.where) {
+	                where = {
+	                    where: options.where
+	                }
+	            }
+	            if(options.id){
+	            	where.id = options.id;
+	        	}
+	            if(typeof this.sailsCollection === "string" && this.sailsCollection !== "") {
 	                this.socket = socket;
 	            	var collectionid = where.id?'/'+where.id:'';
-	                this.socket.request(this.urlRoot+collectionid, where, _.bind(function(company){
-	                    if(company.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
+	                this.socket.request("/" + this.sailsCollection+collectionid, where, _.bind(function(tnotes){
+	                    if(tnotes.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
 	                        location.reload(); // Will boot back to login screen
 	                    }
-	                    this.clear();
-	                    this.set(company);
-	                    if(companyView==null){
-	                    	companyView = new CompanyBackboneView();
-	                    	companyView.render();
-	                    }else{
-	                    	companyView.render();
-	                    }
+	                    this.set(tnotes);
+	                    notesView = new NotesBackboneView({collection: notes});
 	                }, this));
 	            }
-	        
 	        }
 	    });
-	    var company = new CompanyModel();
-		
+	
+	    var NotesCollection = NotesCollection.extend({
+	        sailsCollection: 'contacts/notes',
+	        model: NotesModel
+	    });
+	
+	    var notes = new NotesCollection();
+	    //buildingnotes.fetch({id:11});
+	
+	
+	
+	
+	
 	    ///////////////////////////
-	    /// Company View       ////
+	    ///     Notes View     ////
 	    ///////////////////////////
 	
-	    var CompanyBackboneView = Backbone.View.extend({
-	        el: '#company_information_section',
+	    var NotesBackboneView = Backbone.View.extend({
+	        el: '#notes-wrapper',
 	        events: {
-	           // "change .building-segment-wrapper input" : "inputChange"
+	            "click a.delete-note"   : "deleteNote",
+	            "click a.edit-note" : "editNote"
+	
 	        },
-	        inputChange:function(event){
+	        editNote:function(event){
+	        	var self = this;
+	        	var blurTimeout;
+	        	var trackdetailstyping = '';
+	        	//event.target.parent('.note').find();
+	        	var $notelement = $(event.target).parents('.note');
+	        	var noteid= $notelement.attr('noteid');
+	        	//var currentnote = $(event.target).parents('.note').find('.note-editable').html();
+	        	//this.collection.get(noteid)
+	        	$('.no-notes-remove').remove();
+	        	$notelement.find('.note-editable').replaceWith('<div class="row-fluid"><div class="row-fluid"><textarea class="note-textarea-editable">'+this.collection.get(noteid).get('note')+'</textarea></div><div class="row-fluid"><button class="save-note-textarea-editable btn btn-primary">Save</button><button class="cancel-note-textarea-editable btn ">Cancel</button></div></div>');
 	        	
-	        	//setChangesPending();
-	        },
-	        initialize: function () {
-	            //this.render();
-	        },
-	        template: _.template($('#company-template').html()),
-	        render: function () {
-	    	    this.$el.empty();
-	        	this.$el.append(this.template(company.toJSON()));
-	        	socket.get('/contacts/getcompaniesbyname',{},function(res){
-		        	$('select.company_name').empty();
-		        	$('select.company_name').append('<option company_id="'+company.get('company_id')+'" value="'+company.get('company_id')+'" company_name="'+company.get('company_name')+'">'+company.get('company_name')+'</option>');
-		        	for(var i=0;i<res.length;i++){
-		        		if(parseInt(company.get('company_id'))!=parseInt(res[i].company_id)){
-			        		$('select.company_name').append('<option company_id="'+res[i].company_id+'" value="'+res[i].company_id+'" company_name="'+res[i].company_name+'">'+res[i].company_name+'</option>');
-		        		}
-		        	}
-		        	companycombobox = $('select.company_name').combobox();
-		        	$('input.company_name').on('keyup',function(e){
-		        		if(curcompanyval!=$('input.company_name').val()&&e.keyCode!=9&&e.keyCode!=13&&e.keyCode!=27)
-		        		{
-		        			curcompanyval =  $('input.company_name').val();
-		        			updateCompanyCombobox();
-	        			}
-		        		else if(e.keyCode==9||e.keyCode==13||e.keyCode==27)
-		        		{
-		        			$('input.company_name').change();
-	        			}
-	        		});
-	        		$('input.company_name').change(function(){
-	        			var selectedoption = $('select.company_name option[company_name="'+$('input.company_name').val()+'"]');
-	        			if(selectedoption.length==1)
-	        			{
-	        				var newcompany = {company_id:selectedoption.attr('company_id'),company_name:selectedoption.attr('company_name')};
-	        				if(typeof(selectedoption.attr('dosync'))!='undefined'&&selectedoption.attr('dosync'))
-	        				{
-	        					newcompany.dosync = true;
-	        				}
-	        				company = new CompanyModel(newcompany);
-	        				companyView.render();
-	        				socket.get('/contacts/getaddressbycompanyid/'+company.get('company_id'),{},function(addressval){
-	        					address.fetch({id:addressval.address_id});
-	        				});
-	    				}else{
-	    					if($('input.company_name').val()!='')
-	    					{
-	    						if(mapping_id=='new')
-	    						{
-	    							company = new CompanyModel({company_id:'new' ,company_name:$('input.company_name').val()});
-	    							companyView.render();
-    							}else{
-    								company.set('dosync',true);
-    								company.set('company_name',$('input.company_name').val());
-    								companyView.render();
-    							}
-	    					}
-	    				}
-					});
-					
-	    			$('.company_name').siblings('.add-on').find('.icon-remove').click(function(){
-	    				$('input.company_name').val('');
-	    				$('input.company_name').change();
-					});
-	    			$('.company_name').siblings('.add-on').find('.caret').click(function(){
-	    				$('input.company_name').val('');
-	    				$('input.company_name').change();
-					});
-	    			$('.company_name').siblings('.add-on').click(function(){
-	    				$('input.company_name').val('');
-	    				$('input.company_name').change();
-					});
+        		$notelement.find('.save-note-textarea-editable').unbind();
+	        	$notelement.find('.save-note-textarea-editable').click(function(){
+	        		self.collection.get(noteid).set('note', trackdetailstyping);//$notelement.find('.note-textarea-editable').val());
+	        		self.collection.get(noteid).set('modified', true);
+	        		contact.set('modified',true);
+	        		setChangesPending();
+	    		});
+	    		$notelement.find('.note-textarea-editable').unbind();
+	        	$notelement.find('.note-textarea-editable').blur(function(){
+		        	blurTimeout = setTimeout(function(){
+		        		self.render();
+		        	},200);
 	        	});
-        		
-	            setChangesPending();
-	        }
-	    });
-	    var companyView;
-    	
-    	
-	    
-	    
-    	
-    	 //////////////////////////
-	    /// Address         ///////
-	    ///////////////////////////    	
-	    	
-		var AddressModel = Backbone.Model.extend({
-	        urlRoot: '/contacts/getaddress',
-	        socket:null,
-	        sync:function(method,model,options){
-	        	var where = options;
-	            if(typeof this.urlRoot === "string" && this.urlRoot !== "") {
-	                this.socket = socket;
-	            	var collectionid = where.id?'/'+where.id:'';
-	                this.socket.request(this.urlRoot+collectionid, where, _.bind(function(address){
-	                    if(address.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
-	                        location.reload(); // Will boot back to login screen
-	                    }
-	                    this.clear();
-	                    this.set(address);
-	                    if(addressView==null){
-	                    	addressView = new AddressBackboneView();
-	                    	addressView.render();
-	                    }else{
-	                    	addressView.render();
-	                    }
-	                }, this));
-	            }
-	        
-	        }
-	    });
-	    var address = new AddressModel();
-		
-	    ///////////////////////////
-	    /// Address View       ////
-	    ///////////////////////////
-	
-	    var AddressBackboneView = Backbone.View.extend({
-	        el: '#address_information_section',
-	        events: {
-	           // "change .building-segment-wrapper input" : "inputChange"
+	        	$notelement.find('.note-textarea-editable').keyup(function(){
+	        		trackdetailstyping = $notelement.find('.note-textarea-editable').val();
+	        	});
+	        	
+	        	trackdetailstyping = $notelement.find('.note-textarea-editable').val();
+	        	$notelement.find('.note-textarea-editable').focus();
+	        	
 	        },
-	        inputChange:function(event){
-	        	//setChangesPending();
+	        deleteNote:function(event){
+	        	var $notelement = $(event.target).parents('.note');
+	        	var noteid= $notelement.attr('noteid');
+	        	if($notelement.attr('noteid').indexOf("new")>-1){
+	        		this.collection.remove(noteid);
+	        		this.render();
+	        	}else{
+	        		this.collection.get(noteid).set('deleted',true);
+	        		this.render();
+	        	}
+	        	contact.set('modified',true);
+        		setChangesPending();
 	        },
 	        initialize: function () {
-	            //this.render();
+	            this.render();
 	        },
-	        template: _.template($('#address-template').html()),
+	        template: _.template($('#notes-template').html()),
 	        render: function () {
-	    	    this.$el.empty();
-	        	this.$el.append(this.template(address.toJSON()));
-	            setChangesPending();
+	            this.$el.html("");
+	            
+	        	if(contact.get('contact_id')!='new'){
+	        		//$('#building-sales').css('display','')
+	        	}
+	            var tcollection = this.collection.sortBy(function(notes){
+	                return notes.get("note").toString().toUpperCase();
+	            });
+	
+	            for(var i=0; i<tcollection.length; i++)
+	            {
+	                //if(!tcollection[i].isNew()){
+	                if(typeof(tcollection[i].get('deleted'))=='undefined'){
+	                	tcollection[i].set('note_datetime',toDateTimeString(tcollection[i].get('timestamp')));
+	                	this.$el.append(this.template(tcollection[i].toJSON()));
+	            	}
+	                //}else{
+	                //    this.$el.append(this.newusertemplate(tcollection[i].toJSON()));
+	                //}
+	            }
+	            if(tcollection.length==0){
+	            	this.$el.append('<div class="no-notes-remove">No Notes Found.</div>');
+	            }
+	            
+	            
+	            //setChangesPending();  // recalculates and displays if changes are pending
 	        }
 	    });
-	    var addressView;
-    	
-    	*/
-        
+	    var notesView;
+	   
+	   
     });
 </script>

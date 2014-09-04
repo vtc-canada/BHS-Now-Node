@@ -146,10 +146,19 @@ table.dataTable > tbody > tr.selected{
 	font-weight: bold;
 	cursor:pointer;
 }
-table.dataTable > tbody > tr{
+table.dataTable:not(.disable-pointer) > tbody > tr{
     cursor:pointer;
 }
 
+.tooltip.top {
+	display: none;
+}
+
+.slider-min-val-label {
+	margin-right: 20px;
+	text-align: right;
+	width:38px;
+}
 
 .content-wrapper{
 	margin-top: 10px;
@@ -512,8 +521,12 @@ div.tableheader{
 	font-weight:normal;
 }
 
+
 .note-textarea-editable{
-	width:50%;
+	width: 98%;
+	margin: 0px;
+	margin-bottom: 4px;
+	padding: 2px 1%;
 }
 .main-search{
     line-height: 15px !important;
@@ -644,6 +657,26 @@ a.isys-a.small{
 
 #adminusers div[userid] > div > span.mobilelabel{
     display: none;
+}
+.css-notes-wrapper span.mobilelabel{
+	display:none;
+}
+
+.building-note > div {
+	padding-top:8px;
+}
+.note > div {
+	padding-top:8px;
+}
+.save-note-textarea-editable{
+	margin-left:4px;	
+	margin-right: -1px;
+	float:right;
+}
+.cancel-note-textarea-editable{
+	margin-left:0px;	
+	margin-right: 0px;
+	float:right;
 }
 
 div.language-flag{
@@ -965,6 +998,31 @@ div.language-flag.chile{
         border: 1px solid #BBBDBE;
         background-color: rgb(246, 247, 250);
         margin-bottom: 20px;
+    }
+    .css-notes-wrapper > div[noteid]{
+        border: 1px solid #BBBDBE;
+        background-color: rgb(246, 247, 250);
+        margin-bottom: 20px;
+    
+    }
+    .css-notes-wrapper span.mobilelabel{
+    	display:inline;
+    	width: 25%;
+    	float:left;
+    	margin-left:10px;
+    }
+    
+    .save-note-textarea-editable{
+    	margin-right:5px;
+	}
+	.cancel-note-textarea-editable{
+	}
+	
+	.note-textarea-editable{
+		width:69%;
+	}
+    #notes-table-header{
+    	display:none;
     }
     #adminusers div[userid] > div > span.mobilelabel{
         display: inline;

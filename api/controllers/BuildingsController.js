@@ -126,6 +126,16 @@ module.exports = {
 
 	}
     },
+    deletebuilding:function(req,res){
+	if(typeof(req.body.building_id)!='undefined'&&!isNaN(parseInt(req.body.building_id))){
+	    sails.controllers.database.credSproc('DeleteBuilding',[parseInt(req.body.building_id)],function(err,resultDelete){
+		if(err)
+		    return res.json({error:'Database Error:'+err},500);	
+		res.json({success:'success'});
+		
+	    });
+	}
+    },
     savebuilding : function(req, res) {
 
 	var building = req.body.building;
@@ -225,13 +235,16 @@ module.exports = {
 	    var geocoder = require('node-geocoder').getGeocoder(geocoderProvider, httpAdapter, extra);
 
 	    geocoder.geocode(addressSearch, function(err, responseGeocode) {
-
+		var lat = null;
+		var lng = null;
 		if (typeof (responseGeocode) != 'undefined' && responseGeocode.length > 0) {
-
+		    lat = responseGeocode[0].latitude;
+		    lng = responseGeocode[0].longitude;
+		}
 		    if (building.building_id != 'new') {
 			sails.controllers.database.credSproc('UpdateAddress', [ building.address_id, "'" + building.street_number_begin + "'",
 				"'" + building.street_number_end + "'", "'" + building.street_name + "'", "'" + building.postal_code + "'",
-				"'" + building.city + "'", "'" + building.province + "'", responseGeocode[0].latitude, responseGeocode[0].longitude ],
+				"'" + building.city + "'", "'" + building.province + "'", lat, lng ],
 				function(err, responseAddress) {
 			    		if(err)
 			    		    return res.json({error:'Database Error'+err},500);
@@ -268,8 +281,8 @@ module.exports = {
 			                        				,1 // Type
 										    // Asset
 			                        				, "'" + building.province + "'"
-			                        				, responseGeocode[0].latitude
-			                        				, responseGeocode[0].longitude
+			                        				, lat
+			                        				, lng
 			                        				,tempAddressId],
 			                        				function(err, responseAddress) {
 			    if(err)
@@ -302,7 +315,6 @@ module.exports = {
 			});
 			
 		    }
-		}
 	    });
 	}
 
@@ -438,14 +450,22 @@ module.exports = {
 	if (req.query.contact_search != '') {
 	    contact_search = "'+" + req.query.contact_search.split(" ").join("* +") + "*'";
 	}
+	
+	var orderstring = '';
+	if(req.query.order[0].column==1){  //Address column
+	    orderstring = 'street_number_begin';
+	}else if(req.query.order[0].column==5){
+	    orderstring = 'sale_date';
+	}else{
+	    orderstring = req.query.columns[req.query.order[0].column].data;
+	}
+	orderstring = "'"+orderstring+'_'+req.query.order[0].dir+"'";
 
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
 	sails.controllers.database.credSproc('GetBuildings', [ contact_search, address_search, null,
 		req.query.unitQuantityMin == '' ? null : parseInt(req.query.unitQuantityMin),
 		req.query.unitQuantityMax == '' ? null : parseInt(req.query.unitQuantityMax),
 		req.query.saleDateRangeStart == '' ? null : "'"+req.query.saleDateRangeStart+"'", req.query.saleDateRangeEnd == '' ? null : "'"+req.query.saleDateRangeEnd+"'",
-		req.query.centerLatitude == ''?null:req.query.centerLatitude,
-		req.query.centerLongitude == ''?null:req.query.centerLongitude,
 
 		req.query.boundsLatitudeMin == ''?null:req.query.boundsLatitudeMin,
 		req.query.boundsLatitudeMax == ''?null:req.query.boundsLatitudeMax,
@@ -453,13 +473,12 @@ module.exports = {
 		req.query.boundsLongitudeMax == ''?null:req.query.boundsLongitudeMax,
 			
 		
-		false, // centerlat, centerlng,
-		// range,heattype
+		false, // has elevator
 		null, null, null, // capmin,capmax,heattype
 		null, null, null, null,// bedroom1min,bedroom1max,bedroom2min,bedroom2max
 		null, null, null, null,// bedroom3min,bedroom3max,bachelormin,bachelormax
 		null, null, // windowmin,windowmax
-		req.query.start, req.query.length, null, filteredCount ], function(err, result) { // GetBuildings
+		req.query.start, req.query.length, orderstring, filteredCount ], function(err, result) { // GetBuildings
 	    if (err) {
 		return res.json({
 		    error : 'Database Error'+err

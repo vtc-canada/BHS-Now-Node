@@ -1,2 +1,5 @@
 eclipse.preferences.version=1
 encoding//api/controllers/UsersController.js=UTF-8
+encoding//database/scripts/CreateContactCompanyMapping.sql=UTF-8
+encoding//database/scripts/SearchCompanies.sql=UTF-8
+encoding//database/scripts/SearchContacts.sql=UTF-8

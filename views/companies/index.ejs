@@ -142,7 +142,7 @@
 </div>
 <script type="text/template" id="company-template">
 	<div class="row-fluid " style="position:relative; cursor:default;" company_id="{{=company_id}}">
-
+		{{ if(latitude ==null){ }}Invalid latitude/longitude{{ } }}
 		<div class="row-fluid building-segment-wrapper">
 			<div class="span5 segment-label" >Company Name:</div>
 			<div class="span7" ><input type="text" id="company_name" class="company_name address-input" value="{{=company_name}}"></div>
@@ -210,11 +210,30 @@
 	</div>
 </script>
 
+<script type="text/template" id="notes-template">
+	<div class="row-fluid note" noteid="{{=id}}">
+		<div class="span2">
+			<span class="mobilelabel">Timestamp:</span>{{=note_datetime}}
+		</div>
+		<div class="span2">
+			<span class="mobilelabel">User:</span>{{=user}}
+		</div>
+		<div class="span6"><span class="mobilelabel">Details:</span><div class="note-editable">{{=note}}</div></div>
+		<div class="span2" style="padding-top:0px;">
+			<div class="row-fluid" style="padding:6px;">
+				<a class="edit-note" style="color:#0F74BC;cursor:pointer;padding-right:6px;"><i class="icon-edit icon-2x"></i></a>
+				<a class="delete-note" style="color:red;cursor:pointer;"><i class="icon-remove-sign icon-2x"></i></a>
+			</div>
+		</div>
+	</div>
+</script>
+
 <div class="row-fluid edit-item-section" style="display:none; margin-top:19px;">
     <div class="span10 offset1 page-controls-wrapper">
         <div class="row-fluid" id="reportheader"><span style="padding-left:10px;" id="building-section-title">Edit Company Details</span>
          	<button style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="save_contact">Save</button>
          	<button style="margin-right:10px;font-weight: 400;" class="btn btn-danger pull-right save_pull" id="delete_company">Delete</button>
+         	<button style="margin-right:10px;font-weight: 400;" class="btn pull-right save_pull" id="cancel_company">Cancel</button>
          	<div style="margin-right: 10px; color: rgb(153, 0, 0); font-weight: 400; display: none;" class="pull-right save_pull" id="changes_pending">Changes Pending. &nbsp;</div>
   		 </div>
         <div class="row-fluid " id="iframediv">
@@ -276,6 +295,43 @@
         		
         		<div id="adminusers" style="width:100%; margin:0px; display:none;">
         		</div>
+        		
+        		<div class="row-fluid">
+					<div class="span12">
+						<div class="row-fluid">
+							<div class="row-category">
+								<i class="icon-pencil"></i> &nbsp&nbsp<b>Note History</b>
+								<div class="pull-right" style="height:40px;">
+									<span class="row-category-button-wrapper">
+										<span id="create_note" class="btn btn-success">
+						                    <i class="glyphicon glyphicon-plus"></i>
+						                    <span>Create Note</span>
+						                </span>
+									</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div id="notes-table-header" class="tableheader row-fluid">
+					<div class="span2">
+						Timestamp
+					</div>
+					<div class="span2">
+						User
+					</div>
+					<div class="span6">
+						Details
+					</div>
+					<div class="span2">
+						Modify
+					</div>
+				</div>
+				<div id="notes-wrapper" class="row-fluid css-notes-wrapper">
+				
+				</div>
+        		
         		
             </div>
         </div>
@@ -397,7 +453,15 @@
 	     	
     	});
     	
-    	
+    	$('#create_note').click(function(){
+	    	if(typeof(notes)!='undefined'){
+	    		var noteid = 'new_'+Math.floor((Math.random() * 1000000) + 1);
+	    		var newnote = new NotesModel({id:noteid,note:'',timestamp:new Date(),user:'<%=req.session.user.username%>'});
+	    		notes.add(newnote);
+	    		notesView.render();
+	    		$('.note[noteid='+noteid+'] .edit-note').click();
+	    	}	
+		});
 
 		$('#search_address').keydown(function(){
 			setTimeout(function(){
@@ -412,12 +476,18 @@
 		
 		$('#create_company').click(function(){
 			$('#delete_company').css('display','none');
-			$('.edit-item-section').css('display','');			
+			$('.edit-item-section').css('display','');
+			notes.reset();	
 			company = new CompanyModel({company_id:'new',company_name:'',street_number_begin:'',street_number_end:'',street_name:'',postal_code:'',city:'',province:'',latitude:'',longitude:''});
 			companyView.render();
 			contacts.reset();
 			contactsView.render();
 		
+		});
+		
+		$('#cancel_company').click(function(){
+			$('#delete_company').css('display','none');
+			$('.edit-item-section').css('display','none');	
 		});
 		
 		$('#delete_company').click(function(){
@@ -446,7 +516,7 @@
 		});
 		
     	$('#save_contact').click(function(){
-    		socket.get('/companies/updatecompany/' + contacts.get('contact_id'), {company:company.toJSON(), contacts : contacts.toJSON()},function(response){
+    		socket.get('/companies/updatecompany/' + contacts.get('contact_id'), {company:company.toJSON(), contacts : contacts.toJSON(), notes: notes.toJSON()},function(response){
     			if(typeof(response.success)!='undefined'){
     				if(company.get('company_id')=='new'){
     					company.set('company_id',response.company_id);
@@ -570,6 +640,7 @@
 	        render: function () {
 	    	    this.$el.empty();
 	        	this.$el.append(this.template(company.toJSON()));
+	        	notes.fetch({id:company.get('company_id')});
 	        	setChangesPending();
 				
 	        }
@@ -660,6 +731,145 @@
 
         var contactsView = new ContactsView({collection: contacts});
 	   
+	   
+	   
+	   ///////////////////////////
+	    ///  NOTES ////////
+	    ///////////////////////////
+	    	
+		var NotesModel = Backbone.Model.extend({
+	        urlRoot: '/contacts/note'
+	    });
+	
+	    var NotesCollection = Backbone.Collection.extend({
+	        sailsCollection: "",
+	        socket: null,
+	        sync: function(method, model, options){
+	            var where = {};
+	            if (options.where) {
+	                where = {
+	                    where: options.where
+	                }
+	            }
+	            if(options.id){
+	            	where.id = options.id;
+	        	}
+	            if(typeof this.sailsCollection === "string" && this.sailsCollection !== "") {
+	                this.socket = socket;
+	            	var collectionid = where.id?'/'+where.id:'';
+	                this.socket.request("/" + this.sailsCollection+collectionid, where, _.bind(function(tnotes){
+	                    if(tnotes.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
+	                        location.reload(); // Will boot back to login screen
+	                    }
+	                    this.set(tnotes);
+	                    notesView = new NotesBackboneView({collection: notes});
+	                }, this));
+	            }
+	        }
+	    });
+	
+	    var NotesCollection = NotesCollection.extend({
+	        sailsCollection: 'companies/notes',
+	        model: NotesModel
+	    });
+	
+	    var notes = new NotesCollection();
+	    //buildingnotes.fetch({id:11});
+	
+	
+	
+	
+	
+	    ///////////////////////////
+	    ///     Notes View     ////
+	    ///////////////////////////
+	
+	    var NotesBackboneView = Backbone.View.extend({
+	        el: '#notes-wrapper',
+	        events: {
+	            "click a.delete-note"   : "deleteNote",
+	            "click a.edit-note" : "editNote"
+	
+	        },
+	        editNote:function(event){
+	        	var self = this;
+	        	var blurTimeout;
+	        	var trackdetailstyping = '';
+	        	//event.target.parent('.note').find();
+	        	var $notelement = $(event.target).parents('.note');
+	        	var noteid= $notelement.attr('noteid');
+	        	//var currentnote = $(event.target).parents('.note').find('.note-editable').html();
+	        	//this.collection.get(noteid)
+	        	$('.no-notes-remove').remove();
+	        	$notelement.find('.note-editable').replaceWith('<div class="row-fluid"><div class="row-fluid"><textarea class="note-textarea-editable">'+this.collection.get(noteid).get('note')+'</textarea></div><div class="row-fluid"><button class="save-note-textarea-editable btn btn-primary">Save</button><button class="cancel-note-textarea-editable btn ">Cancel</button></div></div>');
+	        	
+        		$notelement.find('.save-note-textarea-editable').unbind();
+	        	$notelement.find('.save-note-textarea-editable').click(function(){
+	        		self.collection.get(noteid).set('note', trackdetailstyping);//$notelement.find('.note-textarea-editable').val());
+	        		self.collection.get(noteid).set('modified', true);
+	        		company.set('modified',true);
+	        		setChangesPending();
+	    		});
+	    		$notelement.find('.note-textarea-editable').unbind();
+	        	$notelement.find('.note-textarea-editable').blur(function(){
+		        	blurTimeout = setTimeout(function(){
+		        		self.render();
+		        	},200);
+	        	});
+	        	$notelement.find('.note-textarea-editable').keyup(function(){
+	        		trackdetailstyping = $notelement.find('.note-textarea-editable').val();
+	        	});
+	        	
+	        	trackdetailstyping = $notelement.find('.note-textarea-editable').val();
+	        	$notelement.find('.note-textarea-editable').focus();
+	        	
+	        },
+	        deleteNote:function(event){
+	        	var $notelement = $(event.target).parents('.note');
+	        	var noteid= $notelement.attr('noteid');
+	        	if($notelement.attr('noteid').indexOf("new")>-1){
+	        		this.collection.remove(noteid);
+	        		this.render();
+	        	}else{
+	        		this.collection.get(noteid).set('deleted',true);
+	        		this.render();
+	        	}
+	        	company.set('modified',true);
+        		setChangesPending();
+	        },
+	        initialize: function () {
+	            this.render();
+	        },
+	        template: _.template($('#notes-template').html()),
+	        render: function () {
+	            this.$el.html("");
+	            
+	        	if(company.get('company_id')!='new'){
+	        		//$('#building-sales').css('display','')
+	        	}
+	            var tcollection = this.collection.sortBy(function(notes){
+	                return notes.get("note").toString().toUpperCase();
+	            });
+	
+	            for(var i=0; i<tcollection.length; i++)
+	            {
+	                //if(!tcollection[i].isNew()){
+	                if(typeof(tcollection[i].get('deleted'))=='undefined'){
+	                	tcollection[i].set('note_datetime',toDateTimeString(tcollection[i].get('timestamp')));
+	                	this.$el.append(this.template(tcollection[i].toJSON()));
+	            	}
+	                //}else{
+	                //    this.$el.append(this.newusertemplate(tcollection[i].toJSON()));
+	                //}
+	            }
+	            if(tcollection.length==0){
+	            	this.$el.append('<div class="no-notes-remove">No Notes Found.</div>');
+	            }
+	            
+	            //setChangesPending();  // recalculates and displays if changes are pending
+	        }
+	    });
+	    var notesView;
 	   
         
     });

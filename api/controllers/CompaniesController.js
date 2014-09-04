@@ -25,6 +25,16 @@ module.exports = {
    * (specific to CompaniesController)
    */
   _config: {},
+  notes : function(req, res) {
+	if (typeof (req.params.id) != 'undefined' && !isNaN(parseInt(req.params.id))) {
+	     sails.controllers.database.credSproc('GetCompanyNotes', [
+	     parseInt(req.params.id) ], function(err, result) {
+		 if(err)
+		    return res.json({error:'Database Error:'+err},500);
+		 res.json(result[0]);
+	     });  
+	}
+  },
   find : function(req, res) {
 	res.view('companies/index', {});
   },
@@ -116,6 +126,7 @@ module.exports = {
   updatecompany:function(req,res){
 	company = req.body.company;
 	contacts = req.body.contacts;
+	notes = req.body.notes;
 	function updateCompany(contact,cb){
 	    if(company.company_id != 'new'&&typeof(company.modified)!='undefined'){
 		sails.controllers.database.credSproc('UpdateCompany',[company.company_id,"'"+company.company_name+"'"],function(err,resContact){
@@ -138,15 +149,17 @@ module.exports = {
 		    var geocoder = require('node-geocoder').getGeocoder(geocoderProvider, httpAdapter, extra);
 
 		    geocoder.geocode(addressSearch, function(err, responseGeocode) {
-
+			var lat = null;
+			var lng = null;
 			if (typeof (responseGeocode) != 'undefined' && responseGeocode.length > 0) {
-		    
-        		   sails.controllers.database.credSproc('UpdateAddressByCompanyId',[company.company_id,"'"+company.street_number_begin+"'" ,"'"+company.street_number_end+"'","'"+company.street_name+"'","'"+company.postal_code+"'","'"+company.city+"'","'"+company.province+"'",responseGeocode[0].latitude, responseGeocode[0].longitude],function(err,resAddress){
-        		        if(err)
-          			    return res.json({error:'Database Error:'+err},500);
-          			cb(); 
-        		   });
+			    lat = responseGeocode[0].latitude;
+			    lng = responseGeocode[0].longitude;
 			}
+			sails.controllers.database.credSproc('UpdateAddressByCompanyId',[company.company_id,"'"+company.street_number_begin+"'" ,"'"+company.street_number_end+"'","'"+company.street_name+"'","'"+company.postal_code+"'","'"+company.city+"'","'"+company.province+"'",lat, lng],function(err,resAddress){
+    		        if(err)
+      			    return res.json({error:'Database Error:'+err},500);
+      			cb(); 
+    		   });
      		   });
 		});
 	    }else if(company.company_id == 'new'){
@@ -173,12 +186,14 @@ module.exports = {
 		    var geocoder = require('node-geocoder').getGeocoder(geocoderProvider, httpAdapter, extra);
 
 		    geocoder.geocode(addressSearch, function(err, responseGeocode) {
-
+			var lat = null;
+			var lng = null;
 			if (typeof (responseGeocode) != 'undefined' && responseGeocode.length > 0) {
-		    
-		    
+			    lat = responseGeocode[0].latitude;
+			    lng = responseGeocode[0].longitude;
+			}
         		    var outaddressId = '@out' + Math.floor((Math.random() * 1000000) + 1);
-        		    sails.controllers.database.credSproc('CreateAddress',["'"+company.street_number_begin+"'" ,"'"+company.street_number_end+"'","'"+company.street_name+"'","'"+company.postal_code+"'","'"+company.city+"'",2,"'"+company.province+"'",responseGeocode[0].latitude, responseGeocode[0].longitude,outaddressId],function(err,resAddress){
+        		    sails.controllers.database.credSproc('CreateAddress',["'"+company.street_number_begin+"'" ,"'"+company.street_number_end+"'","'"+company.street_name+"'","'"+company.postal_code+"'","'"+company.city+"'",2,"'"+company.province+"'",lat, lng,outaddressId],function(err,resAddress){
         		        if(err)
           			    return res.json({error:'Database Error:'+err},500);
         		        
@@ -188,53 +203,128 @@ module.exports = {
         	  			cb(); 	            
         		        });
         		   });
-			}
+			
+			
 		    });
 		});
 	    }else{
 		cb();
 	    }
 	}
-	updateCompany(company,function(){
-	    function loopContacts(i)
-	    {
-		if(typeof(contacts[i].new)!='undefined'){
-		    sails.controllers.database.credSproc('CreateContactCompanyMapping',[contacts[i].contact_id,company.company_id,'@outval'],function(err,resMapping){
-			    if(err)
-				return res.json({error:'Database Error:'+err},500);
-			    i++;	
-			    if(i<contacts.length){
-				loopContacts(i);
-			    }else{
-				res.json({'success':'success', company_id:company.company_id});
-			    }
+	
+	
+	function processNotes(cb){
+	    function loopNotes(i){
+		if (notes[i].id.toString().indexOf('new')>-1) { // new
+									// Note!
+		    var tempOutNoteVar = '@out' + Math.floor((Math.random() * 1000000) + 1);
+		    sails.controllers.database.credSproc('CreateNote', [ "'"+notes[i].note+"'", "'"+req.session.user.username+"'", 'NOW()',tempOutNoteVar], function(err, responseNote) {
+			if (err)
+			    return res.json({
+				error : 'Database Error:' + err
+			    }, 500);
+			
+			sails.controllers.database.credSproc('CreateNoteMapping',[company.company_id, responseNote[1][tempOutNoteVar], 2,'@outId'],function(err,responseNoteMapping){
+			    if (err)
+				return res.json({
+					error : 'Database Error:' + err
+				    }, 500);
 			    
+				i++;
+				if (i < notes.length) {
+				    loopNotes(i);
+				} else {
+				    cb();
+				}
+			});
+			
 		    });
-		}else if(typeof(contacts[i].dodelete)!='undefined'){
-		    sails.controllers.database.credSproc('DeleteContactCompanyMapping',[contacts[i].contact_id, company.company_id],function(err,resDel){
-			    if(err)
-				return res.json({error:'Database Error:'+err},500);
-			    i++;
-			    if(i<contacts.length){
-				loopContacts(i);
-			    }else{
-				res.json({'success':'success', company_id:company.company_id});
-			    }
+		}else if (typeof (notes[i].deleted) != 'undefined') { // delete
+		    sails.controllers.database.credSproc('DeleteNote', [ notes[i].id ], function(err, responseNote) {
+			if (err)
+			    return res.json({
+				error : 'Database Error:' + err
+			    }, 500);
+			i++;
+			if (i < notes.length) {
+			    loopNotes(i);
+			} else {
+			    cb();
+			}
 		    });
+		} else if (typeof (notes[i].modified) != 'undefined') {
+		    sails.controllers.database.credSproc('UpdateNote', [ notes[i].id, "'"+notes[i].note+"'", "'"+notes[i].user+"'", 'NOW()' ], function(err, responseNote) {
+			if (err)
+			    return res.json({
+				error : 'Database Error:' + err
+			    }, 500);
+			i++;
+			if (i < notes.length) {
+			    loopNotes(i);
+			} else {
+			    cb();
+			}
+		    });
+		} else {
+		    i++;
+		    if (i < notes.length) {
+			loopNotes(i);
+		    } else {
+			cb();
+		    }
 		}
-		i++;
-		if(i<contacts.length){
-		    loopContacts(i);
-		}else{
-		    res.json({'success':'success', company_id:company.company_id});
-		}
-		
 	    }
-	    if(contacts.length>0){
-		loopContacts(0);
+	    if(notes.length>0){
+		loopNotes(0);
 	    }else{
-		res.json({'success':'success', company_id:company.company_id});
+		cb();
 	    }
+	}
+	
+	
+	
+	updateCompany(company,function(){
+	    processNotes(function(){
+        	    function loopContacts(i)
+        	    {
+        		if(typeof(contacts[i].new)!='undefined'){
+        		    sails.controllers.database.credSproc('CreateContactCompanyMapping',[contacts[i].contact_id,company.company_id,'@outval'],function(err,resMapping){
+        			    if(err)
+        				return res.json({error:'Database Error:'+err},500);
+        			    i++;	
+        			    if(i<contacts.length){
+        				loopContacts(i);
+        			    }else{
+        				res.json({'success':'success', company_id:company.company_id});
+        			    }
+        			    
+        		    });
+        		}else if(typeof(contacts[i].dodelete)!='undefined'){
+        		    sails.controllers.database.credSproc('DeleteContactCompanyMapping',[contacts[i].contact_id, company.company_id],function(err,resDel){
+        			    if(err)
+        				return res.json({error:'Database Error:'+err},500);
+        			    i++;
+        			    if(i<contacts.length){
+        				loopContacts(i);
+        			    }else{
+        				res.json({'success':'success', company_id:company.company_id});
+        			    }
+        		    });
+        		}
+        		i++;
+        		if(i<contacts.length){
+        		    loopContacts(i);
+        		}else{
+        		    res.json({'success':'success', company_id:company.company_id});
+        		}
+        		
+        	    }
+        	    if(contacts.length>0){
+        		loopContacts(0);
+        	    }else{
+        		res.json({'success':'success', company_id:company.company_id});
+        	    }
+	    });
 	});
 	
 	
