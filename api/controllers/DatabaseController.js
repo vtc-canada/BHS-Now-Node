@@ -37,10 +37,10 @@ var localPool = mysql.createPool({
 
 var credPool = mysql.createPool({
     connectionLimit : 1000,
-    user : 'root',
-    password : 'Glasgow931',
+    user : 'paadmin',
+    password : '.SampsonMews8',
     database : 'cred',
-    host : '10.1.1.60'//10.1.1.60'//10.1.1.60'
+    host : 'pa-cred-database.c1midzvqwdqm.us-west-2.rds.amazonaws.com'//10.1.1.60'//10.1.1.60'
 });
 
 module.exports = {

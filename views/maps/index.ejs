@@ -492,7 +492,11 @@
 	          zoom: 10,
 	          panControl:false,
 	          streetViewControl:false,
-	          mapTypeControl:false,
+	          mapTypeControl:true,
+	          mapTypeControlOptions: {
+			        style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+			        position: google.maps.ControlPosition.TOP_LEFT
+			    },
 	          overviewMapControl:false
 	        };
     		
@@ -596,15 +600,11 @@
 		        			//d.length = $('#result_size').val();
 		        			if(markers.constrainGPS)
 		        			{
-			        			d.centerLatitude = map.getCenter().k;
-			        			d.centerLongitude = map.getCenter().B;
 			        			d.boundsLatitudeMin = map.getBounds().getSouthWest().lat();
 			        			d.boundsLatitudeMax = map.getBounds().getNorthEast().lat();
 			        			d.boundsLongitudeMin = map.getBounds().getSouthWest().lng();
 			        			d.boundsLongitudeMax = map.getBounds().getNorthEast().lng();
 		        			}else{
-			        			d.centerLatitude = null;
-			        			d.centerLongitude = null;
 			        			d.boundsLatitudeMin = null;
 			        			d.boundsLatitudeMax = null;
 			        			d.boundsLongitudeMin = null;

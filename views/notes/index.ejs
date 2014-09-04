@@ -1,0 +1,284 @@
+<%
+    var translate = {
+        'en' : {
+            'You do not have sufficient privileges to access':'You do not have sufficient privileges to access',
+            'Error':'Error',
+            'Buildings':'Buildings',
+            'Date':'Date',
+            'Equipment':'Equipment',
+            'Device':'Device',
+            'Alarm Type':'Alarm Type',
+            'System Health':'System Health',
+            'System Throughput':'System Throughput',
+            'Time In System':'Time In System',
+            'BHS Overview':'BHS Overview',
+            'Time':'Time',
+            'Alarms':'Alarms',
+            'Daily Reminders':'Daily Reminders',
+            'Predictive Mainenance Tasks':'Predictive Mainenance Tasks',
+            'DEVICE':'DEVICE',
+            'REASON':'REASON',
+            'Uptime':'Uptime',
+            'Failsafe Rate':'Failsafe Rate',
+            'Tracking Rate':'Tracking Rate',
+            'Key Performance Indicators':'Key Performance Indicators',
+            'Throughput (bph)':'Throughput (bph)',
+            'State':'State',
+            'Jam Rate':'Jam Rate',
+            'ATR Read Rate':'ATR Read Rate',
+            'Cancel':'Cancel',
+            'Delete':'Delete',
+            'To create a new owner':'To create a new owner, select the contact and/or company associated with this building',
+            'To create a new sale':'To create a new sale, click create',
+            'Create':'Create',
+            'Contact':'Contact',
+            'Contacts':'Contacts',
+            'Company':'Company',
+            'Confirm':'Confirm',
+            'Notes':'Notes'
+        },
+        'es' : {
+            'You do not have sufficient privileges to access':'Usted no tiene suficientes privilegios para acceder a',
+            'Error':'Error',
+            'Buildings':'Salpicadero',
+            'Date':'Date',
+            'Equipment':'Equipment',
+            'Device':'Device',
+            'REASON':'REASON',
+            'Alarm Type':'Alarm Type',
+            'System Health':'System Health',
+            'System Throughput':'System Throughput',
+            'Time In System':'Time In System',
+            'BHS Overview':'BHS Overview',
+            'Time':'Time',
+            'Alarms':'Alarms',
+            'Daily Reminders':'Daily Reminders',
+            'Predictive Mainenance Tasks':'Predictive Mainenance Tasks',
+            'DEVICE':'DEVICE',
+            'Uptime':'Uptime',
+            'Failsafe Rate':'Failsafe Rate',
+            'Tracking Rate':'Tracking Rate',
+            'Key Performance Indicators':'Key Performance Indicators',
+            'Throughput (bph)':'Throughput (bph)',
+            'State':'State',
+            'Jam Rate':'Jam Rate',
+            'ATR Read Rate':'ATR Read Rate',
+            'Cancel':'Cancel',
+            'Delete':'Delete',
+            'To create a new owner':'To create a new owner, select the contact and/or company associated with this building',
+            'To create a new sale':'To create a new sale, click create',
+            'Create':'Create',
+            'Contact':'Contact',
+            'Contacts':'Contacts',
+            'Company':'Company',
+            'Confirm':'Confirm',
+            'Notes':'Notes'
+        }
+    }
+%>
+
+<div class="row-fluid page-banner">
+    <div class="banner-div"><i class="icon-file-alt icon-1x banner-icon-top"></i><div class="banner-div-text"><%= translate[req.session.user.locale]['Notes'] %></div></div>
+</div>
+
+        <!-- Throws in Error messages if they were passed in from the controller -->
+<% if(typeof(errormessage)!='undefined'){ %>
+<div class="alert alert-error" style="border-radius:0px;">
+    <button type="button" class="close" data-dismiss="alert">×</button>
+    <strong><%= translate[req.session.user.locale]['Error'] %>:</strong>
+    <%= translate[req.session.user.locale][errormessage] %><% if(typeof(errorurl)!='undefined'){ %> <%= errorurl %><% } %>
+</div>
+<% } %>
+
+
+<div class="row-fluid create-report-controls-wrapper">
+<div class="span10 offset1 report-control-left-label"  style="min-height: 30px;padding-top: 5px; font-size:18px; font-weight:bold;margin-top: 33px;">
+	<i class="icon-search icon-2x banner-icon-top" style="margin-top: -12px; margin-right: 10px;"></i><div class="banner-div-text">Search Filters</div>
+
+</div>
+</div>
+
+<div class="row-fluid create-report-controls-wrapper">
+    <div class="row">
+        <div class="span8 offset2 create-report-controls" style="padding-top: 20px;">
+           <div class="row-fluid">
+               <div class="row">
+                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_note">Note Details:</label></div>
+                   <div class="span8 report-control-right-control">
+                       <input type="text" id="search_note" value="">
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_user">User:</label></div>
+                   <div class="span8 report-control-right-control">
+                       <input type="text" id="search_user" value="">
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_address">Building:</label></div>
+                   <div class="span8 report-control-right-control">
+                       <input type="text" id="search_address" value="">
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_contact">Contact:</label></div>
+                   <div class="span8 report-control-right-control">
+                       <input type="text" id="search_contact" value="">
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_company">Company:</label></div>
+                   <div class="span8 report-control-right-control">
+                       <input type="text" id="search_company" value="">
+                   </div>
+               </div>
+               <div class="row">
+               		<div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;">
+               			<label for="start_time">Sale Date:</label>
+           			</div>
+           			<div class="input-append span3 report-control-right-control" id="start_time_gen">
+           				<input class="" data-format="yyyy-MM-dd" style="width:150px; max-width:70%;" id="start_time" type="text" value="">
+       					<span class="add-on"><i data-time-icon="icon-time" data-date-icon="icon-calendar" class="icon-calendar"> </i> </span>
+       				</div>
+           			<div class="input-append span1 report-control-right-control">
+       					<span style="display: inline-block;width: auto;height: 20px;min-width: 16px;padding: 4px 5px;font-size: 14px;font-weight: normal;line-height: 20px;">to</span>
+					</div>
+           			<div class="input-append span3 report-control-right-control" id="end_time_gen">
+           				<input class="" data-format="yyyy-MM-dd" style="width:150px; max-width:70%;" id="end_time" type="text" value="">
+   						<span class="add-on"><i data-time-icon="icon-time" data-date-icon="icon-calendar" class="icon-calendar"> </i> </span>
+       				</div>
+       				
+   				</div>
+   				
+           </div>
+        </div>
+    </div>
+</div>
+
+<div class="row-fluid" style="margin-top:19px;">
+    <div class="span10 offset1 page-controls-wrapper">
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;">Contacts</span>
+             <div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="export_notes">Export</div>
+        
+        </div>
+        <div class="row-fluid key-indicaters-frame" id="iframediv">
+            <div class="row-fluid">
+                <table id="contacts" class="disable-pointer display" cellspacing="0" width="100%">
+			        <thead>
+			            <tr>
+			            	<th>Id<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+			                <th>Timestamp<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+			                <th>User<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+			                <th>Details<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+			                <th>Name<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+			            </tr>
+			        </thead>
+			 
+			    </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function(){
+    
+    	var init_id = <%=typeof(init_id)!='undefined'?init_id:null%>;
+    	
+        		
+        		
+		var datatable = $('#contacts').dataTable({
+		        "processing": true,
+		        "serverSide": true,
+		        "dom":"ltipr",
+		        "ajax": {
+		        	"url":"/notes/searchnotes",
+	        		"data":function(d){
+	        			d.contact_search = $("#search_contact").val();
+	        			d.address_search = $('#search_address').val();
+	        			d.company_search = $('#search_company').val();
+	        			d.note_search = $('#search_note').val();
+	        			d.saleDateRangeStart = $('#start_time').val();
+	        			d.saleDateRangeEnd = $('#end_time').val();
+	        		},
+	        		error: function(xhr, error, thrown){
+	        			alert('an error');
+	        		}
+	        	},
+		        "aoColumns":[
+		        	{"mData":"note_id","visible":false}
+			        ,{"mData":function(data,b){
+			        	return toDateTimeString(new Date(data.timestamp));
+			        }
+					}
+			        ,{"mData":"user"}
+			        ,{"mData":"note"}
+			        ,{"mData":function(data,b){
+			        	return '<b>'+data['note_id']+'</b>';
+			        }}
+		        ],
+		        "rowCallback": function( row, data, displayIndex ) {
+					$(row).attr('note_id',data['note_id']);
+					$(row).click(function(){
+               		});
+		        }
+	    });
+	    $('select[name=contacts_length]').css('margin-top','10px');
+	    $('#contacts_length label').css('margin-bottom','0px');
+	    
+	    $('#contacts').on('draw.dt',function(event,datatable){
+	     	
+    	});
+    	
+    	
+
+		$('#search_contact').keydown(function(){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		});
+		$('#search_company').keydown(function(){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		});
+		$('#search_address').keydown(function(){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		});
+		$('#search_note').keydown(function(){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		});
+		
+		$("#start_time_gen" ).datetimepicker({
+            language: 'en',
+            format: 'yyyy-MM-dd hh:mm',
+            pick12HourFormat: false,
+            pickSeconds: false
+        }).data('datetimepicker');
+
+        $("#end_time_gen" ).datetimepicker({
+            language: 'en',
+            format: 'yyyy-MM-dd hh:mm',
+            pick12HourFormat: false,
+            pickSeconds: false
+        }).data('datetimepicker');
+        $("#start_time_gen" ).data('datetimepicker').$element.on('changeDate',function(e,y){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		});
+		$("#end_time_gen" ).data('datetimepicker').$element.on('changeDate',function(e,y){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		});
+		$('#export_notes').click(function(){
+			alert('do notes export');
+		});
+    });
+</script>

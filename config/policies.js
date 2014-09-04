@@ -41,6 +41,7 @@ module.exports.policies = {
         'view' : true
     },
     'companies':true,
+    'notes':true,
     'upload':true
 
 };
