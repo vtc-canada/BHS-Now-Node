@@ -40,11 +40,10 @@ SELECT
 	,ref_building_type.id
 	,ref_heat_system_type.id
 	
-FROM 
-	cred.cur_owner_seller_property_mapping as mapping
+FROM cur_buildings
+	INNER JOIN cur_address ON (cur_address.id = cur_buildings.cur_address_id)
+	LEFT JOIN cur_owner_seller_property_mapping as mapping ON (mapping.property_address_id = cur_address.id)
 	LEFT JOIN cred.cur_contacts AS owner_contact on (owner_contact.id = mapping.contact_id AND mapping.contact_type_id = '1')
-	INNER JOIN cred.cur_address ON (cur_address.id = mapping.property_address_id)
-	INNER JOIN cur_buildings ON (cur_buildings.cur_address_id = cur_address.id)	
 	LEFT JOIN ref_building_type ON (ref_building_type.id = cur_buildings.ref_building_type_id)
 	LEFT JOIN ref_heat_system_type ON (ref_heat_system_type.id = cur_buildings.heat_system_type_id)
 	LEFT JOIN (SELECT COUNT(DISTINCT cur_sales_record_history_id) AS 'num_of_records'
