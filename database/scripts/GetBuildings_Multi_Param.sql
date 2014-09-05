@@ -2,12 +2,15 @@ USE cred;
 DROP PROCEDURE if EXISTS `GetBuildings` ;
 DELIMITER $$
 CREATE PROCEDURE `GetBuildings`(IN contactSearchTerms VARCHAR(128), IN addressSearchTerms VARCHAR(128),IN buildingSearchTerms VARCHAR(128),
+		IN mortgageCompanySearchTerms VARCHAR(64),
 		IN unitQuantityMin int, IN unitQuantityMax int, IN saleDateRangeStart datetime, IN saleDateRangeEnd datetime,
 		IN centerLatitude FLOAT, IN centerLongitude FLOAT, IN boundsLatitudeMin FLOAT, IN boundsLatitudeMax FLOAT, IN boundsLongitudeMin FLOAT, 
 		IN boundsLongitudeMax FLOAT,IN hasElevator BOOLEAN, IN capRateMin FLOAT, IN capRateMax FLOAT, 
 		IN propMgmt VARCHAR(128), IN prevPropMgmt VARCHAR(128), IN heatAgeMin INT, IN heatAgeMax INT,
 		IN boilerAgeMin INT, IN boilerAgeMax INT, IN cableProvider VARCHAR(128),
-		IN assessedValueMin INT, IN assessedValueMax INT,IN lastSalesPriceMin INT, IN lastSalesPriceMax INT,
+		IN assessedValueMin INT, IN assessedValueMax INT,IN lastSalesPriceMin INT, IN lastSalesPriceMax INT,		
+		IN elevatorInstalledYearMin INT, IN elevatorInstalledYearMax INT,IN lastElevatorInstalledYearMin INT, IN lastElevatorInstalledYearMax INT,
+		IN lastBoilerInstalledYearMin INT, IN lastBoilerInstalledYearMax INT,
 		IN numOf1BedroomMin INT, IN numOf1BedroomMax INT, IN numOf2BedroomMin INT, IN numOf2BedroomMax INT, 
 		IN numOf3BedroomMin INT, IN numOf3BedroomMax INT, IN numOfBachelorMin INT, IN numOfBachelorMax INT, 
 		IN priceOf1BedroomMin INT, IN priceOf1BedroomMax INT, IN priceOf2BedroomMin INT, IN priceOf2BedroomMax INT, 
@@ -15,7 +18,7 @@ CREATE PROCEDURE `GetBuildings`(IN contactSearchTerms VARCHAR(128), IN addressSe
 		IN buildingIncomeMin INT, IN buildingIncomeMax INT, IN unitPriceMin INT, IN unitPriceMax INT,	
 		IN windowInstallYearMin INT, IN windowInstallYearMax INT, IN numOfSalesMin INT, numOfSalesMax INT,
 		IN buildingTypes VARCHAR(64), IN heatSystemTypes VARCHAR(64),
-		IN mortgageCompany VARCHAR(64),IN mortgageDueDateRangeStart datetime, IN mortgageDueDateRangeEnd datetime,
+		IN mortgageDueDateRangeStart datetime, IN mortgageDueDateRangeEnd datetime,
 		IN offsetIndex int, IN recordCount INT, IN orderBy VARCHAR (255), OUT id int)
 BEGIN
 SELECT 
@@ -52,6 +55,7 @@ WHERE
 	(addressSearchTerms IS NULL OR MATCH(street_name,postal_code,city,province) AGAINST (addressSearchTerms IN BOOLEAN MODE))
 	AND (contactSearchTerms IS NULL OR MATCH (owner_contact.name, owner_contact.email) AGAINST (contactSearchTerms IN BOOLEAN MODE))
 	AND (buildingSearchTerms IS NULL OR MATCH (property_mgmt_company,prev_property_mgmt_company) AGAINST (buildingSearchTerms IN BOOLEAN MODE))
+	AND (mortgageCompanySearchTerms IS NULL OR MATCH (mortgage_company) AGAINST (mortgageCompanySearchTerms IN BOOLEAN MODE))
 	AND (CASE WHEN unitQuantityMax IS NOT NULL THEN (cur_buildings.unit_quantity <= unitQuantityMax) ELSE 1 END)
 	AND (CASE WHEN unitQuantityMin IS NOT NULL THEN (cur_buildings.unit_quantity >= unitQuantityMin) ELSE 1 END)
 	AND (CASE WHEN saleDateRangeStart IS NOT NULL THEN (cur_buildings.sale_date >= saleDateRangeStart ) ELSE 1 END)
@@ -62,6 +66,12 @@ WHERE
 	AND (CASE WHEN boundsLongitudeMin IS NOT NULL THEN cur_address.longitude BETWEEN boundsLongitudeMin AND boundsLongitudeMax ELSE 1 END)
 	AND (CASE WHEN capRateMax IS NOT NULL THEN (cur_buildings.cap_rate <= capRateMax) ELSE 1 END)
 	AND (CASE WHEN capRateMin IS NOT NULL THEN (cur_buildings.cap_rate >= capRateMin) ELSE 1 END)
+	AND (CASE WHEN elevatorInstalledYearMax IS NOT NULL THEN (cur_buildings.elevator_installed_year <= elevatorInstalledYearMax) ELSE 1 END)
+	AND (CASE WHEN elevatorInstalledYearMin IS NOT NULL THEN (cur_buildings.elevator_installed_year >= elevatorInstalledYearMin) ELSE 1 END)
+	AND (CASE WHEN lastElevatorInstalledYearMax IS NOT NULL THEN (cur_buildings.last_elevator_upgrade_year <= lastElevatorInstalledYearMax) ELSE 1 END)
+	AND (CASE WHEN lastElevatorInstalledYearMin IS NOT NULL THEN (cur_buildings.last_elevator_upgrade_year >= lastElevatorInstalledYearMin) ELSE 1 END)
+	AND (CASE WHEN lastBoilerInstalledYearMax IS NOT NULL THEN (cur_buildings.last_boiler_upgrade_year <= lastBoilerInstalledYearMax) ELSE 1 END)
+	AND (CASE WHEN lastBoilerInstalledYearMin IS NOT NULL THEN (cur_buildings.last_boiler_upgrade_year >= lastBoilerInstalledYearMin) ELSE 1 END)
 	AND (CASE WHEN heatAgeMax IS NOT NULL THEN (cur_buildings.heat_system_age <= heatAgeMax) ELSE 1 END)
 	AND (CASE WHEN heatAgeMin IS NOT NULL THEN (cur_buildings.heat_system_age >= heatAgeMin) ELSE 1 END)
 	AND (CASE WHEN boilerAgeMax IS NOT NULL THEN (cur_buildings.boiler_installed_year <= boilerAgeMax) ELSE 1 END)
@@ -98,7 +108,6 @@ WHERE
 	AND (CASE WHEN propMgmt IS NOT NULL THEN (cur_buildings.property_mgmt_company = propMgmt) ELSE 1 END)
 	AND (CASE WHEN prevPropMgmt IS NOT NULL THEN (cur_buildings.prev_property_mgmt_company = prevPropMgmt) ELSE 1 END)
 	AND (CASE WHEN cableProvider IS NOT NULL THEN (cur_buildings.cable_internet_provider = cableProvider) ELSE 1 END)
-	AND (CASE WHEN mortgageCompany IS NOT NULL THEN (cur_buildings.mortgage_company = mortgageCompany) ELSE 1 END)
 	AND (CASE WHEN buildingTypes IS NOT NULL THEN FIND_IN_SET(ref_building_type.id, buildingTYpes) ELSE 1 END)
 	AND (CASE WHEN heatSystemTypes IS NOT NULL THEN FIND_IN_SET(ref_heat_system_type.id, heatSystemTypes) ELSE 1 END)
 	AND (cur_buildings.is_deleted = 0)
