@@ -160,6 +160,10 @@ table.dataTable:not(.disable-pointer) > tbody > tr{
 	width:38px;
 }
 
+.dataTables_scrollHeadInner{
+	padding-left:0px !important;
+}
+
 .content-wrapper{
 	margin-top: 10px;
 	width: 96%;

@@ -145,8 +145,17 @@
                    </div>
                </div>
                <div class="row collapse" id="collapseadvanced">
-               
-               
+               		
+               		
+               		<div class="row-fluid" style="min-height: 40px;">
+	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label>Building Type:</label></div>
+	        			<div class="span8 report-control-right-control" style="margin-bottom:10px;">
+							<% for(var i=0;i<building_types.length;i++){ %>
+							<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="building-type-radio" building_type="<%-building_types[i].id%>" id="building_type_<%-building_types[i].id%>">&nbsp;&nbsp;&nbsp;<label for="building_type_<%-building_types[i].id%>" style="display: inline;"><%-building_types[i].type%></label></div>
+							<% } %>
+						</div>   
+	               </div>
+               		
 	               <div class="row-fluid" style="min-height: 40px;">
 	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_property_mgmt_company">Property Management:</label></div>
 	                   <div class="span8 report-control-right-control">
@@ -160,7 +169,16 @@
 	                   </div>
 	               </div>
                
+               	   <div class="row-fluid" style="min-height: 40px;">
+	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label>Heat System:</label></div>
+	        			<div class="span8 report-control-right-control" style="margin-bottom:10px;">
+							<% for(var i=0;i<heat_types.length;i++){ %>
+							<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="heat-type-radio" heat_type="<%-heat_types[i].id%>" id="heat_type_<%-heat_types[i].id%>">&nbsp;&nbsp;&nbsp;<label for="heat_type_<%-heat_types[i].id%>" style="display: inline;"><%-heat_types[i].type%></label></div>
+							<% } %>
+						</div>   
+	               </div>
                
+           <!--- WHERE DO THESE two go?? -->
 	               	<div class="row-fluid" style="min-height: 40px;">
 	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_elevator">Elevator:</label></div>
 	                   <div class="span8 report-control-right-control" >
@@ -180,6 +198,9 @@
 	                   		</div>
 	                   </div>
 	               </div>
+      	 <!--- END WHERE DO THESE two go?? END -->
+	               
+	               
 	               
 	               <div class="row-fluid" style="min-height: 40px;">
 	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="heat_age_slider">Heat Age:</label></div>
@@ -189,10 +210,58 @@
 	                   			
 	                   			<input id="heat_age_slider" type="text" class="" value="" data-slider-min="" data-slider-max="" data-slider-step="" data-slider-value=""/>
 	                   			&nbsp&nbsp
-	                   			<span id="heat_age_max">250+</span>
+	                   			<span id="heat_age_max">+</span>
 	                   		</div>
 	                   </div>
 	               </div>
+	               
+	               <div class="row-fluid" style="min-height: 40px;">
+	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="boiler_age_slider">Boiler Age:</label></div>
+	                   <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
+	                   		<div class="row-fluid">
+	                   			<div class="pull-left slider-min-val-label"><span id="boiler_age_min">0</span></div>
+	                   			
+	                   			<input id="boiler_age_slider" type="text" class="" value="" data-slider-min="" data-slider-max="" data-slider-step="" data-slider-value=""/>
+	                   			&nbsp&nbsp
+	                   			<span id="boiler_age_max">+</span>
+	                   		</div>
+	                   </div>
+	               </div>
+	               
+	               <div class="row-fluid" style="min-height: 40px;">
+	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_isp">Cable Internet Provider:</label></div>
+	                   <div class="span8 report-control-right-control">
+	                       <input type="text" id="search_isp" value="">
+	                   </div>
+	               </div>
+	               
+	               <div class="row-fluid" style="min-height: 40px;">
+	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="assessed_value_slider">Assessed Value:</label></div>
+	                   <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
+	                   		<div class="row-fluid">
+	                   			<div class="pull-left slider-min-val-label"><span id="assessed_value_min">0</span></div>
+	                   			
+	                   			<input id="assessed_value_slider" type="text" class="" value="" data-slider-min="" data-slider-max="" data-slider-step="" data-slider-value=""/>
+	                   			&nbsp&nbsp
+	                   			<span id="assessed_value_max">+</span>
+	                   		</div>
+	                   </div>
+	               </div>
+	               
+	               
+	               <div class="row-fluid" style="min-height: 40px;">
+	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="bachelor_rent_slider">Bachelor Rent Price:</label></div>
+	                   <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
+	                   		<div class="row-fluid">
+	                   			<div class="pull-left slider-min-val-label"><span id="bachelor_rent_min">0</span></div>
+	                   			
+	                   			<input id="bachelor_rent_slider" type="text" class="rent-slider" value="" data-slider-min="" data-slider-max="" data-slider-step="" data-slider-value=""/>
+	                   			&nbsp&nbsp
+	                   			<span id="bachelor_rent_max">+</span>
+	                   		</div>
+	                   </div>
+	               </div>
+	               
 	               
 	               
 	   			</div>
@@ -564,7 +633,10 @@
 	<div class="row-fluid building-segment-wrapper">
 		<div class="row-fluid">
 			<div class="span5 segment-label">Building Type:</div>
-			<div class="span7"><select type="text" id="building_type"><% for(var i=0;i<building_types.length;i++){ %><%-'<option value="'+building_types[i].id+'" {{ if(building_type=='+building_types[i].id+'){ }} selected="selected"{{ } }}  >'+building_types[i].type+'</option>'%><% } %></select>
+			<div class="span7">
+			
+				<select type="text" id="building_type"><% for(var i=0;i<building_types.length;i++){ %><%-'<option value="'+building_types[i].id+'" {{ if(building_type=='+building_types[i].id+'){ }} selected="selected"{{ } }}  >'+building_types[i].type+'</option>'%><% } %></select>
+			</div>
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">Property Management:</div>
@@ -824,6 +896,19 @@
     	var MIN_HEAT_AGE = 1900;
     	var MAX_HEAT_AGE = 2038;
     	var STEP_HEAT_AGE = 10;
+    	var MIN_BOILER_AGE = 1900;
+    	var MAX_BOILER_AGE = 2100;
+    	var STEP_BOILER_AGE = 10;
+    	
+    	var MIN_ASSESSED_VALUE = 0;
+    	var MAX_ASSESSED_VALUE = 1000000;
+    	var STEP_ASSESSED_VALUE = 1000;
+    	
+    	var MIN_ROOM_RENT = 0;
+    	var MAX_ROOM_RENT = 10000;
+    	var STEP_ROOM_RENT = 100;
+    	
+    	
     
     	var buildingphototemplate = _.template($('#building-photo-template').html());
     	
@@ -962,6 +1047,90 @@
 		});
 		
 		function initSliders(){
+		
+		
+		
+			$('.rent-slider').attr('data-slider-min',MIN_ROOM_RENT); // corrects limit
+			$('.rent-slider').attr('data-slider-max',MAX_ROOM_RENT); // corrects limit
+			$('.rent-slider').attr('data-slider-step',STEP_ROOM_RENT); // corrects limit
+			$('.rent-slider').attr('data-slider-value','['+MIN_ROOM_RENT+','+MAX_ROOM_RENT+']');
+			$('.rent-slider').slider({tooltip: 'disabled'});
+			
+			
+			$('#bachelor_rent_min').html(MIN_ROOM_RENT);
+			$('#bachelor_rent_max').html(MAX_ROOM_RENT+'+');
+			$('#bachelor_rent_slider').on('slide',function(slideEvt){
+				bachelor_rent_min = slideEvt.value[0];
+				bachelor_rent_max = slideEvt.value[1];
+				$('#bachelor_rent_min').html(bachelor_rent_min);
+				
+				if(bachelor_rent_max==MAX_ROOM_RENT)
+				{
+					$('#bachelor_rent_max').html(bachelor_rent_max+'+');
+				}else{
+					$('#bachelor_rent_max').html(bachelor_rent_max);
+				}
+			});
+			
+			
+			
+			$('#assessed_value_slider').on('slideStop',function(slideEvt){
+				setTimeout(function(){
+					datatable.api().ajax.reload();
+				},10);
+			});
+		
+		
+			$('#assessed_value_slider').attr('data-slider-min',MIN_ASSESSED_VALUE); // corrects limit
+			$('#assessed_value_slider').attr('data-slider-max',MAX_ASSESSED_VALUE); // corrects limit
+			$('#assessed_value_slider').attr('data-slider-step',STEP_ASSESSED_VALUE); // corrects limit
+			$('#assessed_value_min').html(MIN_ASSESSED_VALUE);
+			$('#assessed_value_max').html(MAX_ASSESSED_VALUE+'+');
+			$('#assessed_value_slider').attr('data-slider-value','['+MIN_ASSESSED_VALUE+','+MAX_ASSESSED_VALUE+']');
+			$('#assessed_value_slider').slider({tooltip: 'disabled'});
+			$('#assessed_value_slider').on('slide',function(slideEvt){
+				assessed_value_min = slideEvt.value[0];
+				assessed_value_max = slideEvt.value[1];
+				$('#assessed_value_min').html(assessed_value_min);
+				
+				if(assessed_value_max==MAX_ASSESSED_VALUE)
+				{
+					$('#assessed_value_max').html(assessed_value_max+'+');
+				}else{
+					$('#assessed_value_max').html(assessed_value_max);
+				}
+			});
+			$('#assessed_value_slider').on('slideStop',function(slideEvt){
+				setTimeout(function(){
+					datatable.api().ajax.reload();
+				},10);
+			});
+			
+			$('#boiler_age_slider').attr('data-slider-min',MIN_BOILER_AGE); // corrects limit
+			$('#boiler_age_slider').attr('data-slider-max',MAX_BOILER_AGE); // corrects limit
+			$('#boiler_age_slider').attr('data-slider-step',STEP_BOILER_AGE); // corrects limit
+			$('#boiler_age_min').html(MIN_BOILER_AGE);
+			$('#boiler_age_max').html(MAX_BOILER_AGE+'+');
+			$('#boiler_age_slider').attr('data-slider-value','['+MIN_BOILER_AGE+','+MAX_BOILER_AGE+']');
+			$('#boiler_age_slider').slider({tooltip: 'disabled'});
+			$('#boiler_age_slider').on('slide',function(slideEvt){
+				boiler_age_min = slideEvt.value[0];
+				boiler_age_max = slideEvt.value[1];
+				$('#boiler_age_min').html(boiler_age_min);
+				
+				if(boiler_age_max==MAX_BOILER_AGE)
+				{
+					$('#boiler_age_max').html(boiler_age_max+'+');
+				}else{
+					$('#boiler_age_max').html(boiler_age_max);
+				}
+			});
+			$('#boiler_age_slider').on('slideStop',function(slideEvt){
+				setTimeout(function(){
+					datatable.api().ajax.reload();
+				},10);
+			});
+		
 			$('#heat_age_slider').attr('data-slider-min',MIN_HEAT_AGE); // corrects limit
 			$('#heat_age_slider').attr('data-slider-max',MAX_HEAT_AGE); // corrects limit
 			$('#heat_age_slider').attr('data-slider-step',STEP_HEAT_AGE); // corrects limit
