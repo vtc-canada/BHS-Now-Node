@@ -15,6 +15,7 @@ CREATE PROCEDURE `GetBuildings`(IN contactSearchTerms VARCHAR(128), IN addressSe
 		IN buildingIncomeMin INT, IN buildingIncomeMax INT, IN unitPriceMin INT, IN unitPriceMax INT,	
 		IN windowInstallYearMin INT, IN windowInstallYearMax INT, IN numOfSalesMin INT, numOfSalesMax INT,
 		IN buildingTypes VARCHAR(64), IN heatSystemTypes VARCHAR(64),
+		IN mortgageCompany VARCHAR(64),IN mortgageDueDateRangeStart datetime, IN mortgageDueDateRangeEnd datetime,
 		IN offsetIndex int, IN recordCount INT, IN orderBy VARCHAR (255), OUT id int)
 BEGIN
 SELECT 
@@ -55,6 +56,8 @@ WHERE
 	AND (CASE WHEN unitQuantityMin IS NOT NULL THEN (cur_buildings.unit_quantity >= unitQuantityMin) ELSE 1 END)
 	AND (CASE WHEN saleDateRangeStart IS NOT NULL THEN (cur_buildings.sale_date >= saleDateRangeStart ) ELSE 1 END)
 	AND (CASE WHEN saleDateRangeEnd IS NOT NULL THEN (cur_buildings.sale_date <= saleDateRangeEnd) ELSE 1 END)
+	AND (CASE WHEN mortgageDueDateRangeStart IS NOT NULL THEN (cur_buildings.mortage_due_date >= mortgageDueDateRangeStart ) ELSE 1 END)
+	AND (CASE WHEN mortgageDueDateRangeEnd IS NOT NULL THEN (cur_buildings.mortage_due_date <= mortgageDueDateRangeEnd) ELSE 1 END)
 	AND (CASE WHEN boundsLatitudeMin IS NOT NULL THEN cur_address.latitude BETWEEN boundsLatitudeMin AND boundsLatitudeMax ELSE 1 END)
 	AND (CASE WHEN boundsLongitudeMin IS NOT NULL THEN cur_address.longitude BETWEEN boundsLongitudeMin AND boundsLongitudeMax ELSE 1 END)
 	AND (CASE WHEN capRateMax IS NOT NULL THEN (cur_buildings.cap_rate <= capRateMax) ELSE 1 END)
@@ -95,6 +98,7 @@ WHERE
 	AND (CASE WHEN propMgmt IS NOT NULL THEN (cur_buildings.property_mgmt_company = propMgmt) ELSE 1 END)
 	AND (CASE WHEN prevPropMgmt IS NOT NULL THEN (cur_buildings.prev_property_mgmt_company = prevPropMgmt) ELSE 1 END)
 	AND (CASE WHEN cableProvider IS NOT NULL THEN (cur_buildings.cable_internet_provider = cableProvider) ELSE 1 END)
+	AND (CASE WHEN mortgageCompany IS NOT NULL THEN (cur_buildings.mortgage_company = mortgageCompany) ELSE 1 END)
 	AND (CASE WHEN buildingTypes IS NOT NULL THEN FIND_IN_SET(ref_building_type.id, buildingTYpes) ELSE 1 END)
 	AND (CASE WHEN heatSystemTypes IS NOT NULL THEN FIND_IN_SET(ref_heat_system_type.id, heatSystemTypes) ELSE 1 END)
 	AND (cur_buildings.is_deleted = 0)

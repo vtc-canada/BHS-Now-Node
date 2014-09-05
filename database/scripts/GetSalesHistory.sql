@@ -1,9 +1,8 @@
 USE cred;
 DROP PROCEDURE if EXISTS `GetSalesHistory` ;
-
-CREATE PROCEDURE `GetSalesHistory`()
-
 DELIMITER $$
+CREATE PROCEDURE `GetSalesHistory`()
+BEGIN
 SELECT 	
 		 cur_contacts.name as 'contact'
 		,cur_company.name as 'company'
@@ -26,6 +25,8 @@ SELECT
 		,cur_sales_record_history.cable_internet_provider
 		,cur_sales_record_history.heat_system_type
 		,cur_sales_record_history.property_mgmt_company
+		,cur_sales_record_history.mortgage_company
+		,cur_sales_record_history.mortgage_due_date
 FROM cur_sales_record_history
 	INNER JOIN cur_sales_history_contact_mapping as mapping ON (mapping.cur_sales_record_history_id = cur_sales_record_history.id)
 	LEFT JOIN cur_contacts ON (cur_contacts.id = mapping.contact_id )
@@ -34,5 +35,5 @@ FROM cur_sales_record_history
 	LEFT JOIN cur_company ON (cur_company.id = mapping.cur_company_id)
 	INNER JOIN ref_contact_type ON (ref_contact_type.id = mapping.ref_contact_type_id)
 ORDER BY cur_buildings.id, ref_contact_type.type ASC;
-END$$
+END $$
 DELIMITER ;

@@ -39,6 +39,8 @@ SELECT
 	,cur_buildings.has_elevator
 	,cur_buildings.last_elevator_upgrade_year
 	,cur_buildings.last_boiler_upgrade_year
+	,cur_buildings.mortgage_company
+	,cur_buildings.mortage_due_date
 	
 FROM
 	cur_buildings

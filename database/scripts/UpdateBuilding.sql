@@ -7,7 +7,8 @@ CREATE PROCEDURE `UpdateBuilding`(IN buildingID INT, IN addressID INT, IN buildi
 		,IN heatSystemTypeID INT, IN unitQuantity INT, IN saleDate DATETIME,IN pricePerUnit float
 		,IN propertyMgmtCompany VARCHAR(45), IN prevPropertyMgmtCompany VARCHAR(45), IN lastSalePrice VARCHAR(45), IN images VARCHAR(1024)
 		,IN bachelorPrice FLOAT, IN bedroom1Price FLOAT, IN bedroom2Price FLOAT, IN bedroom3Price FLOAT, IN bachelorUnits INT, IN bedroom1Units INT
-		,IN bedroom2Units INT, IN bedroom3Units INT, IN buildingIncome FLOAT, IN hasElevator BOOLEAN, IN lastElevatorUpgradeYear INT, IN lastBoilerUpgradeYear INT)
+		,IN bedroom2Units INT, IN bedroom3Units INT, IN buildingIncome FLOAT, IN hasElevator BOOLEAN, IN lastElevatorUpgradeYear INT, IN lastBoilerUpgradeYear INT
+		,IN mortageCompany VARCHAR(64), IN mortageDueDate TIMESTAMP)
 BEGIN
 
 	UPDATE cur_buildings
@@ -38,7 +39,9 @@ BEGIN
 			,building_income = buildingIncome
 			,has_elevator = hasElevator
 			,last_elevator_upgrade_year = lastElevatorUpgradeYear
-			,last_boiler_upgrade_year = lastBoilerUpgradeYear			
+			,last_boiler_upgrade_year = lastBoilerUpgradeYear	
+			,mortage_company = mortgageCompany
+			,mortgage_due_date = mortgageDueDate
 	WHERE cur_buildings.id = buildingID;
 
 END$$
