@@ -1,5 +1,5 @@
 USE cred;
-DROP PROCEDURE if EXISTS `CreateAddress` ;
+DROP PROCEDURE if EXISTS `CreateAddress`;
 
 DELIMITER $$
 CREATE PROCEDURE `CreateAddress`(IN streetNumberBegin VARCHAR(64), IN streetNumberEnd VARCHAR(64), IN streetName VARCHAR(256), 

@@ -7,7 +7,26 @@ CREATE PROCEDURE `SearchNotes`(IN contactSearchTerms VARCHAR(128), IN addressSea
 							,IN offsetIndex int, IN recordCount INT, IN orderBy VARCHAR (255),OUT filteredCount INT,OUT totalCount INT)
 BEGIN
 	DROP TABLE IF EXISTS tmp_notes;
-	CREATE TEMPORARY TABLE tmp_notes(
+	CREATE TEMPORARY TABLE tmp_notes (
+		note_id SMALLINT(5) UNSIGNED,
+		note VARCHAR(256),
+		user VARCHAR(256),
+		timestamp timestamp,
+		contact_id SMALLINT(5) UNSIGNED,
+		contact VARCHAR(256),
+		company VARCHAR(256),
+		company_id SMALLINT(5) UNSIGNED,
+		street_number_begin VARCHAR(64),
+		street_number_end VARCHAR(64),
+		street_name VARCHAR(128),
+		city VARCHAR(128),
+		province VARCHAR(64),
+		postal_code VARCHAR(64),
+		cur_address_id SMALLINT(5) UNSIGNED,
+		KEY(note_id, contact_id, company_id, cur_address_id)
+	);
+	INSERT INTO tmp_notes (note_id,note,user,timestamp,contact_id,contact,company,company_id,cur_address_id, street_number_begin
+		,street_number_end, street_name, city, province, postal_code)
 		SELECT 
 			cur_notes.id as 'note_id'
 			,cur_notes.note
@@ -35,32 +54,43 @@ BEGIN
 			(noteSearchTerms IS NULL OR MATCH(note) AGAINST (noteSearchTerms IN BOOLEAN MODE))
 			AND (startDate IS NULL OR cur_notes.timestamp >= startDate)
 			AND (endDate IS NULL OR cur_notes.timestamp <= endDate)
-		GROUP BY cur_notes.id);
+		GROUP BY cur_notes.id;
 
 	#Create Temporary Contacts Table
 	DROP TABLE IF EXISTS tmp_contacts;
-	CREATE TEMPORARY TABLE tmp_contacts(
+	CREATE TEMPORARY TABLE tmp_contacts (
+		id SMALLINT(5) UNSIGNED,
+		KEY(id)
+	);
+	INSERT INTO tmp_contacts (id)
 			SELECT cur_contacts.id
 			FROM cur_contacts 
-			WHERE (contactSearchTerms IS NULL OR MATCH (cur_contacts.name, cur_contacts.email) AGAINST (contactSearchTerms IN BOOLEAN MODE))
-		);
-
+			WHERE (contactSearchTerms IS NULL OR MATCH (cur_contacts.name, cur_contacts.email) AGAINST (contactSearchTerms IN BOOLEAN MODE));
+	
 	#Create Temporary Company Table
 	DROP TABLE IF EXISTS tmp_company;
-	CREATE TEMPORARY TABLE tmp_company(
+	CREATE TEMPORARY TABLE tmp_company (
+		id SMALLINT(5) UNSIGNED,
+		name VARCHAR(128),
+		KEY(id)
+	);
+	INSERT INTO tmp_company (id, name)
 			SELECT cur_company.id, cur_company.name
 			FROM cur_company 
-			WHERE (companySearchTerms IS NULL OR MATCH (cur_company.name) AGAINST (companySearchTerms IN BOOLEAN MODE))
-		);
-
+			WHERE (companySearchTerms IS NULL OR MATCH (cur_company.name) AGAINST (companySearchTerms IN BOOLEAN MODE));
+	
 	#Create Temporary Address Table
 	DROP TABLE IF EXISTS tmp_address;
-	CREATE TEMPORARY TABLE tmp_address(
+	CREATE TEMPORARY TABLE tmp_address (
+		id SMALLINT(5) UNSIGNED,
+		street_name VARCHAR(128),
+		KEY(id)
+	);
+	INSERT INTO tmp_address (id, street_name)
 			SELECT cur_address.id, cur_address.street_name
 			FROM cur_address 
-			WHERE (addressSearchTerms IS NULL OR MATCH(cur_address.street_name,cur_address.postal_code,cur_address.city,cur_address.province) AGAINST (addressSearchTerms IN BOOLEAN MODE))
-		);
-
+			WHERE (addressSearchTerms IS NULL OR MATCH(cur_address.street_name,cur_address.postal_code,cur_address.city,cur_address.province) AGAINST (addressSearchTerms IN BOOLEAN MODE));
+	
 	#Building Final Results
 	Select SQL_CALC_FOUND_ROWS 
 			tmp_notes.note_id
