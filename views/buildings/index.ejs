@@ -94,6 +94,7 @@
 
 <div class="row-fluid create-report-controls-wrapper">
     <div class="row">
+    	<div class="row-fluid">
         <div class="span8 offset2 create-report-controls" style="padding-top: 20px;">
            <div class="row-fluid">
                <div class="row">
@@ -108,6 +109,12 @@
                        <input type="text" id="search_contact" value="">
                    </div>
                </div>
+               <div class="row">
+                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_company">Company:</label></div>
+                   <div class="span8 report-control-right-control">
+                       <input type="text" id="search_company" value="">
+                   </div>
+               </div>
                <div class="row" style="min-height: 40px;">
                    <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="reporttype">Units:</label></div>
                    <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
@@ -117,6 +124,18 @@
                    			<input id="units_slider" type="text" class="" value="" data-slider-min="0" data-slider-max="250" data-slider-step="5" data-slider-value="[0,250]"/>
                    			&nbsp&nbsp
                    			<span id="units_max">250+</span>
+                   		</div>
+                   </div>
+               </div>
+               <div class="row" style="min-height: 40px;">
+                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="reporttype">Unit Price:</label></div>
+                   <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
+                   		<div class="row-fluid">
+                   			<div class="pull-left slider-min-val-label" ><span id="unit_price_min">0</span></div>
+                   			
+                   			<input id="unit_price_slider" type="text" class="" value="" data-slider-min="0" data-slider-max="250" data-slider-step="5" data-slider-value="[0,250]"/>
+                   			&nbsp&nbsp
+                   			<span id="unit_price_max">250+</span>
                    		</div>
                    </div>
                </div>
@@ -137,13 +156,19 @@
        				</div>
        				
    				</div>
-               <div class="row" style="margin-top:15px; ">
-                   <div class="span7 report-control-left-label">
-                   		<a id="advanced_criteria_toggler" data-toggle="collapse" data-target="#collapseadvanced" style="text-decoration: none; color: #5a6573;">
-							<div style="float:left;"></i><i class="icon-plus-sign icon-2x"></i></div><div style="float: left; padding-bottom: 20px;margin-top: -6px;margin-left: 20px;"><h4>Advanced Criteria</h4></div>
-						</a>
-                   </div>
-               </div>
+   			</div>
+   		</div>
+   		</div>
+   		<div class="row-fluid">
+	   		<div class="span10 offset1 create-report-controls" style="padding-top: 20px;">
+	           		<a id="advanced_criteria_toggler" data-toggle="collapse" data-target="#collapseadvanced" style="text-decoration: none; color: #5a6573;">
+						<div style="float:left;"></i><i class="icon-plus-sign icon-2x"></i></div><div style="float: left; padding-bottom: 20px;margin-top: -6px;margin-left: 20px;"><h4>Advanced Criteria</h4></div>
+					</a>
+	          </div>
+          </div>
+          <div class="row-fluid">
+         <div class="span8 offset2 create-report-controls" style="padding-top: 20px;">
+           <div class="row-fluid">
                <div class="row collapse" id="collapseadvanced">
                		
                		
@@ -151,7 +176,7 @@
 	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label>Building Type:</label></div>
 	        			<div class="span8 report-control-right-control" style="margin-bottom:10px;">
 							<% for(var i=0;i<building_types.length;i++){ %>
-							<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="building-type-radio" building_type="<%-building_types[i].id%>" id="building_type_<%-building_types[i].id%>">&nbsp;&nbsp;&nbsp;<label for="building_type_<%-building_types[i].id%>" style="display: inline;"><%-building_types[i].type%></label></div>
+							<div class="row-fluid" style="margin-top: 5px;"><input type="checkbox" class="segment-form-radio building-type-checkboxes" name="building-type-radio" building_type="<%-building_types[i].id%>" id="building_type_<%-building_types[i].id%>">&nbsp;&nbsp;&nbsp;<label for="building_type_<%-building_types[i].id%>" style="display: inline;"><%-building_types[i].type%></label></div>
 							<% } %>
 						</div>   
 	               </div>
@@ -173,7 +198,7 @@
 	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label>Heat System:</label></div>
 	        			<div class="span8 report-control-right-control" style="margin-bottom:10px;">
 							<% for(var i=0;i<heat_types.length;i++){ %>
-							<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="heat-type-radio" heat_type="<%-heat_types[i].id%>" id="heat_type_<%-heat_types[i].id%>">&nbsp;&nbsp;&nbsp;<label for="heat_type_<%-heat_types[i].id%>" style="display: inline;"><%-heat_types[i].type%></label></div>
+							<div class="row-fluid" style="margin-top: 5px;"><input type="checkbox" class="segment-form-radio heating-type-checkboxes" name="heat-type-radio" heat_type="<%-heat_types[i].id%>" id="heat_type_<%-heat_types[i].id%>">&nbsp;&nbsp;&nbsp;<label for="heat_type_<%-heat_types[i].id%>" style="display: inline;"><%-heat_types[i].type%></label></div>
 							<% } %>
 						</div>   
 	               </div>
@@ -187,7 +212,35 @@
 	               </div>
 	               
 	               <div class="row-fluid" style="min-height: 40px;">
-	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="cap_rate_slider">Cap Rate:</label></div>
+	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="elevator_installed_year_slider">Elevator Installed:</label></div>
+	                   <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
+	                   		<div class="row-fluid">
+	                   			<div class="pull-left slider-min-val-label"><span id="elevator_installed_year_min">0</span></div>
+	                   			
+	                   			<input id="elevator_installed_year_slider" type="text" class="" value="" data-slider-min="" data-slider-max="" data-slider-step="5" data-slider-value=""/>
+	                   			&nbsp&nbsp
+	                   			<span id="elevator_installed_year_max">250+</span>
+	                   		</div>
+	                   </div>
+	               </div>
+	               
+	               
+	               <div class="row-fluid" style="min-height: 40px;">
+	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="elevator_upgrade_year_slider">Last Elevator Upgrade:</label></div>
+	                   <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
+	                   		<div class="row-fluid">
+	                   			<div class="pull-left slider-min-val-label"><span id="elevator_upgrade_year_min">0</span></div>
+	                   			
+	                   			<input id="elevator_upgrade_year_slider" type="text" class="" value="" data-slider-min="" data-slider-max="" data-slider-step="5" data-slider-value=""/>
+	                   			&nbsp&nbsp
+	                   			<span id="elevator_upgrade_year_max">250+</span>
+	                   		</div>
+	                   </div>
+	               </div>
+	               
+	               
+	               <div class="row-fluid" style="min-height: 40px;">
+	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="cap_rate_slider">CAP Rate:</label></div>
 	                   <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
 	                   		<div class="row-fluid">
 	                   			<div class="pull-left slider-min-val-label"><span id="cap_rate_min">0</span></div>
@@ -216,14 +269,27 @@
 	               </div>
 	               
 	               <div class="row-fluid" style="min-height: 40px;">
-	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="boiler_age_slider">Boiler Age:</label></div>
+	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="boiler_installed_year_slider">Boiler Age:</label></div>
 	                   <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
 	                   		<div class="row-fluid">
-	                   			<div class="pull-left slider-min-val-label"><span id="boiler_age_min">0</span></div>
+	                   			<div class="pull-left slider-min-val-label"><span id="boiler_installed_year_min">0</span></div>
 	                   			
-	                   			<input id="boiler_age_slider" type="text" class="" value="" data-slider-min="" data-slider-max="" data-slider-step="" data-slider-value=""/>
+	                   			<input id="boiler_installed_year_slider" type="text" class="" value="" data-slider-min="" data-slider-max="" data-slider-step="" data-slider-value=""/>
 	                   			&nbsp&nbsp
-	                   			<span id="boiler_age_max">+</span>
+	                   			<span id="boiler_installed_year_max">+</span>
+	                   		</div>
+	                   </div>
+	               </div>
+	               
+	               <div class="row-fluid" style="min-height: 40px;">
+	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="boiler_upgrade_slider">Last Boiler Upgrade:</label></div>
+	                   <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
+	                   		<div class="row-fluid">
+	                   			<div class="pull-left slider-min-val-label"><span id="boiler_upgrade_min">0</span></div>
+	                   			
+	                   			<input id="boiler_upgrade_slider" type="text" class="" value="" data-slider-min="" data-slider-max="" data-slider-step="" data-slider-value=""/>
+	                   			&nbsp&nbsp
+	                   			<span id="boiler_upgrade_max">+</span>
 	                   		</div>
 	                   </div>
 	               </div>
@@ -261,11 +327,180 @@
 	                   		</div>
 	                   </div>
 	               </div>
+
+	               <div class="row-fluid" style="min-height: 40px;">
+	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="bedroom1_rent_slider">1 Bedroom Rent Price:</label></div>
+	                   <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
+	                   		<div class="row-fluid">
+	                   			<div class="pull-left slider-min-val-label"><span id="bedroom1_rent_min">0</span></div>
+	                   			
+	                   			<input id="bedroom1_rent_slider" type="text" class="rent-slider" value="" data-slider-min="" data-slider-max="" data-slider-step="" data-slider-value=""/>
+	                   			&nbsp&nbsp
+	                   			<span id="bedroom1_rent_max">+</span>
+	                   		</div>
+	                   </div>
+	               </div>
 	               
+   	               <div class="row-fluid" style="min-height: 40px;">
+	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="bedroom2_rent_slider">2 Bedroom Rent Price:</label></div>
+	                   <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
+	                   		<div class="row-fluid">
+	                   			<div class="pull-left slider-min-val-label"><span id="bedroom2_rent_min">0</span></div>
+	                   			
+	                   			<input id="bedroom2_rent_slider" type="text" class="rent-slider" value="" data-slider-min="" data-slider-max="" data-slider-step="" data-slider-value=""/>
+	                   			&nbsp&nbsp
+	                   			<span id="bedroom2_rent_max">+</span>
+	                   		</div>
+	                   </div>
+	               </div>	
+	               
+   	               <div class="row-fluid" style="min-height: 40px;">
+	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="bedroom3_rent_slider">3 Bedroom Rent Price:</label></div>
+	                   <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
+	                   		<div class="row-fluid">
+	                   			<div class="pull-left slider-min-val-label"><span id="bedroom3_rent_min">0</span></div>
+	                   			
+	                   			<input id="bedroom3_rent_slider" type="text" class="rent-slider" value="" data-slider-min="" data-slider-max="" data-slider-step="" data-slider-value=""/>
+	                   			&nbsp&nbsp
+	                   			<span id="bedroom3_rent_max">+</span>
+	                   		</div>
+	                   </div>
+	               </div>               
+	               
+	               
+	               <div class="row-fluid" style="min-height: 40px;">
+	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="bachelor_units_slider">Bachelor Units:</label></div>
+	                   <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
+	                   		<div class="row-fluid">
+	                   			<div class="pull-left slider-min-val-label"><span id="bachelor_units_min">0</span></div>
+	                   			
+	                   			<input id="bachelor_units_slider" type="text" class="units-slider" value="" data-slider-min="" data-slider-max="" data-slider-step="" data-slider-value=""/>
+	                   			&nbsp&nbsp
+	                   			<span id="bachelor_units_max">+</span>
+	                   		</div>
+	                   </div>
+	               </div>
+
+	               <div class="row-fluid" style="min-height: 40px;">
+	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="bedroom1_units_slider">1 Bedroom Units:</label></div>
+	                   <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
+	                   		<div class="row-fluid">
+	                   			<div class="pull-left slider-min-val-label"><span id="bedroom1_units_min">0</span></div>
+	                   			
+	                   			<input id="bedroom1_units_slider" type="text" class="units-slider" value="" data-slider-min="" data-slider-max="" data-slider-step="" data-slider-value=""/>
+	                   			&nbsp&nbsp
+	                   			<span id="bedroom1_units_max">+</span>
+	                   		</div>
+	                   </div>
+	               </div>
+	               
+   	               <div class="row-fluid" style="min-height: 40px;">
+	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="bedroom2_units_slider">2 Bedroom Units:</label></div>
+	                   <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
+	                   		<div class="row-fluid">
+	                   			<div class="pull-left slider-min-val-label"><span id="bedroom2_units_min">0</span></div>
+	                   			
+	                   			<input id="bedroom2_units_slider" type="text" class="units-slider" value="" data-slider-min="" data-slider-max="" data-slider-step="" data-slider-value=""/>
+	                   			&nbsp&nbsp
+	                   			<span id="bedroom2_units_max">+</span>
+	                   		</div>
+	                   </div>
+	               </div>	
+	               
+   	               <div class="row-fluid" style="min-height: 40px;">
+	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="bedroom3_units_slider">3 Bedroom Units:</label></div>
+	                   <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
+	                   		<div class="row-fluid">
+	                   			<div class="pull-left slider-min-val-label"><span id="bedroom3_units_min">0</span></div>
+	                   			
+	                   			<input id="bedroom3_units_slider" type="text" class="units-slider" value="" data-slider-min="" data-slider-max="" data-slider-step="" data-slider-value=""/>
+	                   			&nbsp&nbsp
+	                   			<span id="bedroom3_units_max">+</span>
+	                   		</div>
+	                   </div>
+	               </div> 
+	               
+   	               <div class="row-fluid" style="min-height: 40px;">
+	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="building_income_slider">Building Income:</label></div>
+	                   <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
+	                   		<div class="row-fluid">
+	                   			<div class="pull-left slider-min-val-label"><span id="building_income_min">0</span></div>
+	                   			
+	                   			<input id="building_income_slider" type="text" value="" data-slider-min="" data-slider-max="" data-slider-step="" data-slider-value=""/>
+	                   			&nbsp&nbsp
+	                   			<span id="building_income_max">+</span>
+	                   		</div>
+	                   </div>
+	               </div> 
+	               
+	               
+   	               <div class="row-fluid" style="min-height: 40px;">
+	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="sale_price_slider">Last Sale Price:</label></div>
+	                   <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
+	                   		<div class="row-fluid">
+	                   			<div class="pull-left slider-min-val-label"><span id="sale_price_min">0</span></div>
+	                   			
+	                   			<input id="sale_price_slider" type="text"  value="" data-slider-min="" data-slider-max="" data-slider-step="" data-slider-value=""/>
+	                   			&nbsp&nbsp
+	                   			<span id="sale_price_max">+</span>
+	                   		</div>
+	                   </div>
+	               </div> 
+	               
+	               <div class="row-fluid" style="min-height: 40px;">
+	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="sales_count_slider">Number of Sale History Records:</label></div>
+	                   <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
+	                   		<div class="row-fluid">
+	                   			<div class="pull-left slider-min-val-label"><span id="sales_count_min">0</span></div>
+	                   			
+	                   			<input id="sales_count_slider" type="text"  value="" data-slider-min="" data-slider-max="" data-slider-step="" data-slider-value=""/>
+	                   			&nbsp&nbsp
+	                   			<span id="sales_count_max">+</span>
+	                   		</div>
+	                   </div>
+	               </div> 
+	               
+	               <div class="row-fluid" style="min-height: 40px;">
+	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="windows_installed_year_slider">Windows Installed Year:</label></div>
+	                   <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
+	                   		<div class="row-fluid">
+	                   			<div class="pull-left slider-min-val-label"><span id="windows_installed_year_min">0</span></div>
+	                   			
+	                   			<input id="windows_installed_year_slider" type="text"  value="" data-slider-min="" data-slider-max="" data-slider-step="" data-slider-value=""/>
+	                   			&nbsp&nbsp
+	                   			<span id="windows_installed_year_max">+</span>
+	                   		</div>
+	                   </div>
+	               </div> 
+	               
+	               <div class="row-fluid" style="min-height: 40px;">
+	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_mortgage">Mortgage Company:</label></div>
+	                   <div class="span8 report-control-right-control">
+	                       <input type="text" id="search_mortgage" value="">
+	                   </div>
+	               </div>
+	               
+	               <div class="row-fluid">
+	               		<div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;">
+	               			<label for="start_mortgage_due_date">Mortgage Due Date:</label>
+	           			</div>
+	           			<div class="input-append span3 report-control-right-control" id="start_mortgage_due_date_gen">
+	           				<input class="" data-format="yyyy-MM-dd" style="width:150px; max-width:70%;" id="start_mortgage_due_date" type="text" value="">
+	       					<span class="add-on"><i data-time-icon="icon-time" data-date-icon="icon-calendar" class="icon-calendar"> </i> </span>
+	       				</div>
+	           			<div class="input-append span1 report-control-right-control">
+	       					<span style="display: inline-block;width: auto;height: 20px;min-width: 16px;padding: 4px 5px;font-size: 14px;font-weight: normal;line-height: 20px;">to</span>
+						</div>
+	           			<div class="input-append span3 report-control-right-control" id="end_mortgage_due_date_gen">
+	           				<input class="" data-format="yyyy-MM-dd" style="width:150px; max-width:70%;" id="end_mortgage_due_date" type="text" value="">
+	   						<span class="add-on"><i data-time-icon="icon-time" data-date-icon="icon-calendar" class="icon-calendar"> </i> </span>
+	       				</div>
+	   				</div>
 	               
 	               
 	   			</div>
            </div>
+        </div>
         </div>
     </div>
 </div>
@@ -648,16 +883,20 @@
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">Heat System:</div>
-			<div class="span7"><select type="text" id="heat_system"><% for(var i=0;i<heat_types.length;i++){ %><%-'<option value="'+heat_types[i].id+'">'+heat_types[i].type+'</option>'%><% } %></select>
+			<div class="span7"><select type="text" id="heat_system_type"><% for(var i=0;i<heat_types.length;i++){ %><%-'<option value="'+heat_types[i].id+'" {{ if(heat_system_type=='+heat_types[i].id+'){ }} selected="selected"{{ } }}>'+heat_types[i].type+'</option>'%><% } %></select>
 
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">Heat Age:</div>
-			<div class="span7"><input type="text" id="heat_system_age" value="{{=heat_system_age}}"></div>
+			<div class="span7"><input type="text" min="1900" max="2099" pattern="[0-9]{4}" id="heat_system_age" value="{{=heat_system_age}}"></div>
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">Boiler Age:</div>
-			<div class="span7"><input type="text" id="boilers_age" value="{{=boiler_installed_year}}"></div>
+			<div class="span7"><input type="text" min="1900" max="2099" pattern="[0-9]{4}" id="boiler_installed_year" value="{{=boiler_installed_year}}"></div>
+		</div>
+		<div class="row-fluid">
+			<div class="span5 segment-label">Last Boiler Upgrade:</div>
+			<div class="span7"><input type="text" min="1900" max="2099" pattern="[0-9]{4}" id="last_boiler_upgrade_year" value="{{=last_boiler_upgrade_year}}"></div>
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">Cable Internet Provider:</div>
@@ -665,7 +904,7 @@
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">Total Units:</div>
-			<div class="span7"><input type="text" id="unit_quantity" value=""></div>
+			<div class="span7"><input type="text" min="0" max="999999" id="unit_quantity" value="{{=unit_quantity}}"></div>
 		</div>
 	</div>
 	
@@ -686,57 +925,71 @@
 			<div class="span7"><input type="text" id="assessed_value" value="{{=assessed_value}}"></div>
 		</div>
 		<div class="row-fluid">
+			<div class="span5 segment-label">Mortgage Company:</div>
+			<div class="span7"><input type="text" id="mortgage_company" value="{{=mortgage_company}}"></div>
+		</div>
+		<div class="row-fluid">
+			<div class="span5 segment-label">Mortgage Due Date:</div>
+			
+			<div class="span7">
+				<div class="input-append span3 report-control-right-control" id="mortgage_due_date_gen">
+       				<input class="" data-format="yyyy-MM-dd" style="width: 179px;" id="mortgage_due_date" type="text" value="">
+   					<span class="add-on"><i data-time-icon="icon-time" data-date-icon="icon-calendar" class="icon-calendar"> </i> </span>
+   				</div>
+			</div>
+		</div>
+		<div class="row-fluid">
 			<div class="span5 segment-label">Bachelor Rent Price:</div>
-			<div class="span7"><input type="text" id="bachelor_price" value="{{=bachelor_price}}"></div>
+			<div class="span7"><input type="text" class="unit-price-dependant" id="bachelor_price" value="{{=bachelor_price}}"></div>
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">1 Bedroom Rent Price:</div>
-			<div class="span7"><input type="text" id="bedroom1_price" value="{{=bedroom1_price}}"></div>
+			<div class="span7"><input type="text" class="unit-price-dependant" id="bedroom1_price" value="{{=bedroom1_price}}"></div>
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">2 Bedroom Rent Price:</div>
-			<div class="span7"><input type="text" id="bedroom2_price" value="{{=bedroom2_price}}"></div>
+			<div class="span7"><input type="text" class="unit-price-dependant" id="bedroom2_price" value="{{=bedroom2_price}}"></div>
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">3 Bedroom Rent Price:</div>
-			<div class="span7"><input type="text" id="bedroom3_price" value="{{=bedroom3_price}}"></div>
+			<div class="span7"><input type="text" class="unit-price-dependant" id="bedroom3_price" value="{{=bedroom3_price}}"></div>
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">Bachelor Units:</div>
-			<div class="span7"><input type="text" id="bachelor_units" value="{{=bachelor_units}}"></div>
+			<div class="span7"><input type="text" class="unit-price-dependant" id="bachelor_units" value="{{=bachelor_units}}"></div>
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">1 Bedroom Units:</div>
-			<div class="span7"><input type="text" id="bedroom1_units" value="{{=bedroom1_units}}"></div>
+			<div class="span7"><input type="text" class="unit-price-dependant" id="bedroom1_units" value="{{=bedroom1_units}}"></div>
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">2 Bedroom Units:</div>
-			<div class="span7"><input type="text" id="bedroom2_units" value="{{=bedroom2_units}}"></div>
+			<div class="span7"><input type="text" class="unit-price-dependant" id="bedroom2_units" value="{{=bedroom2_units}}"></div>
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">3 Bedroom Units:</div>
-			<div class="span7"><input type="text" id="bedroom3_units" value="{{=bedroom3_units}}"></div>
+			<div class="span7"><input type="text" class="unit-price-dependant" id="bedroom3_units" value="{{=bedroom3_units}}"></div>
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">Building Income:</div>
 			<div class="span7" style="margin-bottom:10px;">
-				<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="building-income-radio" id="income_calculated_radio" {{ if(building_income==null){ }}checked="checked"{{ } }}>&nbsp&nbsp&nbspCalculated - <span id="income_calculated_radio_label"></span></div>
-				<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="building-income-radio" id="income_manual_radio" {{ if(building_income!=null){ }}checked="checked"{{ } }}>&nbsp&nbsp&nbspManual - <input style="width:118px; margin-bottom:0px;" type="text" class="" id="building_income" {{ if(building_income==null){ }}disabled="disabled" {{ }else{ }}value="{{=building_income}}"{{ } }}></div>
+				<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="building-income-radio" id="income_calculated_radio" {{ if(!building_income_manual_mode){ }}checked="checked"{{ } }}>&nbsp&nbsp&nbspCalculated - <span id="income_calculated_radio_label">{{ if(!building_income_manual_mode){ }}{{='$'+(building_income==null?'0.00':building_income.toFixed(2))}}{{ } }}</span></div>
+				<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="building-income-radio" id="income_manual_radio" {{ if(building_income_manual_mode){ }}checked="checked"{{ } }}>&nbsp&nbsp&nbspManual - <input style="width:118px; margin-bottom:0px;" type="text" class="" id="building_income" {{ if(!building_income_manual_mode){ }}disabled="disabled" {{ }else{ }}value="{{=building_income}}"{{ } }}></div>
 			</div>
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">Unit Price:</div>
 			<div class="span7" style="margin-bottom:10px;">
-				<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="unit-price-radio" id="unit_price_calculated_radio" {{ if(unit_price==null){ }}checked="checked"{{ } }}>&nbsp&nbsp&nbspCalculated - <span id="unit_price_calculated_radio_label"></span></div>
-				<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="unit-price-radio" id="unit_price_manual_radio" {{ if(unit_price!=null){ }}checked="checked"{{ } }}>&nbsp&nbsp&nbspManual - <input style="width:118px; margin-bottom:0px;" type="text" class="" id="unit_price" {{ if(unit_price==null){ }}disabled="disabled" {{ }else{ }}value="{{=unit_price}}"{{ } }}></div>
+				<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="unit-price-radio" id="unit_price_calculated_radio" {{ if(!unit_price_manual_mode){ }}checked="checked"{{ } }}>&nbsp&nbsp&nbspCalculated - <span id="unit_price_calculated_radio_label">{{ if(!unit_price_manual_mode){ }}{{='$'+(unit_price==null?'0.00':unit_price.toFixed(2))}}{{ } }}</span></div>
+				<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="unit-price-radio" id="unit_price_manual_radio" {{ if(unit_price_manual_mode){ }}checked="checked"{{ } }}>&nbsp&nbsp&nbspManual - <input style="width:118px; margin-bottom:0px;" type="text" class="" id="unit_price" {{ if(!unit_price_manual_mode){ }}disabled="disabled" {{ }else{ }}value="{{=unit_price}}"{{ } }}></div>
 			</div>
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">CAP Rate:</div>
-			<div class="span7"><input type="text" id="cap_rate"></div>
+			<div class="span7 cap-rate"><span id="cap_rate">%{{=cap_rate}}</span></div>
 		</div>
 		<div class="row-fluid">
-			<div class="span5 segment-label">Last Sale Date:</div>
+			<div class="span5 segment-label">{{if(typeof(sale_id)=='undefined'){ }}Last {{ } }}Sale Date:</div>
 			<div class="span7">
 				<div class="input-append span3 report-control-right-control" id="last_sale_date_gen">
        				<input class="" data-format="yyyy-MM-dd" style="width: 179px;" id="sale_date" type="text" value="">
@@ -745,7 +998,7 @@
 			</div>
 		</div>
 		<div class="row-fluid">
-			<div class="span5 segment-label">Last Sale Price:</div>
+			<div class="span5 segment-label">{{if(typeof(sale_id)=='undefined'){ }}Last {{ } }}Sale Price:</div>
 			<div class="span7"><input type="text" id="last_sale_price" value="{{=last_sale_price}}"></div>
 		</div>
 	</div>
@@ -877,6 +1130,52 @@
     
     	var unitsMax = null;
     	var unitsMin = null;
+    	var building_income_max = null;
+		var elevator_installed_year_max = null;
+		var unit_price_max = null;
+		var elevator_upgrade_year_max = null;
+		var cap_rate_max = null;
+		var sale_price_max = null;
+		var assessed_value_max = null;
+		var boiler_installed_year_max = null;
+		var boiler_upgrade_max = null;
+		var heat_age_max = null;
+		var sales_count_max = null;
+		var windows_installed_year_max = null;
+		var windows_installed_year_max;
+		
+    	var building_income_min = null;
+		var elevator_installed_year_min = null;
+		var unit_price_min = null;
+		var elevator_upgrade_year_min = null;
+		var cap_rate_min = null;
+		var sale_price_min = null;
+		var assessed_value_min = null;
+		var boiler_installed_year_min = null;
+		var boiler_upgrade_min = null;
+		var heat_age_min = null;
+		var sales_count_min = null;
+		var windows_installed_year_min = null;
+		var windows_installed_year_min;
+    	
+    	var bachelor_units_min = null;
+    	var bachelor_units_max = null;
+    	var bedroom1_units_min = null;
+    	var bedroom1_units_max = null;
+    	var bedroom2_units_min = null;
+    	var bedroom2_units_max = null;
+    	var bedroom3_units_min = null;
+    	var bedroom3_units_max = null;
+    	
+    	var bachelor_rent_min = null;
+    	var bachelor_rent_max = null;
+    	var bedroom1_rent_min = null;
+    	var bedroom1_rent_max = null;
+    	var bedroom2_rent_min = null;
+    	var bedroom2_rent_max = null;
+    	var bedroom3_rent_min = null;
+    	var bedroom3_rent_max = null;
+    	
     	var sliderLimit = 250;
     	var bucketPrefix = "https://s3-us-west-2.amazonaws.com/credimages/";
     	var tempImg = null;
@@ -896,9 +1195,12 @@
     	var MIN_HEAT_AGE = 1900;
     	var MAX_HEAT_AGE = 2038;
     	var STEP_HEAT_AGE = 10;
-    	var MIN_BOILER_AGE = 1900;
-    	var MAX_BOILER_AGE = 2100;
-    	var STEP_BOILER_AGE = 10;
+    	var MIN_BOILER_INSTALLED_YEAR = 1900;
+    	var MAX_BOILER_INSTALLED_YEAR = 2100;
+    	var STEP_BOILER_INSTALLED_YEAR = 10;
+    	var MIN_BOILER_UPGRADE = 1900;
+    	var MAX_BOILER_UPGRADE = 2100;
+    	var STEP_BOILER_UPGRADE = 10;
     	
     	var MIN_ASSESSED_VALUE = 0;
     	var MAX_ASSESSED_VALUE = 1000000;
@@ -907,9 +1209,39 @@
     	var MIN_ROOM_RENT = 0;
     	var MAX_ROOM_RENT = 10000;
     	var STEP_ROOM_RENT = 100;
+    	var MIN_ROOM_UNITS = 0;
+    	var MAX_ROOM_UNITS = 1000;
+    	var STEP_ROOM_UNITS = 1;
+    	
+    	var MIN_BUILDING_INCOME = 0;
+    	var MAX_BUILDING_INCOME = 1000000;
+    	var STEP_BUILDING_INCOME = 1000;
+    	
+    	var MIN_UNIT_PRICE = 0;
+    	var MAX_UNIT_PRICE = 1000000;
+    	var STEP_UNIT_PRICE = 1000;
+
+    	var MIN_SALE_PRICE = 0;
+    	var MAX_SALE_PRICE = 10000000;
+    	var STEP_SALE_PRICE = 1000;
+    	
+    	var MIN_SALES_COUNT = 0;
+    	var MAX_SALES_COUNT = 10;
+    	var STEP_SALES_COUNT = 1;
+    	
+    	var MIN_WINDOWS_INSTALLED_YEAR = 1900;
+    	var MAX_WINDOWS_INSTALLED_YEAR = 2100;
+    	var STEP_WINDOWS_INSTALLED_YEAR = 1;
+    	
+    	var MIN_ELEVATOR_UPGRADE_YEAR = 1900;
+    	var MAX_ELEVATOR_UPGRADE_YEAR = 2100;
+    	var STEP_ELEVATOR_UPGRADE_YEAR = 1;
+    	
+    	var MIN_ELEVATOR_INSTALLED_YEAR = 1900;
+    	var MAX_ELEVATOR_INSTALLED_YEAR = 2100;
+    	var STEP_ELEVATOR_INSTALLED_YEAR = 1;
     	
     	
-    
     	var buildingphototemplate = _.template($('#building-photo-template').html());
     	
     	//var buildingtemplate = _.template($('#building-details-template').html());
@@ -922,9 +1254,11 @@
 			$('#buildings tbody tr.selected').removeClass('selected');
 			building.clear();
 			building = new BuildingModel({building_id:'new',street_number_begin:'',street_number_end:'',street_name:'',city:'',province:'',postal_code:'',building_type:1
-										,property_mgmt_company:'',prev_property_mgmt_company:'',heat_system_age:'',boiler_installed_year:'',elevator_installed_year:'',windows_installed_year:'',cable_internet_provider:'',assessed_value:''
-										,bachelor_price:'',bedroom1_price:'',bedroom2_price:'',bedroom3_price:'',bachelor_units:'',bedroom1_units:'',bedroom2_units:'',bedroom3_units:'',building_income:''
-										,unit_price:'',sale_date:'',last_sale_price:'',images:''});
+										,property_mgmt_company:null,prev_property_mgmt_company:null,heat_system_age:null,heat_system_type:null,boiler_installed_year:null,elevator_installed_year:null,windows_installed_year:null,cable_internet_provider:'',assessed_value:null
+										,bachelor_price:null,bedroom1_price:null,bedroom2_price:null,bedroom3_price:null,bachelor_units:null,bedroom1_units:null,bedroom2_units:null,bedroom3_units:null,building_income:null
+										,building_income_manual_mode:false,unit_price:null,unit_price_manual_mode:false,unit_quantity:null
+										,last_boiler_upgrade_year:null
+										,sale_date:null,last_sale_price:null,images:'',mortgage_company:null,mortgage_due_date:null,cap_rate:null});
 			$('#building-sales').css('display','none');
 			buildingcontacts.reset();
 			if(buildingcontactsView==null)
@@ -989,10 +1323,107 @@
 	        		"data":function(d){
 	        			d.address_search = $("#search_address").val();
 	        			d.contact_search = $("#search_contact").val();
+	        			d.company_search = $('#search_company').val();
+	        			d.mortgage_search = $('#search_mortgage').val();
+	        			
 	        			d.unitQuantityMin = unitsMin==0?null:unitsMin;
 	        			d.unitQuantityMax = unitsMax==sliderLimit?null:unitsMax;
+	        			d.unit_price_min = unit_price_min==0?null:unit_price_min;
+	        			d.unit_price_max = unit_price_max==MAX_UNIT_PRICE?null:unit_price_max;
+	        			
 	        			d.saleDateRangeStart = $('#start_time').val();
 	        			d.saleDateRangeEnd = $('#end_time').val();
+	        			
+	        			d.has_elevator = $('#search_elevator').is(':checked');
+	        			d.elevator_installed_year_min = elevator_installed_year_min==MIN_ELEVATOR_INSTALLED_YEAR?null:elevator_installed_year_min;
+	        			d.elevator_installed_year_max = elevator_installed_year_max==MAX_ELEVATOR_INSTALLED_YEAR?null:elevator_installed_year_max;
+	        			d.elevator_upgrade_year_min = elevator_upgrade_year_min==MIN_ELEVATOR_UPGRADE_YEAR?null:elevator_upgrade_year_min;
+	        			d.elevator_upgrade_year_max = elevator_upgrade_year_max==MAX_ELEVATOR_UPGRADE_YEAR?null:elevator_upgrade_year_max;
+	        			
+	        			d.cap_rate_min = cap_rate_min==MIN_CAP_RATE?null:cap_rate_min;
+	        			d.cap_rate_max = cap_rate_max==MAX_CAP_RATE?null:cap_rate_max;
+	        			d.search_property_mgmt_company = $('#search_property_mgmt_company').val();
+	        			d.search_prev_property_mgmt_company = $('#search_prev_property_mgmt_company').val();
+	        			d.heat_age_min = heat_age_min==MIN_HEAT_AGE?null:heat_age_min;
+	        			d.heat_age_max = heat_age_max==MAX_HEAT_AGE?null:heat_age_max;
+	        			
+	        			d.boiler_installed_year_min = boiler_installed_year_min==MIN_BOILER_INSTALLED_YEAR?null:boiler_installed_year_min;
+	        			d.boiler_installed_year_max = boiler_installed_year_max==MAX_BOILER_INSTALLED_YEAR?null:boiler_installed_year_max;
+	        			
+	        			d.boiler_upgrade_min = boiler_upgrade_min==MIN_BOILER_UPGRADE?null:boiler_upgrade_min;
+	        			d.boiler_upgrade_max = boiler_upgrade_max==MAX_BOILER_UPGRADE?null:boiler_upgrade_max;
+	        			
+	        			d.assessed_value_min = assessed_value_min==MIN_ASSESSED_VALUE?null:assessed_value_min;
+	        			d.assessed_value_max = assessed_value_max==MAX_ASSESSED_VALUE?null:assessed_value_max;
+	        			
+	        			d.building_income_min = building_income_min==MIN_BUILDING_INCOME?null:building_income_min;
+	        			d.building_income_max = building_income_max==MAX_BUILDING_INCOME?null:building_income_max;
+	        			
+	        			d.sale_price_min = sale_price_min==MIN_SALE_PRICE?null:sale_price_min;
+	        			d.sale_price_max = sale_price_max==MAX_SALE_PRICE?null:sale_price_max;
+	        			
+	        			d.bachelor_units_min = bachelor_units_min==MIN_ROOM_UNITS?null:bachelor_units_min;
+	        			d.bachelor_units_max = bachelor_units_max==MAX_ROOM_UNITS?null:bachelor_units_max;
+	        			
+	        			d.bedroom1_units_min = bedroom1_units_min==MIN_ROOM_UNITS?null:bedroom1_units_min;
+	        			d.bedroom1_units_max = bedroom1_units_max==MAX_ROOM_UNITS?null:bedroom1_units_max;
+	        			
+	        			d.bedroom2_units_min = bedroom2_units_min==MIN_ROOM_UNITS?null:bedroom2_units_min;
+	        			d.bedroom2_units_max = bedroom2_units_max==MAX_ROOM_UNITS?null:bedroom2_units_max;
+	        			
+	        			d.bedroom3_units_min = bedroom3_units_min==MIN_ROOM_UNITS?null:bedroom3_units_min;
+	        			d.bedroom3_units_max = bedroom3_units_max==MAX_ROOM_UNITS?null:bedroom3_units_max;
+	        			
+	        			d.bachelor_rent_min = bachelor_rent_min==MIN_ROOM_RENT?null:bachelor_rent_min;
+	        			d.bachelor_rent_max = bachelor_rent_max==MAX_ROOM_RENT?null:bachelor_rent_max;
+	        			
+	        			d.bedroom1_rent_min = bedroom1_rent_min==MIN_ROOM_RENT?null:bedroom1_rent_min;
+	        			d.bedroom1_rent_max = bedroom1_rent_max==MAX_ROOM_RENT?null:bedroom1_rent_max;
+	        			
+	        			d.bedroom2_rent_min = bedroom2_rent_min==MIN_ROOM_RENT?null:bedroom2_rent_min;
+	        			d.bedroom2_rent_max = bedroom2_rent_max==MAX_ROOM_RENT?null:bedroom2_rent_max;
+	        			
+	        			d.bedroom3_rent_min = bedroom3_rent_min==MIN_ROOM_RENT?null:bedroom3_rent_min;
+	        			d.bedroom3_rent_max = bedroom3_rent_max==MAX_ROOM_RENT?null:bedroom3_rent_max;
+	        			
+	        			d.windows_installed_year_min = windows_installed_year_min==MIN_WINDOWS_INSTALLED_YEAR?null:windows_installed_year_min;
+	        			d.windows_installed_year_max = windows_installed_year_max==MAX_WINDOWS_INSTALLED_YEAR?null:windows_installed_year_max;
+	        			
+	        			d.cable_internet_provider = $('#search_isp').val();
+	        			
+	        			
+	        			d.start_mortgage_due_date = $('#start_mortgage_due_date').val();
+	        			d.end_mortgage_due_date = $('#end_mortgage_due_date').val();
+	        			
+	        			d.sales_count_min = sales_count_min==MIN_SALES_COUNT?null:sales_count_min;
+	        			d.sales_count_max = sales_count_max==MAX_SALES_COUNT?null:sales_count_max;
+	        			var checkbox_building_types = '';
+	        			$('.building-type-checkboxes').each(function(){
+	        				if($(this).is(':checked')){
+	        					if(checkbox_building_types != ''){
+	        						checkbox_building_types = checkbox_building_types + ',';
+	        					}
+	        					checkbox_building_types = checkbox_building_types + $(this).attr('building_type');
+	        				}
+	        			});	        			
+	        			if(checkbox_building_types!=''){
+	        				checkbox_building_types = "'"+checkbox_building_types+"'";
+	        			}
+	        			d.checkbox_building_types = checkbox_building_types;
+	        			
+	        			var checkbox_heating_types = '';
+	        			$('.heating-type-checkboxes').each(function(){
+	        				if($(this).is(':checked')){
+	        					if(checkbox_heating_types != ''){
+	        						checkbox_heating_types = checkbox_heating_types + ',';
+	        					}
+	        					checkbox_heating_types = checkbox_heating_types + $(this).attr('heat_type');
+	        				}
+	        			});        			
+	        			if(checkbox_heating_types!=''){
+	        				checkbox_heating_types = "'"+checkbox_heating_types+"'";
+	        			}
+	        			d.checkbox_heating_types = checkbox_heating_types;
 	        		},
 	        		error: function(xhr, error, thrown){
 	        			
@@ -1045,6 +1476,29 @@
 				datatable.api().ajax.reload();
 			},10);
 		});
+		$('#search_company').keydown(function(){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		});
+		$('#search_mortgage').keydown(function(){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		});
+		
+		$('.building-type-checkboxes').click(function(){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		
+		});
+		$('.heating-type-checkboxes').click(function(){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		
+		});
 		
 		function initSliders(){
 		
@@ -1055,6 +1509,11 @@
 			$('.rent-slider').attr('data-slider-step',STEP_ROOM_RENT); // corrects limit
 			$('.rent-slider').attr('data-slider-value','['+MIN_ROOM_RENT+','+MAX_ROOM_RENT+']');
 			$('.rent-slider').slider({tooltip: 'disabled'});
+			$('.units-slider').attr('data-slider-min',MIN_ROOM_UNITS); // corrects limit
+			$('.units-slider').attr('data-slider-max',MAX_ROOM_UNITS); // corrects limit
+			$('.units-slider').attr('data-slider-step',STEP_ROOM_UNITS); // corrects limit
+			$('.units-slider').attr('data-slider-value','['+MIN_ROOM_UNITS+','+MAX_ROOM_UNITS+']');
+			$('.units-slider').slider({tooltip: 'disabled'});
 			
 			
 			$('#bachelor_rent_min').html(MIN_ROOM_RENT);
@@ -1071,14 +1530,310 @@
 					$('#bachelor_rent_max').html(bachelor_rent_max);
 				}
 			});
-			
-			
-			
-			$('#assessed_value_slider').on('slideStop',function(slideEvt){
+			$('#bachelor_rent_slider').on('slideStop',function(slideEvt){
 				setTimeout(function(){
 					datatable.api().ajax.reload();
 				},10);
 			});
+			
+			$('#bedroom1_rent_min').html(MIN_ROOM_RENT);
+			$('#bedroom1_rent_max').html(MAX_ROOM_RENT+'+');
+			$('#bedroom1_rent_slider').on('slide',function(slideEvt){
+				bedroom1_rent_min = slideEvt.value[0];
+				bedroom1_rent_max = slideEvt.value[1];
+				$('#bedroom1_rent_min').html(bedroom1_rent_min);
+				
+				if(bedroom1_rent_max==MAX_ROOM_RENT)
+				{
+					$('#bedroom1_rent_max').html(bedroom1_rent_max+'+');
+				}else{
+					$('#bedroom1_rent_max').html(bedroom1_rent_max);
+				}
+			});
+			$('#bedroom1_rent_slider').on('slideStop',function(slideEvt){
+				setTimeout(function(){
+					datatable.api().ajax.reload();
+				},10);
+			});
+			
+			$('#bedroom2_rent_min').html(MIN_ROOM_RENT);
+			$('#bedroom2_rent_max').html(MAX_ROOM_RENT+'+');
+			$('#bedroom2_rent_slider').on('slide',function(slideEvt){
+				bedroom2_rent_min = slideEvt.value[0];
+				bedroom2_rent_max = slideEvt.value[1];
+				$('#bedroom2_rent_min').html(bedroom2_rent_min);
+				
+				if(bedroom2_rent_max==MAX_ROOM_RENT)
+				{
+					$('#bedroom2_rent_max').html(bedroom2_rent_max+'+');
+				}else{
+					$('#bedroom2_rent_max').html(bedroom2_rent_max);
+				}
+			});
+			$('#bedroom2_rent_slider').on('slideStop',function(slideEvt){
+				setTimeout(function(){
+					datatable.api().ajax.reload();
+				},10);
+			});
+			
+			$('#bedroom3_rent_min').html(MIN_ROOM_RENT);
+			$('#bedroom3_rent_max').html(MAX_ROOM_RENT+'+');
+			$('#bedroom3_rent_slider').on('slide',function(slideEvt){
+				bedroom3_rent_min = slideEvt.value[0];
+				bedroom3_rent_max = slideEvt.value[1];
+				$('#bedroom3_rent_min').html(bedroom3_rent_min);
+				
+				if(bedroom3_rent_max==MAX_ROOM_RENT)
+				{
+					$('#bedroom3_rent_max').html(bedroom3_rent_max+'+');
+				}else{
+					$('#bedroom3_rent_max').html(bedroom3_rent_max);
+				}
+			});
+			$('#bedroom3_rent_slider').on('slideStop',function(slideEvt){
+				setTimeout(function(){
+					datatable.api().ajax.reload();
+				},10);
+			});
+			
+			
+			// Units
+			$('#bachelor_units_min').html(MIN_ROOM_RENT);
+			$('#bachelor_units_max').html(MAX_ROOM_UNITS+'+');
+			$('#bachelor_units_slider').on('slide',function(slideEvt){
+				bachelor_units_min = slideEvt.value[0];
+				bachelor_units_max = slideEvt.value[1];
+				$('#bachelor_units_min').html(bachelor_units_min);
+				
+				if(bachelor_units_max==MAX_ROOM_UNITS)
+				{
+					$('#bachelor_units_max').html(bachelor_units_max+'+');
+				}else{
+					$('#bachelor_units_max').html(bachelor_units_max);
+				}
+			});
+			$('#bachelor_units_slider').on('slideStop',function(slideEvt){
+				setTimeout(function(){
+					datatable.api().ajax.reload();
+				},10);
+			});
+			
+			$('#bedroom1_units_min').html(MIN_ROOM_UNITS);
+			$('#bedroom1_units_max').html(MAX_ROOM_UNITS+'+');
+			$('#bedroom1_units_slider').on('slide',function(slideEvt){
+				bedroom1_units_min = slideEvt.value[0];
+				bedroom1_units_max = slideEvt.value[1];
+				$('#bedroom1_units_min').html(bedroom1_units_min);
+				
+				if(bedroom1_units_max==MAX_ROOM_UNITS)
+				{
+					$('#bedroom1_units_max').html(bedroom1_units_max+'+');
+				}else{
+					$('#bedroom1_units_max').html(bedroom1_units_max);
+				}
+			});
+			$('#bedroom1_units_slider').on('slideStop',function(slideEvt){
+				setTimeout(function(){
+					datatable.api().ajax.reload();
+				},10);
+			});
+			
+			$('#bedroom2_units_min').html(MIN_ROOM_UNITS);
+			$('#bedroom2_units_max').html(MAX_ROOM_UNITS+'+');
+			$('#bedroom2_units_slider').on('slide',function(slideEvt){
+				bedroom2_units_min = slideEvt.value[0];
+				bedroom2_units_max = slideEvt.value[1];
+				$('#bedroom2_units_min').html(bedroom2_units_min);
+				
+				if(bedroom2_units_max==MAX_ROOM_UNITS)
+				{
+					$('#bedroom2_units_max').html(bedroom2_units_max+'+');
+				}else{
+					$('#bedroom2_units_max').html(bedroom2_units_max);
+				}
+			});
+			$('#bedroom2_units_slider').on('slideStop',function(slideEvt){
+				setTimeout(function(){
+					datatable.api().ajax.reload();
+				},10);
+			});
+			
+			$('#bedroom3_units_min').html(MIN_ROOM_UNITS);
+			$('#bedroom3_units_max').html(MAX_ROOM_UNITS+'+');
+			$('#bedroom3_units_slider').on('slide',function(slideEvt){
+				bedroom3_units_min = slideEvt.value[0];
+				bedroom3_units_max = slideEvt.value[1];
+				$('#bedroom3_units_min').html(bedroom3_units_min);
+				
+				if(bedroom3_units_max==MAX_ROOM_UNITS)
+				{
+					$('#bedroom3_units_max').html(bedroom3_units_max+'+');
+				}else{
+					$('#bedroom3_units_max').html(bedroom3_units_max);
+				}
+			});
+			
+			$('#bedroom3_units_slider').on('slideStop',function(slideEvt){
+				setTimeout(function(){
+					datatable.api().ajax.reload();
+				},10);
+			});
+			
+			
+			$('#building_income_slider').attr('data-slider-min',MIN_BUILDING_INCOME); // corrects limit
+			$('#building_income_slider').attr('data-slider-max',MAX_BUILDING_INCOME); // corrects limit
+			$('#building_income_slider').attr('data-slider-step',STEP_BUILDING_INCOME); // corrects limit
+			$('#building_income_min').html(MIN_BUILDING_INCOME);
+			$('#building_income_max').html(MAX_BUILDING_INCOME+'+');
+			$('#building_income_slider').attr('data-slider-value','['+MIN_BUILDING_INCOME+','+MAX_BUILDING_INCOME+']');
+			$('#building_income_slider').slider({tooltip: 'disabled'});
+			$('#building_income_slider').on('slide',function(slideEvt){
+				building_income_min = slideEvt.value[0];
+				building_income_max = slideEvt.value[1];
+				$('#building_income_min').html(building_income_min);
+				
+				if(building_income_max==MAX_BUILDING_INCOME)
+				{
+					$('#building_income_max').html(building_income_max+'+');
+				}else{
+					$('#building_income_max').html(building_income_max);
+				}
+			});
+			$('#building_income_slider').on('slideStop',function(slideEvt){
+				setTimeout(function(){
+					datatable.api().ajax.reload();
+				},10);
+			});
+			
+			
+			$('#elevator_installed_year_slider').attr('data-slider-min',MIN_ELEVATOR_INSTALLED_YEAR); // corrects limit
+			$('#elevator_installed_year_slider').attr('data-slider-max',MAX_ELEVATOR_INSTALLED_YEAR); // corrects limit
+			$('#elevator_installed_year_slider').attr('data-slider-step',STEP_ELEVATOR_INSTALLED_YEAR); // corrects limit
+			$('#elevator_installed_year_min').html(MIN_ELEVATOR_INSTALLED_YEAR);
+			$('#elevator_installed_year_max').html(MAX_ELEVATOR_INSTALLED_YEAR+'+');
+			$('#elevator_installed_year_slider').attr('data-slider-value','['+MIN_ELEVATOR_INSTALLED_YEAR+','+MAX_ELEVATOR_INSTALLED_YEAR+']');
+			$('#elevator_installed_year_slider').slider({tooltip: 'disabled'});
+			$('#elevator_installed_year_slider').on('slide',function(slideEvt){
+				elevator_installed_year_min = slideEvt.value[0];
+				elevator_installed_year_max = slideEvt.value[1];
+				$('#elevator_installed_year_min').html(elevator_installed_year_min);
+				
+				if(elevator_installed_year_max==MAX_ELEVATOR_INSTALLED_YEAR)
+				{
+					$('#elevator_installed_year_max').html(elevator_installed_year_max+'+');
+				}else{
+					$('#elevator_installed_year_max').html(elevator_installed_year_max);
+				}
+			});
+			$('#elevator_installed_year_slider').on('slideStop',function(slideEvt){
+				setTimeout(function(){
+					datatable.api().ajax.reload();
+				},10);
+			});
+			
+			$('#unit_price_slider').attr('data-slider-min',MIN_UNIT_PRICE); // corrects limit
+			$('#unit_price_slider').attr('data-slider-max',MAX_UNIT_PRICE); // corrects limit
+			$('#unit_price_slider').attr('data-slider-step',STEP_UNIT_PRICE); // corrects limit
+			$('#unit_price_min').html(MIN_UNIT_PRICE);
+			$('#unit_price_max').html(MAX_UNIT_PRICE+'+');
+			$('#unit_price_slider').attr('data-slider-value','['+MIN_UNIT_PRICE+','+MAX_UNIT_PRICE+']');
+			$('#unit_price_slider').slider({tooltip: 'disabled'});
+			$('#unit_price_slider').on('slide',function(slideEvt){
+				unit_price_min = slideEvt.value[0];
+				unit_price_max = slideEvt.value[1];
+				$('#unit_price_min').html(unit_price_min);
+				
+				if(unit_price_max==MAX_UNIT_PRICE)
+				{
+					$('#unit_price_max').html(unit_price_max+'+');
+				}else{
+					$('#unit_price_max').html(unit_price_max);
+				}
+			});
+			$('#unit_price_slider').on('slideStop',function(slideEvt){
+				setTimeout(function(){
+					datatable.api().ajax.reload();
+				},10);
+			});
+			
+			
+			$('#elevator_upgrade_year_slider').attr('data-slider-min',MIN_ELEVATOR_UPGRADE_YEAR); // corrects limit
+			$('#elevator_upgrade_year_slider').attr('data-slider-max',MAX_ELEVATOR_UPGRADE_YEAR); // corrects limit
+			$('#elevator_upgrade_year_slider').attr('data-slider-step',STEP_ELEVATOR_UPGRADE_YEAR); // corrects limit
+			$('#elevator_upgrade_year_min').html(MIN_ELEVATOR_UPGRADE_YEAR);
+			$('#elevator_upgrade_year_max').html(MAX_ELEVATOR_UPGRADE_YEAR+'+');
+			$('#elevator_upgrade_year_slider').attr('data-slider-value','['+MIN_ELEVATOR_UPGRADE_YEAR+','+MAX_ELEVATOR_UPGRADE_YEAR+']');
+			$('#elevator_upgrade_year_slider').slider({tooltip: 'disabled'});
+			$('#elevator_upgrade_year_slider').on('slide',function(slideEvt){
+				elevator_upgrade_year_min = slideEvt.value[0];
+				elevator_upgrade_year_max = slideEvt.value[1];
+				$('#elevator_upgrade_year_min').html(elevator_upgrade_year_min);
+				
+				if(elevator_upgrade_year_max==MAX_ELEVATOR_UPGRADE_YEAR)
+				{
+					$('#elevator_upgrade_year_max').html(elevator_upgrade_year_max+'+');
+				}else{
+					$('#elevator_upgrade_year_max').html(elevator_upgrade_year_max);
+				}
+			});
+			$('#elevator_upgrade_year_slider').on('slideStop',function(slideEvt){
+				setTimeout(function(){
+					datatable.api().ajax.reload();
+				},10);
+			});
+			
+			
+			$('#cap_rate_slider').attr('data-slider-min',MIN_CAP_RATE); // corrects limit
+			$('#cap_rate_slider').attr('data-slider-max',MAX_CAP_RATE); // corrects limit
+			$('#cap_rate_slider').attr('data-slider-step',STEP_CAP_RATE); // corrects limit
+			$('#cap_rate_min').html(MIN_CAP_RATE);
+			$('#cap_rate_max').html(MAX_CAP_RATE+'+');
+			$('#cap_rate_slider').attr('data-slider-value','['+MIN_CAP_RATE+','+MAX_CAP_RATE+']');
+			$('#cap_rate_slider').slider({tooltip: 'disabled'});
+			$('#cap_rate_slider').on('slide',function(slideEvt){
+				cap_rate_min = slideEvt.value[0];
+				cap_rate_max = slideEvt.value[1];
+				$('#cap_rate_min').html(cap_rate_min);
+				
+				if(cap_rate_max==MAX_CAP_RATE)
+				{
+					$('#cap_rate_max').html(cap_rate_max+'+');
+				}else{
+					$('#cap_rate_max').html(cap_rate_max);
+				}
+			});
+			$('#cap_rate_slider').on('slideStop',function(slideEvt){
+				setTimeout(function(){
+					datatable.api().ajax.reload();
+				},10);
+			});
+			
+			
+			$('#sale_price_slider').attr('data-slider-min',MIN_SALE_PRICE); // corrects limit
+			$('#sale_price_slider').attr('data-slider-max',MAX_SALE_PRICE); // corrects limit
+			$('#sale_price_slider').attr('data-slider-step',STEP_SALE_PRICE); // corrects limit
+			$('#sale_price_min').html(MIN_SALE_PRICE);
+			$('#sale_price_max').html(MAX_SALE_PRICE+'+');
+			$('#sale_price_slider').attr('data-slider-value','['+MIN_SALE_PRICE+','+MAX_SALE_PRICE+']');
+			$('#sale_price_slider').slider({tooltip: 'disabled'});
+			$('#sale_price_slider').on('slide',function(slideEvt){
+				sale_price_min = slideEvt.value[0];
+				sale_price_max = slideEvt.value[1];
+				$('#sale_price_min').html(sale_price_min);
+				
+				if(sale_price_max==MAX_SALE_PRICE)
+				{
+					$('#sale_price_max').html(sale_price_max+'+');
+				}else{
+					$('#sale_price_max').html(sale_price_max);
+				}
+			});
+			$('#sale_price_slider').on('slideStop',function(slideEvt){
+				setTimeout(function(){
+					datatable.api().ajax.reload();
+				},10);
+			});
+			
 		
 		
 			$('#assessed_value_slider').attr('data-slider-min',MIN_ASSESSED_VALUE); // corrects limit
@@ -1106,30 +1861,56 @@
 				},10);
 			});
 			
-			$('#boiler_age_slider').attr('data-slider-min',MIN_BOILER_AGE); // corrects limit
-			$('#boiler_age_slider').attr('data-slider-max',MAX_BOILER_AGE); // corrects limit
-			$('#boiler_age_slider').attr('data-slider-step',STEP_BOILER_AGE); // corrects limit
-			$('#boiler_age_min').html(MIN_BOILER_AGE);
-			$('#boiler_age_max').html(MAX_BOILER_AGE+'+');
-			$('#boiler_age_slider').attr('data-slider-value','['+MIN_BOILER_AGE+','+MAX_BOILER_AGE+']');
-			$('#boiler_age_slider').slider({tooltip: 'disabled'});
-			$('#boiler_age_slider').on('slide',function(slideEvt){
-				boiler_age_min = slideEvt.value[0];
-				boiler_age_max = slideEvt.value[1];
-				$('#boiler_age_min').html(boiler_age_min);
+			$('#boiler_installed_year_slider').attr('data-slider-min',MIN_BOILER_INSTALLED_YEAR); // corrects limit
+			$('#boiler_installed_year_slider').attr('data-slider-max',MAX_BOILER_INSTALLED_YEAR); // corrects limit
+			$('#boiler_installed_year_slider').attr('data-slider-step',STEP_BOILER_INSTALLED_YEAR); // corrects limit
+			$('#boiler_installed_year_min').html(MAX_BOILER_INSTALLED_YEAR);
+			$('#boiler_installed_year_max').html(MAX_BOILER_INSTALLED_YEAR+'+');
+			$('#boiler_installed_year_slider').attr('data-slider-value','['+MAX_BOILER_INSTALLED_YEAR+','+MAX_BOILER_INSTALLED_YEAR+']');
+			$('#boiler_installed_year_slider').slider({tooltip: 'disabled'});
+			$('#boiler_installed_year_slider').on('slide',function(slideEvt){
+				boiler_installed_year_min = slideEvt.value[0];
+				boiler_installed_year_max = slideEvt.value[1];
+				$('#boiler_installed_year_min').html(boiler_installed_year_min);
 				
-				if(boiler_age_max==MAX_BOILER_AGE)
+				if(boiler_installed_year_max==MAX_BOILER_INSTALLED_YEAR)
 				{
-					$('#boiler_age_max').html(boiler_age_max+'+');
+					$('#boiler_installed_year_max').html(boiler_installed_year_max+'+');
 				}else{
-					$('#boiler_age_max').html(boiler_age_max);
+					$('#boiler_installed_year_max').html(boiler_installed_year_max);
 				}
 			});
-			$('#boiler_age_slider').on('slideStop',function(slideEvt){
+			$('#boiler_installed_year_slider').on('slideStop',function(slideEvt){
 				setTimeout(function(){
 					datatable.api().ajax.reload();
 				},10);
 			});
+			
+			$('#boiler_upgrade_slider').attr('data-slider-min',MIN_BOILER_UPGRADE); // corrects limit
+			$('#boiler_upgrade_slider').attr('data-slider-max',MAX_BOILER_UPGRADE); // corrects limit
+			$('#boiler_upgrade_slider').attr('data-slider-step',STEP_BOILER_UPGRADE); // corrects limit
+			$('#boiler_upgrade_min').html(MIN_BOILER_UPGRADE);
+			$('#boiler_upgrade_max').html(MAX_BOILER_UPGRADE+'+');
+			$('#boiler_upgrade_slider').attr('data-slider-value','['+MIN_BOILER_UPGRADE+','+MAX_BOILER_UPGRADE+']');
+			$('#boiler_upgrade_slider').slider({tooltip: 'disabled'});
+			$('#boiler_upgrade_slider').on('slide',function(slideEvt){
+				boiler_upgrade_min = slideEvt.value[0];
+				boiler_upgrade_max = slideEvt.value[1];
+				$('#boiler_upgrade_min').html(boiler_upgrade_min);
+				
+				if(boiler_upgrade_max==MAX_BOILER_UPGRADE)
+				{
+					$('#boiler_upgrade_max').html(boiler_upgrade_max+'+');
+				}else{
+					$('#boiler_upgrade_max').html(boiler_upgrade_max);
+				}
+			});
+			$('#boiler_upgrade_slider').on('slideStop',function(slideEvt){
+				setTimeout(function(){
+					datatable.api().ajax.reload();
+				},10);
+			});
+			
 		
 			$('#heat_age_slider').attr('data-slider-min',MIN_HEAT_AGE); // corrects limit
 			$('#heat_age_slider').attr('data-slider-max',MAX_HEAT_AGE); // corrects limit
@@ -1156,30 +1937,57 @@
 				},10);
 			});
 		
-			$('#cap_rate_slider').attr('data-slider-min',MIN_CAP_RATE); // corrects limit
-			$('#cap_rate_slider').attr('data-slider-max',MAX_CAP_RATE); // corrects limit
-			$('#cap_rate_slider').attr('data-slider-step',STEP_CAP_RATE); // corrects limit
-			$('#cap_rate_min').html(MIN_CAP_RATE);
-			$('#cap_rate_max').html(MAX_CAP_RATE+'+');
-			$('#cap_rate_slider').attr('data-slider-value','['+MIN_CAP_RATE+','+MAX_CAP_RATE+']');
-			$('#cap_rate_slider').slider({tooltip: 'disabled'});
-			$('#cap_rate_slider').on('slide',function(slideEvt){
-				cap_rate_min = slideEvt.value[0];
-				cap_rate_max = slideEvt.value[1]
-				$('#cap_rate_min').html(cap_rate_min);
+			$('#sales_count_slider').attr('data-slider-min',MIN_SALES_COUNT); // corrects limit
+			$('#sales_count_slider').attr('data-slider-max',MAX_SALES_COUNT); // corrects limit
+			$('#sales_count_slider').attr('data-slider-step',STEP_SALES_COUNT); // corrects limit
+			$('#sales_count_min').html(MIN_SALES_COUNT);
+			$('#sales_count_max').html(MAX_SALES_COUNT+'+');
+			$('#sales_count_slider').attr('data-slider-value','['+MIN_SALES_COUNT+','+MAX_SALES_COUNT+']');
+			$('#sales_count_slider').slider({tooltip: 'disabled'});
+			$('#sales_count_slider').on('slide',function(slideEvt){
+				sales_count_min = slideEvt.value[0];
+				sales_count_max = slideEvt.value[1]
+				$('#sales_count_min').html(sales_count_min);
 				
-				if(cap_rate_max==MAX_CAP_RATE)
+				if(sales_count_max==MAX_SALES_COUNT)
 				{
-					$('#cap_rate_max').html(cap_rate_max+'+');
+					$('#sales_count_max').html(sales_count_max+'+');
 				}else{
-					$('#cap_rate_max').html(cap_rate_max);
+					$('#sales_count_max').html(sales_count_max);
 				}
 			});
-			$('#cap_rate_slider').on('slideStop',function(slideEvt){
+			$('#sales_count_slider').on('slideStop',function(slideEvt){
 				setTimeout(function(){
 					datatable.api().ajax.reload();
 				},10);
 			});
+			
+			$('#windows_installed_year_slider').attr('data-slider-min',MIN_WINDOWS_INSTALLED_YEAR); // corrects limit
+			$('#windows_installed_year_slider').attr('data-slider-max',MAX_WINDOWS_INSTALLED_YEAR); // corrects limit
+			$('#windows_installed_year_slider').attr('data-slider-step',STEP_WINDOWS_INSTALLED_YEAR); // corrects limit
+			$('#windows_installed_year_min').html(MIN_WINDOWS_INSTALLED_YEAR);
+			$('#windows_installed_year_max').html(MAX_WINDOWS_INSTALLED_YEAR+'+');
+			$('#windows_installed_year_slider').attr('data-slider-value','['+MIN_WINDOWS_INSTALLED_YEAR+','+MAX_WINDOWS_INSTALLED_YEAR+']');
+			$('#windows_installed_year_slider').slider({tooltip: 'disabled'});
+			$('#windows_installed_year_slider').on('slide',function(slideEvt){
+				windows_installed_year_min = slideEvt.value[0];
+				windows_installed_year_max = slideEvt.value[1]
+				$('#windows_installed_year_min').html(windows_installed_year_min);
+				
+				if(windows_installed_year_max==MAX_WINDOWS_INSTALLED_YEAR)
+				{
+					$('#windows_installed_year_max').html(windows_installed_year_max+'+');
+				}else{
+					$('#windows_installed_year_max').html(windows_installed_year_max);
+				}
+			});
+			$('#windows_installed_year_slider').on('slideStop',function(slideEvt){
+				setTimeout(function(){
+					datatable.api().ajax.reload();
+				},10);
+			});
+			
+			
 		
 			$('#units_slider').attr('data-slider-max',sliderLimit); // corrects limit
 			$('#units_slider').slider({tooltip: 'disabled'});
@@ -1218,6 +2026,12 @@
             pick12HourFormat: false,
             pickSeconds: false
         }).data('datetimepicker');
+		$("#start_time_gen" ).data('datetimepicker').$element.on('changeDate',function(e,y){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		});
+		$('.bootstrap-datetimepicker-widget:not([picker_name])').attr('picker_name','start_time_gen');
 
         $("#end_time_gen" ).datetimepicker({
             language: 'en',
@@ -1225,19 +2039,40 @@
             pick12HourFormat: false,
             pickSeconds: false
         }).data('datetimepicker');
-        
-        
-		$("#start_time_gen" ).data('datetimepicker').$element.on('changeDate',function(e,y){
-			setTimeout(function(){
-				datatable.api().ajax.reload();
-			},10);
-		});
 		$("#end_time_gen" ).data('datetimepicker').$element.on('changeDate',function(e,y){
 			setTimeout(function(){
 				datatable.api().ajax.reload();
 			},10);
 		});
-        
+		$('.bootstrap-datetimepicker-widget:not([picker_name])').attr('picker_name','end_time_gen');
+		
+		$("#start_mortgage_due_date_gen" ).datetimepicker({
+            language: 'en',
+            format: 'yyyy-MM-dd hh:mm',
+            pick12HourFormat: false,
+            pickSeconds: false
+        }).data('datetimepicker');
+		$("#start_mortgage_due_date_gen" ).data('datetimepicker').$element.on('start_mortgage_due_date_gen',function(e,y){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		});
+		$('.bootstrap-datetimepicker-widget:not([picker_name])').attr('picker_name','start_time_gen');
+		
+        $("#end_mortgage_due_date_gen" ).datetimepicker({
+            language: 'en',
+            format: 'yyyy-MM-dd hh:mm',
+            pick12HourFormat: false,
+            pickSeconds: false
+        }).data('datetimepicker');
+        $("#end_mortgage_due_date_gen" ).data('datetimepicker').setDate(null);
+		$("#end_mortgage_due_date_gen" ).data('datetimepicker').$element.on('changeDate',function(e,y){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		});
+		$('.bootstrap-datetimepicker-widget:not([picker_name])').attr('picker_name','end_mortgage_due_date_gen');
+		
         
         
         
@@ -1247,13 +2082,14 @@
             pick12HourFormat: false,
             pickSeconds: false
         }).data('datetimepicker');
+		$('.bootstrap-datetimepicker-widget:not([picker_name])').attr('picker_name','new_sale_date_gen');
         
         $('#sale_price').change(function(){
           	var priceperunit = 0 ;
 	        if(!isNaN(parseInt(building.get('unit_quantity')))&&!isNaN(parseInt($('#sale_price').val()))){
 	        	priceperunit = (parseInt($('#sale_price').val()) / parseInt(building.get('unit_quantity'))).toFixed(2);			        	
 	        }
-        	$('#new_unit_price_calculated_radio_label').html(priceperunit);
+        	$('#new_unit_price_calculated_radio_label').html(priceperunit);//.formatMoney(2,'.',','));
     	});
     	
     	$('#confirmaddsale').click(function(){
@@ -1285,10 +2121,8 @@
         function rebindDateTimePickerCloser(){
 	        $('.bootstrap-datetimepicker-widget > div > div.close-datetime').unbind();
 	        $('.bootstrap-datetimepicker-widget > div > div.close-datetime').click(function(){
-	            $("#end_time_gen" ).data('datetimepicker').hide();
-	            $("#start_time_gen" ).data('datetimepicker').hide();
-	            $('#last_sale_date_gen').data('datetimepicker').hide();
-	            $('#new_sale_date_gen').data('datetimepicker').hide();
+	        	
+	            $("#"+$(this).parent().parent().attr('picker_name')+"" ).data('datetimepicker').hide();
 	        });
         }
         rebindDateTimePickerCloser();
@@ -1570,23 +2404,108 @@
 	    var BuildingBackboneView = Backbone.View.extend({
 	        el: '#main-building-details',
 	        events: {
+	            "keyup .building-segment-wrapper input" : "inputChange",
 	            "change .building-segment-wrapper input" : "inputChange",
-	            "change .building-segment-wrapper select" : "inputChange"
+	            "change .building-segment-wrapper select" : "inputChange",
+	            "keyup .unit-price-dependant" : "unitPriceChange",
+	            "keyup #unit_quantity":"unitQuantityChange",
+	            "keyup #building_income":"updateCapRate",
+	            "keyup #last_sale_price":"updateCapRate"
+	        },
+	        updateCapRate:function(event){
+	        	var calculatedCapRate = ((building.get('building_income')/building.get('last_sale_price'))*100).toFixed(0);
+	        	building.set('cap_rate',calculatedCapRate);
+	        	$('#cap_rate').html(calculatedCapRate+'%');
+	        },
+	        unitQuantityChange:function(event){
+	        	//if(!building.get('building_income_manual_mode')){  // if automatic mode 
+	        		// Calculate the Average unit price.
+	        		this.updateBuildingIncome();
+	        		
+	        	//}else{
+	        	//	this.unitQuantityChange();
+	        	//}
+	        },
+	        unitPriceChange:function(event){
+	        	if(!building.get('unit_price_manual_mode')){  // if automatic mode 
+	        		// Calculate the Average unit price.
+	        		this.updateCalculatedPrice();
+	        		
+	        	}
+	        },
+	        updateCalculatedPrice : function(){
+	        		var bachelorRent = isNaN(parseFloat($('#bachelor_price').autoNumeric('get')))?0:parseFloat($('#bachelor_price').autoNumeric('get'));
+	        		var bedroom1Rent = isNaN(parseFloat($('#bedroom1_price').autoNumeric('get')))?0:parseFloat($('#bedroom1_price').autoNumeric('get'));
+	        		var bedroom2Rent = isNaN(parseFloat($('#bedroom2_price').autoNumeric('get')))?0:parseFloat($('#bedroom2_price').autoNumeric('get'));
+	        		var bedroom3Rent = isNaN(parseFloat($('#bedroom3_price').autoNumeric('get')))?0:parseFloat($('#bedroom3_price').autoNumeric('get'));
+	        		
+	        		var bachelorUnits = isNaN(parseInt($('#bachelor_units').val()))?0:parseInt($('#bachelor_units').val());
+	        		var bedroom1Units = isNaN(parseInt($('#bedroom1_units').val()))?0:parseInt($('#bedroom1_units').val());
+	        		var bedroom2Units = isNaN(parseInt($('#bedroom2_units').val()))?0:parseInt($('#bedroom2_units').val());
+	        		var bedroom3Units = isNaN(parseInt($('#bedroom3_units').val()))?0:parseInt($('#bedroom3_units').val());
+	        		
+	        		var averagePrice = 0;
+	        		if((bachelorUnits+bedroom1Units+bedroom2Units+bedroom3Units)!=0){
+	        			averagePrice = (((bachelorRent*bachelorUnits)+(bedroom1Rent*bedroom1Units)+(bedroom2Rent*bedroom2Units)+(bedroom3Rent*bedroom3Units))/(bachelorUnits+bedroom1Units+bedroom2Units+bedroom3Units)).toFixed(2);
+	        		
+	        		}
+	        		$('#unit_price_calculated_radio_label').html('$'+(isNaN(parseFloat(averagePrice))?'0.00':parseFloat(averagePrice).toFixed(2)));
+	        		building.set('unit_price',parseFloat(averagePrice));
+	        		this.unitQuantityChange();
+	        },
+	        updateBuildingManualPrice:function(){
+	        
+	        },
+	        updateBuildingIncome : function(){
+	        	if(!building.get('building_income_manual_mode')){
+	        		var averageUnitPrice = isNaN(parseInt(building.get('unit_price')))?0:parseInt(building.get('unit_price'));
+	        		var numberOfUnits = isNaN(parseInt(building.get('unit_quantity')))?0:parseInt(building.get('unit_quantity'));
+	        		
+	        		
+	        		var buildingIncome = (averageUnitPrice*numberOfUnits*12).toFixed(2);
+	        		
+	        		$('#income_calculated_radio_label').html('$'+parseFloat(buildingIncome).toFixed(2));
+	        		building.set('building_income',parseFloat(buildingIncome));
+	        		this.updateCapRate();
+        		}else{
+	        		this.updateCapRate();
+        		
+        		}
 	        },
 	        inputChange:function(event){
 	        	building.set('dosync',true);
 	        	if(typeof(building.get($(event.target).attr('id')))!='undefined'){
-	        		building.set($(event.target).attr('id'),$(event.target).val());
+	        		var targetId = $(event.target).attr('id');
+	        		if(['last_sale_price','building_income','unit_price','bachelor_price','bedroom1_price','bedroom2_price','bedroom3_price'].indexOf($(event.target).attr('id'))>-1){
+	        			building.set($(event.target).attr('id'),parseFloat($(event.target).autoNumeric('get')));
+	        			this.unitQuantityChange();
+	        		}else if(['heat_system_type'].indexOf($(event.target).attr('id'))>-1){
+	        			building.set($(event.target).attr('id'),parseInt($(event.target).val()));
+	        			
+	        		}else{
+	        			building.set($(event.target).attr('id'),$(event.target).val());
+	        		}
 	        	}else if($(event.target).attr('id')=='income_calculated_radio'){
-	        		building.set('building_income',null);
+	        		building.set('building_income_manual_mode',false);
 	        		$('#building_income').attr('disabled','disabled');
+	        		$('#building_income').val('');
+	        		this.updateBuildingIncome();
 	        	}else if($(event.target).attr('id')=='income_manual_radio'){
+	        		building.set('building_income_manual_mode',true);
 	        		$('#building_income').removeAttr('disabled');
+	        		$('#building_income').val('$'+(building.get('building_income')==null?'0.00':building.get('building_income').toFixed(2)));
+	        		$('#income_calculated_radio_label').empty();
 	        	}else if($(event.target).attr('id')=='unit_price_calculated_radio'){
-	        		building.set('unit_price',null);
+	        		building.set('unit_price_manual_mode',false);
 	        		$('#unit_price').attr('disabled','disabled');
+	        		$('#unit_price').val('');
+	        		this.updateCalculatedPrice();
+	        		this.unitQuantityChange();
 	        	}else if($(event.target).attr('id')=='unit_price_manual_radio'){
+	        		building.set('unit_price_manual_mode',true);
 	        		$('#unit_price').removeAttr('disabled');
+	        		$('#unit_price').val('$'+(building.get('unit_price')==null?'0.00':building.get('unit_price').toFixed(2)));
+	        		$('#unit_price_calculated_radio_label').empty();
 	        	}
 	        	setChangesPending();
 	        },
@@ -1598,6 +2517,9 @@
 	        
 	        	if($("#last_sale_date_gen").data('datetimepicker')!=null){
 	        		$("#last_sale_date_gen").data('datetimepicker').destroy();
+        		}
+	        	if($("#mortgage_due_date_gen").data('datetimepicker')!=null){
+	        		$("#mortgage_due_date_gen").data('datetimepicker').destroy();
         		}
 	            this.$el.html("");
 	            
@@ -1613,6 +2535,21 @@
 	            this.$el.append(this.template(building.toJSON()));
 	            $('.edit-item-section').css('display','block');
 	         
+	         	$('#heat_system_age').autoNumeric('init',{vMin: '0', vMax: '2099', mDec: '0',aSep: ''});
+	         	$('#boiler_installed_year').autoNumeric('init',{vMin: '0', vMax: '2099', mDec: '0',aSep: ''});
+	         	$('#last_boiler_upgrade_year').autoNumeric('init',{vMin: '0', vMax: '2099', mDec: '0',aSep: ''});
+	         	$('#unit_quantity').autoNumeric('init',{vMin: '0', vMax: '999999', mDec: '0',aSep: '',wEmpty: 'zero'});
+	         	$('#unit_price').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '999999', mDec: '2',aSep: '',wEmpty: 'zero'});
+	         	$('#building_income').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '99999999999', mDec: '2',aSep: '',wEmpty: 'zero'});
+	         	$('#last_sale_price').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '99999999999', mDec: '2',aSep: '',wEmpty: 'zero'});
+	         	$('#bachelor_price').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '999999', mDec: '2',aSep: ',',wEmpty: 'zero'});
+	         	$('#bedroom1_price').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '999999', mDec: '2',aSep: ',',wEmpty: 'zero'});
+	         	$('#bedroom2_price').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '999999', mDec: '2',aSep: ',',wEmpty: 'zero'});
+	         	$('#bedroom3_price').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '999999', mDec: '2',aSep: ',',wEmpty: 'zero'});
+	         	$('#bachelor_units').autoNumeric('init',{vMin: '0', vMax: '999999', mDec: '0',aSep: '',wEmpty: 'zero'});
+	         	$('#bedroom1_units').autoNumeric('init',{vMin: '0', vMax: '999999', mDec: '0',aSep: '',wEmpty: 'zero'});
+	         	$('#bedroom2_units').autoNumeric('init',{vMin: '0', vMax: '999999', mDec: '0',aSep: '',wEmpty: 'zero'});
+	         	$('#bedroom3_units').autoNumeric('init',{vMin: '0', vMax: '999999', mDec: '0',aSep: '',wEmpty: 'zero'});
 	         	if(triggerScroll){
 		            if($('body').width()>979){
 						$('.main-content').animate({
@@ -1689,21 +2626,10 @@
 		        	building.set('sale_date',$("#last_sale_date_gen").data('datetimepicker').getLocalDate());//$('#sale_date').val());
 		        	building.set('dosync',true);
 		        	setChangesPending();
-		        	//alert('me');
-		            //gantt.fetch();
-		            //$('#report-header-date').html($('#datepicker').data('datetimepicker').getLocalDate().toDateString()+ ' <%= translate[locale]['Flight Schedule']%>');
 		        });
+				$('.bootstrap-datetimepicker-widget:not([picker_name])').attr('picker_name','last_sale_date_gen');
 		        var saleDate = new Date(building.get('sale_date'));
 				$("#last_sale_date_gen").data('datetimepicker').setLocalDate(saleDate);
-				//$('#last_sale_date_gen').data({date: saleDate}).datetimepicker('update').children("input").val(saleDate);
-
-		        //$("#last_sale_date_gen").datepicker("update", new Date('2011-01-01 12:00'));
-		        
-		       /* $("#last_sale_date_gen" ).data('datetimepicker').$element.on('changeDate',function(e,y){
-				setTimeout(function(){
-				datatable.api().ajax.reload();
-			},10);
-		});*/
 
 		        $('#last_sale_date_gen .add-on').click(function(){
 		         	building.set('dosync',true);
@@ -1711,11 +2637,34 @@
 		         $('#sale_date').click(function(){
 		         	building.set('dosync',true);
 		         });
-		         $('#sale_date').on('changeDate',function(){
-		         	alert('datechange');
+		        
+		        $("#mortgage_due_date_gen").datetimepicker({
+		            language: 'en',
+		            format: 'yyyy-MM-dd hh:mm',
+		            pick12HourFormat: false,
+		            pickSeconds: false
+		        }).on('changeDate',function(e){
+		        	building.set('mortgage_due_date',$("#mortgage_due_date_gen").data('datetimepicker').getLocalDate());//$('#sale_date').val());
+		        	building.set('dosync',true);
+		        	setChangesPending();
+		        });
+				$('.bootstrap-datetimepicker-widget:not([picker_name])').attr('picker_name','mortgage_due_date_gen');
+		        var mortgageDate = new Date(building.get('mortgage_due_date'));
+				$("#mortgage_due_date_gen").data('datetimepicker').setLocalDate(mortgageDate);
+
+		        $('#mortgage_due_date_gen .add-on').click(function(){
+		         	building.set('dosync',true);
+		         });
+		         $('#mortgage_due_date').click(function(){
+		         	building.set('dosync',true);
 		         });
 		        
+		        
+		        
 		        rebindDateTimePickerCloser();
+		        
+		        
+		        
 		        
 		        $('#create_sale').click(function(){
 		        	$('#addSaleModal div.alert-error').remove();
@@ -1811,7 +2760,7 @@
 						
 					});
 		        });
-		        
+		        this.updateCapRate();
 	            setChangesPending();
 	        }
 	    });

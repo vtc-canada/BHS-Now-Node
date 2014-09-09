@@ -42,7 +42,8 @@ module.exports.policies = {
     },
     'companies':true,
     'notes':true,
-    'upload':true
+    'upload':true,
+    'datautility':true
 
 };
 

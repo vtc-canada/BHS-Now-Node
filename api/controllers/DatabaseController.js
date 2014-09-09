@@ -37,10 +37,10 @@ var localPool = mysql.createPool({
 
 var credPool = mysql.createPool({
     connectionLimit : 1000,
-    user : 'paadmin',
-    password : '.SampsonMews8',
+    user : 'root',//paadmin',
+    password : 'Glasgow931',//.SampsonMews8',
     database : 'cred',
-    host : 'pa-cred-database.c1midzvqwdqm.us-west-2.rds.amazonaws.com'//10.1.1.60'//10.1.1.60'
+    host : '10.1.1.60'//pa-cred-database.c1midzvqwdqm.us-west-2.rds.amazonaws.com'//10.1.1.60'//10.1.1.60'
 });
 
 module.exports = {
@@ -123,6 +123,8 @@ module.exports = {
 	});
     },
     credQuery : function(query, cb) {
+
+	console.log(query);
 	credPool.getConnection(function(err, connection) {
 	    if (err) {
 		cb(err);

@@ -159,6 +159,9 @@ table.dataTable:not(.disable-pointer) > tbody > tr{
 	text-align: right;
 	width:38px;
 }
+.cap-rate{
+	min-height: 40px !important;
+}
 
 .dataTables_scrollHeadInner{
 	padding-left:0px !important;
