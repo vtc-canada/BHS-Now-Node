@@ -13,6 +13,8 @@ SELECT
 	,cur_address.postal_code
 	,cur_address.city
 	,cur_address.province
+	,cur_address.latitude
+	,cur_address.longitude
 	,ref_building_type.id as 'building_type'
 	,cur_buildings.property_mgmt_company
 	,cur_buildings.prev_property_mgmt_company

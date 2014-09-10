@@ -108,9 +108,20 @@ module.exports = {
 	    contact_search = "'"+contact_search.trim()+"'";
 	}
 
+
+	var orderstring = '';
+	if(req.query.order[0].column==1){  //Address column
+	    orderstring = 'company_name';
+	}else if(req.query.order[0].column==2){
+	    orderstring = 'street_name';
+	}else{
+	    orderstring = req.query.columns[req.query.order[0].column].data;
+	}
+	orderstring = "'"+orderstring+'_'+req.query.order[0].dir+"'";
+	
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
 	totalCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
-	sails.controllers.database.credSproc('SearchCompanies',[contact_search,address_search,req.query.start, req.query.length, null,filteredCount,totalCount],function(err,responseCompanies){
+	sails.controllers.database.credSproc('SearchCompanies',[contact_search,address_search,req.query.start, req.query.length, orderstring,filteredCount,totalCount],function(err,responseCompanies){
 	    if(err){
 		return res.json({error:'Database Error:'+err},500);
 	    }

@@ -2,8 +2,8 @@ USE cred;
 DROP PROCEDURE if EXISTS `UpdateSalesRecord` ;
 
 DELIMITER $$
-CREATE PROCEDURE `UpdateSalesRecord`(IN recordID INT,IN salePrice FLOAT,IN saleDate DATETIME, IN heatSystemAge INT, IN windowsInstalledYear INT, 
-		IN elevatorInstalledYear INT, IN has_elevator BOOLEAN
+CREATE PROCEDURE `UpdateSalesRecord`(IN recordID INT,IN salePrice DECIMAL(13,2),IN saleDate DATETIME, IN heatSystemAge INT, IN windowsInstalledYear INT, 
+		IN elevatorInstalledYear INT,IN elevatorUpgradeYear INT, IN has_elevator BOOLEAN
 		,IN boilerInstalledYear INT, IN cableInternetProvider VARCHAR(45)
 		,IN assessedValue FLOAT 
 		,IN heatSystemType VARCHAR(45),IN unitQuantity INT
@@ -24,6 +24,7 @@ BEGIN
 			,heat_system_age = heatSystemAge
 			,windows_installed_year = windowsInstalledYear
 			,elevator_installed_year = elevatorInstalledYear
+			,last_elevator_upgrade_year = elevatorUpgradeYear
 			,boiler_installed_year = boilerInstalledYear
 			,cable_internet_provider = cableInternetProvider
 			,assessed_value = assessedValue

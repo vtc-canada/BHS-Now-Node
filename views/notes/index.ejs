@@ -203,7 +203,7 @@
 	        			d.saleDateRangeEnd = $('#end_time').val();
 	        		},
 	        		error: function(xhr, error, thrown){
-	        			alert('an error');
+	        			//alert('an error');
 	        		}
 	        	},
 		        "aoColumns":[
@@ -215,7 +215,20 @@
 			        ,{"mData":"user"}
 			        ,{"mData":"note"}
 			        ,{"mData":function(data,b){
-			        	return '<b>'+data['note_id']+'</b>';
+			        	var response = '';
+			        	if(data['contact']!=null){
+			        		response = '<i class="icon-group"></i> '+data['contact']; 
+			        	}
+			        	if(data['company']!=null){
+			        		response = (response==''?'':response+'<br>')+ '<i class="icon-briefcase"></i> '+data['company']; 
+			        	}
+			        	var address = buildAddressString(data);
+			        	if(address!=''){
+			        		response = (response==''?'':response+'<br>')+ '<i class="icon-building "></i> '+address; 
+			        	}
+			        	
+			        
+			        	return response;
 			        }}
 		        ],
 		        "rowCallback": function( row, data, displayIndex ) {

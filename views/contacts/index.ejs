@@ -227,7 +227,7 @@
 				<div class="row-fluid">
 					<div class="span12">
 						<div class="row-fluid">
-							<div class="row-category">
+							<div class="row-category" style="margin-bottom:0px;">
 								<span class="" id="sales_title">
 									<i class="icon-plus-sign" style="margin-right:10px; display:none;"></i>
 									<i class="icon-briefcase"></i> &nbsp&nbsp<b>Associated Companies</b>
@@ -243,6 +243,12 @@
 						</div>
 					</div>
 				</div>
+				<div class="row-fluid">
+					<div class="span12" style="min-height:10px;">
+						<div class="row-fluid associated-companies-alert">
+						</div>
+					</div>
+				</div>
 					
     			<div class="row-fluid building-segment-wrapper companycard" userid="" style="border-bottom: 1px solid #828282;line-height: 30px;">
 					<div class="span5 ">Company</div>
@@ -252,42 +258,44 @@
         		<div id="companies-div" style="width:100%; margin:0px; line-height: 35px; margin-top: 5px;">
         		</div>
         		
-        		<div class="row-fluid">
-					<div class="span12">
-						<div class="row-fluid">
-							<div class="row-category">
-								<i class="icon-pencil"></i> &nbsp&nbsp<b>Note History</b>
-								<div class="pull-right" style="height:40px;">
-									<span class="row-category-button-wrapper">
-										<span id="create_note" class="btn btn-success">
-						                    <i class="glyphicon glyphicon-plus"></i>
-						                    <span>Create Note</span>
-						                </span>
-									</span>
+				<div class="note-wrapper" style="display:none;">
+				
+	        		<div class="row-fluid">
+						<div class="span12">
+							<div class="row-fluid">
+								<div class="row-category">
+									<i class="icon-pencil"></i> &nbsp&nbsp<b>Note History</b>
+									<div class="pull-right" style="height:40px;">
+										<span class="row-category-button-wrapper">
+											<span id="create_note" class="btn btn-success">
+							                    <i class="glyphicon glyphicon-plus"></i>
+							                    <span>Create Note</span>
+							                </span>
+										</span>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-				
-				<div id="notes-table-header" class="tableheader row-fluid">
-					<div class="span2">
-						Timestamp
+					
+					<div id="notes-table-header" class="tableheader row-fluid">
+						<div class="span2">
+							Timestamp
+						</div>
+						<div class="span2">
+							User
+						</div>
+						<div class="span6">
+							Details
+						</div>
+						<div class="span2">
+							Modify
+						</div>
 					</div>
-					<div class="span2">
-						User
+					<div id="notes-wrapper" class="row-fluid css-notes-wrapper">
+					
 					</div>
-					<div class="span6">
-						Details
-					</div>
-					<div class="span2">
-						Modify
-					</div>
-				</div>
-				<div id="notes-wrapper" class="row-fluid css-notes-wrapper">
-				
-				</div>
-	        		
+	        	</div>
             </div>
         </div>
     </div>
@@ -358,6 +366,7 @@
     			}
     		});
     		$('#add_company_card').click(function(){
+    			$('.associated-companies-alert').empty();
     			var companyname = $('input.companycombobox').val()
 				var companyid =  parseInt($('select.companycombobox option[company_name="'+companyname+'"]').attr('company_id'));
     			socket.get('/contacts/getaddressbycompanyid/'+companyid,{},function(addressval){
@@ -365,6 +374,14 @@
     					addressval.new = true;
     					companies.add(addressval);
     					companyView.render();
+    				}else if(typeof(companies.findWhere({company_id:companyid}))!='undefined'){
+    					
+    					$('.associated-companies-alert').append(
+'<div class="alert alert-error" style="border-radius:0px; margin-bottom: 10px;">'
+    +'<button type="button" class="close" data-dismiss="alert">&times</button>'
+    +'<strong><%= translate[req.session.user.locale]['Error'] %>:</strong>'
+    +'This company is already associated with this contact.'
++'</div>');
     				}
     			});
     		});
@@ -453,7 +470,7 @@
 			contactView.render();
 			companies.reset();
 			companyView.render();
-		
+			notesView.render();
 		});
 		
 		$('#cancel_contact').click(function(){
@@ -601,6 +618,9 @@
 	    var ContactBackboneView = Backbone.View.extend({
 	        el: '#contact_information_section',
 	        events: {
+	           "keyup input#contact_name":"name",
+	           "keyup input#phone_number":"phone",
+	           "keyup input#email":"email",
 	           "change input#contact_name":"name",
 	           "change input#phone_number":"phone",
 	           "change input#email":"email"
@@ -740,6 +760,7 @@
             },
             template: _.template($('#company-template').html()),
             render: function () {
+	            $('.associated-companies-alert').empty();
                 this.$el.html("");
                 var tcollection = this.collection.sortBy(function(hoarow){
                     return hoarow.get("eqp_ID");
@@ -829,7 +850,7 @@
 	        	//var currentnote = $(event.target).parents('.note').find('.note-editable').html();
 	        	//this.collection.get(noteid)
 	        	$('.no-notes-remove').remove();
-	        	$notelement.find('.note-editable').replaceWith('<div class="row-fluid"><div class="row-fluid"><textarea class="note-textarea-editable">'+this.collection.get(noteid).get('note')+'</textarea></div><div class="row-fluid"><button class="save-note-textarea-editable btn btn-primary">Save</button><button class="cancel-note-textarea-editable btn ">Cancel</button></div></div>');
+	        	$notelement.find('.note-editable').replaceWith('<div class="row-fluid"><div class="row-fluid"><textarea maxlength=512" class="note-textarea-editable">'+this.collection.get(noteid).get('note')+'</textarea></div><div class="row-fluid"><button class="save-note-textarea-editable btn btn-primary">Set</button><button class="cancel-note-textarea-editable btn ">Cancel</button></div></div>');
 	        	
         		$notelement.find('.save-note-textarea-editable').unbind();
 	        	$notelement.find('.save-note-textarea-editable').click(function(){
@@ -894,6 +915,12 @@
 	            	this.$el.append('<div class="no-notes-remove">No Notes Found.</div>');
 	            }
 	            
+	            if(contact.get('contact_id')=='new'){
+	            
+					$('.note-wrapper').css('display','none');
+	            }else{
+					$('.note-wrapper').css('display','');
+	            }
 	            
 	            //setChangesPending();  // recalculates and displays if changes are pending
 	        }

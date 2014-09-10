@@ -148,13 +148,13 @@ module.exports = {
 	    if (building.sale_id == 'new') {
 		new_sale_id = '@out' + Math.floor((Math.random() * 1000000) + 1);
 		sails.controllers.database.credSproc('CreateSalesRecord', [ building.last_sale_price, "'" + toUTCDateTimeString(building.sale_date) + "'", building.heat_system_age,
-			building.windows_installed_year, building.elevator_installed_year,building.has_elevator, building.boiler_installed_year,
+			building.windows_installed_year, building.elevator_installed_year, building.last_elevator_upgrade_year,building.has_elevator, building.boiler_installed_year,
 			"'" + building.cable_internet_provider + "'", building.assessed_value, building.heat_system_type, building.unit_quantity
 			,building.unit_price,building.unit_price_manual_mode,building.building_income,building.building_income_manual_mode
 			
 			, building.bachelor_price, building.bedroom1_price, building.bedroom2_price, building.bedroom3_price,
 			building.bachelor_units, building.bedroom1_units, building.bedroom2_units, building.bedroom3_units, "'"+building.property_mgmt_company+"'"
-			,"'"+building.prev_property_mgmt_company+"'", building.cap_rate, ,building.building_type , building.last_boiler_upgrade_year, "'"+ building.mortgage_company+"'", "'" + toUTCDateTimeString(building.mortgage_due_date) + "'"
+			,"'"+building.prev_property_mgmt_company+"'", isNaN(building.cap_rate)?0:building.cap_rate,building.building_type , building.last_boiler_upgrade_year, "'"+ building.mortgage_company+"'", "'" + toUTCDateTimeString(building.mortgage_due_date) + "'"
 			,new_sale_id ], function(err, responseSalesRecord) {
 		    if (err) {
 			console.log(err);
@@ -200,12 +200,12 @@ module.exports = {
 		});
 
 	    } else if (!isNaN(parseInt(building.sale_id))) { // saving sale
-		sails.controllers.database.credSproc('UpdateSalesRecord', [ building.sale_id, building.sale_price, "'"+toUTCDateTimeString(building.sale_date)+"'",
-			building.heat_system_age, building.windows_installed_year, building.elevator_installed_year, building.has_elevator, building.boiler_installed_year,
+		sails.controllers.database.credSproc('UpdateSalesRecord', [ building.sale_id, building.last_sale_price, "'"+toUTCDateTimeString(building.sale_date)+"'",
+			building.heat_system_age, building.windows_installed_year, building.elevator_installed_year,building.last_elevator_upgrade_year, building.has_elevator, building.boiler_installed_year,
 			"'"+building.cable_internet_provider+"'", building.assessed_value, building.heat_system_type, building.unit_quantity, building.unit_price,
 			building.unit_price_manual_mode, building.building_income, building.building_income_manual_mode,
 			building.bachelor_units, building.bedroom1_units, building.bedroom2_units, building.bedroom3_units, building.bachelor_price,
-			building.bedroom1_price, building.bedroom2_price, building.bedroom3_price,  "'"+building.property_mgmt_company+"'", "'"+building.prev_property_mgmt_company+"'", building.cap_rate, building.building_type, building.last_boiler_upgrade_year, building.mortgage_company, building.mortgage_due_date], function(err,
+			building.bedroom1_price, building.bedroom2_price, building.bedroom3_price,  "'"+building.property_mgmt_company+"'", "'"+building.prev_property_mgmt_company+"'", isNaN(building.cap_rate)?0:cap_rate, building.building_type, building.last_boiler_upgrade_year,"'"+ building.mortgage_company+"'", "'" + toUTCDateTimeString(building.mortgage_due_date) + "'"], function(err,
 			responseUpdateSale) {
 
 		    // TODO : Update building..
@@ -484,7 +484,7 @@ module.exports = {
 	}
 
 	var mortgage_search = null;
-	if (req.query.mortgage_search != '') {
+	if (typeof(req.query.mortgage_search)!='undefined'&&req.query.mortgage_search != '') {
 	    mortgage_search = req.query.mortgage_search.trim().split(" ");
 	    adr = req.query.mortgage_search.trim().split(" ");
 	    mortgage_search = '';
@@ -512,8 +512,8 @@ module.exports = {
 	sails.controllers.database.credSproc('GetBuildings', [ contact_search, address_search, company_search, mortgage_search,
 		req.query.unitQuantityMin == '' ? null : parseInt(req.query.unitQuantityMin),
 		req.query.unitQuantityMax == '' ? null : parseInt(req.query.unitQuantityMax),
-		req.query.unit_price_min == '' ? null : parseInt(req.query.unit_price_min),
-		req.query.unit_price_max == '' ? null : parseInt(req.query.unit_price_max),
+		(typeof(req.query.unit_price_min)=='undefined'||req.query.unit_price_min == '') ? null : parseInt(req.query.unit_price_min),
+			(typeof(req.query.unit_price_max)=='undefined'||req.query.unit_price_max == '') ? null : parseInt(req.query.unit_price_max),
 		req.query.saleDateRangeStart == '' ? null : "'"+req.query.saleDateRangeStart+"'", req.query.saleDateRangeEnd == '' ? null : "'"+req.query.saleDateRangeEnd+"'",
 		req.query.boundsLatitudeMin == ''?null:req.query.boundsLatitudeMin,
 		req.query.boundsLatitudeMax == ''?null:req.query.boundsLatitudeMax,
@@ -575,8 +575,8 @@ module.exports = {
 		req.query.cable_internet_provider == ''?null:req.query.cable_internet_provider,	
 			
 			
-		req.query.start_mortgage_due_date == ''?null:"'"+req.query.start_mortgage_due_date+"'",	
-		req.query.end_mortgage_due_date == ''?null:"'"+req.query.end_mortgage_due_date+"'",	
+		(typeof(req.query.start_mortgage_due_date)=='undefined'||req.query.start_mortgage_due_date == '')?null:"'"+req.query.start_mortgage_due_date+"'",	
+		(typeof(req.query.end_mortgage_due_date)=='undefined'||req.query.end_mortgage_due_date == '')?null:"'"+req.query.end_mortgage_due_date+"'",	
 			
 		req.query.sales_count_min == ''?null:req.query.sales_count_min,
 		req.query.sales_count_max == ''?null:req.query.sales_count_max,

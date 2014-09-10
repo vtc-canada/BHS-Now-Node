@@ -1,24 +1,40 @@
 USE cred;
 DROP PROCEDURE if EXISTS `GetBuildings` ;
 DELIMITER $$
-CREATE PROCEDURE `GetBuildings`(IN contactSearchTerms VARCHAR(128), IN addressSearchTerms VARCHAR(128),IN buildingSearchTerms VARCHAR(128),
-		IN mortgageCompanySearchTerms VARCHAR(64),
-		IN unitQuantityMin int, IN unitQuantityMax int, IN saleDateRangeStart datetime, IN saleDateRangeEnd datetime,
-		IN centerLatitude FLOAT, IN centerLongitude FLOAT, IN boundsLatitudeMin FLOAT, IN boundsLatitudeMax FLOAT, IN boundsLongitudeMin FLOAT, 
-		IN boundsLongitudeMax FLOAT,IN hasElevator BOOLEAN, IN capRateMin FLOAT, IN capRateMax FLOAT, 
-		IN propMgmt VARCHAR(128), IN prevPropMgmt VARCHAR(128), IN heatAgeMin INT, IN heatAgeMax INT,
-		IN boilerAgeMin INT, IN boilerAgeMax INT, IN cableProvider VARCHAR(128),
-		IN assessedValueMin INT, IN assessedValueMax INT,IN lastSalesPriceMin INT, IN lastSalesPriceMax INT,		
+CREATE PROCEDURE `GetBuildings`(IN contactSearchTerms VARCHAR(128), IN addressSearchTerms VARCHAR(128),IN buildingSearchTerms VARCHAR(128), IN mortgageCompanySearchTerms VARCHAR(64),
+		
+		IN unitQuantityMin int, IN unitQuantityMax int, IN unitPriceMin INT, IN unitPriceMax INT, 
+		IN saleDateRangeStart datetime, IN saleDateRangeEnd datetime,
+		IN boundsLatitudeMin FLOAT, IN boundsLatitudeMax FLOAT, IN boundsLongitudeMin FLOAT, IN boundsLongitudeMax FLOAT,
+		IN hasElevator BOOLEAN, 
 		IN elevatorInstalledYearMin INT, IN elevatorInstalledYearMax INT,IN lastElevatorInstalledYearMin INT, IN lastElevatorInstalledYearMax INT,
+		
+
+		IN capRateMin FLOAT, IN capRateMax FLOAT, 
+		IN propMgmt VARCHAR(128), IN prevPropMgmt VARCHAR(128), 
+		IN heatAgeMin INT, IN heatAgeMax INT,
+
+		IN boilerAgeMin INT, IN boilerAgeMax INT,		
 		IN lastBoilerInstalledYearMin INT, IN lastBoilerInstalledYearMax INT,
+
+		IN assessedValueMin INT, IN assessedValueMax INT,
+
+		IN buildingIncomeMin INT, IN buildingIncomeMax INT,	
+		IN lastSalesPriceMin INT, IN lastSalesPriceMax INT,
+
 		IN numOf1BedroomMin INT, IN numOf1BedroomMax INT, IN numOf2BedroomMin INT, IN numOf2BedroomMax INT, 
 		IN numOf3BedroomMin INT, IN numOf3BedroomMax INT, IN numOfBachelorMin INT, IN numOfBachelorMax INT, 
 		IN priceOf1BedroomMin INT, IN priceOf1BedroomMax INT, IN priceOf2BedroomMin INT, IN priceOf2BedroomMax INT, 
 		IN priceOf3BedroomMin INT, IN priceOf3BedroomMax INT, IN priceOfBachelorMin INT, IN priceOfBachelorMax INT, 
-		IN buildingIncomeMin INT, IN buildingIncomeMax INT, IN unitPriceMin INT, IN unitPriceMax INT,	
-		IN windowInstallYearMin INT, IN windowInstallYearMax INT, IN numOfSalesMin INT, numOfSalesMax INT,
-		IN buildingTypes VARCHAR(64), IN heatSystemTypes VARCHAR(64),
+		
+		IN windowInstallYearMin INT, IN windowInstallYearMax INT,  
+
+		IN cableProvider VARCHAR(128),
+		
 		IN mortgageDueDateRangeStart datetime, IN mortgageDueDateRangeEnd datetime,
+
+		IN numOfSalesMin INT, numOfSalesMax INT,
+		IN buildingTypes VARCHAR(64), IN heatSystemTypes VARCHAR(64),
 		IN offsetIndex int, IN recordCount INT, IN orderBy VARCHAR (255), OUT id int)
 BEGIN
 SELECT 
@@ -59,8 +75,8 @@ WHERE
 	AND (CASE WHEN unitQuantityMin IS NOT NULL THEN (cur_buildings.unit_quantity >= unitQuantityMin) ELSE 1 END)
 	AND (CASE WHEN saleDateRangeStart IS NOT NULL THEN (cur_buildings.sale_date >= saleDateRangeStart ) ELSE 1 END)
 	AND (CASE WHEN saleDateRangeEnd IS NOT NULL THEN (cur_buildings.sale_date <= saleDateRangeEnd) ELSE 1 END)
-	AND (CASE WHEN mortgageDueDateRangeStart IS NOT NULL THEN (cur_buildings.mortage_due_date >= mortgageDueDateRangeStart ) ELSE 1 END)
-	AND (CASE WHEN mortgageDueDateRangeEnd IS NOT NULL THEN (cur_buildings.mortage_due_date <= mortgageDueDateRangeEnd) ELSE 1 END)
+	AND (CASE WHEN mortgageDueDateRangeStart IS NOT NULL THEN (cur_buildings.mortgage_due_date >= mortgageDueDateRangeStart ) ELSE 1 END)
+	AND (CASE WHEN mortgageDueDateRangeEnd IS NOT NULL THEN (cur_buildings.mortgage_due_date <= mortgageDueDateRangeEnd) ELSE 1 END)
 	AND (CASE WHEN boundsLatitudeMin IS NOT NULL THEN cur_address.latitude BETWEEN boundsLatitudeMin AND boundsLatitudeMax ELSE 1 END)
 	AND (CASE WHEN boundsLongitudeMin IS NOT NULL THEN cur_address.longitude BETWEEN boundsLongitudeMin AND boundsLongitudeMax ELSE 1 END)
 	AND (CASE WHEN capRateMax IS NOT NULL THEN (cur_buildings.cap_rate <= capRateMax) ELSE 1 END)
@@ -113,6 +129,9 @@ WHERE
 GROUP BY 
 	cur_address.id
 ORDER BY
+
+	CASE WHEN orderBy='property_mgmt_company_asc' THEN property_mgmt_company END ASC,
+	CASE WHEN orderBy='property_mgmt_company_desc' THEN property_mgmt_company END DESC,
 	CASE WHEN orderBy='owner_asc' THEN name END ASC,
 	CASE WHEN orderBy='owner_desc' THEN name END DESC,
 	CASE WHEN orderBy='street_number_begin_asc' THEN street_number_begin END ASC,

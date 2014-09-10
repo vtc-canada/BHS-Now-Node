@@ -18,6 +18,13 @@ BEGIN
 		AND (contactSearchTerms IS NULL OR MATCH (cur_contacts.name, cur_contacts.email) AGAINST (contactSearchTerms IN BOOLEAN MODE))
 		
 	GROUP BY cur_contacts.id
+ORDER BY
+	CASE WHEN orderBy='contact_name_asc' THEN contact_name END ASC,
+	CASE WHEN orderBy='contact_name_desc' THEN contact_name END DESC,
+	CASE WHEN orderBy='phone_asc' THEN phone_number END ASC,
+	CASE WHEN orderBy='phone_desc' THEN phone_number END DESC,
+	CASE WHEN orderBy='email_asc' THEN email END ASC,
+	CASE WHEN orderBy='email_desc' THEN email END DESC
 	LIMIT recordCount OFFSET offsetIndex;
 	SET filteredCount = FOUND_ROWS();
 END$$

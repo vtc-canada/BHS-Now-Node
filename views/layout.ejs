@@ -516,7 +516,7 @@
 	
 	function buildStreetString(street_number_begin,street_number_end,street_name){
         	street_number_begin = street_number_begin==null?'':street_number_begin;
-        	street_number_end = street_number_end==''||street_number_end==null||street_number_end=='null'?'':(street_number_begin==null?'':' - ')+street_number_end;
+        	street_number_end = street_number_end==''||street_number_end==null||street_number_end=='null'||street_number_end==0?'':(street_number_begin==null?'':' - ')+street_number_end;
     		street_name= street_name==''||street_name==null||street_name=='null'?'':' '+street_name;
      
         	return street_number_begin + street_number_end +street_name;

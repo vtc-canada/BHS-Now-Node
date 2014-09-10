@@ -29,7 +29,7 @@ BEGIN
 	,cur_sales_record_history.unit_price
 	,cur_sales_record_history.unit_price_manual_mode
 	,cur_sales_record_history.unit_quantity
-	,cur_sales_record_history.sale_price
+	,cur_sales_record_history.sale_price as 'last_sale_price'
 	,cur_sales_record_history.sale_date
 	,cur_sales_record_history.has_elevator
 	,cur_sales_record_history.last_elevator_upgrade_year

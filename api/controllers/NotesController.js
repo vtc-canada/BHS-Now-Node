@@ -78,11 +78,21 @@ module.exports = {
 	    note_search = "'"+note_search.trim()+"'";
 	}
 
+	var orderstring = '';
+	if(req.query.order[0].column==1){  //Address column
+	    orderstring = 'timestamp';
+	}else if(req.query.order[0].column==4){
+	    orderstring = 'contact';
+	}else{
+	    orderstring = req.query.columns[req.query.order[0].column].data;
+	}
+	orderstring = "'"+orderstring+'_'+req.query.order[0].dir+"'";
+
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
 	totalCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
 	sails.controllers.database.credSproc('SearchNotes',[contact_search, address_search, company_search, note_search,
 	                                                    req.query.saleDateRangeStart == '' ? null : "'"+req.query.saleDateRangeStart+"'", req.query.saleDateRangeEnd == '' ? null : "'"+req.query.saleDateRangeEnd+"'",
-	                                            	req.query.start, req.query.length, null,filteredCount,totalCount],function(err,responseNotes){
+	                                            	req.query.start, req.query.length, orderstring,filteredCount,totalCount],function(err,responseNotes){
 	    if(err){
 		return res.json({error:'Database Error:'+err},500);
 	    }

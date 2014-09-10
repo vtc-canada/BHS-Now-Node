@@ -6,7 +6,7 @@ CREATE PROCEDURE `GetBuildingSales`(IN buildingID int)
 BEGIN
 SELECT cur_sales_record_history.id AS 'sale_id'
 	,cur_sales_record_history.sale_price
-	,owner_sale.cur_buildings_id AS 'building_id'
+	,buildingID AS 'building_id'
 	,cur_sales_record_history.property_mgmt_company
 	,cur_sales_record_history.sale_date
 	,GROUP_CONCAT(DISTINCT owner_contact.name SEPARATOR ', ') AS 'owner'
