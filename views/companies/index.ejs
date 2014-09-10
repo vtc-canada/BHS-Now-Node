@@ -296,43 +296,43 @@
         		<div id="adminusers" style="width:100%; margin:0px; display:none;">
         		</div>
         		
-        		<div class="row-fluid">
-					<div class="span12">
-						<div class="row-fluid">
-							<div class="row-category">
-								<i class="icon-pencil"></i> &nbsp&nbsp<b>Note History</b>
-								<div class="pull-right" style="height:40px;">
-									<span class="row-category-button-wrapper">
-										<span id="create_note" class="btn btn-success">
-						                    <i class="glyphicon glyphicon-plus"></i>
-						                    <span>Create Note</span>
-						                </span>
-									</span>
+				<div class="note-wrapper" style="display:none;">
+	        		<div class="row-fluid">
+						<div class="span12">
+							<div class="row-fluid">
+								<div class="row-category">
+									<i class="icon-pencil"></i> &nbsp&nbsp<b>Note History</b>
+									<div class="pull-right" style="height:40px;">
+										<span class="row-category-button-wrapper">
+											<span id="create_note" class="btn btn-success">
+							                    <i class="glyphicon glyphicon-plus"></i>
+							                    <span>Create Note</span>
+							                </span>
+										</span>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-				
-				<div id="notes-table-header" class="tableheader row-fluid">
-					<div class="span2">
-						Timestamp
+					
+					<div id="notes-table-header" class="tableheader row-fluid">
+						<div class="span2">
+							Timestamp
+						</div>
+						<div class="span2">
+							User
+						</div>
+						<div class="span6">
+							Details
+						</div>
+						<div class="span2">
+							Modify
+						</div>
 					</div>
-					<div class="span2">
-						User
+					<div id="notes-wrapper" class="row-fluid css-notes-wrapper">
+					
 					</div>
-					<div class="span6">
-						Details
-					</div>
-					<div class="span2">
-						Modify
-					</div>
-				</div>
-				<div id="notes-wrapper" class="row-fluid css-notes-wrapper">
-				
-				</div>
-        		
-        		
+        		</div>
             </div>
         </div>
     </div>
@@ -482,6 +482,7 @@
 			companyView.render();
 			contacts.reset();
 			contactsView.render();
+			notesView.render();
 		
 		});
 		
@@ -864,6 +865,13 @@
 	            }
 	            if(tcollection.length==0){
 	            	this.$el.append('<div class="no-notes-remove">No Notes Found.</div>');
+	            }
+	            
+	            
+	            if(company.get('company_id')=='new'){
+					$('.note-wrapper').css('display','none');
+	            }else{
+					$('.note-wrapper').css('display','');
 	            }
 	            
 	            //setChangesPending();  // recalculates and displays if changes are pending

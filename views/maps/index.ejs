@@ -133,6 +133,12 @@
                        <input type="text" id="search_contact" value="">
                    </div>
                </div>
+               <div class="row">
+                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_company">Search Company:</label></div>
+                   <div class="span8 report-control-right-control">
+                       <input type="text" id="search_company" value="">
+                   </div>
+               </div>
                <div class="row" style="margin-top:15px; display:none;">
                    <div class="span7 report-control-left-label">
                    		<a id="advanced_criteria_toggler" data-toggle="collapse" data-target="#collapseadvanced" style="text-decoration: none; color: #5a6573;">
@@ -593,6 +599,7 @@
 		        		"data":function(d){
 		        			d.address_search = $("#search_address").val();
 		        			d.contact_search = $("#search_contact").val();
+		        			d.company_search = $("#search_company").val();
 		        			d.unitQuantityMin = unitsMin==0?null:unitsMin;
 		        			d.unitQuantityMax = unitsMax==sliderLimit?null:unitsMax;
 		        			d.saleDateRangeStart = $('#start_time').val();
@@ -804,6 +811,11 @@
 				datatable.api().ajax.reload();
 			},10);
 		});
+		$('#search_company').keydown(function(){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		});
 		
     	$('#units_slider').attr('data-slider-max',sliderLimit); // corrects limit
 		$('#units_slider').slider({tooltip: 'disabled'});
@@ -837,7 +849,7 @@
         });
         
         $(window).scroll(function(){
-        	if($('body,html').scrollTop()>($('#map_wrapper').height()+$('#building_slideup_wrapper').height())/2){
+        	if($(window).scrollTop()>($('#map_wrapper').height()+$('#building_slideup_wrapper').height())/2){
         		$('#search_toggler').attr('scrollstate','bottom');
 			}else{
 				$('#search_toggler').attr('scrollstate','top');
@@ -862,7 +874,7 @@
     				$('.main-content').animate({scrollTop:$('#map_wrapper').height()+$('#building_slideup_wrapper').height()}, 'fast');
     			}
     		}else{
-    			if($('body,html').scrollTop()>($('#map_wrapper').height()+$('#building_slideup_wrapper').height())/2){
+    			if($(window).scrollTop()>($('#map_wrapper').height()+$('#building_slideup_wrapper').height())/2){
     				//$('body').scrollTop(0);
     				$('body,html').animate({scrollTop:0}, 'fast');
     			}else{
