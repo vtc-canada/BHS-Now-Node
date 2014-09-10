@@ -818,7 +818,7 @@
 	        	//var currentnote = $(event.target).parents('.note').find('.note-editable').html();
 	        	//this.collection.get(noteid)
 	        	$('.no-notes-remove').remove();
-	        	$notelement.find('.note-editable').replaceWith('<div class="row-fluid"><div class="row-fluid"><textarea class="note-textarea-editable">'+this.collection.get(noteid).get('note')+'</textarea></div><div class="row-fluid"><button class="save-note-textarea-editable btn btn-primary">Set</button><button class="cancel-note-textarea-editable btn ">Cancel</button></div></div>');
+	        	$notelement.find('.note-editable').replaceWith('<div class="row-fluid"><div class="row-fluid"><textarea maxlength=512" class="note-textarea-editable">'+this.collection.get(noteid).get('note')+'</textarea></div><div class="row-fluid"><button class="save-note-textarea-editable btn btn-primary">Set</button><button class="cancel-note-textarea-editable btn ">Cancel</button></div></div>');
 	        	
         		$notelement.find('.save-note-textarea-editable').unbind();
 	        	$notelement.find('.save-note-textarea-editable').click(function(){
