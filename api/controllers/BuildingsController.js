@@ -148,13 +148,13 @@ module.exports = {
 	    if (building.sale_id == 'new') {
 		new_sale_id = '@out' + Math.floor((Math.random() * 1000000) + 1);
 		sails.controllers.database.credSproc('CreateSalesRecord', [ building.last_sale_price, "'" + toUTCDateTimeString(building.sale_date) + "'", building.heat_system_age,
-			building.windows_installed_year, building.elevator_installed_year,building.has_elevator, building.boiler_installed_year,
+			building.windows_installed_year, building.elevator_installed_year, building.last_elevator_upgrade_year,building.has_elevator, building.boiler_installed_year,
 			"'" + building.cable_internet_provider + "'", building.assessed_value, building.heat_system_type, building.unit_quantity
 			,building.unit_price,building.unit_price_manual_mode,building.building_income,building.building_income_manual_mode
 			
 			, building.bachelor_price, building.bedroom1_price, building.bedroom2_price, building.bedroom3_price,
 			building.bachelor_units, building.bedroom1_units, building.bedroom2_units, building.bedroom3_units, "'"+building.property_mgmt_company+"'"
-			,"'"+building.prev_property_mgmt_company+"'", building.cap_rate,building.building_type , building.last_boiler_upgrade_year, "'"+ building.mortgage_company+"'", "'" + toUTCDateTimeString(building.mortgage_due_date) + "'"
+			,"'"+building.prev_property_mgmt_company+"'", isNaN(building.cap_rate)?0:building.cap_rate,building.building_type , building.last_boiler_upgrade_year, "'"+ building.mortgage_company+"'", "'" + toUTCDateTimeString(building.mortgage_due_date) + "'"
 			,new_sale_id ], function(err, responseSalesRecord) {
 		    if (err) {
 			console.log(err);
@@ -205,7 +205,7 @@ module.exports = {
 			"'"+building.cable_internet_provider+"'", building.assessed_value, building.heat_system_type, building.unit_quantity, building.unit_price,
 			building.unit_price_manual_mode, building.building_income, building.building_income_manual_mode,
 			building.bachelor_units, building.bedroom1_units, building.bedroom2_units, building.bedroom3_units, building.bachelor_price,
-			building.bedroom1_price, building.bedroom2_price, building.bedroom3_price,  "'"+building.property_mgmt_company+"'", "'"+building.prev_property_mgmt_company+"'", building.cap_rate, building.building_type, building.last_boiler_upgrade_year,"'"+ building.mortgage_company+"'", "'" + toUTCDateTimeString(building.mortgage_due_date) + "'"], function(err,
+			building.bedroom1_price, building.bedroom2_price, building.bedroom3_price,  "'"+building.property_mgmt_company+"'", "'"+building.prev_property_mgmt_company+"'", isNaN(building.cap_rate)?0:cap_rate, building.building_type, building.last_boiler_upgrade_year,"'"+ building.mortgage_company+"'", "'" + toUTCDateTimeString(building.mortgage_due_date) + "'"], function(err,
 			responseUpdateSale) {
 
 		    // TODO : Update building..

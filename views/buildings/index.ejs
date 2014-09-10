@@ -1935,9 +1935,9 @@
 			$('#boiler_installed_year_slider').attr('data-slider-min',MIN_BOILER_INSTALLED_YEAR); // corrects limit
 			$('#boiler_installed_year_slider').attr('data-slider-max',MAX_BOILER_INSTALLED_YEAR); // corrects limit
 			$('#boiler_installed_year_slider').attr('data-slider-step',STEP_BOILER_INSTALLED_YEAR); // corrects limit
-			$('#boiler_installed_year_min').html(MAX_BOILER_INSTALLED_YEAR);
+			$('#boiler_installed_year_min').html(MIN_BOILER_INSTALLED_YEAR);
 			$('#boiler_installed_year_max').html(MAX_BOILER_INSTALLED_YEAR+'+');
-			$('#boiler_installed_year_slider').attr('data-slider-value','['+MAX_BOILER_INSTALLED_YEAR+','+MAX_BOILER_INSTALLED_YEAR+']');
+			$('#boiler_installed_year_slider').attr('data-slider-value','['+MIN_BOILER_INSTALLED_YEAR+','+MAX_BOILER_INSTALLED_YEAR+']');
 			$('#boiler_installed_year_slider').slider({tooltip: 'disabled'});
 			$('#boiler_installed_year_slider').on('slide',function(slideEvt){
 				boiler_installed_year_min = slideEvt.value[0];
@@ -3515,6 +3515,10 @@
 	        		$('#delete_sale').parent().css('display','');
 	        		$('#create_sale').parent().css('display','none');
 	        		$('#sales_title > i.icon-plus-sign').removeClass('icon-plus-sign').addClass('icon-minus-sign');
+	        		if($('#building-sales-wrapper').css('display')=='none'){
+	        			$('#sales_title').click();
+	        		}
+	        		
 	        	}else{
 	        		$('#delete_sale').parent().css('display','none');
 	        		$('#create_sale').parent().css('display','');
