@@ -2155,12 +2155,12 @@
         }).data('datetimepicker');
 		$('.bootstrap-datetimepicker-widget:not([picker_name])').attr('picker_name','new_sale_date_gen');
         
-        $('#sale_price').change(function(){
+        $('#sale_price').keyup(function(){
           	var priceperunit = 0 ;
-	        if(!isNaN(parseInt(building.get('unit_quantity')))&&!isNaN(parseInt($('#sale_price').val()))){
-	        	priceperunit = (parseInt($('#sale_price').val()) / parseInt(building.get('unit_quantity'))).toFixed(2);			        	
+	        if(!isNaN(parseInt(building.get('unit_quantity')))&&!isNaN(parseInt($('#sale_price').autoNumeric('get')))){
+	        	priceperunit = (parseInt($('#sale_price').autoNumeric('get')) / parseInt(building.get('unit_quantity'))).toFixed(2);			        	
 	        }
-        	$('#new_unit_price_calculated_radio_label').html(priceperunit);//.formatMoney(2,'.',','));
+        	$('#new_unit_price_calculated_radio_label').html('$'+priceperunit);//.formatMoney(2,'.',','));
     	});
     	
     	$('#confirmaddsale').click(function(){
@@ -2171,11 +2171,11 @@
     		//	building : building.toJSON();
     		//}
     		building.set('sale_id','new');
-    		building.set('last_sale_price',parseInt($('#sale_price').val()));
+    		building.set('last_sale_price',parseInt($('#sale_price').autoNumeric('get')));
     		building.set('sale_date',$('#new_sale_date').val());
     		//building.set('buildingcontacts',buildingcontacts);
-    		if($('#new_unit_price_manual_radio').is(':checked')&&!isNaN(parseFloat($('#new_unit_price').val()))){
-    			building.set('unit_price', parseFloat($('#new_unit_price').val()));
+    		if($('#new_unit_price_manual_radio').is(':checked')&&!isNaN(parseFloat($('#new_unit_price').autoNumeric('get')))){
+    			building.set('unit_price', parseFloat($('#new_unit_price').autoNumeric('get')));
     		}else{
     			building.set('unit_price',null);
     		}
@@ -2758,9 +2758,12 @@
 			        $('#addSaleModal').modal('show');
 			        $('#addSaleModal #myModalLabelAdd').html('Add Sale to Building');
 			        $('#sale_price').val(building.get('last_sale_price'));
+			        $('#sale_price').autoNumeric('update');
 			        //$('#new_sale_date').val(new Date().toLocaleString());
 			        salepicker.setLocalDate(new Date());
-			        $('#new_unit_price').val('');
+			        $('#new_unit_price_calculated_radio').click();
+			        $('#new_unit_price').val('0');
+			        $('#new_unit_price').autoNumeric('update');
 			        $('#new_unit_price_calculated_radio')[0].checked = true;
 			        
 			        $('#sale_price').change();
@@ -3573,6 +3576,14 @@
 	    });
 	    var buildingsalesView;	
     	
+     	$('#sale_price').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '99999999999', mDec: '2',aSep: '',wEmpty: 'zero'});
+        $('#new_unit_price').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '99999999999', mDec: '2',aSep: '',wEmpty: 'zero'});
+        $('#new_unit_price_manual_radio').click(function(){
+        	$('#new_unit_price').removeAttr('disabled');
+        });
         
+        $('#new_unit_price_calculated_radio').click(function(){
+        	$('#new_unit_price').attr('disabled','disabled');
+        });
     });
 </script>
