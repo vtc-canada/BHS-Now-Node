@@ -201,7 +201,7 @@ module.exports = {
 
 	    } else if (!isNaN(parseInt(building.sale_id))) { // saving sale
 		sails.controllers.database.credSproc('UpdateSalesRecord', [ building.sale_id, building.last_sale_price, "'"+toUTCDateTimeString(building.sale_date)+"'",
-			building.heat_system_age, building.windows_installed_year, building.elevator_installed_year, building.has_elevator, building.boiler_installed_year,
+			building.heat_system_age, building.windows_installed_year, building.elevator_installed_year,building.last_elevator_upgrade_year, building.has_elevator, building.boiler_installed_year,
 			"'"+building.cable_internet_provider+"'", building.assessed_value, building.heat_system_type, building.unit_quantity, building.unit_price,
 			building.unit_price_manual_mode, building.building_income, building.building_income_manual_mode,
 			building.bachelor_units, building.bedroom1_units, building.bedroom2_units, building.bedroom3_units, building.bachelor_price,
