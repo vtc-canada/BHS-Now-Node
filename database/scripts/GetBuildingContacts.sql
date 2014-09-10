@@ -11,7 +11,7 @@ SELECT
 	,cur_company.name as 'cur_company_name'
 	,ref_contact_type.type as 'contact_type'
 	,cur_contacts.name as 'contact_name'	
-	,GROUP_CONCAT(DISTINCT cur_phone_numbers.phone_number) as 'phone_number' 
+	,cur_phone_numbers.phone_number as 'phone_number' 
 	,cur_contacts.email 
 	,company_address.street_number_begin
 	,company_address.street_number_end
@@ -32,8 +32,6 @@ FROM
 WHERE 
 	cur_buildings.id = buildingID
 	AND cur_buildings.is_deleted = 0
-	AND cur_contacts.is_deleted = 0
-GROUP BY	
-	cur_contacts.id;
+	AND cur_contacts.is_deleted = 0;
 END$$
 DELIMITER ;	
