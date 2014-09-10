@@ -148,11 +148,14 @@ module.exports = {
 	    if (building.sale_id == 'new') {
 		new_sale_id = '@out' + Math.floor((Math.random() * 1000000) + 1);
 		sails.controllers.database.credSproc('CreateSalesRecord', [ building.last_sale_price, "'" + toUTCDateTimeString(building.sale_date) + "'", building.heat_system_age,
-			building.windows_installed_year, building.elevator_installed_year, building.boiler_installed_year,
-			"'" + building.cable_internet_provider + "'", building.assessed_value, building.heat_system_type, building.unit_quantity,
-			building.unit_price, building.bachelor_price, building.bedroom1_price, building.bedroom2_price, building.bedroom3_price,
-			building.bachelor_units, building.bedroom1_units, building.bedroom2_units, building.bedroom3_units, "'"+building.property_mgmt_company+"'",
-			new_sale_id ], function(err, responseSalesRecord) {
+			building.windows_installed_year, building.elevator_installed_year,building.has_elevator, building.boiler_installed_year,
+			"'" + building.cable_internet_provider + "'", building.assessed_value, building.heat_system_type, building.unit_quantity
+			,building.unit_price,building.unit_price_manual_mode,building.building_income,building.building_income_manual_mode
+			
+			, building.bachelor_price, building.bedroom1_price, building.bedroom2_price, building.bedroom3_price,
+			building.bachelor_units, building.bedroom1_units, building.bedroom2_units, building.bedroom3_units, "'"+building.property_mgmt_company+"'"
+			,"'"+building.prev_property_mgmt_company+"'", building.cap_rate, ,building.building_type , building.last_boiler_upgrade_year, "'"+ building.mortgage_company+"'", "'" + toUTCDateTimeString(building.mortgage_due_date) + "'"
+			,new_sale_id ], function(err, responseSalesRecord) {
 		    if (err) {
 			console.log(err);
 			return res.json({
@@ -198,10 +201,11 @@ module.exports = {
 
 	    } else if (!isNaN(parseInt(building.sale_id))) { // saving sale
 		sails.controllers.database.credSproc('UpdateSalesRecord', [ building.sale_id, building.sale_price, "'"+toUTCDateTimeString(building.sale_date)+"'",
-			building.heat_system_age, building.windows_installed_year, building.elevator_installed_year, building.boiler_installed_year,
-			building.cable_internet_provider, building.assessed_value, building.heat_system, building.unit_quantity, building.unit_price,
+			building.heat_system_age, building.windows_installed_year, building.elevator_installed_year, building.has_elevator, building.boiler_installed_year,
+			"'"+building.cable_internet_provider+"'", building.assessed_value, building.heat_system_type, building.unit_quantity, building.unit_price,
+			building.unit_price_manual_mode, building.building_income, building.building_income_manual_mode,
 			building.bachelor_units, building.bedroom1_units, building.bedroom2_units, building.bedroom3_units, building.bachelor_price,
-			building.bedroom1_price, building.bedroom2_price, building.bedroom3_price, building.property_mgmt_company ], function(err,
+			building.bedroom1_price, building.bedroom2_price, building.bedroom3_price,  "'"+building.property_mgmt_company+"'", "'"+building.prev_property_mgmt_company+"'", building.cap_rate, building.building_type, building.last_boiler_upgrade_year, building.mortgage_company, building.mortgage_due_date], function(err,
 			responseUpdateSale) {
 
 		    // TODO : Update building..
@@ -252,14 +256,14 @@ module.exports = {
 				    sails.controllers.database.credSproc('UpdateBuilding', [ building.building_id, building.address_id,
 					    tryParseInt(building.building_type), tryParseInt(building.heat_system_age), building.windows_installed_year,
 					    building.elevator_installed_year, building.boiler_installed_year, "'" + building.cable_internet_provider + "'",
-					    "'" + building.assessed_value + "'", tryParseInt(building.heat_system), tryParseInt(building.unit_quantity),
-					    "'" + toUTCDateTimeString(building.sale_date) + "'", building.unit_price, "'" + building.property_mgmt_company + "'",
-					    "'" + building.prev_property_mgmt_company + "'", "'" + building.last_sale_price + "'",
+					    "'" + building.assessed_value + "'", tryParseInt(building.heat_system_type), tryParseInt(building.unit_quantity),
+					    "'" + toUTCDateTimeString(building.sale_date) + "'", building.unit_price,building.unit_price_manual_mode, "'" + building.property_mgmt_company + "'",
+					    "'" + building.prev_property_mgmt_company + "'", building.last_sale_price,
 					    "'" + JSON.stringify(building.images) + "'", building.bachelor_price, building.bedroom1_price,
 					    building.bedroom2_price, building.bedroom3_price, tryParseInt(building.bachelor_units),
 					    tryParseInt(building.bedroom1_units), tryParseInt(building.bedroom2_units), tryParseInt(building.bedroom3_units),
-					    building.building_income, building.has_elevator, building.last_elevator_upgrade_year,
-					    building.last_boiler_upgrade_year ], function(err, responseBuilding) {
+					    building.building_income, building.building_income_manual_mode, building.has_elevator, building.last_elevator_upgrade_year,
+					    building.last_boiler_upgrade_year,"'"+building.mortgage_company+"'","'" + toUTCDateTimeString(building.mortgage_due_date) + "'"], function(err, responseBuilding) {
 
 					processContacts(function() {
 					    processNotes(function(){
@@ -293,14 +297,14 @@ module.exports = {
 			    sails.controllers.database.credSproc('CreateBuilding', [ building.address_id,
 			                 					    tryParseInt(building.building_type), tryParseInt(building.heat_system_age), tryParseInt(building.windows_installed_year),
 			                 					   tryParseInt(building.elevator_installed_year), tryParseInt(building.boiler_installed_year), "'" + building.cable_internet_provider + "'",
-			                					    "'" + building.assessed_value + "'", tryParseInt(building.heat_system), tryParseInt(building.unit_quantity),
+			                					    "'" + building.assessed_value + "'", tryParseInt(building.heat_system_type), tryParseInt(building.unit_quantity),
 			                					    "'" + toUTCDateTimeString(building.sale_date) + "'", tryParseFloat(building.unit_price), "'" + building.property_mgmt_company + "'",
-			                					    "'" + building.prev_property_mgmt_company + "'", "'" + building.last_sale_price + "'",
+			                					    "'" + building.prev_property_mgmt_company + "'", building.last_sale_price,
 			                					    "'" + JSON.stringify(building.images) + "'", tryParseFloat(building.bachelor_price), tryParseFloat(building.bedroom1_price),
 			                					    tryParseFloat(building.bedroom2_price), tryParseFloat(building.bedroom3_price), tryParseInt(building.bachelor_units),
 			                					    tryParseInt(building.bedroom1_units), tryParseInt(building.bedroom2_units), tryParseInt(building.bedroom3_units),
 			                					    tryParseFloat(building.building_income), building.has_elevator, building.last_elevator_upgrade_year,
-			                					    building.last_boiler_upgrade_year,tempBuildingId], function(err, responseBuilding) {
+			                					    building.last_boiler_upgrade_year, "'"+ building.mortgage_company+"'", "'" + toUTCDateTimeString(building.mortgage_due_date) + "'", tempBuildingId], function(err, responseBuilding) {
 				building.building_id = responseBuilding[1][tempBuildingId];
 					// sails.controllers.database.credSproc('CreateCompanyAddressMapping',[null,
 					// ])
@@ -441,15 +445,58 @@ module.exports = {
 	 * req.query.order
 	 */
 
-	// Append the asterisks
-	var address_search = null
-	var contact_search = null
+	var address_search = null;
 	if (req.query.address_search != '') {
-	    address_search = "'+" + req.query.address_search.split(" ").join("* +") + "*'";
+	    address_search = req.query.address_search.trim().split(" ");
+	    adr = req.query.address_search.trim().split(" ");
+	    address_search = '';
+	    for(var i=0;i<adr.length;i++){
+		if(adr[i].trim()!=''){
+		    address_search=address_search+ "+"+adr[i].trim()+"* ";
+		}
+	    }
+	    address_search = "'"+address_search.trim()+"'";
 	}
+	var contact_search = null;
 	if (req.query.contact_search != '') {
-	    contact_search = "'+" + req.query.contact_search.split(" ").join("* +") + "*'";
+	    contact_search = req.query.contact_search.trim().split(" ");
+	    adr = req.query.contact_search.trim().split(" ");
+	    contact_search = '';
+	    for(var i=0;i<adr.length;i++){
+		if(adr[i].trim()!=''){
+		    contact_search=contact_search+ "+"+adr[i].trim()+"* ";
+		}
+	    }
+	    contact_search = "'"+contact_search.trim()+"'";
 	}
+
+	var company_search = null;
+	if (req.query.company_search != '') {
+	    company_search = req.query.company_search.trim().split(" ");
+	    adr = req.query.company_search.trim().split(" ");
+	    company_search = '';
+	    for(var i=0;i<adr.length;i++){
+		if(adr[i].trim()!=''){
+		    company_search=company_search+ "+"+adr[i].trim()+"* ";
+		}
+	    }
+	    company_search = "'"+company_search.trim()+"'";
+	}
+
+	var mortgage_search = null;
+	if (req.query.mortgage_search != '') {
+	    mortgage_search = req.query.mortgage_search.trim().split(" ");
+	    adr = req.query.mortgage_search.trim().split(" ");
+	    mortgage_search = '';
+	    for(var i=0;i<adr.length;i++){
+		if(adr[i].trim()!=''){
+		    mortgage_search=mortgage_search+ "+"+adr[i].trim()+"* ";
+		}
+	    }
+	    mortgage_search = "'"+mortgage_search.trim()+"'";
+	}
+
+	
 	
 	var orderstring = '';
 	if(req.query.order[0].column==1){  //Address column
@@ -462,22 +509,81 @@ module.exports = {
 	orderstring = "'"+orderstring+'_'+req.query.order[0].dir+"'";
 
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
-	sails.controllers.database.credSproc('GetBuildings', [ contact_search, address_search, null,
+	sails.controllers.database.credSproc('GetBuildings', [ contact_search, address_search, company_search, mortgage_search,
 		req.query.unitQuantityMin == '' ? null : parseInt(req.query.unitQuantityMin),
 		req.query.unitQuantityMax == '' ? null : parseInt(req.query.unitQuantityMax),
+		req.query.unit_price_min == '' ? null : parseInt(req.query.unit_price_min),
+		req.query.unit_price_max == '' ? null : parseInt(req.query.unit_price_max),
 		req.query.saleDateRangeStart == '' ? null : "'"+req.query.saleDateRangeStart+"'", req.query.saleDateRangeEnd == '' ? null : "'"+req.query.saleDateRangeEnd+"'",
-
 		req.query.boundsLatitudeMin == ''?null:req.query.boundsLatitudeMin,
 		req.query.boundsLatitudeMax == ''?null:req.query.boundsLatitudeMax,
 		req.query.boundsLongitudeMin == ''?null:req.query.boundsLongitudeMin,
 		req.query.boundsLongitudeMax == ''?null:req.query.boundsLongitudeMax,
-			
 		
-		false, // has elevator
-		null, null, null, // capmin,capmax,heattype
-		null, null, null, null,// bedroom1min,bedroom1max,bedroom2min,bedroom2max
-		null, null, null, null,// bedroom3min,bedroom3max,bachelormin,bachelormax
-		null, null, // windowmin,windowmax
+		req.query.has_elevator == ''?null:req.query.has_elevator,
+		req.query.elevator_installed_year_min == ''?null:req.query.elevator_installed_year_min,
+		req.query.elevator_installed_year_max == ''?null:req.query.elevator_installed_year_max,
+		req.query.elevator_upgrade_year_min == ''?null:req.query.elevator_upgrade_year_min,
+		req.query.elevator_upgrade_year_max == ''?null:req.query.elevator_upgrade_year_max,	
+		
+
+		req.query.cap_rate_min == ''?null:req.query.cap_rate_min,	
+		req.query.cap_rate_max == ''?null:req.query.cap_rate_max,	
+			
+		req.query.search_property_mgmt_company == ''?null:req.query.search_property_mgmt_company,
+		req.query.search_prev_property_mgmt_company == ''?null:req.query.search_prev_property_mgmt_company,	
+			
+		req.query.heat_age_min == ''?null:req.query.heat_age_min,		
+		req.query.heat_age_max == ''?null:req.query.heat_age_max,	
+			
+		req.query.boiler_installed_year_min == ''?null:req.query.boiler_installed_year_min,		
+		req.query.boiler_installed_year_max == ''?null:req.query.boiler_installed_year_max,	
+			
+		req.query.boiler_upgrade_min == ''?null:req.query.boiler_upgrade_min,		
+		req.query.boiler_upgrade_max == ''?null:req.query.boiler_upgrade_max,	
+			
+		req.query.assessed_value_min == ''?null:req.query.assessed_value_min,		
+		req.query.assessed_value_max == ''?null:req.query.assessed_value_max,
+			
+		req.query.building_income_min == ''?null:req.query.building_income_min,	
+		req.query.building_income_max == ''?null:req.query.building_income_max,	
+			
+		req.query.sale_price_min == ''?null:req.query.sale_price_min,		
+		req.query.sale_price_max == ''?null:req.query.sale_price_max,	
+			
+		req.query.bachelor_units_min == ''?null:req.query.bachelor_units_min,		
+		req.query.bachelor_units_max == ''?null:req.query.bachelor_units_max,
+		req.query.bedroom1_units_min == ''?null:req.query.bedroom1_units_min,		
+		req.query.bedroom1_units_max == ''?null:req.query.bedroom1_units_max,	
+		req.query.bedroom2_units_min == ''?null:req.query.bedroom2_units_min,		
+		req.query.bedroom2_units_max == ''?null:req.query.bedroom2_units_max,
+		req.query.bedroom3_units_min == ''?null:req.query.bedroom3_units_min,		
+		req.query.bedroom3_units_max == ''?null:req.query.bedroom3_units_max,
+
+		req.query.bachelor_rent_min == ''?null:req.query.bachelor_rent_min,		
+		req.query.bachelor_rent_max == ''?null:req.query.bachelor_rent_max,
+		req.query.bedroom1_rent_min == ''?null:req.query.bedroom1_rent_min,		
+		req.query.bedroom1_rent_max == ''?null:req.query.bedroom1_rent_max,	
+		req.query.bedroom2_rent_min == ''?null:req.query.bedroom2_rent_min,		
+		req.query.bedroom2_rent_max == ''?null:req.query.bedroom2_rent_max,
+		req.query.bedroom3_rent_min == ''?null:req.query.bedroom3_rent_min,		
+		req.query.bedroom3_rent_max == ''?null:req.query.bedroom3_rent_max,
+				
+		req.query.windows_installed_year_min == ''?null:req.query.windows_installed_year_min,		
+		req.query.windows_installed_year_max == ''?null:req.query.windows_installed_year_max,
+			
+		req.query.cable_internet_provider == ''?null:req.query.cable_internet_provider,	
+			
+			
+		req.query.start_mortgage_due_date == ''?null:"'"+req.query.start_mortgage_due_date+"'",	
+		req.query.end_mortgage_due_date == ''?null:"'"+req.query.end_mortgage_due_date+"'",	
+			
+		req.query.sales_count_min == ''?null:req.query.sales_count_min,
+		req.query.sales_count_max == ''?null:req.query.sales_count_max,
+		
+		req.query.checkbox_building_types == ''?null:req.query.checkbox_building_types,
+		req.query.checkbox_heating_types == ''?null:req.query.checkbox_heating_types,
+			
 		req.query.start, req.query.length, orderstring, filteredCount ], function(err, result) { // GetBuildings
 	    if (err) {
 		return res.json({
@@ -518,7 +624,11 @@ module.exports = {
 			for ( var element in responseSale[0][0]) {
 			    // console.log(element.toString());
 			    if (element != 'id' && typeof (building[0][0]) != 'undefined'&&typeof (building[0][0][element]) != 'undefined') {
-				building[0][0][element] = responseSale[0][0][element];
+				if(element == 'building_income'){
+					building[0][0][element] = parseFloat(responseSale[0][0][element]);
+				}else{
+					building[0][0][element] = responseSale[0][0][element];
+				}
 			    }
 			}
 			building[0][0].sale_id = parseInt(req.body.sale_id);
@@ -526,6 +636,7 @@ module.exports = {
 		    });
 
 		} else {
+		    building[0][0]['building_income'] = parseFloat(building[0][0]['building_income']);
 		    res.json(building[0][0]);
 		}
 	    }

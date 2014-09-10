@@ -13,10 +13,10 @@ SELECT
 	,cur_address.postal_code
 	,cur_address.city
 	,cur_address.province
-	,ref_building_type.type as 'building_type'
+	,ref_building_type.id as 'building_type'
 	,cur_buildings.property_mgmt_company
 	,cur_buildings.prev_property_mgmt_company
-	,ref_heat_system_type.type as 'heat_system'
+	,ref_heat_system_type.id as 'heat_system_type'
 	,cur_buildings.heat_system_age
 	,cur_buildings.windows_installed_year
 	,cur_buildings.elevator_installed_year
@@ -32,7 +32,10 @@ SELECT
 	,cur_buildings.bedroom3_units
 	,cur_buildings.assessed_value
 	,cur_buildings.building_income
-	,cur_buildings.unit_priceGetBuildings
+	,cur_buildings.building_income_manual_mode
+	,cur_buildings.unit_price
+	,cur_buildings.unit_price_manual_mode
+	,cur_buildings.unit_quantity
 	,cur_buildings.last_sale_price
 	,cur_buildings.sale_date
 	,cur_buildings.images
@@ -40,7 +43,8 @@ SELECT
 	,cur_buildings.last_elevator_upgrade_year
 	,cur_buildings.last_boiler_upgrade_year
 	,cur_buildings.mortgage_company
-	,cur_buildings.mortage_due_date
+	,cur_buildings.mortgage_due_date
+	,cur_buildings.cap_rate
 	
 FROM
 	cur_buildings

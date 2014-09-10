@@ -4,11 +4,11 @@ DROP PROCEDURE if EXISTS `UpdateBuilding` ;
 DELIMITER $$
 CREATE PROCEDURE `UpdateBuilding`(IN buildingID INT, IN addressID INT, IN buildingTypeID INT,IN heatSystemAge INT, IN windowsInstalledYear INT,IN elevatorInstalledYear INT
 		,IN boilerInstalledYear INT, IN cableInternetProvider VARCHAR(45), IN assessedValue Varchar(45)
-		,IN heatSystemTypeID INT, IN unitQuantity INT, IN saleDate DATETIME,IN pricePerUnit float
+		,IN heatSystemTypeID INT, IN unitQuantity INT, IN saleDate DATETIME,IN pricePerUnit float, IN unit_price_manual_mode BOOLEAN
 		,IN propertyMgmtCompany VARCHAR(45), IN prevPropertyMgmtCompany VARCHAR(45), IN lastSalePrice VARCHAR(45), IN images VARCHAR(1024)
 		,IN bachelorPrice FLOAT, IN bedroom1Price FLOAT, IN bedroom2Price FLOAT, IN bedroom3Price FLOAT, IN bachelorUnits INT, IN bedroom1Units INT
-		,IN bedroom2Units INT, IN bedroom3Units INT, IN buildingIncome FLOAT, IN hasElevator BOOLEAN, IN lastElevatorUpgradeYear INT, IN lastBoilerUpgradeYear INT
-		,IN mortageCompany VARCHAR(64), IN mortageDueDate TIMESTAMP)
+		,IN bedroom2Units INT, IN bedroom3Units INT, IN buildingIncome DECIMAL(13,2), IN building_income_manual_mode BOOLEAN, IN hasElevator BOOLEAN, IN lastElevatorUpgradeYear INT, IN lastBoilerUpgradeYear INT
+		,IN mortgageCompany VARCHAR(64), IN mortgageDueDate TIMESTAMP)
 BEGIN
 
 	UPDATE cur_buildings
@@ -24,6 +24,7 @@ BEGIN
 			,unit_quantity = unitQuantity
 			,sale_date = saleDate
 			,unit_price = pricePerUnit
+			,unit_price_manual_mode = unit_price_manual_mode
 			,property_mgmt_company = propertyMgmtCompany
 			,prev_property_mgmt_company = prevPropertyMgmtCompany
 			,last_sale_price = lastSalePrice
@@ -37,10 +38,11 @@ BEGIN
 			,bedroom2_units = bedroom2Units
 			,bedroom3_units = bedroom3Units
 			,building_income = buildingIncome
+			,building_income_manual_mode = building_income_manual_mode
 			,has_elevator = hasElevator
 			,last_elevator_upgrade_year = lastElevatorUpgradeYear
 			,last_boiler_upgrade_year = lastBoilerUpgradeYear	
-			,mortage_company = mortgageCompany
+			,mortgage_company = mortgageCompany
 			,mortgage_due_date = mortgageDueDate
 	WHERE cur_buildings.id = buildingID;
 
