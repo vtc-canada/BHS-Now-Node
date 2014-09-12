@@ -103,6 +103,7 @@ module.exports = {
     // First checks if it can log in via LDAP
     // Otherwise, failsover to loggin in through the database
     login : function(req, res) {
+	
         var username = req.param("username");
         var password = req.param("password");
 
@@ -113,54 +114,83 @@ module.exports = {
             return false;
         }
 
-        var ldap = require('ldapjs');
-
-        var client = ldap.createClient({
-            url : 'ldap://192.168.1.180:389',
-            connectTimeout : 200
-        });
-
-        client.bind(username, password, function(err, resource) {
+        
+        
+        Users.find({
+            username : username
+        }).done(function(err, usr) {
             if (err) {
-                console.log("Falling back to default login");
-                Users.find({
-                    username : username
-                }).done(function(err, usr) {
-                    if (err) {
-                        console.log("Database Error. Sending 500");
-                        res.send(500, {
-                            error : "DB Error"
-                        });
-                    } else {
-                        if (usr.length == 1) {
-                            usr = usr[0];
-                            console.log("requiring password-hash");
-                            var hasher = require("password-hash");
-                            console.log("Loaded password-hash");
-                            if (hasher.verify(password, usr.password)) {
-                                req.session.user = usr;
-                                req.session.user.policy = {};
-                                sails.controllers.database.localSproc("AuthorizeResourcePolicy", [ req.session.user.id,"'layout'"], function(err,policy) {
-                                    if(err){
-                                        res.json(500,{error:'Database Error'});
-                                    }else if(policy[0]&&policy[0].length==1&&typeof(policy[0][0].create)!='undefined'&&policy[0][0].create!=null){
-                                        req.session.user.policy['layout'] = policy[0][0];
-                                        res.send(usr);
-                                    }
-                                });
-                            } else {
-                                res.send(400, {
-                                    error : "Wrong Password"
-                                });
-                            }
-                        } else {
-                            res.send(404, {
-                                error : "User not Found"
-                            });
-                        }
-                    }
+                console.log("Database Error. Sending 500");
+                res.send(500, {
+                    error : "DB Error"
                 });
             } else {
+                if (usr.length == 1) {
+                    usr = usr[0];
+                    
+                    if(!usr.active){
+                        res.send(400, {
+                            error : "Locked"
+                        });
+                        return 
+                    }
+                    
+                    var hasher = require("password-hash");
+                    console.log("Loaded password-hash");
+                    if (hasher.verify(password, usr.password)) {
+                        req.session.user = usr;
+                        req.session.user.policy = {};
+                        sails.controllers.database.localSproc("AuthorizeResourcePolicy", [ req.session.user.id,"'layout'"], function(err,policy) {
+                            if(err){
+                                console.log('Database Error'+err);
+                                res.json(500,{error:'Database Error'+err});
+                            }else if(policy[0]&&policy[0].length==1&&typeof(policy[0][0].create)!='undefined'&&policy[0][0].create!=null){
+                                req.session.user.policy['layout'] = policy[0][0];
+                                Users.update({id:usr.id},{loginattempts:0},function(err,user){
+                    			if(err)
+                    			    return console.log('error'+err);
+                                }); 
+                                res.send(usr);
+                            }
+                        });
+                    } else {
+                	// increment login count
+                	if(usr.loginattempts==null){
+                	    usr.loginattempts = 1;
+                	}else{
+                    	    usr.loginattempts++;
+                	}
+                	if(usr.loginattempts>=6){
+                	    Users.update({id:usr.id},{active:false,loginattempts:usr.loginattempts},function(err,user){
+                		if(err)
+                		    return console.log('error'+err);
+                            }); 
+                	}else{
+                	    Users.update({id:usr.id},{loginattempts:usr.loginattempts},function(err,user){
+                		if(err)
+                		    return console.log('error'+err);
+                            }); 
+                	}
+                	
+                        res.send(400, {
+                            error : "Wrong Password"
+                        });
+                    }
+                } else {
+                    res.send(404, {
+                        error : "User not Found"
+                    });
+                }
+            }
+        });
+        
+        
+
+       // client.bind(username, password, function(err, resource) {
+       //     if (err) {
+        //        console.log("Falling back to default login");
+                
+           /* } else {
                 console.log("Mirroring LDAPJS client locally");
                 Users.find({
                     username : username
@@ -231,7 +261,7 @@ module.exports = {
                     }
                 });
             }
-        });
+        });*/
     },
 
     // To Logout
@@ -239,7 +269,7 @@ module.exports = {
     // kills user object
     logout : function(req, res) {
         delete req.session.user;
-        delete req.session.boxes;
+        //delete req.session.boxes;
         res.redirect('/auth');
     }
 

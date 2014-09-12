@@ -28,11 +28,11 @@ module.exports = {
   ,index : function(req, res) {
 	sails.controllers.database.credQuery('SELECT * FROM ref_building_type', function(err, building_types) {
 	    if (err) {
-		console.log(err.toString);
+		console.log(err);
 	    } else {
 		sails.controllers.database.credQuery('SELECT * FROM ref_heat_system_type', function(err, heat_types) {
 		    if (err) {
-			console.log(err.toString);
+			console.log(err);
 		    } else {
 			res.view({
 			    building_types : building_types,

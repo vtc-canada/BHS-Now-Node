@@ -67,15 +67,15 @@ module.exports = {
 	    company_search = "'"+company_search.trim()+"'";
 	}
 	if (req.query.note_search != '') {
-	    note_search = req.query.note_search.trim().split(" ");
+	    /*note_search = req.query.note_search.trim().split(" ");
 	    adr = req.query.note_search.trim().split(" ");
 	    note_search = '';
 	    for(var i=0;i<adr.length;i++){
 		if(adr[i].trim()!=''){
 		    note_search=note_search+ "+"+adr[i].trim()+"* ";
 		}
-	    }
-	    note_search = "'"+note_search.trim()+"'";
+	    }*/
+	    note_search = req.query.note_search;
 	}
 
 	var orderstring = '';

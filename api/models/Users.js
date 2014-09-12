@@ -18,6 +18,10 @@ module.exports = {
 	      type:'BOOLEAN',
 	      defaultsTo: 1
 	  },
+	  loginattempts:{
+	      type : 'INTEGER',
+	      defaultsTo : 0
+	  },
 	  locale : 'STRING'
   }
 

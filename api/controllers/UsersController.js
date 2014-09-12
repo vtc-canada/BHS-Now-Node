@@ -83,7 +83,7 @@ module.exports = {
         var test = req;
         if (typeof (req.params.id) != 'undefined' && !isNaN(parseInt(req.params.id))) {
 
-            var updates = {email:req.body.email,active:req.body.active};
+            var updates = {email:req.body.email,active:req.body.active,loginattempts:0};
 
             if(typeof(req.body.password)!='undefined'){
                 var hasher = require("password-hash");
