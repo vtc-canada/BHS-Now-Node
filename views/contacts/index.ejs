@@ -114,7 +114,7 @@
 <div class="row-fluid" style="margin-top:19px;">
     <div class="span10 offset1 page-controls-wrapper">
         <div class="row-fluid" id="reportheader"><span style="padding-left:10px;">Contacts</span>
-             <div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="create_contact">Create New</div>
+             <% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="create_contact">Create New</div><% } %>
         
         </div>
         <div class="row-fluid key-indicaters-frame" id="iframediv">
@@ -155,7 +155,7 @@
 	<div class="row-fluid building-segment-wrapper companycard{{ if(typeof(dodelete)!='undefined'){ }} user-delete{{ } }}" userid="" company_id="{{=company_id}}">
 		<div class="span5 ">{{=company_name}}</div>
 		<div class="span5">{{=address}}</div>
-		<div class="span2 ">{{ if(typeof(dodelete)=='undefined'){ }}<div class="pull-right btn btn-danger delete-company-mapping">Remove</div>{{ }else{ }}<div class="pull-right btn btn-success cancel-delete-company-mapping">Cancel</div>{{ } }}</div>
+		<div class="span2 "><% if(req.session.user.policy[req.route.path].update==1){ %>{{ if(typeof(dodelete)=='undefined'){ }}<div class="pull-right btn btn-danger delete-company-mapping">Remove</div>{{ }else{ }}<div class="pull-right btn btn-success cancel-delete-company-mapping">Cancel</div>{{ } }}<% } %></div>
 	</div>
 </script>
 <script type="text/template" id="address-template">
@@ -190,10 +190,10 @@
 <div class="row-fluid edit-item-section" style="display:none; margin-top:19px;">
     <div class="span10 offset1 page-controls-wrapper">
         <div class="row-fluid" id="reportheader"><span style="padding-left:10px;" id="building-section-title">Edit Contact Details</span>
-         	<button style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="save_contact">Save</button>
-         	<button style="margin-right:10px;font-weight: 400;" class="btn btn-danger pull-right save_pull" id="delete_contact">Delete</button>
+         	<% if(req.session.user.policy[req.route.path].update==1){ %><button style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="save_contact">Save</button><% } %>
+         	<% if(req.session.user.policy[req.route.path].update==1){ %><button style="margin-right:10px;font-weight: 400;" class="btn btn-danger pull-right save_pull" id="delete_contact">Delete</button><% } %>
          	<button style="margin-right:10px;font-weight: 400;" class="btn pull-right save_pull" id="cancel_contact">Cancel</button>
-         	<div style="margin-right: 10px; color: rgb(153, 0, 0); font-weight: 400; display: none;" class="pull-right save_pull" id="changes_pending">Changes Pending. &nbsp;</div>
+         	<% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right: 10px; color: rgb(153, 0, 0); font-weight: 400; display: none;" class="pull-right save_pull" id="changes_pending">Changes Pending. &nbsp;</div><% } %>
   		 </div>
         <div class="row-fluid " id="iframediv">
         	<div class="content-wrapper building-details-frame">
@@ -232,13 +232,14 @@
 									<i class="icon-plus-sign" style="margin-right:10px; display:none;"></i>
 									<i class="icon-briefcase"></i> &nbsp&nbsp<b>Associated Companies</b>
 								</span>
-								
+								<% if(req.session.user.policy[req.route.path].update==1){ %>
 								<div class="pull-right" style="height:40px; width: 308px; background: white;padding-left: 8px; ">
 									<div style="float:left;padding-top:1px;"><select id="companycombobox" class="companycombobox" value=""></select></div>
 									<div style="float:right;"><span id="add_company_card" class="btn btn-success">
 						                    <span>Add</span>
 						                </span</div>
 								</div>
+								<% } %>
 							</div>
 						</div>
 					</div>
@@ -273,6 +274,19 @@
 							                </span>
 										</span>
 									</div>
+									<% if(req.session.user.policy[req.route.path].delete==0){ %>
+											<div class="pull-right" style="height:40px;">
+												<span class="row-category-button-wrapper" id="save_note_parent">
+													<span id="save_notes" class="btn btn-primary">
+									                    <span>Save Notes</span>
+									                </span>
+												</span>
+											</div>
+						         	<% } %>
+											
+						         	<% if(req.session.user.policy[req.route.path].update==0){ %>
+						         	<div style="margin-right: 10px; color: rgb(153, 0, 0); font-weight: 400; display: none;" class="pull-right save_pull" id="changes_pending">Changes Pending. &nbsp;</div>
+						         	<% } %>
 								</div>
 							</div>
 						</div>
@@ -328,8 +342,8 @@
 		<div class="span6"><span class="mobilelabel">Details:</span><div class="note-editable">{{=note}}</div></div>
 		<div class="span2" style="padding-top:0px;">
 			<div class="row-fluid" style="padding:6px;">
-				<a class="edit-note" style="color:#0F74BC;cursor:pointer;padding-right:6px;"><i class="icon-edit icon-2x"></i></a>
-				<a class="delete-note" style="color:red;cursor:pointer;"><i class="icon-remove-sign icon-2x"></i></a>
+				{{ if(user=='<%=req.session.user.username%>'||<%=req.session.user.policy[req.route.path].update==1%>){ }}<a class="edit-note" style="color:#0F74BC;cursor:pointer;padding-right:6px;"><i class="icon-edit icon-2x"></i></a>{{ } }}
+				{{ if(user=='<%=req.session.user.username%>'||<%=req.session.user.policy[req.route.path].update==1%>){ }}<a class="delete-note" style="color:red;cursor:pointer;"><i class="icon-remove-sign icon-2x"></i></a>{{ } }}
 			</div>
 		</div>
 	</div>
@@ -541,6 +555,36 @@
     		});
     	});
     	
+    	$('#save_notes').click(function(){
+    		if($(this).hasClass('disabled')){
+    			return;
+    		}
+    		socket.get('/contacts/updatecontact/' + contact.get('contact_id'), {contact:contact.toJSON(), companies : companies.toJSON(), notes : notes.toJSON()},function(response){
+    			if(typeof(response.success)!='undefined'){
+    				if(contact.get('contact_id')=='new'){
+    					contact.set('contact_id',response.contact_id);
+    				}
+	    			$('.alert-success').remove();
+	                $('.page-banner').after('<div class="alert alert-success fade in" style="border-radius:0px;">'+
+	                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+	                        '<strong>'+'Success'+':&nbsp</strong>'+'Changes have been saved'+'</div>');
+	                $('.main-content')[0].scrollTop=0;
+	                setTimeout(function(){
+	                	contact.fetch({id:parseInt(contact.get('contact_id'))}); 
+	    				companies.fetch({contact_id:parseInt(contact.get('contact_id'))});  
+	                },100);
+	                setTimeout(function(){
+	                    setTimeout(function(){
+	                        $('.alert-success').remove();
+	                    },500);
+	                    $('.alert-success').removeClass('in');
+	                },alert_fadeout_time);
+    			}else{
+    				alert(response.error);
+				}
+    		});
+    	});
+    	
     	
 	    	 // just shows the changes are pending, by scanning through the collection to see if that's the case.
 	    function setChangesPending(){
@@ -574,7 +618,16 @@
             //		change = true;
             //	}
             //});
-	        $('#save_contact')[0].disabled = !change;
+	        if(typeof($('#save_contact')[0])!='undefined'){
+	        	$('#save_contact')[0].disabled = !change;
+            }
+            if(typeof($('#save_notes')[0])!='undefined'){
+            	if(!change){
+            		$('#save_notes').addClass('disabled');
+        		}else{
+            		$('#save_notes').removeClass('disabled');
+        		}
+            }
 	        if(change){
 	            $('#changes_pending').css('display','block');
 	        }
@@ -654,6 +707,10 @@
 	        render: function () {
 	    	    this.$el.empty();
 	        	this.$el.append(this.template(contact.toJSON()));
+	        	
+	        	<% if(req.session.user.policy[req.route.path].update==0){ %>
+	        		$('#contact_information_section input').attr('disabled','disabled');
+	        	<% } %>
 	        	
 	        	setChangesPending();
 				

@@ -58,7 +58,8 @@
                     'Airline Configuration':'Airline Configuration',
                     'Virtual to Physical Mapping':'Virtual to Physical Mapping',
                     'Messages':'Messages',
-                    'Engineering':'Engineering'
+                    'Engineering':'Engineering',
+                	'/':'Maps'
                 }
 
           },
@@ -116,13 +117,14 @@
                       'Airline Configuration':'Airline Configuration',
                       'Virtual to Physical Mapping':'Virtual to Physical Mapping',
                       'Messages':'Messages',
-                      'Engineering':'Engineering'
+                      'Engineering':'Engineering',
+                '/':'Maps'
 
                  }
           }
       }
     %>
-    <title><%= translate[req.session.user.locale]['DefaultTitle'] %> - <%= translate[req.session.user.locale]['pages'][req.url] %> </title>
+    <title><%= translate[req.session.user.locale]['DefaultTitle'] %> - <%= translate[typeof(req.session.user.locale)=='undefined'?'en':req.session.user.locale]['pages'][req.url] %> </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -218,7 +220,8 @@
               <span class="icon-list"></span>
           </button>
             <a class="brand isys-a large" href="/maps" style="height:40px; width: 407px; padding-left: 12px !important;"><img style="padding-top: 3px; padding-left: 3px;"src="/img/CRED-Application-Logo-Desktop.png" /></a>
-            </a>
+            <div class="templatedebug" style="display:none;"><%-req.route.path%> -<%-JSON.stringify(req.session.user.policy['layout'])%></div>
+           
             <a class="brand isys-a small" href="/maps" style="height: 40px; width: 130px;background-image: url(&quot;/img/CRED-Application-Logo-Mobile.png&quot;);background-size: 140px;background-repeat: no-repeat;background-position-x: 11px;">
 
                 <!-- <img src="/img/isyslogo.png" class="top-isys-logo pull-left"><span class="pull-left top-location-text">Airport BHS</span><i class="icon-plane icon-2x pull-right"></i><span class="pull-right webportal-top-text">Web Portal</span>
@@ -306,7 +309,7 @@
               </a>
             </li>
             
-
+		<% if(req.session.user.policy['layout'].update==1){ %>
             <li class="dark-nav <% if (typeof(req.url)!=='undefined'&&(req.url=='/admin/users'||req.url=='/airlineconfiguration'||req.url=='/virtual2physical')){ %>active<% } %>">
 
               <span class="glow"></span>
@@ -328,6 +331,7 @@
 
               </ul>
             </li>
+        <% } %>
       </ul>
 
         
@@ -356,6 +360,8 @@
       // Client-side wide Configuration Values and variables.
       // these variables are accessable and used within the other view
       var alert_fadeout_time = 7000;
+      var user = <%- JSON.stringify(req.session.user)%>;
+      user.policy = <%- typeof(req.session.user.policy[req.route.path])=='undefined'?'ERROR: Missing Policy."'+req.route.path+'"':JSON.stringify(req.session.user.policy[req.route.path]) %>;
       var username = '<%= req.session.user.username %>'; // username of the user, passed from serverside session
       var socket;      // Global variable for the socket
 

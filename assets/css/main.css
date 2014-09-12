@@ -143,7 +143,6 @@ table.dataTable > tbody > tr.selected{
 }
 .generic-table-styling{
 	line-height: 30px;
-	font-weight: bold;
 	cursor:pointer;
 }
 table.dataTable:not(.disable-pointer) > tbody > tr{
@@ -278,10 +277,25 @@ input.segment-form-radio{
 .building-overlay-block-picture{
 	
 	border: 1px solid rgb(156, 156, 156);
-	width:auto !important;
+	height: 110px;
+	margin-bottom: 5px;
+	margin-left: 2.7624309392265194% !important;
+	width: auto !important;
+}
+
+.building-overlay-block-picture img{
+	padding:2px;
+	height: 104px;	
+	width: auto;
 }
 
 .building-overlay-block-details{
+    border: 1px solid #c3c3c3;
+    padding: 4px;
+    min-height: 110px !important;
+    background: rgb(230, 230, 230);
+    margin-bottom: 5px;
+    width: 235px !important;
 }
 
 .building-overlay-block-details .block-value{
@@ -290,8 +304,12 @@ input.segment-form-radio{
 }
 
 .building-overlay-block-address{
+    border: 1px solid #c3c3c3;  padding: 4px;  
+    min-height: 110px !important;  background: rgb(230, 230, 230);
 	/*font-weight:600;
 	color:#828282;*/
+    margin-bottom: 5px;
+    width: 235px !important;
 }
 
 .building-overlay-block-address .block-value{
@@ -305,7 +323,7 @@ input.segment-form-radio{
 }
 
 .row-fluid .building-overlay-block-address{
-	margin-top: 6px;
+	margin-top: 0px;
 }
 
 
@@ -709,6 +727,13 @@ div.language-flag.chile{
 }
 
 
+.templatedebug{
+	float:left;
+	height:20px;
+	width:200px;
+	color:white;
+}
+
 
 .deleteadminuser{
     line-height: 20px;
@@ -965,8 +990,26 @@ div.language-flag.chile{
     }
 
 }
-
+.building-card-images-wrapper{
+		/* width:auto; */
+		/* float:left; */
+	}
+	
 @media (max-width: 767px){
+	
+	.building-overlay-block-address {
+		width: 100% !important;
+	}
+	
+	.building-overlay-block-address {
+		width: 100% !important;
+	}
+	.building-card-images-wrapper{
+		width:100%;
+		float:none;
+	
+		height: 115px;
+	}
 	
 	.row-fluid .building-overlay-block-picture{
 		width:auto;
@@ -984,6 +1027,7 @@ div.language-flag.chile{
 		padding-left: 4px;
 		margin-top: 6px;
 		padding-right: 4px;
+		width:100% !important;
 	}
 	
 	.building-segment-wrapper .segment-label{

@@ -127,22 +127,33 @@ module.exports = {
 	}
     },
     deletebuilding:function(req,res){
-	if(typeof(req.body.building_id)!='undefined'&&!isNaN(parseInt(req.body.building_id))){
-	    sails.controllers.database.credSproc('DeleteBuilding',[parseInt(req.body.building_id)],function(err,resultDelete){
-		if(err)
-		    return res.json({error:'Database Error:'+err},500);	
-		res.json({success:'success'});
-		
-	    });
+	if(req.session.user.policy[req.route.path].delete==1){  // Delete access on this route?
+        	if(typeof(req.body.building_id)!='undefined'&&!isNaN(parseInt(req.body.building_id))){
+        	    sails.controllers.database.credSproc('DeleteBuilding',[parseInt(req.body.building_id)],function(err,resultDelete){
+        		if(err)
+        		    return res.json({error:'Database Error:'+err},500);	
+        		res.json({success:'success'});
+        		
+        	    });
+        	}
 	}
     },
     savebuilding : function(req, res) {
+	
+	
 
 	var building = req.body.building;
 	var buildingcontacts = req.body.buildingcontacts;
 	var buildingnotes = req.body.buildingnotes;
 
-	if (typeof (building.sale_id) != 'undefined') { // SALE MODE!!! (note a
+	if(req.session.user.policy[req.route.path].update==0){  // readonly account Notes update.
+	    processReadOnlyNotes(function(){
+		    return res.json({
+			success : true,
+			building_id : building.building_id
+		    });
+	    });
+	}else if (typeof (building.sale_id) != 'undefined') { // SALE MODE!!! (note a
 							// new building)
 
 	    if (building.sale_id == 'new') {
@@ -165,7 +176,7 @@ module.exports = {
 		    function loop(i) {
 			var tempOutVar = '@out' + Math.floor((Math.random() * 1000000) + 1);
 			sails.controllers.database.credSproc('CreateSalesContactMapping', [ responseSalesRecord[1][new_sale_id],
-				buildingcontacts[i].contact_id, building.building_id, buildingcontacts[i].contact_type == 'owner' ? 1 : 2,
+				buildingcontacts[i].contact_id, building.building_id, buildingcontacts[i].contact_type == 'owner' ? 1 : (buildingcontacts[i].contact_type == 'seller')?2:3,
 				buildingcontacts[i].company_id, tempOutVar ], function(err, responseSalesMapping) {
 			    i++;
 			    if (i < buildingcontacts.length) {
@@ -205,7 +216,7 @@ module.exports = {
 			"'"+building.cable_internet_provider+"'", building.assessed_value, building.heat_system_type, building.unit_quantity, building.unit_price,
 			building.unit_price_manual_mode, building.building_income, building.building_income_manual_mode,
 			building.bachelor_units, building.bedroom1_units, building.bedroom2_units, building.bedroom3_units, building.bachelor_price,
-			building.bedroom1_price, building.bedroom2_price, building.bedroom3_price,  "'"+building.property_mgmt_company+"'", "'"+building.prev_property_mgmt_company+"'", isNaN(building.cap_rate)?0:cap_rate, building.building_type, building.last_boiler_upgrade_year,"'"+ building.mortgage_company+"'", "'" + toUTCDateTimeString(building.mortgage_due_date) + "'"], function(err,
+			building.bedroom1_price, building.bedroom2_price, building.bedroom3_price,  "'"+building.property_mgmt_company+"'", "'"+building.prev_property_mgmt_company+"'", isNaN(building.cap_rate)?0:building.cap_rate, building.building_type, building.last_boiler_upgrade_year,"'"+ building.mortgage_company+"'", "'" + toUTCDateTimeString(building.mortgage_due_date) + "'"], function(err,
 			responseUpdateSale) {
 
 		    // TODO : Update building..
@@ -340,7 +351,7 @@ module.exports = {
 		    });
 		} else if (typeof (buildingcontacts[i].dosync) != 'undefined') {
 		    sails.controllers.database.credSproc('CreatePropertyContactMapping', [ buildingcontacts[i].contact_id, buildingcontacts[i].company_id,
-			    building.address_id, buildingcontacts[i].contact_type == 'owner' ? 1 : 2, '@outId' ], function(err, responseMapping) {
+			    building.address_id, buildingcontacts[i].contact_type == 'owner' ? 1 : (buildingcontacts[i].contact_type == 'seller'?2:3), '@outId' ], function(err, responseMapping) {
 			if (err)
 			    res.json({
 				error : 'Database Error:' + err
@@ -418,6 +429,97 @@ module.exports = {
 			    loopNotes(i);
 			} else {
 			    cb();
+			}
+		    });
+		} else {
+		    i++;
+		    if (i < buildingnotes.length) {
+			loopNotes(i);
+		    } else {
+			cb();
+		    }
+		}
+	    }
+	    if(buildingnotes.length>0){
+		loopNotes(0);
+	    }else{
+		cb();
+	    }
+	    
+	}
+	
+	function processReadOnlyNotes(cb){
+	    function loopNotes(i){
+		if (buildingnotes[i].id.toString().indexOf('new')>-1) { // new
+									// Note!
+		    var tempOutNoteVar = '@out' + Math.floor((Math.random() * 1000000) + 1);
+		    sails.controllers.database.credSproc('CreateNote', [ "'"+buildingnotes[i].note+"'", "'"+req.session.user.username+"'", 'NOW()',tempOutNoteVar], function(err, responseNote) {
+			if (err)
+			    return res.json({
+				error : 'Database Error:' + err
+			    }, 500);
+			
+			sails.controllers.database.credSproc('CreateNoteMapping',[building.address_id, responseNote[1][tempOutNoteVar], 3,'@outId'],function(err,responseNoteMapping){
+			    if (err)
+				return res.json({
+					error : 'Database Error:' + err
+				    }, 500);
+			    
+    				i++;
+    				if (i < buildingnotes.length) {
+    				    loopNotes(i);
+    				} else {
+    				    cb();
+    				}
+			});
+			
+		    });
+		}else if (typeof (buildingnotes[i].deleted) != 'undefined') { // delete
+
+		    sails.controllers.database.credSproc('GetNote',[buildingnotes[i].id],function(err,resultMyNote){
+			if(err)
+			    return console.log('Note error');
+			if(resultMyNote[0].length!=1){
+			    return console.log('error verifying note');
+			}
+			if(resultMyNote[0][0].user==req.session.user.username){
+			    sails.controllers.database.credSproc('DeleteNote', [ buildingnotes[i].id ], function(err, responseNote) {
+				if (err)
+				    return res.json({
+					error : 'Database Error:' + err
+				    }, 500);
+				i++;
+				if (i < buildingnotes.length) {
+				    loopNotes(i);
+				} else {
+				    cb();
+				}
+			    });
+			}else{
+			    return console.log('Attempted hacking');
+			}
+		    });
+		    
+		} else if (typeof (buildingnotes[i].modified) != 'undefined') {
+		    sails.controllers.database.credSproc('GetNote',[buildingnotes[i].id],function(err,resultMyNote){
+			if(err)
+			    return console.log('Note error');
+			if(resultMyNote[0].length!=1){
+			    return console.log('error verifying note');
+			}
+			if(resultMyNote[0][0].user==req.session.user.username){
+        		    sails.controllers.database.credSproc('UpdateNote', [ buildingnotes[i].id, "'"+buildingnotes[i].note+"'", "'"+buildingnotes[i].user+"'", 'NOW()' ], function(err, responseNote) {
+        			if (err)
+        			    return res.json({
+        				error : 'Database Error:' + err
+        			    }, 500);
+        			i++;
+        			if (i < buildingnotes.length) {
+        			    loopNotes(i);
+        			} else {
+        			    cb();
+        			}
+        		    });
 			}
 		    });
 		} else {
@@ -613,7 +715,11 @@ module.exports = {
 		res.json({
 		    error : 'Database Error'
 		}, 500);
-	    } else {
+	    } else if(typeof(building[0][0])=='undefined'){
+		res.json({
+		    error : 'Database Error'
+		}, 500);
+	    }else {
 		if (typeof (req.body.sale_id) != 'undefined' && !isNaN(parseInt(req.body.sale_id))) {
 		    sails.controllers.database.credSproc('GetSale', [ parseInt(req.body.sale_id) ], function(err, responseSale) {
 			if (err || responseSale[0].length < 1)

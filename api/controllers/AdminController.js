@@ -25,14 +25,15 @@ module.exports = {
      */
     _config : {},
     usersjoinedpolicies:function(req,res){
-        sails.controllers.database.localSproc('getUsersJoinedPolicies',[],function(err,result){
-            if(err){
-                res.json({error:'Database Error:'+err},500);
-            }else{
-                res.json(result[0])
-            }
-        });
-
+	if(req.session.user.policy[req.route.path].read==1){  // readonly account Notes update.
+            sails.controllers.database.localSproc('getUsersJoinedPolicies',[],function(err,result){
+                if(err){
+                    res.json({error:'Database Error:'+err},500);
+                }else{
+                    res.json(result[0])
+                }
+            });
+	}
     },
 
     // Attempts to change users password.

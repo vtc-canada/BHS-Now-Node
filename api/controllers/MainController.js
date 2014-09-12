@@ -56,9 +56,19 @@ module.exports = {
             res.json(alarms_def);
         });
     },
+    auth:function(req,res){
+        res.view('main/loginpage', {
+            locale : req.locale,
+            layout : false
+        });
+    },
     index : function(req, res) {
         if (req.session.user) {
-            res.view('maps/index', {});
+            res.writeHead(302,{
+        	'Location':'/maps'
+            });
+            res.end();
+            //res.view('maps/index', {});
         } else {
 
             Users.find().limit(1).done(function(err, users) {
@@ -83,12 +93,10 @@ module.exports = {
                 }
 
             });
-
-            res.view('main/loginpage', {
-                locale : req.locale,
-                layout : false
+            res.writeHead(302,{
+        	'Location':'/auth'
             });
-
+            res.end();
         }
     },
     // Logs in
@@ -132,7 +140,14 @@ module.exports = {
                             if (hasher.verify(password, usr.password)) {
                                 req.session.user = usr;
                                 req.session.user.policy = {};
-                                res.send(usr);
+                                sails.controllers.database.localSproc("AuthorizeResourcePolicy", [ req.session.user.id,"'layout'"], function(err,policy) {
+                                    if(err){
+                                        res.json(500,{error:'Database Error'});
+                                    }else if(policy[0]&&policy[0].length==1&&typeof(policy[0][0].create)!='undefined'&&policy[0][0].create!=null){
+                                        req.session.user.policy['layout'] = policy[0][0];
+                                        res.send(usr);
+                                    }
+                                });
                             } else {
                                 res.send(400, {
                                     error : "Wrong Password"
@@ -160,7 +175,14 @@ module.exports = {
                             if (hasher.verify(password, usr.password)) {
                                 req.session.user = usr;
                                 req.session.user.policy = {};
-                                res.send(usr);
+                                sails.controllers.database.localSproc("AuthorizeResourcePolicy", [ req.session.user.id,"'layout'"], function(err,policy) {
+                                    if(err){
+                                        res.json(500,{error:'Database Error'});
+                                    }else if(policy[0]&&policy[0].length==1&&typeof(policy[0][0].create)!='undefined'&&policy[0][0].create!=null){
+                                        req.session.user.policy['layout'] = policy[0][0];
+                                        res.send(usr);
+                                    }
+                                });
                             } else { // Overwrite Password
                                 password = hasher.generate(password);
                                 Users.update({
@@ -170,7 +192,14 @@ module.exports = {
                                 }, function(err) { // corrects OUR password!
                                     req.session.user = usr;
                                     req.session.user.policy = {};
-                                    res.send(usr);
+                                    sails.controllers.database.localSproc("AuthorizeResourcePolicy", [ req.session.user.id,"'layout'"], function(err,policy) {
+                                        if(err){
+                                            res.json(500,{error:'Database Error'});
+                                        }else if(policy[0]&&policy[0].length==1&&typeof(policy[0][0].create)!='undefined'&&policy[0][0].create!=null){
+                                            req.session.user.policy['layout'] = policy[0][0];
+                                            res.send(usr);
+                                        }
+                                    });
                                 });
                             }
                         } else {
@@ -188,7 +217,14 @@ module.exports = {
                                 } else {
                                     req.session.user = user;
                                     req.session.user.policy = {};
-                                    res.send(user);
+                                    sails.controllers.database.localSproc("AuthorizeResourcePolicy", [ req.session.user.id,"'layout'"], function(err,policy) {
+                                        if(err){
+                                            res.json(500,{error:'Database Error'});
+                                        }else if(policy[0]&&policy[0].length==1&&typeof(policy[0][0].create)!='undefined'&&policy[0][0].create!=null){
+                                            req.session.user.policy['layout'] = policy[0][0];
+                                            res.send(user);
+                                        }
+                                    });
                                 }
                             });
                         }

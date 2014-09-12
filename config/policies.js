@@ -16,20 +16,66 @@
 module.exports.policies = {
 
     '*' : 'isAuthenticated',
+    'buildings':{
+	 '*' : 'isAuthenticated',
+	 'find':'RoutePolicy',
+	 'savebuilding':'RoutePolicy',
+	 'getajax':'RoutePolicy',
+	 'savebuilding':'RoutePolicy',
+	 'getbuilding':'RoutePolicy',
+	 'notes':'RoutePolicy',
+	 'getcontacts':'RoutePolicy',
+	 'getsales':'RoutePolicy',
+	 'deletebuilding':'RoutePolicy'
+    },
+    'companies':{
+	'*' : 'isAuthenticated',
+	'find':'RoutePolicy',
+	'searchcompanies':'RoutePolicy',
+	'getcontactsbyname':'RoutePolicy',
+	'getcontactsbycompanyid':'RoutePolicy',
+	'getcompany':'RoutePolicy',
+	'notes':'RoutePolicy',
+	'updatecompany':'RoutePolicy',
+	'deletecompany':'RoutePolicy'
+    },
+    'contacts':{
+	'*' : 'isAuthenticated',
+	'find':'RoutePolicy',
+	'searchcontacts':'RoutePolicy',
+	'getcontact':'RoutePolicy',
+	'getcompaniesbycontactid':'RoutePolicy',
+	'getcompaniesbyname':'RoutePolicy',
+	'notes':'RoutePolicy',
+	'updatecontact':'RoutePolicy',
+	'deletecontact':'RoutePolicy'
+	
+    },
+    'admin' : {
+	'*':'isAuthenticated',
+        'users' : 'RoutePolicy',
+        'usersjoinedpolicies': 'RoutePolicy'
+    },
+    'users':'RoutePolicy',
+    'notes': {
+	'*':'isAuthenticated',
+	'find':'RoutePolicy',
+	'searchnotes':'RoutePolicy'
+    },
+    'maps':{
+	'*':'isAuthenticated',
+	'index':'RoutePolicy'
+    },
+    'upload':true,
+    'datautility':true,
     'public' : true,
     'main' : {
-        'index' : true,
+        'index' : true,  // just redirects here anyways... will pass through these policies again. detects/sets up 1st user.  the '/'  Route!
         'login' : true,
+        'auth':true,
         'logout' : 'LoggedInPolicy',
-        'joinrooms' : 'LoggedInPolicy',
-        'get_fault_types' : 'LoggedInPolicy',
-        'get_cfg_global_settings' : 'LoggedInPolicy'
-    },
-    'dashboard' : 'DashboardPolicy',
-    'admin' : {
-        'checkandchangemypassword' : 'LoggedInPolicy',
-        'users' : 'RoutePolicy'
-    },
+        'joinrooms' : 'LoggedInPolicy'
+    },/*
     'reports' : {
         'create' : 'LoggedInPolicy',
         'get_equipment' : 'LoggedInPolicy',
@@ -39,11 +85,7 @@ module.exports.policies = {
         'promptprint' : 'LoggedInPolicy',
         'printreport' : true, // open for direct access
         'view' : true
-    },
-    'companies':true,
-    'notes':true,
-    'upload':true,
-    'datautility':true
+    },*/
 
 };
 

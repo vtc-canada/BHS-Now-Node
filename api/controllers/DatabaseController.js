@@ -39,7 +39,7 @@ var credPool = mysql.createPool({
     connectionLimit : 1000,
     user : 'root',//paadmin',
     password : 'Glasgow931',//.SampsonMews8',
-    database : 'cred',
+    database : 'cred_test',
     host : '10.1.1.60'//pa-cred-database.c1midzvqwdqm.us-west-2.rds.amazonaws.com'//10.1.1.60'//10.1.1.60'
 });
 
@@ -51,6 +51,7 @@ module.exports = {
      */
     _config : {},
     localQuery : function(query, cb) {
+	console.log(query);
 	localPool.getConnection(function(err, connection) {
 	    if (err) {
 		cb(err);
@@ -70,6 +71,7 @@ module.exports = {
 	    if (err) {
 		cb(err);
 	    } else {
+		console.log("call " + sprocName + sprocArgs);
 		connection.query("call " + sprocName + sprocArgs, function(err, results) {
 		    if (err) {
 			cb(err);

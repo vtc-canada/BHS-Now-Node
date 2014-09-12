@@ -64,13 +64,15 @@ module.exports = {
 	}
   },
   deletecompany:function(req,res){
-	if(typeof(req.body.company_id)!='undefined'&&!isNaN(parseInt(req.body.company_id))){
-	    sails.controllers.database.credSproc('DeleteCompany',[parseInt(req.body.company_id)],function(err,resultDelete){
-		if(err)
-		    return res.json({error:'Database Error:'+err},500);	
-		res.json({success:'success'});
-		
-	    });
+
+	if(req.session.user.policy[req.route.path].delete==1){  // Delete access on this route?
+        	if(typeof(req.body.company_id)!='undefined'&&!isNaN(parseInt(req.body.company_id))){
+        	    sails.controllers.database.credSproc('DeleteCompany',[parseInt(req.body.company_id)],function(err,resultDelete){
+        		if(err)
+        		    return res.json({error:'Database Error:'+err},500);	
+        		res.json({success:'success'});
+        	    });
+        	}
 	}
   },
   getcontact:function(req,res){
@@ -138,6 +140,7 @@ module.exports = {
 	company = req.body.company;
 	contacts = req.body.contacts;
 	notes = req.body.notes;
+	
 	function updateCompany(contact,cb){
 	    if(company.company_id != 'new'&&typeof(company.modified)!='undefined'){
 		sails.controllers.database.credSproc('UpdateCompany',[company.company_id,"'"+company.company_name+"'"],function(err,resContact){
@@ -292,52 +295,145 @@ module.exports = {
 	    }
 	}
 	
+	function processReadOnlyNotes(cb){
+	    function loopNotes(i){
+		if (notes[i].id.toString().indexOf('new')>-1) { // new
+									// Note!
+		    var tempOutNoteVar = '@out' + Math.floor((Math.random() * 1000000) + 1);
+		    sails.controllers.database.credSproc('CreateNote', [ "'"+notes[i].note+"'", "'"+req.session.user.username+"'", 'NOW()',tempOutNoteVar], function(err, responseNote) {
+			if (err)
+			    return res.json({
+				error : 'Database Error:' + err
+			    }, 500);
+			
+			sails.controllers.database.credSproc('CreateNoteMapping',[company.company_id, responseNote[1][tempOutNoteVar], 2,'@outId'],function(err,responseNoteMapping){
+			    if (err)
+				return res.json({
+					error : 'Database Error:' + err
+				    }, 500);
+			    
+				i++;
+				if (i < notes.length) {
+				    loopNotes(i);
+				} else {
+				    cb();
+				}
+			});
+			
+		    });
+		}else if (typeof (notes[i].deleted) != 'undefined') { // delete
+		    sails.controllers.database.credSproc('GetNote',[notes[i].id],function(err,resultMyNote){
+			if(err)
+			    return console.log('Note error');
+			if(resultMyNote[0].length!=1){
+			    return console.log('error verifying note');
+			}
+			if(resultMyNote[0][0].user==req.session.user.username){
+        		    sails.controllers.database.credSproc('DeleteNote', [ notes[i].id ], function(err, responseNote) {
+        			if (err)
+        			    return res.json({
+        				error : 'Database Error:' + err
+        			    }, 500);
+        			i++;
+        			if (i < notes.length) {
+        			    loopNotes(i);
+        			} else {
+        			    cb();
+        			}
+        		    });
+			}
+		    });
+		} else if (typeof (notes[i].modified) != 'undefined') {
+		    sails.controllers.database.credSproc('GetNote',[notes[i].id],function(err,resultMyNote){
+			if(err)
+			    return console.log('Note error');
+			if(resultMyNote[0].length!=1){
+			    return console.log('error verifying note');
+			}
+			if(resultMyNote[0][0].user==req.session.user.username){
+        		    sails.controllers.database.credSproc('UpdateNote', [ notes[i].id, "'"+notes[i].note+"'", "'"+notes[i].user+"'", 'NOW()' ], function(err, responseNote) {
+        			if (err)
+        			    return res.json({
+        				error : 'Database Error:' + err
+        			    }, 500);
+        			i++;
+        			if (i < notes.length) {
+        			    loopNotes(i);
+        			} else {
+        			    cb();
+        			}
+        		    });
+			}
+		    });
+		} else {
+		    i++;
+		    if (i < notes.length) {
+			loopNotes(i);
+		    } else {
+			cb();
+		    }
+		}
+	    }
+	    if(notes.length>0){
+		loopNotes(0);
+	    }else{
+		cb();
+	    }
+	}
 	
 	
-	updateCompany(company,function(){
-	    processNotes(function(){
-        	    function loopContacts(i)
-        	    {
-        		if(typeof(contacts[i].new)!='undefined'){
-        		    sails.controllers.database.credSproc('CreateContactCompanyMapping',[contacts[i].contact_id,company.company_id,'@outval'],function(err,resMapping){
-        			    if(err)
-        				return res.json({error:'Database Error:'+err},500);
-        			    i++;	
-        			    if(i<contacts.length){
-        				loopContacts(i);
-        			    }else{
-        				res.json({'success':'success', company_id:company.company_id});
-        			    }
-        			    
-        		    });
-        		}else if(typeof(contacts[i].dodelete)!='undefined'){
-        		    sails.controllers.database.credSproc('DeleteContactCompanyMapping',[contacts[i].contact_id, company.company_id],function(err,resDel){
-        			    if(err)
-        				return res.json({error:'Database Error:'+err},500);
-        			    i++;
-        			    if(i<contacts.length){
-        				loopContacts(i);
-        			    }else{
-        				res.json({'success':'success', company_id:company.company_id});
-        			    }
-        		    });
-        		}
-        		i++;
-        		if(i<contacts.length){
-        		    loopContacts(i);
-        		}else{
-        		    res.json({'success':'success', company_id:company.company_id});
-        		}
-        		
-        	    }
-        	    if(contacts.length>0){
-        		loopContacts(0);
-        	    }else{
-        		res.json({'success':'success', company_id:company.company_id});
-        	    }
+	if(req.session.user.policy[req.route.path].update==0){  // readonly account Notes update.
+	    processReadOnlyNotes(function(){
+		    return res.json({
+			success : 'success',
+			company_id : company.company_id
+		    });
 	    });
-	});
-	
+	}else{
+        	updateCompany(company,function(){
+        	    processNotes(function(){
+                	    function loopContacts(i)
+                	    {
+                		if(typeof(contacts[i].new)!='undefined'){
+                		    sails.controllers.database.credSproc('CreateContactCompanyMapping',[contacts[i].contact_id,company.company_id,'@outval'],function(err,resMapping){
+                			    if(err)
+                				return res.json({error:'Database Error:'+err},500);
+                			    i++;	
+                			    if(i<contacts.length){
+                				loopContacts(i);
+                			    }else{
+                				res.json({'success':'success', company_id:company.company_id});
+                			    }
+                			    
+                		    });
+                		}else if(typeof(contacts[i].dodelete)!='undefined'){
+                		    sails.controllers.database.credSproc('DeleteContactCompanyMapping',[contacts[i].contact_id, company.company_id],function(err,resDel){
+                			    if(err)
+                				return res.json({error:'Database Error:'+err},500);
+                			    i++;
+                			    if(i<contacts.length){
+                				loopContacts(i);
+                			    }else{
+                				res.json({'success':'success', company_id:company.company_id});
+                			    }
+                		    });
+                		}
+                		i++;
+                		if(i<contacts.length){
+                		    loopContacts(i);
+                		}else{
+                		    res.json({'success':'success', company_id:company.company_id});
+                		}
+                		
+                	    }
+                	    if(contacts.length>0){
+                		loopContacts(0);
+                	    }else{
+                		res.json({'success':'success', company_id:company.company_id});
+                	    }
+        	    });
+        	});
+	}
 	
   }
 
