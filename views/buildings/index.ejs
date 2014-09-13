@@ -1083,7 +1083,7 @@
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">CAP Rate:</div>
-			<div class="span7 cap-rate"><span id="cap_rate">%{{=cap_rate}}</span></div>
+			<div class="span7 cap-rate"><span id="cap_rate">{{=cap_rate}}%</span></div>
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">{{if(typeof(sale_id)=='undefined'){ }}Last {{ } }}Sale Date:</div>
@@ -2587,7 +2587,7 @@
 	        updateCapRate:function(event){
 	        	var calculatedCapRate = ((building.get('building_income')/building.get('last_sale_price'))*100).toFixed(0);
 	        	building.set('cap_rate',calculatedCapRate=="Infinity"?null:calculatedCapRate);
-	        	$('#cap_rate').html(isNaN(calculatedCapRate)?(0+'%'):(calculatedCapRate+'%'));
+	        	$('#cap_rate').html((calculatedCapRate=="Infinity"||isNaN(calculatedCapRate))?(0+'%'):(calculatedCapRate+'%'));
 	        },
 	        unitQuantityChange:function(event){
 	        	//if(!building.get('building_income_manual_mode')){  // if automatic mode 
