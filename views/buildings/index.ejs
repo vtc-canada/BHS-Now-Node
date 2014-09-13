@@ -2966,7 +2966,7 @@
 					
 						buildingcontacts.add({
 							mapping_id: 'new_'+Math.floor((Math.random() * 1000000) + 1)
-							,contact_id: $('#mapping_new_contact_name').attr('contact_id')
+							,contact_id: newContactId
 							,dosync : true
 							,contact_name: $('#mapping_new_contact_name').html()
 							, contact_type:'seller'
@@ -3042,6 +3042,18 @@
 	    	
 	    function bindAddBuildingContactModal(){
 	    	// get the original data
+	    	
+			$('#mapping_new_company_name').html('');
+			$('#mapping_address').attr('mapping_street_number_begin','');
+			$('#mapping_address').attr('mapping_street_number_end','');
+			$('#mapping_address').attr('mapping_street_name','');
+			$('#mapping_address').attr('mapping_city','');
+			$('#mapping_address').attr('mapping_province','');
+			$('#mapping_address').attr('mapping_postal_code','');
+			$('#mapping_address').attr('mapping_contact_id','');
+			$('#mapping_new_company_address_1').html('');
+			$('#mapping_new_company_address_2').html('');
+			$('#mapping_new_company_address_3').html('');
 	        socket.get('/buildings/getcontactsbycompanyid',{},function(res){
 	        	$('select.contactscombobox').empty();
 	        	for(var i=0;i<res.length;i++){
