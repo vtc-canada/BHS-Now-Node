@@ -115,24 +115,6 @@
                    </div>
                </div>
                <div class="row">
-                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_address">Building:</label></div>
-                   <div class="span8 report-control-right-control">
-                       <input type="text" id="search_address" value="">
-                   </div>
-               </div>
-               <div class="row">
-                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_contact">Contact:</label></div>
-                   <div class="span8 report-control-right-control">
-                       <input type="text" id="search_contact" value="">
-                   </div>
-               </div>
-               <div class="row">
-                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_company">Company:</label></div>
-                   <div class="span8 report-control-right-control">
-                       <input type="text" id="search_company" value="">
-                   </div>
-               </div>
-               <div class="row">
                		<div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;">
                			<label for="start_time">Sale Date:</label>
            			</div>
@@ -195,10 +177,8 @@
 		        "ajax": {
 		        	"url":"/notes/searchnotes",
 	        		"data":function(d){
-	        			d.contact_search = $("#search_contact").val();
-	        			d.address_search = $('#search_address').val();
-	        			d.company_search = $('#search_company').val();
 	        			d.note_search = $('#search_note').val();
+	        			d.user = $('#search_user').val();
 	        			d.saleDateRangeStart = $('#start_time').val();
 	        			d.saleDateRangeEnd = $('#end_time').val();
 	        		},
@@ -262,6 +242,11 @@
 			},10);
 		});
 		$('#search_note').keydown(function(){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		});
+		$('#search_user').keydown(function(){
 			setTimeout(function(){
 				datatable.api().ajax.reload();
 			},10);

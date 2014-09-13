@@ -30,52 +30,16 @@ module.exports = {
     	res.view('notes/index', {});
     },
     searchnotes:function(req,res){
-	var address_search = null;
-	var contact_search = null;
-	var company_search = null;
 	var note_search = null;
-	if (req.query.address_search != '') {
-	    adr = req.query.address_search.trim().split(" ");
-	    address_search = '';
-	    for(var i=0;i<adr.length;i++){
-		if(adr[i].trim()!=''){
-		    address_search=address_search+ "+"+adr[i].trim()+"* ";
-		}
-	    }
-	    address_search = "'"+address_search.trim()+"'";
-	}
-	if (req.query.contact_search != '') {
-	    contact_search = req.query.contact_search.trim().split(" ");
-	    adr = req.query.contact_search.trim().split(" ");
-	    contact_search = '';
-	    for(var i=0;i<adr.length;i++){
-		if(adr[i].trim()!=''){
-		    contact_search=contact_search+ "+"+adr[i].trim()+"* ";
-		}
-	    }
-	    contact_search = "'"+contact_search.trim()+"'";
-	}
-	if (req.query.company_search != '') {
-	    company_search = req.query.company_search.trim().split(" ");
-	    adr = req.query.company_search.trim().split(" ");
-	    company_search = '';
-	    for(var i=0;i<adr.length;i++){
-		if(adr[i].trim()!=''){
-		    company_search=company_search+ "+"+adr[i].trim()+"* ";
-		}
-	    }
-	    company_search = "'"+company_search.trim()+"'";
-	}
 	if (req.query.note_search != '') {
-	    /*note_search = req.query.note_search.trim().split(" ");
 	    adr = req.query.note_search.trim().split(" ");
 	    note_search = '';
 	    for(var i=0;i<adr.length;i++){
 		if(adr[i].trim()!=''){
 		    note_search=note_search+ "+"+adr[i].trim()+"* ";
 		}
-	    }*/
-	    note_search = req.query.note_search;
+	    }
+	    note_search = "'"+note_search+"'";
 	}
 
 	var orderstring = '';
@@ -90,7 +54,7 @@ module.exports = {
 
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
 	totalCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
-	sails.controllers.database.credSproc('SearchNotes',[contact_search, address_search, company_search, note_search,
+	sails.controllers.database.credSproc('SearchNotes',[note_search, req.query.user==''?null:"'"+req.query.user+"'",
 	                                                    req.query.saleDateRangeStart == '' ? null : "'"+req.query.saleDateRangeStart+"'", req.query.saleDateRangeEnd == '' ? null : "'"+req.query.saleDateRangeEnd+"'",
 	                                            	req.query.start, req.query.length, orderstring,filteredCount,totalCount],function(err,responseNotes){
 	    if(err){

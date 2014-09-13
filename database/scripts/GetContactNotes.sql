@@ -12,7 +12,6 @@ SELECT
 FROM 
 	cur_note_mapping
 	INNER JOIN cur_notes ON (cur_notes.id = cur_note_mapping.cur_notes_id)
-	INNER JOIN cur_address ON (cur_address.id = cur_note_mapping.entity_id)
 	INNER JOIN cur_contacts ON (cur_note_mapping.entity_id= cur_contacts.id AND cur_contacts.id = contactID)
 WHERE 
 	cur_notes.is_deleted = 0

@@ -11,6 +11,7 @@ BEGIN
 		,cur_company.id as 'company_id'
 		,cur_address.id as 'address_id'
 		,cur_address.street_number_begin
+		,cur_address.street_number_end
 		,cur_address.street_name
 		,cur_address.postal_code
 		,cur_address.city

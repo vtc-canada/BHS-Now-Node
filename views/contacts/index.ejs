@@ -369,7 +369,7 @@
         		}
         	}
         	companycombobox = $('select.companycombobox').combobox();
-        	$('.combobox-container .icon-remove').click();
+        	//$('.combobox-container .icon-remove').click();
         	$('input.companycombobox').on('keyup',function(e){
         		if(curcompanyval!=$('input.companycombobox').val()&&e.keyCode!=9&&e.keyCode!=13&&e.keyCode!=27){
     				curcompanyval =  $('input.companycombobox').val();
@@ -465,7 +465,9 @@
         	$(this).removeClass('selected').addClass('selected');
 	    });
 	    $('#contacts').on('draw.dt',function(event,datatable){
-	     	
+	     	if(!isNaN(parseInt(contact.get('contact_id')))){
+	     		$('#contacts tbody tr[contact_id='+contact.get('contact_id')+']').addClass('selected');
+	     	}
     	});
     	
     	
@@ -484,12 +486,29 @@
 			contactView.render();
 			companies.reset();
 			companyView.render();
-			notesView.render();
+			if(notesView!=null){
+				notesView.render();
+			}
+     		$('#contacts tbody tr').removeClass('selected');
+     		
+            setTimeout(function(){
+				if($('body').width()>979){
+					$('.main-content').animate({
+				        scrollTop: $(".edit-item-section").offset().top - $('.navbar-fixed-top').height()
+				    }, 500);
+				}else{
+					$('html, body').animate({
+				        scrollTop: $(".edit-item-section").offset().top
+				    }, 500);
+				}
+            },100);
 		});
 		
 		$('#cancel_contact').click(function(){
 			$('#delete_contact').css('display','none');
 			$('.edit-item-section').css('display','none');	
+     		$('#contacts tbody tr').removeClass('selected');
+			
 		});
 		
 		$('#delete_contact').click(function(){
@@ -525,10 +544,14 @@
 				contactView.render();
 				companies.reset();
 				companyView.render();
+				$('#delete_contact').css('display','none');
+				$('.edit-item-section').css('display','none');	
+	           	
 			});
 		});
 		
     	$('#save_contact').click(function(){
+    		var wasnew = contact.get('contact_id')=='new'?true:false;
     		socket.get('/contacts/updatecontact/' + contact.get('contact_id'), {contact:contact.toJSON(), companies : companies.toJSON(), notes : notes.toJSON()},function(response){
     			if(typeof(response.success)!='undefined'){
     				if(contact.get('contact_id')=='new'){
@@ -539,10 +562,21 @@
 	                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
 	                        '<strong>'+'Success'+':&nbsp</strong>'+'Changes have been saved'+'</div>');
 	                $('.main-content')[0].scrollTop=0;
-	                setTimeout(function(){
-	                	contact.fetch({id:parseInt(contact.get('contact_id'))}); 
-	    				companies.fetch({contact_id:parseInt(contact.get('contact_id'))});  
+	                
+	                
+	                setTimeout(function(){// wait for database to be ready
+	                	if(wasnew){
+							$('.edit-item-section').css('display','none');
+							$('#delete_contact').css('display','none');
+							contact.set('contact_id','new');
+	                	}else{
+		                	contact.fetch({id:parseInt(contact.get('contact_id'))}); 
+		    				companies.fetch({contact_id:parseInt(contact.get('contact_id'))});  
+	                	}
+						datatable.api().ajax.reload(function(){},false);  // reloads the datatable- value should still be shown
 	                },100);
+	                
+					
 	                setTimeout(function(){
 	                    setTimeout(function(){
 	                        $('.alert-success').remove();
@@ -954,7 +988,7 @@
 	        		//$('#building-sales').css('display','')
 	        	}
 	            var tcollection = this.collection.sortBy(function(notes){
-	                return notes.get("note").toString().toUpperCase();
+	                return notes.get("timestamp").toString().toUpperCase();
 	            });
 	
 	            for(var i=0; i<tcollection.length; i++)
@@ -962,7 +996,7 @@
 	                //if(!tcollection[i].isNew()){
 	                if(typeof(tcollection[i].get('deleted'))=='undefined'){
 	                	tcollection[i].set('note_datetime',toDateTimeString(tcollection[i].get('timestamp')));
-	                	this.$el.append(this.template(tcollection[i].toJSON()));
+	                	this.$el.prepend(this.template(tcollection[i].toJSON()));
 	            	}
 	                //}else{
 	                //    this.$el.append(this.newusertemplate(tcollection[i].toJSON()));
@@ -982,7 +1016,7 @@
 	            //setChangesPending();  // recalculates and displays if changes are pending
 	        }
 	    });
-	    var notesView;
+	    var notesView=null;
 	   
 	   
     });
