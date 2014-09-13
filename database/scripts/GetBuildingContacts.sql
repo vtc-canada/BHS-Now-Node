@@ -32,6 +32,5 @@ FROM
 WHERE 
 	cur_buildings.id = buildingID
 	AND cur_buildings.is_deleted = 0;
-	#AND cur_contacts.is_deleted = 0;
 END$$
 DELIMITER ;	
