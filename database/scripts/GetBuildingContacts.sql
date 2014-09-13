@@ -31,7 +31,7 @@ FROM
 	INNER JOIN ref_contact_type ON (ref_contact_type.id = mapping.contact_type_id)
 WHERE 
 	cur_buildings.id = buildingID
-	AND cur_buildings.is_deleted = 0
-	AND cur_contacts.is_deleted = 0;
+	AND cur_buildings.is_deleted = 0;
+	#AND cur_contacts.is_deleted = 0;
 END$$
 DELIMITER ;	
