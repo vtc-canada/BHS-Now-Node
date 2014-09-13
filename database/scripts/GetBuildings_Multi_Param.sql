@@ -53,8 +53,6 @@ SELECT
 	,cur_address.longitude
 	,cur_buildings.windows_installed_year
 	,IFNULL(sales_count.num_of_records,0) AS num_of_sales
-	,ref_building_type.id
-	,ref_heat_system_type.id
 	
 FROM cur_buildings
 	INNER JOIN cur_address ON (cur_address.id = cur_buildings.cur_address_id)
