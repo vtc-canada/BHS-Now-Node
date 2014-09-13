@@ -197,16 +197,11 @@ module.exports = {
 			var tempOutVar = '@out' + Math.floor((Math.random() * 1000000) + 1);
 			sails.controllers.database.credSproc('CreateSalesContactMapping', [ responseSalesRecord[1][new_sale_id],
 				null, building.building_id, null, null, tempOutVar ], function(err, responseSalesMapping) {
-			    i++;
-			    if (i < buildingcontacts.length) {
-				loop(i)
-			    } else {
 				res.json({
 				    success : true,
 				    sale_id : responseSalesRecord[1][new_sale_id],
 				    building_id : building.building_id
 				});
-			    }
 			});
 		    }
 		    // sails.controllers.database.credSproc('CreateSalesContactMapping',
