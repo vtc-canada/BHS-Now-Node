@@ -171,9 +171,10 @@
         		
         		
 		var datatable = $('#contacts').dataTable({
+				"iDisplayLength":25,
 		        "processing": true,
 		        "serverSide": true,
-		        "dom":"ltipr",
+		        "dom":"tipr",
 		        "ajax": {
 		        	"url":"/notes/searchnotes",
 	        		"data":function(d){

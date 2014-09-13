@@ -2918,15 +2918,12 @@
 						if(newContactId==null&&newCompanyId==null)
 						{
 							$('#addContactModal div.modal-header').after(
-	                    '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong>Error:&nbsp;</strong>Please select a Contact and optionally a company to associate with this building.</div>');
+	                    '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong>Error:&nbsp;</strong>Please select a Contact, Company or both.</div>');
 	            			return;
 						}else if(newContactId==null){
-							$('#addContactModal div.modal-header').after(
-	                    '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong>Error:&nbsp;</strong>You must select a contact.</div>');
-	            		
+							
 						}
 						
-					
 						buildingcontacts.add({
 							mapping_id: 'new_'+Math.floor((Math.random() * 1000000) + 1)
 							,contact_id: newContactId

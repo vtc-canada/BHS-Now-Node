@@ -277,25 +277,33 @@ input.segment-form-radio{
 .building-overlay-block-picture{
 	
 	border: 1px solid rgb(156, 156, 156);
-	height: 110px;
+	height: 106px;
 	margin-bottom: 5px;
-	margin-left: 2.7624309392265194% !important;
 	width: auto !important;
+	margin-right: 16px;
+	margin-left: 10px !important;
 }
 
 .building-overlay-block-picture img{
-	padding:2px;
+	padding: 0px;
 	height: 104px;	
 	width: auto;
 }
 
+.building-overlay-block-details:last-child{
+	margin-right:45px;
+}
 .building-overlay-block-details{
-    border: 1px solid #c3c3c3;
     padding: 4px;
     min-height: 110px !important;
-    background: rgb(230, 230, 230);
     margin-bottom: 5px;
     width: 235px !important;
+    margin-left: 0px !important;
+    border-left: 1px solid #c3c3c3;
+    padding-left: 10px;
+    margin-right: 10px;
+    float: none !important;
+    display: inline-block !important;
 }
 
 .building-overlay-block-details .block-value{
@@ -303,14 +311,14 @@ input.segment-form-radio{
 	color:black;
 }
 
-.building-overlay-block-address{
-    border: 1px solid #c3c3c3;  padding: 4px;  
-    min-height: 110px !important;  background: rgb(230, 230, 230);
+.building-overlay-block-address{  padding: 4px;  
+    min-height: 110px !important;
 	/*font-weight:600;
 	color:#828282;*/
     margin-bottom: 5px;
     width: 235px !important;
-}
+    margin-left: 0px !important;
+  padding-left: 10px;  border-left: 1px solid #c3c3c3;  margin-right: 10px;  display: inline-block !important;  float: none;  white-space: nowrap;}
 
 .building-overlay-block-address .block-value{
 	font-weight:600;
@@ -320,6 +328,7 @@ input.segment-form-radio{
 
 .building-details-padder{
 	padding:5px;
+	overflow-x: auto;
 }
 
 .row-fluid .building-overlay-block-address{
@@ -1020,15 +1029,20 @@ div.language-flag.chile{
 	.row-fluid .building-overlay-block-address{
 		/*border: 1px solid #AAAAAA;*/
 		padding-left: 4px;
-	}
+	
+		float: left;
+		width: 235px !important;
+}
 	
 	.row-fluid .building-overlay-block-details{
-		/*border: 1px solid #AAAAAA;*/
-		padding-left: 4px;
-		margin-top: 6px;
-		padding-right: 4px;
-		width:100% !important;
-	}
+		/* border: 1px solid #AAAAAA; */
+		/* padding-left: 4px; */
+		/* margin-top: 6px; */
+		/* padding-right: 4px; */
+		width: 235px !important;
+	
+		float: left;
+}
 	
 	.building-segment-wrapper .segment-label{
 		text-align:left;
