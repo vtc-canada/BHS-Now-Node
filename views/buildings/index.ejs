@@ -2253,7 +2253,7 @@
     		//}
     		building.set('sale_id','new');
     		building.set('last_sale_price',parseInt($('#sale_price').autoNumeric('get')));
-    		building.set('sale_date',$('#new_sale_date').val());
+    		building.set('sale_date',$('#new_sale_date_gen').data('datetimepicker').getLocalDate().toUTCString());
     		//building.set('buildingcontacts',buildingcontacts);
     		if($('#new_unit_price_manual_radio').is(':checked')&&!isNaN(parseFloat($('#new_unit_price').autoNumeric('get')))){
     			building.set('unit_price', parseFloat($('#new_unit_price').autoNumeric('get')));
@@ -2894,6 +2894,7 @@
 			        $('#sale_price').val(building.get('last_sale_price'));
 			        $('#sale_price').autoNumeric('update');
 			        //$('#new_sale_date').val(new Date().toLocaleString());
+			        
 			        salepicker.setLocalDate(new Date());
 			        $('#new_unit_price_calculated_radio').click();
 			        $('#new_unit_price').val('0');
