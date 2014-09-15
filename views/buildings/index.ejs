@@ -798,14 +798,6 @@
 	</div>
 	{{ } }}
 	
-	<div class="row-fluid">
-		<div class="span12">
-			<div class="row-fluid" >
-				<div class="row-category" >
-    			</div>
-			</div>
-		</div>
-	</div>
     		
 	
 	<div class="row-fluid building-segment-wrapper">
@@ -1176,28 +1168,31 @@
 	<div class="row-fluid building-contact-wrapper" contact_mapping_id="{{=mapping_id}}" contact_id="{{=contact_id}}" {{ if(typeof(dodelete)!='undefined'){ }}style="display:none;"{{ } }}>
 
 		<div class="row-fluid">
-			<div class="span5 segment-label">Company:</div>
-			<div class="span7 segment-label-value">{{=cur_company_name}}</div>
+			<div class="span5 segment-label mobilehider">Company:</div>
+			<div class="span7 segment-label-value"><span class="mobilelabel">Company:</span>{{=cur_company_name}}</div>
 		</div>
 		<div class="row-fluid">
-			<div class="span5 segment-label">Address:</div>
+			<div class="span5 segment-label mobilehider">Address:</div>
 			<div class="span7" style="padding-top: 6px;">
-				<div class="row-fluid">{{=(street_number_begin==null?'':street_number_begin)+(street_number_end==''||street_number_end==null||street_number_end=='null'?'':' - '+street_number_end)+(street_name==''||street_name==null||street_name=='null'?'':' '+street_name)}}</div>
-				<div class="row-fluid">{{=(city==''||city==null||city=='null'?'':city)+(province==''||province==null||province=='null'?'':(city==''||city==null||city=='null'?'':', ')+province)}}</div>
-				<div class="row-fluid">{{=postal_code==null||postal_code=='null'||postal_code==''?'':postal_code}}</div>
+				<span class="mobilelabel">Address:</span>
+				<div class="mobileaddress">
+					<div class="row-fluid">{{=(street_number_begin==null?'':street_number_begin)+(street_number_end==''||street_number_end==null||street_number_end=='null'?'':' - '+street_number_end)+(street_name==''||street_name==null||street_name=='null'?'':' '+street_name)}}</div>
+					<div class="row-fluid">{{=(city==''||city==null||city=='null'?'':city)+(province==''||province==null||province=='null'?'':(city==''||city==null||city=='null'?'':', ')+province)}}</div>
+					<div class="row-fluid">{{=postal_code==null||postal_code=='null'||postal_code==''?'':postal_code}}</div>
+				</div>
 			</div>
 		</div>
 		<div class="row-fluid">
-			<div class="span5 segment-label">Contact:</div>
-			<div class="span7 segment-label-value">{{=contact_name}}</div>
+			<div class="span5 segment-label mobilehider">Contact:</div>
+			<div class="span7 segment-label-value"><span class="mobilelabel">Contact:</span>{{=contact_name}}</div>
 		</div>
 		<div class="row-fluid">
-			<div class="span5 segment-label">Phone:</div>
-			<div class="span7 segment-label-value">{{=phone_number}}</div>
+			<div class="span5 segment-label mobilehider">Phone:</div>
+			<div class="span7 segment-label-value"><span class="mobilelabel">Phone:</span>{{=phone_number}}</div>
 		</div>
 		<div class="row-fluid">
-			<div class="span5 segment-label">Email:</div>
-			<div class="span7 segment-label-value">{{=email}}</div>
+			<div class="span5 segment-label mobilehider">Email:</div>
+			<div class="span7 segment-label-value"><span class="mobilelabel">Email:</span>{{=email}}</div>
 		</div>
 		
 		{{if(typeof(sale_id)=='undefined'){ }}
@@ -1215,11 +1210,11 @@
 <script type="text/template" id="building-sale-template">
 	<div class="row-fluid building-sale-wrapper generic-table-styling {{=typeof(selected)!='undefined'&&selected?'table-row-selected':''}}" sale_id="{{=sale_id}}" building_id="{{=building_id}}">
 		<div class="row-fluid">
-			<div class="span3">{{=sale_datestring}}</div>
-			<div class="span2">{{=owner}}</div>
-			<div class="span2">{{=seller}}</div>
-			<div class="span2">{{=agent}}</div>
-			<div class="span3">{{=formatted_sale_price}}</div>
+			<div class="span3"><span class="mobilelabel">Timestamp:</span>{{=sale_datestring}}</div>
+			<div class="span2"><span class="mobilelabel">Owner:</span>{{=owner}}</div>
+			<div class="span2"><span class="mobilelabel">Seller:</span>{{=seller}}</div>
+			<div class="span2"><span class="mobilelabel">Agent:</span>{{=agent}}</div>
+			<div class="span3"><span class="mobilelabel">Price:</span>{{=formatted_sale_price}}</div>
 		</div>
 	</div>
 </script>

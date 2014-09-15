@@ -695,6 +695,9 @@ a.isys-a.small{
 .css-notes-wrapper span.mobilelabel{
 	display:none;
 }
+.building-sale-wrapper  span.mobilelabel{
+	display:none;
+} 
 
 .building-note > div {
 	padding-top:8px;
@@ -1006,6 +1009,17 @@ div.language-flag.chile{
 	
 @media (max-width: 767px){
 	
+	#building-owners-wrapper .mobilehider{
+		display:none;
+	}
+	#building-sellers-wrapper .mobilehider{
+		display:none;
+	}
+	#building-agents-wrapper .mobilehider{
+		display:none;
+	}
+	
+	
 	.building-overlay-block-address {
 		width: 100% !important;
 	}
@@ -1070,6 +1084,38 @@ div.language-flag.chile{
         margin-bottom: 20px;
     
     }
+    .building-sale-wrapper  span.mobilelabel{
+    	display:inline;
+    	width: 25%;
+    	float:left;
+    	margin-left:10px;
+    } 
+    .building-sale-wrapper{
+    	
+		border: 1px solid #BBBDBE;
+		background-color: rgb(246, 247, 250);
+		margin-bottom: 20px;
+    }
+ 	.building-sale-wrapper.table-row-selected {
+		background: #0F74BC;
+		color: white;
+	}
+    
+    .building-contact-wrapper  span.mobilelabel{
+    	display:inline;
+    	width: 25%;
+    	float:left;
+    	margin-left:10px;
+    }
+    .building-contact-wrapper{
+		border: 1px solid #BBBDBE;
+		background-color: rgb(246, 247, 250);
+		margin-bottom: 20px;
+		border-top: 1px solid #BBBDBE !important;
+	}
+	 .building-contact-wrapper .remove-building-contact{
+	 	margin:10px;
+	 }
     .css-notes-wrapper span.mobilelabel{
     	display:inline;
     	width: 25%;
