@@ -26,7 +26,9 @@ module.exports.policies = {
 	 'notes':'RoutePolicy',
 	 'getcontacts':'RoutePolicy',
 	 'getsales':'RoutePolicy',
-	 'deletebuilding':'RoutePolicy'
+	 'deletebuilding':'RoutePolicy',
+	 'getcompaniesbycontactid':'RoutePolicy',
+	 'getcontactsbycompanyid':'RoutePolicy'
     },
     'companies':{
 	'*' : 'isAuthenticated',
@@ -48,13 +50,15 @@ module.exports.policies = {
 	'getcompaniesbyname':'RoutePolicy',
 	'notes':'RoutePolicy',
 	'updatecontact':'RoutePolicy',
-	'deletecontact':'RoutePolicy'
+	'deletecontact':'RoutePolicy',
+	'getaddressbycompanyid':'RoutePolicy'
 	
     },
     'admin' : {
 	'*':'isAuthenticated',
         'users' : 'RoutePolicy',
-        'usersjoinedpolicies': 'RoutePolicy'
+        'usersjoinedpolicies': 'RoutePolicy',
+        'checkusername':'RoutePolicy'
     },
     'users':'RoutePolicy',
     'notes': {

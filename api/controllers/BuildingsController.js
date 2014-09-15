@@ -182,10 +182,12 @@ module.exports = {
 			    if (i < buildingcontacts.length) {
 				loop(i)
 			    } else {
-				res.json({
-				    success : true,
-				    sale_id : responseSalesRecord[1][new_sale_id],
-				    building_id : building.building_id
+				checkAndUpdateBuildingLastSale(building,function(){
+				    res.json({
+					success : true,
+					sale_id : responseSalesRecord[1][new_sale_id],
+					building_id : building.building_id
+				    });
 				});
 			    }
 			});
@@ -197,10 +199,12 @@ module.exports = {
 			var tempOutVar = '@out' + Math.floor((Math.random() * 1000000) + 1);
 			sails.controllers.database.credSproc('CreateSalesContactMapping', [ responseSalesRecord[1][new_sale_id],
 				null, building.building_id, null, null, tempOutVar ], function(err, responseSalesMapping) {
-				res.json({
-				    success : true,
-				    sale_id : responseSalesRecord[1][new_sale_id],
-				    building_id : building.building_id
+				checkAndUpdateBuildingLastSale(building,function(){
+    					res.json({
+    					    	success : true,
+    					    	sale_id : responseSalesRecord[1][new_sale_id],
+    				    		building_id : building.building_id
+    					});
 				});
 			});
 		    }
@@ -224,10 +228,12 @@ module.exports = {
 			responseUpdateSale) {
 
 		    // TODO : Update building..
-		    res.json({
-			success : true,
-			sale_id : building.sale_id,
-			building_id : building.building_id
+		    checkAndUpdateBuildingLastSale(building,function(){
+			    res.json({
+				success : true,
+				sale_id : building.sale_id,
+				building_id : building.building_id
+			    });
 		    });
 		});
 
@@ -335,6 +341,39 @@ module.exports = {
 			
 		    }
 	    });
+	    function checkAndUpdateBuildingLastSale(buildingsale,cb){
+		if(isNaN(parseInt(buildingsale.building_id))){
+		    return console.log('invalid building id');
+		}
+		sails.controllers.database.credSproc('GetBuilding', [ buildingsale.building_id ], function(err, building) {
+
+		    if (err) {
+			res.json({
+			    error : 'Database Error'
+			}, 500);
+		    } else if(typeof(building[0][0])=='undefined'){
+			res.json({
+			    error : 'Database Error'
+			}, 500);
+		    }else {
+			building = building[0][0];
+			if(new Date(buildingsale.sale_date)>=building.sale_date){
+			    
+			    sails.controllers.database.credSproc('UpdateBuildingLastSale', [ building.building_id, "'" + toUTCDateTimeString(buildingsale.sale_date) + "'"
+			                                                                     , buildingsale.last_sale_price,], function(err, updatesale) {
+				if(err)
+				    return console.log('error'+err);
+				cb();
+			    });
+			}else{
+			    cb();
+			}
+			
+		    }
+		});
+	    }
+	    
+	    
 	}
 
 	function processContacts(cb) { // inline process contacts // loops,
@@ -804,7 +843,7 @@ function toUTCDateTimeString(date){
 	date = new Date();
     }else if(typeof(date)!=='object'){
 	date = new Date(date);
-	date = new Date(date.setMinutes(date.getMinutes() - date.getTimezoneOffset()));
+	//date = new Date(date.setMinutes(date.getMinutes() - date.getTimezoneOffset()));
     }
 	
     
