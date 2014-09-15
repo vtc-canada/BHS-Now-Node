@@ -180,8 +180,8 @@
 	        		"data":function(d){
 	        			d.note_search = $('#search_note').val();
 	        			d.user = $('#search_user').val();
-	        			d.saleDateRangeStart = $('#start_time').val();
-	        			d.saleDateRangeEnd = $('#end_time').val();
+	        			d.saleDateRangeStart = $('#start_time_gen').data('datetimepicker').getLocalDate().toUTCString();	        			
+	        			d.saleDateRangeEnd = $('#end_time_gen').data('datetimepicker').getLocalDate().toUTCString();
 	        		},
 	        		error: function(xhr, error, thrown){
 	        			//alert('an error');
