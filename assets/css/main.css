@@ -224,6 +224,10 @@ table.dataTable:not(.disable-pointer) > tbody > tr{
 	line-height: 30px;
 }
 
+.building-contact-wrapper  span.mobilelabel{
+	display:none;
+}
+
 .building-contact-delete{
 	opacity:0.4;
 }
