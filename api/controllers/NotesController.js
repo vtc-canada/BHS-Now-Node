@@ -84,3 +84,8 @@ function toUTCDateTimeString(date){
     }
     return date.getUTCFullYear()+'-'+padLeft((date.getUTCMonth()+1).toString(),2)+'-'+ padLeft(date.getUTCDate(),2) + ' ' + padLeft(date.getUTCHours(),2)+':'+padLeft(date.getUTCMinutes(),2)+':'+padLeft(date.getUTCSeconds(),2);
 }
+
+function padLeft(nr, n, str){
+    return Array(n-String(nr).length+1).join(str||'0')+nr;
+}
+  
