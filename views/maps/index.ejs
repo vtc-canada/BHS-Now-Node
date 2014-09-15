@@ -611,8 +611,9 @@
 		        			d.company_search = $("#search_company").val();
 		        			d.unitQuantityMin = unitsMin==0?null:unitsMin;
 		        			d.unitQuantityMax = unitsMax==sliderLimit?null:unitsMax;
-		        			d.saleDateRangeStart = $('#start_time_gen').data('datetimepicker').getLocalDate().toUTCString();	        			
-		        			d.saleDateRangeEnd = $('#end_time_gen').data('datetimepicker').getLocalDate().toUTCString();
+							d.saleDateRangeStart = typeof($('#start_time_gen').data('datetimepicker'))=='undefined'?null:$('#start_time_gen').data('datetimepicker').getLocalDate().toUTCString();	        			
+	        				d.saleDateRangeEnd = typeof($('#end_time_gen').data('datetimepicker'))=='undefined'?null:$('#end_time_gen').data('datetimepicker').getLocalDate().toUTCString();
+	        			
 		        			//d.length = $('#result_size').val();
 		        			if(markers.constrainGPS)
 		        			{

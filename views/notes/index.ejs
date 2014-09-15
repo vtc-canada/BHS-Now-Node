@@ -139,7 +139,7 @@
 
 <div class="row-fluid" style="margin-top:19px;">
     <div class="span10 offset1 page-controls-wrapper">
-        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;">Contacts</span>
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;">Notes</span>
              <div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="export_notes">Export</div>
         
         </div>
@@ -180,8 +180,9 @@
 	        		"data":function(d){
 	        			d.note_search = $('#search_note').val();
 	        			d.user = $('#search_user').val();
-	        			d.saleDateRangeStart = $('#start_time_gen').data('datetimepicker').getLocalDate().toUTCString();	        			
-	        			d.saleDateRangeEnd = $('#end_time_gen').data('datetimepicker').getLocalDate().toUTCString();
+						d.saleDateRangeStart = $('#start_time').val()==''?null:typeof($('#start_time_gen').data('datetimepicker'))=='undefined'?null:$('#start_time_gen').data('datetimepicker').getLocalDate().toUTCString();	        			
+        				d.saleDateRangeEnd =$('#end_time').val()==''?null: typeof($('#end_time_gen').data('datetimepicker'))=='undefined'?null:$('#end_time_gen').data('datetimepicker').getLocalDate().toUTCString();
+
 	        		},
 	        		error: function(xhr, error, thrown){
 	        			//alert('an error');

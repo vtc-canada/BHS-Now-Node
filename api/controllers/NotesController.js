@@ -55,8 +55,9 @@ module.exports = {
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
 	totalCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
 	sails.controllers.database.credSproc('SearchNotes',[note_search, req.query.user==''?null:"'"+req.query.user+"'",
-	                                                    req.query.saleDateRangeStart == '' ? null : "'"+req.query.saleDateRangeStart+"'", req.query.saleDateRangeEnd == '' ? null : "'"+req.query.saleDateRangeEnd+"'",
-	                                            	req.query.start, req.query.length, orderstring,filteredCount,totalCount],function(err,responseNotes){
+        		(req.query.saleDateRangeStart == ''||req.query.saleDateRangeStart == null) ? null : "'"+toUTCDateTimeString(req.query.saleDateRangeStart)+"'",
+        		(req.query.saleDateRangeEnd == ''||req.query.saleDateRangeEnd == null) ? null : "'"+toUTCDateTimeString(req.query.saleDateRangeEnd)+"'",	                                            	
+			req.query.start, req.query.length, orderstring,filteredCount,totalCount],function(err,responseNotes){
 	    if(err){
 		return res.json({error:'Database Error:'+err},500);
 	    }
@@ -69,5 +70,17 @@ module.exports = {
 	});
 	
     }
+    
+    
   
 };
+
+function toUTCDateTimeString(date){
+    if(date==null){
+	date = new Date();
+    }else if(typeof(date)!=='object'){
+	date = new Date(date);
+	//date = new Date(date.setMinutes(date.getMinutes() - date.getTimezoneOffset()));
+    }
+    return date.getUTCFullYear()+'-'+padLeft((date.getUTCMonth()+1).toString(),2)+'-'+ padLeft(date.getUTCDate(),2) + ' ' + padLeft(date.getUTCHours(),2)+':'+padLeft(date.getUTCMinutes(),2)+':'+padLeft(date.getUTCSeconds(),2);
+}

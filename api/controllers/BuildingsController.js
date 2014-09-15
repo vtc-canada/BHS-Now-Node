@@ -659,7 +659,9 @@ module.exports = {
 		req.query.unitQuantityMax == '' ? null : parseInt(req.query.unitQuantityMax),
 		(typeof(req.query.unit_price_min)=='undefined'||req.query.unit_price_min == '') ? null : parseInt(req.query.unit_price_min),
 			(typeof(req.query.unit_price_max)=='undefined'||req.query.unit_price_max == '') ? null : parseInt(req.query.unit_price_max),
-		req.query.saleDateRangeStart == '' ? null : "'"+req.query.saleDateRangeStart+"'", req.query.saleDateRangeEnd == '' ? null : "'"+req.query.saleDateRangeEnd+"'",
+		(req.query.saleDateRangeStart == ''||req.query.saleDateRangeStart == null) ? null : "'"+toUTCDateTimeString(req.query.saleDateRangeStart)+"'",
+		(req.query.saleDateRangeEnd == ''||req.query.saleDateRangeEnd == null) ? null : "'"+toUTCDateTimeString(req.query.saleDateRangeEnd)+"'",
+					
 		req.query.boundsLatitudeMin == ''?null:req.query.boundsLatitudeMin,
 		req.query.boundsLatitudeMax == ''?null:req.query.boundsLatitudeMax,
 		req.query.boundsLongitudeMin == ''?null:req.query.boundsLongitudeMin,
@@ -845,7 +847,6 @@ function toUTCDateTimeString(date){
 	date = new Date(date);
 	//date = new Date(date.setMinutes(date.getMinutes() - date.getTimezoneOffset()));
     }
-	
     
     return date.getUTCFullYear()+'-'+padLeft((date.getUTCMonth()+1).toString(),2)+'-'+ padLeft(date.getUTCDate(),2) + ' ' + padLeft(date.getUTCHours(),2)+':'+padLeft(date.getUTCMinutes(),2)+':'+padLeft(date.getUTCSeconds(),2);
 }
