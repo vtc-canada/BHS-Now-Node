@@ -179,6 +179,7 @@ table.dataTable:not(.disable-pointer) > tbody > tr{
 	padding-left: 12px;
 	margin-top:12px;
 	margin-bottom:20px;
+	position: relative;
 }
 
 .row-category-button-wrapper{
@@ -186,6 +187,16 @@ table.dataTable:not(.disable-pointer) > tbody > tr{
 	background: white;
 	padding-top: 10px;
 	padding-bottom:10px;
+}
+
+.fileupload-ontop input{
+	cursor:pointer;
+}
+.fileupload-ontop{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    opacity: 0;
 }
 
 .building-segment-wrapper .segment-label{

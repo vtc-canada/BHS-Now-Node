@@ -760,15 +760,15 @@
 					<% if(req.session.user.policy[req.route.path].update==1){ %>
 					<div class="pull-right" style="height:40px;">
 						<span class="row-category-button-wrapper">
-						
 							<span class="btn btn-success fileinput-button">
 			                    <i class="glyphicon glyphicon-plus"></i>
 			                    <span>Add Photo</span>
 			                </span>
-						
-							<div style='height: 0px;width:0px; overflow:hidden;'><input type="file" name="filesToUpload[]" id="filesToUpload" multiple="multiple"/></div>
-    
 						</span>
+						
+						<div class="fileupload-ontop"> <!-- style='height: 0px;width:0px; overflow:hidden;'-->
+							<input type="file" name="filesToUpload[]" id="filesToUpload" multiple="multiple"/>
+						</div>
 					</div>
 					<% } %>
 				</div>
@@ -2805,16 +2805,20 @@
 		    	$('.fileinput-button').click(function(){
 		    		if(typeof($(this).attr('disabled'))=='undefined')
 		    		{
+		    			alert('clicked it');
 		    			$('#filesToUpload').val('');
 			    		$('#filesToUpload').click();
 		    		}
 		    	});
 		    	
 				$('#filesToUpload').change(function(){
-		    		if($(this).val()!='')
+					if(typeof($('.fileinput-button').attr('disabled'))=='undefined')
 		    		{
-			    		$('.fileinput-button').attr('disabled','disabled');
-						fileSelect();
+			    		if($(this).val()!='')
+			    		{
+				    		$('.fileinput-button').attr('disabled','disabled');
+							fileSelect();
+			    		}
 		    		}
 				});
 				
