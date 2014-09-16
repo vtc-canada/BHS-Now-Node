@@ -582,16 +582,67 @@ module.exports = {
 	    
 	}
     },
-    getajax : function(req, res) {
-	/*
-	 * null req.query.search req.query.unitQuantityMin
-	 * req.query.unitQuantityMax req.query.saleDateRangeStart
-	 * req.query.saleDateRangeEnd req.query.start req.query.length
-	 * req.query.order
-	 */
+    export:function(req,res){
+	req.query = req.body;
+	req.query.length = 999999;
+	req.query.start = 0;
+	sails.controllers.buildings.querybuildings(req,res,function(results){
+	    if(typeof(results[0])!='undefined'){
+		results = results[0];
+	    }
+	    var bodystring = '';
+	    for(var i=0;i<results.length;i++){
+		bodystring+=results[i].building_id;
+		var timestamp = results[i].sale_date;
+		timestamp = new Date(timestamp.setMinutes(timestamp.getMinutes() -req.query.timezoneoffset));
+		bodystring+=','+toUTCDateTimeString(timestamp);
+		bodystring+=','+results[i].owner;
+		bodystring+=','+buildAddressString(results[i]);
+		bodystring+='\r\n';
+	    }
 
+	    var AWS = require('aws-sdk'); 
+	    AWS.config.update({ "accessKeyId": "AKIAJ7AKNL3ASNPN3IBA", "secretAccessKey": "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", "region": "us-west-2" });
+	    
+
+	    var s3 = new AWS.S3(); 
+
+	     //s3.createBucket({Bucket: 'myBucket'}, function() {
+
+	    var crypto = require("crypto");
+	    var current_date = (new Date()).valueOf().toString();
+	    var random = Math.random().toString();
+	    var filename = crypto.createHash('sha1').update(current_date + random).digest('hex')+'.csv';
+	    var params = {Bucket: 'credcsv', Key: filename, Body: bodystring};
+
+	    s3.putObject(params, function(err, data) {
+	    	if (err){       
+	        	return console.log(err);  
+	    	}
+	        var params = {Bucket: 'credcsv', Key: filename};
+	        s3.getSignedUrl('getObject', params, function (err, url) {
+	             res.json({url:url});
+	        }); 
+	     });
+	});
+    },
+    getajax : function(req, res) {
+	
+	sails.controllers.buildings.querybuildings(req,res,function(result){
+		sails.controllers.database.credSproc('GetBuildingsCount', [], function(err, buildingscount) {
+		    res.json({
+			draw : req.query.draw,
+			recordsTotal : buildingscount[0][0].number_of_buildings,
+			recordsFiltered : result[1][filteredCount],
+			data : result[0]
+		    });
+		});
+	});
+
+    },
+    querybuildings:function(req,res,cb){
 	var address_search = null;
-	if (req.query.address_search != '') {
+	if (typeof(req.query.address_search)!='undefined'&&req.query.address_search != '') {
 	    address_search = req.query.address_search.trim().split(" ");
 	    adr = req.query.address_search.trim().split(" ");
 	    address_search = '';
@@ -603,7 +654,7 @@ module.exports = {
 	    address_search = "'"+address_search.trim()+"'";
 	}
 	var contact_search = null;
-	if (req.query.contact_search != '') {
+	if (typeof(req.query.contact_search)!='undefined'&&req.query.contact_search != '') {
 	    contact_search = req.query.contact_search.trim().split(" ");
 	    adr = req.query.contact_search.trim().split(" ");
 	    contact_search = '';
@@ -616,7 +667,7 @@ module.exports = {
 	}
 
 	var company_search = null;
-	if (req.query.company_search != '') {
+	if (typeof(req.query.company_search)!='undefined'&&req.query.company_search != '') {
 	    company_search = req.query.company_search.trim().split(" ");
 	    adr = req.query.company_search.trim().split(" ");
 	    company_search = '';
@@ -643,22 +694,23 @@ module.exports = {
 
 	
 	
-	var orderstring = '';
-	if(req.query.order[0].column==1){  //Address column
-	    orderstring = 'street_number_begin';
-	}else if(req.query.order[0].column==5){
-	    orderstring = 'sale_date';
-	}else{
-	    orderstring = req.query.columns[req.query.order[0].column].data;
+	var orderstring = null;
+	if(typeof(req.query.order)!='undefined'){
+        	if(req.query.order[0].column==1){  //Address column
+        	    orderstring = 'street_number_begin';
+        	}else if(req.query.order[0].column==5){
+        	    orderstring = 'sale_date';
+        	}else{
+        	    orderstring = req.query.columns[req.query.order[0].column].data;
+        	}
+        	orderstring = "'"+orderstring+'_'+req.query.order[0].dir+"'";
 	}
-	orderstring = "'"+orderstring+'_'+req.query.order[0].dir+"'";
-
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
 	sails.controllers.database.credSproc('GetBuildings', [ contact_search, address_search, company_search, mortgage_search,
-		req.query.unitQuantityMin == '' ? null : parseInt(req.query.unitQuantityMin),
-		req.query.unitQuantityMax == '' ? null : parseInt(req.query.unitQuantityMax),
-		(typeof(req.query.unit_price_min)=='undefined'||req.query.unit_price_min == '') ? null : parseInt(req.query.unit_price_min),
-			(typeof(req.query.unit_price_max)=='undefined'||req.query.unit_price_max == '') ? null : parseInt(req.query.unit_price_max),
+		(req.query.unitQuantityMin == ''||req.query.unitQuantityMin==null) ? null : parseInt(req.query.unitQuantityMin),
+		(req.query.unitQuantityMax == ''||req.query.unitQuantityMax==null) ? null : parseInt(req.query.unitQuantityMax),
+		(typeof(req.query.unit_price_min)=='undefined'||req.query.unit_price_min == ''||req.query.unit_price_min==null) ? null : parseInt(req.query.unit_price_min),
+		(typeof(req.query.unit_price_max)=='undefined'||req.query.unit_price_max == ''||req.query.unit_price_max==null) ? null : parseInt(req.query.unit_price_max),
 		(req.query.saleDateRangeStart == ''||req.query.saleDateRangeStart == null) ? null : "'"+toUTCDateTimeString(req.query.saleDateRangeStart)+"'",
 		(req.query.saleDateRangeEnd == ''||req.query.saleDateRangeEnd == null) ? null : "'"+toUTCDateTimeString(req.query.saleDateRangeEnd)+"'",
 					
@@ -730,25 +782,15 @@ module.exports = {
 		
 		req.query.checkbox_building_types == ''?null:req.query.checkbox_building_types,
 		req.query.checkbox_heating_types == ''?null:req.query.checkbox_heating_types,
-			
 		req.query.start, req.query.length, orderstring, filteredCount ], function(err, result) { // GetBuildings
 	    if (err) {
 		return res.json({
 		    error : 'Database Error'+err
 		}, 500);
 	    } else {
-		sails.controllers.database.credSproc('GetBuildingsCount', [], function(err, buildingscount) {
-		    res.json({
-			draw : req.query.draw,
-			recordsTotal : buildingscount[0][0].number_of_buildings,
-			recordsFiltered : result[1][filteredCount],
-			data : result[0]
-		    });
-		});
+		cb(result);
 	    }
-
 	});
-
     },
     getbuilding : function(req, res) {
 
@@ -853,5 +895,40 @@ function toUTCDateTimeString(date){
 
 function padLeft(nr, n, str){
     return Array(n-String(nr).length+1).join(str||'0')+nr;
+}
+
+
+function buildAddressString(data){
+	var street_number_begin = '';
+	var street_number_end = '';
+	var street_name = '';
+	var city = '';
+	var province = '';
+	var postal_code = '';
+	
+	if(data.street_number_begin!=null){
+		street_number_begin = data.street_number_begin;
+	}
+	if(data.street_number_end!=null&&data.street_number_end!=''){
+		street_number_end = data.street_number_end==null||data.street_number_end=='null'?'':' - '+data.street_number_end;
+	}
+	if(data.street_name!=null&&data.street_name!='')
+	{
+		street_name= data.street_name==null||data.street_name=='null'?'':' '+data.street_name;
+	}
+	if(data.city != null && data.city != '')
+	{
+		city = data.city==null||data.city=='null'?'':data.city;
+	}
+	if(data.province != null && data.province != '')
+	{
+		province = data.province==null||data.province=='null'?'':data.province;
+	}
+	if(data.postal_code != null && data.postal_code != '')
+	{
+		postal_code =  data.postal_code==null||data.postal_code=='null'?'':data.postal_code; 
+	}
+	return street_number_begin+street_number_end+','+street_name+','+city+','+province+','+postal_code; 
+
 }
   

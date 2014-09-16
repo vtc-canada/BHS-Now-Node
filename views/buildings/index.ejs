@@ -92,6 +92,25 @@
 </div>
 </div>
 
+
+
+    <!-- Modal -  -->
+<div id="exportModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="exportModalLabelgenerate">Buildings Export</h3>
+    </div>
+    <p style="margin:10px;">
+    	Your report is being generated and will be available for 15 minutes.
+    </p>
+    <div class="modal-body" style="overflow:hidden;">
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <!--<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" id="confirmdeletes"><%= translate[locale]['Confirm'] %></button>-->
+    </div>
+</div>
+
 <div class="row-fluid create-report-controls-wrapper">
     <div class="row">
     	<div class="row-fluid">
@@ -521,24 +540,27 @@
 <div class="row-fluid" style="margin-top:19px;">
     <div class="span10 offset1 page-controls-wrapper">
         <div class="row-fluid" id="reportheader"><span style="padding-left:10px;">Buildings</span>
-             <% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="create_building">Create New</div><% } %>
+       		<% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="create_building">Create New</div><% } %>
+         <% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="export_building">Export</div><% } %>      
         
         </div>
         <div class="row-fluid key-indicaters-frame" id="iframediv">
             <div class="row-fluid">
-                <table id="buildings" class="display" cellspacing="0" width="100%">
-			        <thead>
-			            <tr>
-			            	<th>Id<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
-			                <th>Address<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
-			                <th>Units<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
-			                <th>Owner<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
-			                <th>Property Manager<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
-			                <th>Sale Date<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
-			            </tr>
-			        </thead>
-			 
-			    </table>
+            	<div class="real_buildings_wrapper">
+	                <table id="buildings" class="display" cellspacing="0" width="100%">
+				        <thead>
+				            <tr>
+				            	<th>Id<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+				                <th>Address<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+				                <th>Units<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+				                <th>Owner<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+				                <th>Property Manager<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+				                <th>Sale Date<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+				            </tr>
+				        </thead>
+				 
+				    </table>
+			    </div>
             </div>
         </div>
     </div>
@@ -1174,11 +1196,10 @@
 		<div class="row-fluid">
 			<div class="span5 segment-label mobilehider">Address:</div>
 			<div class="span7" style="padding-top: 6px;">
-				<span class="mobilelabel">Address:</span>
 				<div class="mobileaddress">
-					<div class="row-fluid">{{=(street_number_begin==null?'':street_number_begin)+(street_number_end==''||street_number_end==null||street_number_end=='null'?'':' - '+street_number_end)+(street_name==''||street_name==null||street_name=='null'?'':' '+street_name)}}</div>
-					<div class="row-fluid">{{=(city==''||city==null||city=='null'?'':city)+(province==''||province==null||province=='null'?'':(city==''||city==null||city=='null'?'':', ')+province)}}</div>
-					<div class="row-fluid">{{=postal_code==null||postal_code=='null'||postal_code==''?'':postal_code}}</div>
+					<div class="row-fluid"><span class="mobilelabel">Address:</span><span>{{=(street_number_begin==null?'':street_number_begin)+(street_number_end==''||street_number_end==null||street_number_end=='null'?'':' - '+street_number_end)+(street_name==''||street_name==null||street_name=='null'?'':' '+street_name)}}</span></div>
+					<div class="row-fluid"><span class="mobilelabel"></span><span>{{=(city==''||city==null||city=='null'?'':city)+(province==''||province==null||province=='null'?'':(city==''||city==null||city=='null'?'':', ')+province)}}</span></div>
+					<div class="row-fluid"><span class="mobilelabel"></span><span>{{=postal_code==null||postal_code=='null'||postal_code==''?'':postal_code}}</span></div>
 				</div>
 			</div>
 		</div>
@@ -1304,7 +1325,7 @@
     	var bedroom3_rent_max = null;
     	
     	var sliderLimit = 250;
-    	var bucketPrefix = "https://s3-us-west-2.amazonaws.com/credimages/";
+    	var bucketPrefix = "https://s3-us-west-2.amazonaws.com/credimage/";
     	var tempImg = null;
     	var lastImageUrl = "";
     	var lastThumbUrl = "";
@@ -1374,6 +1395,107 @@
     	//var buildingtemplate = _.template($('#building-details-template').html());
     	//$('.building-details-frame').append(buildingtemplate());
     	
+    	
+    	
+    	
+		$('#export_building').click(function(){
+			$('#exportModal .modal-body').html('<div style="font-size: 16px; font-weight:400; text-align:right;" class="pull-right"><span class=""><i class="icon icon-cog icon-spin"></i></span>&nbsp;&nbsp;Generating Report...&nbsp;</div>');
+            $('#exportModal').modal('show');
+            
+            
+            var checkbox_building_types = '';
+			var checkbox_heating_types = '';
+			$('.building-type-checkboxes').each(function(){
+				if($(this).is(':checked')){
+					if(checkbox_building_types != ''){
+						checkbox_building_types = checkbox_building_types + ',';
+					}
+					checkbox_building_types = checkbox_building_types + $(this).attr('building_type');
+				}
+			});	        			
+			if(checkbox_building_types!=''){
+				checkbox_building_types = "'"+checkbox_building_types+"'";
+			}
+			$('.heating-type-checkboxes').each(function(){
+				if($(this).is(':checked')){
+					if(checkbox_heating_types != ''){
+						checkbox_heating_types = checkbox_heating_types + ',';
+					}
+					checkbox_heating_types = checkbox_heating_types + $(this).attr('heat_type');
+				}
+			});        			
+			if(checkbox_heating_types!=''){
+				checkbox_heating_types = "'"+checkbox_heating_types+"'";
+			}
+            
+           	
+            
+            
+            
+			socket.get('/buildings/export',
+				{timezoneoffset : new Date().getTimezoneOffset()
+				,address_search : $("#search_address").val()
+				,contact_search : $("#search_contact").val()
+				,company_search : $('#search_company').val()
+				,mortgage_search : $('#search_mortgage').val()
+				,unitQuantityMin : unitsMin==0?null:unitsMin
+				,unitQuantityMax : unitsMax==sliderLimit?null:unitsMax
+				,unit_price_min:unit_price_min==0?null:unit_price_min
+				,unit_price_max:unit_price_max==MAX_UNIT_PRICE?null:unit_price_max
+				,saleDateRangeStart:$('#start_time').val()==''?null:typeof($('#start_time_gen').data('datetimepicker'))=='undefined'?null:$('#start_time_gen').data('datetimepicker').getLocalDate().toUTCString()        			
+				,saleDateRangeEnd : $('#end_time').val()==''?null: typeof($('#end_time_gen').data('datetimepicker'))=='undefined'?null:$('#end_time_gen').data('datetimepicker').getLocalDate().toUTCString()
+				,has_elevator: ($('#search_elevator').val()=='null'||$('#search_elevator').val()==null)?null:($('#search_elevator').val()=='true'||$('#search_elevator').val()==true?true:false)
+				,elevator_installed_year_min:elevator_installed_year_min==MIN_ELEVATOR_INSTALLED_YEAR?null:elevator_installed_year_min
+				,elevator_installed_year_max:elevator_installed_year_max==MAX_ELEVATOR_INSTALLED_YEAR?null:elevator_installed_year_max
+				,elevator_upgrade_year_min:elevator_upgrade_year_min==MIN_ELEVATOR_UPGRADE_YEAR?null:elevator_upgrade_year_min
+				,elevator_upgrade_year_max:elevator_upgrade_year_max==MAX_ELEVATOR_UPGRADE_YEAR?null:elevator_upgrade_year_max
+				,cap_rate_min:cap_rate_min==MIN_CAP_RATE?null:cap_rate_min
+				,cap_rate_max:cap_rate_max==MAX_CAP_RATE?null:cap_rate_max
+				,search_property_mgmt_company:$('#search_property_mgmt_company').val()
+				,search_prev_property_mgmt_company:$('#search_prev_property_mgmt_company').val()
+				,heat_age_min:heat_age_min==MIN_HEAT_AGE?null:heat_age_min
+				,heat_age_max:heat_age_max==MAX_HEAT_AGE?null:heat_age_max
+				,boiler_installed_year_min:boiler_installed_year_min==MIN_BOILER_INSTALLED_YEAR?null:boiler_installed_year_min
+				,boiler_installed_year_max:boiler_installed_year_max==MAX_BOILER_INSTALLED_YEAR?null:boiler_installed_year_max
+				,boiler_upgrade_min:boiler_upgrade_min==MIN_BOILER_UPGRADE?null:boiler_upgrade_min
+				,boiler_upgrade_max:boiler_upgrade_max==MAX_BOILER_UPGRADE?null:boiler_upgrade_max
+				,assessed_value_min:assessed_value_min==MIN_ASSESSED_VALUE?null:assessed_value_min
+				,assessed_value_max:assessed_value_max==MAX_ASSESSED_VALUE?null:assessed_value_max
+				,building_income_min:building_income_min==MIN_BUILDING_INCOME?null:building_income_min
+				,building_income_max:building_income_max==MAX_BUILDING_INCOME?null:building_income_max
+				,sale_price_min:sale_price_min==MIN_SALE_PRICE?null:sale_price_min
+				,sale_price_max:sale_price_max==MAX_SALE_PRICE?null:sale_price_max
+				,bachelor_units_min:bachelor_units_min==MIN_ROOM_UNITS?null:bachelor_units_min
+				,bachelor_units_max:bachelor_units_max==MAX_ROOM_UNITS?null:bachelor_units_max
+				,bedroom1_units_min:bedroom1_units_min==MIN_ROOM_UNITS?null:bedroom1_units_min
+				,bedroom1_units_max:bedroom1_units_max==MAX_ROOM_UNITS?null:bedroom1_units_max
+				,bedroom2_units_min:bedroom2_units_min==MIN_ROOM_UNITS?null:bedroom2_units_min
+				,bedroom2_units_max:bedroom2_units_max==MAX_ROOM_UNITS?null:bedroom2_units_max
+				,bedroom3_units_min:bedroom3_units_min==MIN_ROOM_UNITS?null:bedroom3_units_min
+				,bedroom3_units_max:bedroom3_units_max==MAX_ROOM_UNITS?null:bedroom3_units_max
+				,bachelor_rent_min:bachelor_rent_min==MIN_ROOM_RENT?null:bachelor_rent_min
+				,bachelor_rent_max:bachelor_rent_max==MAX_ROOM_RENT?null:bachelor_rent_max
+				,bedroom1_rent_min:bedroom1_rent_min==MIN_ROOM_RENT?null:bedroom1_rent_min
+				,bedroom1_rent_max:bedroom1_rent_max==MAX_ROOM_RENT?null:bedroom1_rent_max
+				,bedroom2_rent_min:bedroom2_rent_min==MIN_ROOM_RENT?null:bedroom2_rent_min
+				,bedroom2_rent_max:bedroom2_rent_max==MAX_ROOM_RENT?null:bedroom2_rent_max
+				,bedroom3_rent_min:bedroom3_rent_min==MIN_ROOM_RENT?null:bedroom3_rent_min
+				,bedroom3_rent_max:bedroom3_rent_max==MAX_ROOM_RENT?null:bedroom3_rent_max
+				,windows_installed_year_min:windows_installed_year_min==MIN_WINDOWS_INSTALLED_YEAR?null:windows_installed_year_min
+				,windows_installed_year_max:windows_installed_year_max==MAX_WINDOWS_INSTALLED_YEAR?null:windows_installed_year_max
+				,cable_internet_provider:$('#search_isp').val()
+				,start_mortgage_due_date:$('#start_mortgage_due_date').val()
+				,end_mortgage_due_date:$('#end_mortgage_due_date').val()			
+				,sales_count_min:sales_count_min==MIN_SALES_COUNT?null:sales_count_min
+				,sales_count_max:sales_count_max==MAX_SALES_COUNT?null:sales_count_max
+				,checkbox_building_types : checkbox_building_types
+				,checkbox_heating_types : checkbox_heating_types
+				},function(url){
+					$('#exportModal .modal-body').html('<a class="pull-right btn btn-success" href="'+url.url+'">Download</a>');
+				
+				
+			});
+		});
 		$('#create_building').click(function(){
 		
 			$('.edit-item-section').css('display','none');
@@ -2325,7 +2447,7 @@
 				fd.append('policy', policy.policy);
 				fd.append('signature',policy.signature);
 				fd.append('file', file);
-				xhr.open('POST', '//s3-us-west-2.amazonaws.com/credimages', true);
+				xhr.open('POST', '//s3-us-west-2.amazonaws.com/credimage', true);
 				xhr.send(fd);
 				
 				cb();

@@ -94,6 +94,25 @@
 
 </div>
 </div>
+
+
+    <!-- Modal -  -->
+<div id="exportModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="exportModalLabelgenerate">Companies Export</h3>
+    </div>
+    <p style="margin:10px;">
+    	Your report is being generated and will be available for 15 minutes.
+    </p>
+    <div class="modal-body" style="overflow:hidden;">
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <!--<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" id="confirmdeletes"><%= translate[locale]['Confirm'] %></button>-->
+    </div>
+</div>
+
 <div class="row-fluid create-report-controls-wrapper">
     <div class="row">
     
@@ -122,7 +141,7 @@
     <div class="span10 offset1 page-controls-wrapper">
         <div class="row-fluid" id="reportheader"><span style="padding-left:10px;">Companies</span>
              <% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="create_company">Create New</div><% } %>
-        
+            <% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="export_companies">Export</div><% } %>      
         </div>
         <div class="row-fluid key-indicaters-frame" id="iframediv">
             <div class="row-fluid">
@@ -634,6 +653,20 @@
     				alert(response.error);
     			}
     		});
+		});
+		
+		$('#export_companies').click(function(){
+			$('#exportModal .modal-body').html('<div style="font-size: 16px; font-weight:400; text-align:right;" class="pull-right"><span class=""><i class="icon icon-cog icon-spin"></i></span>&nbsp;&nbsp;Generating Report...&nbsp;</div>');
+            $('#exportModal').modal('show');
+			socket.get('/companies/export',
+				{timezoneoffset : new Date().getTimezoneOffset()
+				,address_search  : $("#search_address").val()
+				, contact_search : $("#search_company").val()
+				},function(url){
+					$('#exportModal .modal-body').html('<a class="pull-right btn btn-success" href="'+url.url+'">Download</a>');
+				
+			});
+		
 		});
 		
     	$('#save_company').click(function(){

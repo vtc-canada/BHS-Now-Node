@@ -539,11 +539,12 @@ input.segment-form-radio{
 
 
 
-#buildings_wrapper{
+.real_buildings_wrapper{
 	width:96%;
 	margin-left:2%;
 	margin-right:2%;
 	margin-bottom: 12px;
+	overflow: auto;
 }
 #buildings_wrapper  table.dataTable > thead > tr > th{
 	font-weight:normal;
@@ -1022,6 +1023,10 @@ div.language-flag.chile{
 		/* float:left; */
 	}
 	
+#buildings{
+	min-width:400px;
+}	
+	
 @media (max-width: 767px){
 	
 	#building-owners-wrapper .mobilehider{
@@ -1121,7 +1126,9 @@ div.language-flag.chile{
     	width: 25%;
     	float:left;
     	margin-left:10px;
-    }
+    
+    	min-height: 20px;
+}
     .building-contact-wrapper{
 		border: 1px solid #BBBDBE;
 		background-color: rgb(246, 247, 250);

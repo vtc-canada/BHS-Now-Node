@@ -103,7 +103,64 @@ module.exports = {
 	    });
 	}
     },
+    export:function(req,res){
+	req.query = req.body;
+	req.query.length = 999999;
+	req.query.start = 0;
+	sails.controllers.contacts.querycontacts(req,res,function(responseContacts){
+	    if(typeof(responseContacts[0])!='undefined'){
+		results = responseContacts[0];
+	    }
+	    var bodystring = '';
+	    for(var i=0;i<results.length;i++){
+		bodystring+=results[i].contact_id;
+		//var timestamp = results[i].sale_date;
+		//timestamp = new Date(timestamp.setMinutes(timestamp.getMinutes() -req.query.timezoneoffset));
+		//bodystring+=','+toUTCDateTimeString(timestamp);
+		//bodystring+=','+results[i].owner;
+		bodystring+=','+buildAddressString(results[i]);
+		bodystring+='\r\n';
+	    }
+
+	    var AWS = require('aws-sdk'); 
+	    AWS.config.update({ "accessKeyId": "AKIAJ7AKNL3ASNPN3IBA", "secretAccessKey": "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", "region": "us-west-2" });
+	    
+
+	    var s3 = new AWS.S3(); 
+
+	     //s3.createBucket({Bucket: 'myBucket'}, function() {
+
+	    var crypto = require("crypto");
+	    var current_date = (new Date()).valueOf().toString();
+	    var random = Math.random().toString();
+	    var filename = crypto.createHash('sha1').update(current_date + random).digest('hex')+'.csv';
+	    var params = {Bucket: 'credcsv', Key: filename, Body: bodystring};
+
+	    s3.putObject(params, function(err, data) {
+	    	if (err){       
+	        	return console.log(err);  
+	    	}
+	        var params = {Bucket: 'credcsv', Key: filename};
+	        s3.getSignedUrl('getObject', params, function (err, url) {
+	             res.json({url:url});
+	        }); 
+	     });
+	});
+    },
     searchcontacts: function(req,res){
+	sails.controllers.contacts.querycontacts(req,res,function(responseContacts,responseContactsCount){
+	    if(typeof(responseContacts[0])=='undefined'){
+		return res.json({error:'Database err'});
+	    }
+	    res.json({
+		draw : req.query.draw,
+		recordsTotal : responseContactsCount[0][0].number_of_contact_mappings,
+		recordsFiltered : responseContacts[1][filteredCount],
+		data : responseContacts[0]
+	    });
+	});
+    },
+    querycontacts:function(req,res,cb){
 	var contact_search = null;
 	if (req.query.contact_search != '') {
 	    contact_search = req.query.contact_search.trim().split(" ");
@@ -117,16 +174,17 @@ module.exports = {
 	    contact_search = "'"+contact_search.trim()+"'";
 	}
 	
-	var orderstring = '';
-	if(req.query.order[0].column==1){  //Address column
-	    orderstring = 'contact_name';
-	}else if(req.query.order[0].column==4){
-	    orderstring = 'invalid';
-	}else{
-	    orderstring = req.query.columns[req.query.order[0].column].data;
+	var orderstring = null;
+	if(typeof(req.query.order)!='undefined'){	  
+        	if(req.query.order[0].column==1){  //Address column
+        	    orderstring = 'contact_name';
+        	}else if(req.query.order[0].column==4){
+        	    orderstring = 'invalid';
+        	}else{
+        	    orderstring = req.query.columns[req.query.order[0].column].data;
+        	}
+        	orderstring = "'"+orderstring+'_'+req.query.order[0].dir+"'";
 	}
-	orderstring = "'"+orderstring+'_'+req.query.order[0].dir+"'";
-
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
 	sails.controllers.database.credSproc('SearchContacts',[contact_search,req.query.start, req.query.length, orderstring,filteredCount],function(err,responseContacts){
 	    if(err){
@@ -136,12 +194,7 @@ module.exports = {
 		if(err){
 		   return res.json({error:'Database Error:'+err},500);
 		}
-		    res.json({
-			draw : req.query.draw,
-			recordsTotal : responseContactsCount[0][0].number_of_contact_mappings,
-			recordsFiltered : responseContacts[1][filteredCount],
-			data : responseContacts[0]
-		    });
+		cb(responseContacts,responseContactsCount);
 	    })
 	});
 	
@@ -401,3 +454,55 @@ module.exports = {
     }
 
 };
+
+
+function toUTCDateTimeString(date){
+    if(date==null){
+	date = new Date();
+    }else if(typeof(date)!=='object'){
+	date = new Date(date);
+	//date = new Date(date.setMinutes(date.getMinutes() - date.getTimezoneOffset()));
+    }
+    
+    return date.getUTCFullYear()+'-'+padLeft((date.getUTCMonth()+1).toString(),2)+'-'+ padLeft(date.getUTCDate(),2) + ' ' + padLeft(date.getUTCHours(),2)+':'+padLeft(date.getUTCMinutes(),2)+':'+padLeft(date.getUTCSeconds(),2);
+}
+
+function padLeft(nr, n, str){
+    return Array(n-String(nr).length+1).join(str||'0')+nr;
+}
+
+
+function buildAddressString(data){
+	var street_number_begin = '';
+	var street_number_end = '';
+	var street_name = '';
+	var city = '';
+	var province = '';
+	var postal_code = '';
+	
+	if(data.street_number_begin!=null){
+		street_number_begin = data.street_number_begin;
+	}
+	if(data.street_number_end!=null&&data.street_number_end!=''){
+		street_number_end = data.street_number_end==null||data.street_number_end=='null'?'':' - '+data.street_number_end;
+	}
+	if(data.street_name!=null&&data.street_name!='')
+	{
+		street_name= data.street_name==null||data.street_name=='null'?'':' '+data.street_name;
+	}
+	if(data.city != null && data.city != '')
+	{
+		city = data.city==null||data.city=='null'?'':data.city;
+	}
+	if(data.province != null && data.province != '')
+	{
+		province = data.province==null||data.province=='null'?'':data.province;
+	}
+	if(data.postal_code != null && data.postal_code != '')
+	{
+		postal_code =  data.postal_code==null||data.postal_code=='null'?'':data.postal_code; 
+	}
+	return street_number_begin+street_number_end+','+street_name+','+city+','+province+','+postal_code; 
+
+}
+  

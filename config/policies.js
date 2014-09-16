@@ -28,7 +28,8 @@ module.exports.policies = {
 	 'getsales':'RoutePolicy',
 	 'deletebuilding':'RoutePolicy',
 	 'getcompaniesbycontactid':'RoutePolicy',
-	 'getcontactsbycompanyid':'RoutePolicy'
+	 'getcontactsbycompanyid':'RoutePolicy',
+	 'export':'RoutePolicy'
     },
     'companies':{
 	'*' : 'isAuthenticated',
@@ -39,7 +40,8 @@ module.exports.policies = {
 	'getcompany':'RoutePolicy',
 	'notes':'RoutePolicy',
 	'updatecompany':'RoutePolicy',
-	'deletecompany':'RoutePolicy'
+	'deletecompany':'RoutePolicy',
+	'export':'RoutePolicy'
     },
     'contacts':{
 	'*' : 'isAuthenticated',
@@ -51,7 +53,8 @@ module.exports.policies = {
 	'notes':'RoutePolicy',
 	'updatecontact':'RoutePolicy',
 	'deletecontact':'RoutePolicy',
-	'getaddressbycompanyid':'RoutePolicy'
+	'getaddressbycompanyid':'RoutePolicy',
+	'export':'RoutePolicy'
 	
     },
     'admin' : {
@@ -64,7 +67,8 @@ module.exports.policies = {
     'notes': {
 	'*':'isAuthenticated',
 	'find':'RoutePolicy',
-	'searchnotes':'RoutePolicy'
+	'searchnotes':'RoutePolicy',
+	'export':'RoutePolicy'
     },
     'maps':{
 	'*':'isAuthenticated',

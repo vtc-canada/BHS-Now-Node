@@ -28,9 +28,9 @@ module.exports = {
 
   getPolicy:function(req,res){
 
-      var bucket='credimages';
-      var accesskey='AKIAJMQ2PJJK63JVPX6Q';
-      var secret='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';
+      var bucket='credimage';
+      var accesskey='AKIAIYGNUEROAWSUOCCQ';//'AKIAJMQ2PJJK63JVPX6Q';
+      var secret='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';//'JvP/LUbu6JpK55rGCmKlCxrpamvDra9LFs86+9vd';
 
       var crypto = require("crypto");
       var current_date = (new Date()).valueOf().toString();
@@ -38,7 +38,7 @@ module.exports = {
       var filename = crypto.createHash('sha1').update(current_date + random).digest('hex');
 
       var policy = {
-          "expiration": "2014-09-18T07:23:14Z",
+          "expiration": "2015-09-18T07:23:14Z",
           "conditions": [
               {
                   "bucket": bucket
