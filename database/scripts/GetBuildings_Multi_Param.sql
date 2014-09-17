@@ -2,40 +2,29 @@ USE cred;
 DROP PROCEDURE if EXISTS `GetBuildings` ;
 DELIMITER $$
 CREATE PROCEDURE `GetBuildings`(IN contactSearchTerms VARCHAR(128), IN addressSearchTerms VARCHAR(128),IN buildingSearchTerms VARCHAR(128), IN mortgageCompanySearchTerms VARCHAR(64),
-		
 		IN unitQuantityMin int, IN unitQuantityMax int, IN unitPriceMin INT, IN unitPriceMax INT, 
 		IN saleDateRangeStart datetime, IN saleDateRangeEnd datetime,
 		IN boundsLatitudeMin FLOAT, IN boundsLatitudeMax FLOAT, IN boundsLongitudeMin FLOAT, IN boundsLongitudeMax FLOAT,
 		IN hasElevator BOOLEAN, 
 		IN elevatorInstalledYearMin INT, IN elevatorInstalledYearMax INT,IN lastElevatorInstalledYearMin INT, IN lastElevatorInstalledYearMax INT,
-		
-
 		IN capRateMin FLOAT, IN capRateMax FLOAT, 
 		IN propMgmt VARCHAR(128), IN prevPropMgmt VARCHAR(128), 
 		IN heatAgeMin INT, IN heatAgeMax INT,
-
 		IN boilerAgeMin INT, IN boilerAgeMax INT,		
 		IN lastBoilerInstalledYearMin INT, IN lastBoilerInstalledYearMax INT,
-
 		IN assessedValueMin INT, IN assessedValueMax INT,
-
 		IN buildingIncomeMin INT, IN buildingIncomeMax INT,	
 		IN lastSalesPriceMin INT, IN lastSalesPriceMax INT,
-
 		IN numOf1BedroomMin INT, IN numOf1BedroomMax INT, IN numOf2BedroomMin INT, IN numOf2BedroomMax INT, 
 		IN numOf3BedroomMin INT, IN numOf3BedroomMax INT, IN numOfBachelorMin INT, IN numOfBachelorMax INT, 
 		IN priceOf1BedroomMin INT, IN priceOf1BedroomMax INT, IN priceOf2BedroomMin INT, IN priceOf2BedroomMax INT, 
 		IN priceOf3BedroomMin INT, IN priceOf3BedroomMax INT, IN priceOfBachelorMin INT, IN priceOfBachelorMax INT, 
-		
 		IN windowInstallYearMin INT, IN windowInstallYearMax INT,  
-
 		IN cableProvider VARCHAR(128),
-		
 		IN mortgageDueDateRangeStart datetime, IN mortgageDueDateRangeEnd datetime,
-
 		IN numOfSalesMin INT, numOfSalesMax INT,
 		IN buildingTypes VARCHAR(64), IN heatSystemTypes VARCHAR(64),
-		IN offsetIndex int, IN recordCount INT, IN orderBy VARCHAR (255), OUT id int)
+		IN offsetIndex int, IN recordCount INT, IN orderBy VARCHAR (255), OUT id int, OUT totalCount int)
 BEGIN
 SELECT 
 	 SQL_CALC_FOUND_ROWS GROUP_CONCAT(owner_contact.name SEPARATOR ', ') as 'owner'
@@ -153,6 +142,12 @@ ORDER BY
 LIMIT recordCount OFFSET offsetIndex;
 
 SET id = FOUND_ROWS();
+
+SELECT COUNT(*) INTO totalCount
+FROM cur_buildings
+INNER JOIN cur_address ON (cur_address.id = cur_buildings.cur_address_id)
+WHERE
+	(cur_buildings.is_deleted = 0) ;
 
 END$$
 DELIMITER ;
