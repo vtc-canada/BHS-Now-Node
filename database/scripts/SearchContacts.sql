@@ -10,10 +10,12 @@ BEGIN
 		,cur_contacts.name as 'contact_name'
 		,GROUP_CONCAT(DISTINCT cur_phone_numbers.phone_number) as 'phone'
 		,cur_contacts.email
-		
+		,GROUP_CONCAT(cur_company.name SEPARATOR ',') as 'company'
 	FROM cur_contacts
-		LEFT JOIN cur_phone_numbers ON (cur_phone_numbers.contact_ID = cur_contacts.id)
-		WHERE 
+	LEFT JOIN cur_phone_numbers ON (cur_phone_numbers.contact_ID = cur_contacts.id)
+	LEFT JOIN cur_contact_company_mapping ON (cur_contact_company_mapping.cur_contacts_id = cur_contacts.id)
+	LEFT JOIN cur_company ON (cur_company.id = cur_contact_company_mapping.cur_company_id)
+	WHERE 
 		cur_contacts.is_deleted = 0
 		AND (contactSearchTerms IS NULL OR MATCH (cur_contacts.name, cur_contacts.email) AGAINST (contactSearchTerms IN BOOLEAN MODE))
 		
