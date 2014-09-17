@@ -47,6 +47,7 @@ SELECT
 	,cur_buildings.mortgage_company
 	,cur_buildings.mortgage_due_date
 	,cur_buildings.cap_rate
+	,cur_buildings.parking_spots
 	
 FROM
 	cur_buildings
