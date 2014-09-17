@@ -1794,6 +1794,16 @@
 		$('#search_elevator').change(function(){
 			datatable.api().ajax.reload();
 		});
+		$('#search_property_mgmt_company').keydown(function(){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		});
+		$('#search_prev_property_mgmt_company').keydown(function(){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		});
 		
 		
 		function initSliders(){
