@@ -761,8 +761,8 @@ module.exports = {
 		req.query.cap_rate_min == ''?null:req.query.cap_rate_min,	
 		req.query.cap_rate_max == ''?null:req.query.cap_rate_max,	
 			
-		req.query.search_property_mgmt_company == ''?null:"'%"+req.query.search_property_mgmt_company+"%'",
-		req.query.search_prev_property_mgmt_company == ''?null:"'%"+req.query.search_prev_property_mgmt_company+"%'",	
+		(typeof(req.query.search_property_mgmt_company)=='undefined'||req.query.search_property_mgmt_company == '')?null:"'%"+req.query.search_property_mgmt_company+"%'",
+		(typeof(req.query.search_prev_property_mgmt_company)=='undefined'||req.query.search_prev_property_mgmt_company == '')?null:"'%"+req.query.search_prev_property_mgmt_company+"%'",	
 			
 		req.query.heat_age_min == ''?null:req.query.heat_age_min,		
 		req.query.heat_age_max == ''?null:req.query.heat_age_max,	
