@@ -183,14 +183,14 @@
  <div class="row-fluid">
     <div class="row-fluid span10 offset1 report-control-left-label" style="padding-top: 20px;">
    		<a id="advanced_criteria_toggler" data-toggle="collapse" data-target="#collapseadvanced" style="text-decoration: none; color: #5a6573;">
-			<div style="float:left;"></i><i class="icon-plus-sign icon-2x"></i></div><div style="float: left; padding-bottom: 20px;margin-top: -6px;margin-left: 20px;"><h4>Advanced Criteria</h4></div>
+			<div style="float:left;"></i><i class="icon-plus-sign icon-2x"></i></div><div style="float: left; padding-bottom: 5px;margin-top: -6px;margin-left: 20px;"><h4>Advanced Criteria</h4></div>
 		</a>
   	</div>
  </div>
  <div class="row-fluid create-report-controls-wrapper">
     <div class="row">
        <div class="row-fluid">
-         <div class="span8 offset2 create-report-controls" style="padding-top: 20px;">
+         <div class="span8 offset2 create-report-controls" style="padding-top: 10px; padding-bottom:10px;">
            <div class="row-fluid">
                <div class="row collapse" id="collapseadvanced">
                		
@@ -501,6 +501,19 @@
 	               </div> 
 	               
 	               <div class="row-fluid" style="min-height: 40px;">
+	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="parking_spots_slider">Number of Parking Spots:</label></div>
+	                   <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
+	                   		<div class="row-fluid">
+	                   			<div class="pull-left slider-min-val-label"><span id="parking_spots_min">0</span></div>
+	                   			
+	                   			<input id="parking_spots_slider" type="text"  value="" data-slider-min="" data-slider-max="" data-slider-step="" data-slider-value=""/>
+	                   			&nbsp&nbsp
+	                   			<span id="parking_spots_max">+</span>
+	                   		</div>
+	                   </div>
+	               </div> 
+	               
+	               <div class="row-fluid" style="min-height: 40px;">
 	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_mortgage">Mortgage Company:</label></div>
 	                   <div class="span8 report-control-right-control">
 	                       <input type="text" id="search_mortgage" value="">
@@ -537,7 +550,7 @@
 <!-- In order, they represent the columns across the diagram -->
 
 
-<div class="row-fluid" style="margin-top:19px;">
+<div class="row-fluid" style="margin-top:0px;">
     <div class="span10 offset1 page-controls-wrapper">
         <div class="row-fluid" id="reportheader"><span style="padding-left:10px;">Buildings</span>
        		<% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="create_building">Create New</div><% } %>
@@ -1014,6 +1027,10 @@
 			<div class="span7"><input type="text" min="1900" max="2099" pattern="[0-9]{4}" id="windows_installed_year" value="{{=windows_installed_year}}"></div>
 		</div>
 		<div class="row-fluid">
+			<div class="span5 segment-label">Number Of Parking Spots:</div>
+			<div class="span7"><input type="text" min="0" max="5" pattern="[0-9]" id="parking_spots" value="{{=typeof(parking_spots)=='undefined'?'':parking_spots}}"></div>
+		</div>
+		<div class="row-fluid">
 			<div class="span5 segment-label">Total Units:</div>
 			<div class="span7"><input type="text" min="0" max="999999" id="unit_quantity" value="{{=unit_quantity}}"></div>
 		</div>
@@ -1290,7 +1307,7 @@
 		var heat_age_max = null;
 		var sales_count_max = null;
 		var windows_installed_year_max = null;
-		var windows_installed_year_max;
+		var parking_spots_max = null;
 		
     	var building_income_min = null;
 		var elevator_installed_year_min = null;
@@ -1304,8 +1321,8 @@
 		var heat_age_min = null;
 		var sales_count_min = null;
 		var windows_installed_year_min = null;
-		var windows_installed_year_min;
-    	
+		var parking_spots_min = null;
+		    	
     	var bachelor_units_min = null;
     	var bachelor_units_max = null;
     	var bedroom1_units_min = null;
@@ -1380,6 +1397,9 @@
     	var MIN_WINDOWS_INSTALLED_YEAR = 1900;
     	var MAX_WINDOWS_INSTALLED_YEAR = 2100;
     	var STEP_WINDOWS_INSTALLED_YEAR = 1;
+    	var MIN_PARKING_SPOTS = 0;
+    	var MAX_PARKING_SPOTS = 5;
+    	var STEP_PARKING_SPOTS = 1;
     	
     	var MIN_ELEVATOR_UPGRADE_YEAR = 1900;
     	var MAX_ELEVATOR_UPGRADE_YEAR = 2100;
@@ -1483,6 +1503,8 @@
 				,bedroom3_rent_max:bedroom3_rent_max==MAX_ROOM_RENT?null:bedroom3_rent_max
 				,windows_installed_year_min:windows_installed_year_min==MIN_WINDOWS_INSTALLED_YEAR?null:windows_installed_year_min
 				,windows_installed_year_max:windows_installed_year_max==MAX_WINDOWS_INSTALLED_YEAR?null:windows_installed_year_max
+				,parking_spots_min:parking_spots_min==MIN_PARKING_SPOTS?null:parking_spots_min
+				,parking_spots_max:parking_spots_max==MAX_PARKING_SPOTS?null:parking_spots_max
 				,cable_internet_provider:$('#search_isp').val()
 				,start_mortgage_due_date:$('#start_mortgage_due_date').val()
 				,end_mortgage_due_date:$('#end_mortgage_due_date').val()			
@@ -1503,7 +1525,7 @@
 			$('#buildings tbody tr.selected').removeClass('selected');
 			building.clear();
 			building = new BuildingModel({building_id:'new',street_number_begin:'',street_number_end:'',street_name:'',city:'',province:'',postal_code:'',building_type:1
-										,property_mgmt_company:null,prev_property_mgmt_company:null,heat_system_age:null,heat_system_type:null,boiler_installed_year:null,elevator_installed_year:null,windows_installed_year:null,cable_internet_provider:'',assessed_value:null
+										,property_mgmt_company:null,prev_property_mgmt_company:null,heat_system_age:null,heat_system_type:null,boiler_installed_year:null,elevator_installed_year:null,windows_installed_year:null, parking_spots:null, cable_internet_provider:'',assessed_value:null
 										,bachelor_price:null,bedroom1_price:null,bedroom2_price:null,bedroom3_price:null,bachelor_units:null,bedroom1_units:null,bedroom2_units:null,bedroom3_units:null,building_income:null
 										,building_income_manual_mode:false,unit_price:null,unit_price_manual_mode:false,unit_quantity:null
 										,last_boiler_upgrade_year:null,has_elevator:false, latitude:null, longitude:null, last_elevator_upgrade_year:null
@@ -1650,6 +1672,10 @@
 	        			d.windows_installed_year_min = windows_installed_year_min==MIN_WINDOWS_INSTALLED_YEAR?null:windows_installed_year_min;
 	        			d.windows_installed_year_max = windows_installed_year_max==MAX_WINDOWS_INSTALLED_YEAR?null:windows_installed_year_max;
 	        			
+	        			d.parking_spots_min = parking_spots_min==MIN_PARKING_SPOTS?null:parking_spots_min;
+	        			d.parking_spots_max = parking_spots_max==MAX_PARKING_SPOTS?null:parking_spots_max;
+	        			
+				
 	        			d.cable_internet_provider = $('#search_isp').val();
 	        			
 	        			
@@ -2257,6 +2283,31 @@
 			});
 			
 			
+			$('#parking_spots_slider').attr('data-slider-min',MIN_PARKING_SPOTS); // corrects limit
+			$('#parking_spots_slider').attr('data-slider-max',MAX_PARKING_SPOTS); // corrects limit
+			$('#parking_spots_slider').attr('data-slider-step',STEP_PARKING_SPOTS); // corrects limit
+			$('#parking_spots_min').html(MIN_PARKING_SPOTS);
+			$('#parking_spots_max').html(MAX_PARKING_SPOTS+'+');
+			$('#parking_spots_slider').attr('data-slider-value','['+MIN_PARKING_SPOTS+','+MAX_PARKING_SPOTS+']');
+			$('#parking_spots_slider').slider({tooltip: 'disabled'});
+			$('#parking_spots_slider').on('slide',function(slideEvt){
+				parking_spots_min = slideEvt.value[0];
+				parking_spots_max = slideEvt.value[1]
+				$('#parking_spots_min').html(parking_spots_min);
+				
+				if(parking_spots_max==MAX_PARKING_SPOTS)
+				{
+					$('#parking_spots_max').html(parking_spots_max+'+');
+				}else{
+					$('#parking_spots_max').html(parking_spots_max);
+				}
+			});
+			$('#parking_spots_slider').on('slideStop',function(slideEvt){
+				setTimeout(function(){
+					datatable.api().ajax.reload();
+				},10);
+			});
+			
 		
 			$('#units_slider').attr('data-slider-max',sliderLimit); // corrects limit
 			$('#units_slider').slider({tooltip: 'disabled'});
@@ -2861,6 +2912,7 @@
 	         	$('#heat_system_age').autoNumeric('init',{vMin: '0', vMax: '2099', mDec: '0',aSep: ''});
 	         	$('#boiler_installed_year').autoNumeric('init',{vMin: '0', vMax: '2099', mDec: '0',aSep: ''});
 	         	$('#windows_installed_year').autoNumeric('init',{vMin: '0', vMax: '2099', mDec: '0',aSep: ''});
+	         	$('#parking_spots').autoNumeric('init',{vMin: '0', vMax: '5', mDec: '0',aSep: ''});
 	         	$('#elevator_installed_year').autoNumeric('init',{vMin: '0', vMax: '2099', mDec: '0',aSep: ''});
 	         	$('#last_elevator_upgrade_year').autoNumeric('init',{vMin: '0', vMax: '2099', mDec: '0',aSep: ''});
 	         	

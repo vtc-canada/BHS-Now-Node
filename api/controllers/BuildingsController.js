@@ -17,6 +17,7 @@
  * @docs :: http://sailsjs.org/#!documentation/controllers
  */
 var filteredCount; // This is here because struggles with scope issues...
+var totalCount;
 // became unscoped after callback from database controller
 // method
 
@@ -67,7 +68,7 @@ module.exports = {
     getcompaniesbycontactid : function(req, res) {
 
 	var address_search = null;
-	if (req.body.search != '') {
+	if (typeof(req.body.search)!='undefined'&&req.body.search != '') {
 	    adr = req.body.search.trim().split(" ");
 	    address_search = '';
 	    for(var i=0;i<adr.length;i++){
@@ -90,7 +91,7 @@ module.exports = {
     getcontactsbycompanyid : function(req, res) {
 	
 	var address_search = null;
-	if (req.body.search != '') {
+	if (typeof(req.body.search)!='undefined'&&req.body.search != '') {
 	    adr = req.body.search.trim().split(" ");
 	    address_search = '';
 	    for(var i=0;i<adr.length;i++){
@@ -627,16 +628,13 @@ module.exports = {
 	});
     },
     getajax : function(req, res) {
-	
 	sails.controllers.buildings.querybuildings(req,res,function(result){
-		sails.controllers.database.credSproc('GetBuildingsCount', [], function(err, buildingscount) {
-		    res.json({
-			draw : req.query.draw,
-			recordsTotal : buildingscount[0][0].number_of_buildings,
-			recordsFiltered : result[1][filteredCount],
-			data : result[0]
-		    });
-		});
+	    res.json({
+		draw : req.query.draw,
+		recordsTotal : 'temp',//result[1][totalCount],
+		recordsFiltered : result[1][filteredCount],
+		data : result[0]
+	    });
 	});
 
     },
@@ -705,6 +703,7 @@ module.exports = {
         	}
         	orderstring = "'"+orderstring+'_'+req.query.order[0].dir+"'";
 	}
+	totalCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
 	sails.controllers.database.credSproc('GetBuildings', [ contact_search, address_search, company_search, mortgage_search,
 		(req.query.unitQuantityMin == ''||req.query.unitQuantityMin==null) ? null : parseInt(req.query.unitQuantityMin),
@@ -782,7 +781,7 @@ module.exports = {
 		
 		req.query.checkbox_building_types == ''?null:req.query.checkbox_building_types,
 		req.query.checkbox_heating_types == ''?null:req.query.checkbox_heating_types,
-		req.query.start, req.query.length, orderstring, filteredCount ], function(err, result) { // GetBuildings
+		req.query.start, req.query.length, orderstring, filteredCount, totalCount ], function(err, result) { // GetBuildings
 	    if (err) {
 		return res.json({
 		    error : 'Database Error'+err
