@@ -631,7 +631,7 @@ module.exports = {
 	sails.controllers.buildings.querybuildings(req,res,function(result){
 	    res.json({
 		draw : req.query.draw,
-		recordsTotal : 'temp',//result[1][totalCount],
+		recordsTotal : result[1][totalCount],
 		recordsFiltered : result[1][filteredCount],
 		data : result[0]
 	    });
