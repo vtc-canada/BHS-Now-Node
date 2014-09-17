@@ -37,6 +37,7 @@ BEGIN
 	,cur_sales_record_history.mortgage_company
 	,cur_sales_record_history.mortgage_due_date
 	,cur_sales_record_history.cap_rate
+	,cur_sales_record_history.parking_spots
 	FROM
 		cur_sales_record_history
 	LEFT JOIN ref_building_type ON (cur_sales_record_history.ref_building_type_id = ref_building_type.id)

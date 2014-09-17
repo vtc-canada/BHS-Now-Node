@@ -23,7 +23,7 @@ CREATE PROCEDURE `GetBuildings`(IN contactSearchTerms VARCHAR(128), IN addressSe
 		IN cableProvider VARCHAR(128),
 		IN mortgageDueDateRangeStart datetime, IN mortgageDueDateRangeEnd datetime,
 		IN numOfSalesMin INT, numOfSalesMax INT,
-		IN buildingTypes VARCHAR(64), IN heatSystemTypes VARCHAR(64),
+		IN buildingTypes VARCHAR(64), IN heatSystemTypes VARCHAR(64), IN numOfParkingMin INT, IN numOfParkingMax,
 		IN offsetIndex int, IN recordCount INT, IN orderBy VARCHAR (255), OUT id int, OUT totalCount int)
 BEGIN
 SELECT 
@@ -54,7 +54,7 @@ SELECT
 	,cur_buildings.elevator_installed_year
 	,cur_buildings.last_elevator_upgrade_year
 	,cur_buildings.windows_installed_year
-	,'parking_spots' as 'parking_spots'
+	,cur_buildings.parking_spots
 	,cur_buildings.assessed_value
 	,cur_buildings.mortgage_company
 	,cur_buildings.mortgage_due_date
@@ -133,6 +133,8 @@ WHERE
 	AND (CASE WHEN lastSalesPriceMax IS NOT NULL THEN (cur_buildings.last_sale_price <= lastSalesPriceMax) ELSE 1 END)
 	AND (CASE WHEN numOfSalesMin IS NOT NULL THEN (sales_count.num_of_records >= numOfSalesMin) ELSE 1 END)
 	AND (CASE WHEN numOfSalesMax IS NOT NULL THEN (sales_count.num_of_records <= numOfSalesMax) ELSE 1 END)
+	AND (CASE WHEN numOfParkingMin IS NOT NULL THEN (cur_buildings.parking_spots>= numOfParkingMin) ELSE 1 END)
+	AND (CASE WHEN numOfParkingMax IS NOT NULL THEN (cur_buildings.parking_spots <= numOfParkingMax) ELSE 1 END)
 	AND (CASE WHEN windowInstallYearMax IS NOT NULL THEN (cur_buildings.windows_installed_year <= windowInstallYearMax) ELSE 1 END)
 	AND (CASE WHEN windowInstallYearMin IS NOT NULL THEN (cur_buildings.windows_installed_year >= windowInstallYearMin) ELSE 1 END)
 	AND (CASE WHEN hasElevator IS NOT NULL THEN (cur_buildings.has_elevator = hasElevator) ELSE 1 END)

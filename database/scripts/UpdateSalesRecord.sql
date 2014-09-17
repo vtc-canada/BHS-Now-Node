@@ -7,14 +7,11 @@ CREATE PROCEDURE `UpdateSalesRecord`(IN recordID INT,IN salePrice DECIMAL(13,2),
 		,IN boilerInstalledYear INT, IN cableInternetProvider VARCHAR(45)
 		,IN assessedValue FLOAT 
 		,IN heatSystemType VARCHAR(45),IN unitQuantity INT
-
 		,IN unitPrice INT, IN unit_price_manual_mode BOOLEAN, IN building_income DECIMAL(13,2), IN building_income_manual_mode BOOLEAN
-
 		,IN bachelor_units INT, IN bedroom1_units INT, IN bedroom2_units INT, IN bedroom3_units INT
 		,IN bachelor_price FLOAT, IN bedroom1_price FLOAT, IN bedroom2_price FLOAT, IN bedroom3_price FLOAT
-
 		,IN propertyMgmtCompany VARCHAR(45), IN prev_property_mgmt_company VARCHAR(45), IN cap_rate INT, IN building_type INT, IN last_boiler_upgrade_year INT
-		,IN mortgageCompany VARCHAR(64), IN mortgageDueDate TIMESTAMP)
+		,IN mortgageCompany VARCHAR(64), IN mortgageDueDate TIMESTAMP, IN parkingSpots INT)
 BEGIN
 	UPDATE cur_sales_record_history
 		SET	
@@ -50,7 +47,7 @@ BEGIN
 			,last_boiler_upgrade_year = last_boiler_upgrade_year
 			,mortgage_company = mortgageCompany
 			,mortgage_due_date = mortgageDueDate
-			
+			,parking_spots = parkingSpots		
 
 	WHERE cur_sales_record_history.id = recordID;
 END$$
