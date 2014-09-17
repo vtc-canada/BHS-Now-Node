@@ -199,7 +199,7 @@ module.exports = {
 		    } else {
 			var tempOutVar = '@out' + Math.floor((Math.random() * 1000000) + 1);
 			sails.controllers.database.credSproc('CreateSalesContactMapping', [ responseSalesRecord[1][new_sale_id],
-				null, building.building_id, null, null, tempOutVar ], function(err, responseSalesMapping) {
+				null, building.building_id, 1, null, tempOutVar ], function(err, responseSalesMapping) {
 				checkAndUpdateBuildingLastSale(building,function(){
     					res.json({
     					    	success : true,
@@ -225,7 +225,7 @@ module.exports = {
 			"'"+building.cable_internet_provider+"'", building.assessed_value, building.heat_system_type, building.unit_quantity, building.unit_price,
 			building.unit_price_manual_mode, building.building_income, building.building_income_manual_mode,
 			building.bachelor_units, building.bedroom1_units, building.bedroom2_units, building.bedroom3_units, building.bachelor_price,
-			building.bedroom1_price, building.bedroom2_price, building.bedroom3_price,  "'"+building.property_mgmt_company+"'", "'"+building.prev_property_mgmt_company+"'", isNaN(building.cap_rate)?0:building.cap_rate, building.building_type, building.last_boiler_upgrade_year,"'"+ building.mortgage_company+"'", "'" + toUTCDateTimeString(building.mortgage_due_date) + "'"], function(err,
+			building.bedroom1_price, building.bedroom2_price, building.bedroom3_price,  "'"+building.property_mgmt_company+"'", "'"+building.prev_property_mgmt_company+"'", isNaN(building.cap_rate)?0:building.cap_rate, building.building_type, building.last_boiler_upgrade_year,"'"+ building.mortgage_company+"'", "'" + toUTCDateTimeString(building.mortgage_due_date) + "'",building.parking_spots], function(err,
 			responseUpdateSale) {
 
 		    // TODO : Update building..
@@ -285,7 +285,7 @@ module.exports = {
 					    building.bedroom2_price, building.bedroom3_price, tryParseInt(building.bachelor_units),
 					    tryParseInt(building.bedroom1_units), tryParseInt(building.bedroom2_units), tryParseInt(building.bedroom3_units),
 					    building.building_income, building.building_income_manual_mode, building.has_elevator, building.last_elevator_upgrade_year,
-					    building.last_boiler_upgrade_year,"'"+building.mortgage_company+"'","'" + toUTCDateTimeString(building.mortgage_due_date) + "'"], function(err, responseBuilding) {
+					    building.last_boiler_upgrade_year,"'"+building.mortgage_company+"'","'" + toUTCDateTimeString(building.mortgage_due_date) + "'", building.parking_spots], function(err, responseBuilding) {
 
 					processContacts(function() {
 					    processNotes(function(){
@@ -591,17 +591,50 @@ module.exports = {
 	    if(typeof(results[0])!='undefined'){
 		results = results[0];
 	    }
-	    var bodystring = '';
+	    var bodystring = 'Address,Building Type,Property Management Company,Previous Property Management Company,Heat System,Heat System Installed Year,Boiler Installed Year,Last Boiler Upgrade Year'
+		+',Cable Internet Provider,Elevator,Elevator Installed Year,Last Elevator Upgrade Year,Windows Installed Year,Parking Spots,Assessed Value,Mortgage Company,Mortgage Due Date,Bachelor Price,1 Bedroom Price,2 Bedroom Price,3 Bedroom Price'
+		+',Bachelor Units,1 Bedroom Units,2 Bedroom Units,3 Bedroom Units,Total Units,Building Income,Average Unit Price,CAP Rate,Last Sale Date,Last Sale Price'
+		+'\r\n';
 	    for(var i=0;i<results.length;i++){
-		bodystring+=results[i].building_id;
+
+		bodystring+='"'+buildAddressString(results[i])+'"';
+		bodystring+=','+ (results[i].building_type==null?'':results[i].building_type);
+		bodystring+=',"'+ (results[i].property_mgmt_company==null?'':results[i].property_mgmt_company)+'"';
+		bodystring+=',"'+ (results[i].prev_property_mgmt_company==null?'':results[i].prev_property_mgmt_company)+'"';
+		bodystring+=',"'+ (results[i].heat_system==null?'':results[i].heat_system)+'"';
+		bodystring+=','+ (results[i].heat_system_age==null?'':results[i].heat_system_age);
+		bodystring+=','+ (results[i].boiler_installed_year==null?'':results[i].boiler_installed_year);
+		bodystring+=','+ (results[i].last_boiler_upgrade_year==null?'':results[i].last_boiler_upgrade_year);
+		bodystring+=',"'+ (results[i].cable_internet_provider==null?'':results[i].cable_internet_provider)+'"';
+		bodystring+=','+ (results[i].has_elevator==null?'':results[i].has_elevator);
+		bodystring+=','+ (results[i].elevator_installed_year==null?'':results[i].elevator_installed_year);
+		bodystring+=','+ (results[i].last_elevator_upgrade_year==null?'':results[i].last_elevator_upgrade_year);
+		bodystring+=','+ (results[i].windows_installed_year==null?'':results[i].windows_installed_year);
+		bodystring+=','+ (results[i].parking_spots==null?'':results[i].parking_spots);
+		bodystring+=','+ (results[i].assessed_value==null?'':results[i].assessed_value);
+		bodystring+=',"'+ (results[i].mortgage_company==null?'':results[i].mortgage_company)+'"';
+		var mortgagetime = results[i].mortgage_due_date;
+		mortgagetime = new Date(mortgagetime.setMinutes(mortgagetime.getMinutes() -req.query.timezoneoffset));
+		bodystring+=',"'+toUTCDateTimeString(mortgagetime);
+		bodystring+=','+ (results[i].bachelor_price==null?'':results[i].bachelor_price);
+		bodystring+=','+ (results[i].bedroom1_price==null?'':results[i].bedroom1_price);
+		bodystring+=','+ (results[i].bedroom2_price==null?'':results[i].bedroom2_price);
+		bodystring+=','+ (results[i].bedroom3_price==null?'':results[i].bedroom3_price);
+		bodystring+=','+ (results[i].bachelor_units==null?'':results[i].bachelor_units);
+		bodystring+=','+ (results[i].bedroom1_units==null?'':results[i].bedroom1_units);
+		bodystring+=','+ (results[i].bedroom2_units==null?'':results[i].bedroom2_units);
+		bodystring+=','+ (results[i].bedroom3_units==null?'':results[i].bedroom3_units);
+		bodystring+=','+ (results[i].unit_quantity==null?'':results[i].unit_quantity);
+		bodystring+=','+ (results[i].building_income==null?'':results[i].building_income);
+		bodystring+=','+ (results[i].unit_price==null?'':results[i].unit_price);
+		bodystring+=','+ (results[i].cap_rate==null?'':results[i].cap_rate);
 		var timestamp = results[i].sale_date;
 		timestamp = new Date(timestamp.setMinutes(timestamp.getMinutes() -req.query.timezoneoffset));
 		bodystring+=','+toUTCDateTimeString(timestamp);
-		bodystring+=','+results[i].owner;
-		bodystring+=','+buildAddressString(results[i]);
+		bodystring+=','+ (results[i].last_sale_price==null?'':results[i].last_sale_price);
 		bodystring+='\r\n';
 	    }
-
+	    
 	    var AWS = require('aws-sdk'); 
 	    AWS.config.update({ "accessKeyId": "AKIAJ7AKNL3ASNPN3IBA", "secretAccessKey": "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", "region": "us-west-2" });
 	    
@@ -728,8 +761,8 @@ module.exports = {
 		req.query.cap_rate_min == ''?null:req.query.cap_rate_min,	
 		req.query.cap_rate_max == ''?null:req.query.cap_rate_max,	
 			
-		req.query.search_property_mgmt_company == ''?null:req.query.search_property_mgmt_company,
-		req.query.search_prev_property_mgmt_company == ''?null:req.query.search_prev_property_mgmt_company,	
+		req.query.search_property_mgmt_company == ''?null:"'"+req.query.search_property_mgmt_company,
+		req.query.search_prev_property_mgmt_company == ''?null:"'"+req.query.search_prev_property_mgmt_company,	
 			
 		req.query.heat_age_min == ''?null:req.query.heat_age_min,		
 		req.query.heat_age_max == ''?null:req.query.heat_age_max,	
@@ -781,6 +814,8 @@ module.exports = {
 		
 		req.query.checkbox_building_types == ''?null:req.query.checkbox_building_types,
 		req.query.checkbox_heating_types == ''?null:req.query.checkbox_heating_types,
+		req.query.parking_spots_min == ''?null:req.query.parking_spots_min,
+		req.query.parking_spots_max == ''?null:req.query.parking_spots_max,
 		req.query.start, req.query.length, orderstring, filteredCount, totalCount ], function(err, result) { // GetBuildings
 	    if (err) {
 		return res.json({
@@ -913,21 +948,21 @@ function buildAddressString(data){
 	}
 	if(data.street_name!=null&&data.street_name!='')
 	{
-		street_name= data.street_name==null||data.street_name=='null'?'':' '+data.street_name;
+		street_name= data.street_name==null||data.street_name=='null'?'':','+data.street_name;
 	}
 	if(data.city != null && data.city != '')
 	{
-		city = data.city==null||data.city=='null'?'':data.city;
+		city = data.city==null||data.city=='null'?'':','+data.city;
 	}
 	if(data.province != null && data.province != '')
 	{
-		province = data.province==null||data.province=='null'?'':data.province;
+		province = data.province==null||data.province=='null'?'':','+data.province;
 	}
 	if(data.postal_code != null && data.postal_code != '')
 	{
-		postal_code =  data.postal_code==null||data.postal_code=='null'?'':data.postal_code; 
+		postal_code =  data.postal_code==null||data.postal_code=='null'?'':','+data.postal_code; 
 	}
-	return street_number_begin+street_number_end+','+street_name+','+city+','+province+','+postal_code; 
+	return street_number_begin+street_number_end+street_name+city+province+postal_code; 
 
 }
   

@@ -93,15 +93,15 @@ module.exports = {
 	    if(typeof(responseCompanies[0])!='undefined'){
 		results = responseCompanies[0];
 	    }
-	    var bodystring = 'Company,Street Number Begin,Street Number End,Street Name,City,Province,Postal Code\r\n';
+	    var bodystring = 'Company,Address\r\n';
 	    for(var i=0;i<results.length;i++){
 		//bodystring+=results[i].company_id;
-		bodystring+=results[i].company_name;
+		bodystring+='"'+(results[i].company_name==null?'':results[i].company_name) + '"';
 		//var timestamp = results[i].sale_date;
 		//timestamp = new Date(timestamp.setMinutes(timestamp.getMinutes() -req.query.timezoneoffset));
 		//bodystring+=','+toUTCDateTimeString(timestamp);
 		//bodystring+=','+results[i].owner;
-		bodystring+=','+buildAddressString(results[i]);
+		bodystring+=',"'+buildAddressString(results[i])+'"';
 		bodystring+='\r\n';
 	    }
 

@@ -111,9 +111,12 @@ module.exports = {
 	    if(typeof(responseContacts[0])!='undefined'){
 		results = responseContacts[0];
 	    }
-	    var bodystring = '';
+	    var bodystring = 'Contact Name,Phone Number,Email,Associated Companies\r\n';
 	    for(var i=0;i<results.length;i++){
-		bodystring+=results[i].contact_id;
+		bodystring+='"'+results[i].contact_name+'"';
+		bodystring+=',"'+results[i].phone+'"';
+		bodystring+=',"'+results[i].email+'"';
+		bodystring+=',"'+results[i].company + '"';
 		//var timestamp = results[i].sale_date;
 		//timestamp = new Date(timestamp.setMinutes(timestamp.getMinutes() -req.query.timezoneoffset));
 		//bodystring+=','+toUTCDateTimeString(timestamp);
