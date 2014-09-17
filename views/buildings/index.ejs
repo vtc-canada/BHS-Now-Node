@@ -3667,7 +3667,7 @@
 	            $(this.elagents).html("");
 	            
 	            var tcollection = this.collection.sortBy(function(contacts){
-	                return contacts.get("contact_name").toString().toUpperCase();
+	                return contacts.get("contact_name")!=null?contacts.get("contact_name").toString().toUpperCase():0;
 	            });
 	
 	            for(var i=0; i<tcollection.length; i++)
