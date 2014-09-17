@@ -19,7 +19,7 @@ LEFT JOIN cur_sales_history_contact_mapping AS agent_sale ON (agent_sale.cur_sal
 LEFT JOIN cur_contacts AS owner_contact ON (owner_contact.id = owner_sale.contact_id)
 LEFT JOIN cur_contacts AS seller_contact ON (seller_contact.id = seller_sale.contact_id)
 LEFT JOIN cur_contacts AS agent_contact ON (agent_contact.id = agent_sale.contact_id)
-WHERE (owner_sale.cur_buildings_id IS NULL OR owner_sale.cur_buildings_id = buildingID)
+WHERE (owner_sale.cur_buildings_id = buildingID OR seller_sale.cur_buildings_id = buildingID  OR agent_sale.cur_buildings_id = buildingID )
 GROUP BY cur_sales_record_history.id;
 END$$
 DELIMITER ;	
