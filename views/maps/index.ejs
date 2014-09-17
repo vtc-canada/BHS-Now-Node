@@ -122,19 +122,19 @@
         <div class="span8 offset2 create-report-controls" style="padding-top: 10px;">
            <div class="row-fluid">
                <div class="row">
-                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_address">Search Address:</label></div>
+                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_address">Address:</label></div>
                    <div class="span8 report-control-right-control">
                        <input type="text" id="search_address" value="">
                    </div>
                </div>
                <div class="row">
-                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_contact">Search Contact:</label></div>
+                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_contact">Owner:</label></div>
                    <div class="span8 report-control-right-control">
                        <input type="text" id="search_contact" value="">
                    </div>
                </div>
                <div class="row">
-                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_company">Search Company:</label></div>
+                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_company">Property Manager:</label></div>
                    <div class="span8 report-control-right-control">
                        <input type="text" id="search_company" value="">
                    </div>
@@ -153,9 +153,9 @@
 	                   		<div class="row-fluid">
 	                   			<div class="pull-left" style="width:35px;"><span id="units_min">0</span></div>
 	                   			
-	                   			<input id="units_slider" type="text" class="" value="" data-slider-min="0" data-slider-max="250" data-slider-step="5" data-slider-value="[0,250]"/>
+	                   			<input id="units_slider" type="text" class="" value="" data-slider-min="0" data-slider-max="1000" data-slider-step="5" data-slider-value="[0,1000]"/>
 	                   			&nbsp&nbsp
-	                   			<span id="units_max">250+</span>
+	                   			<span id="units_max">1000+</span>
 	                   		</div>
 	                   </div>
 	                   
@@ -317,7 +317,7 @@
     
     	var unitsMax = null;
     	var unitsMin = null;
-    	var sliderLimit = 250;
+    	var sliderLimit = 1000;
         var leaveSalesExpanded = false;
     
     	var buildingtemplate = _.template($('#building-template').html());
