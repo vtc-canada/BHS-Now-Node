@@ -23,7 +23,7 @@ CREATE PROCEDURE `GetBuildings`(IN contactSearchTerms VARCHAR(128), IN addressSe
 		IN cableProvider VARCHAR(128),
 		IN mortgageDueDateRangeStart datetime, IN mortgageDueDateRangeEnd datetime,
 		IN numOfSalesMin INT, numOfSalesMax INT,
-		IN buildingTypes VARCHAR(64), IN heatSystemTypes VARCHAR(64), IN numOfParkingMin INT, IN numOfParkingMax,
+		IN buildingTypes VARCHAR(64), IN heatSystemTypes VARCHAR(64), IN numOfParkingMin INT, IN numOfParkingMax INT,
 		IN offsetIndex int, IN recordCount INT, IN orderBy VARCHAR (255), OUT id int, OUT totalCount int)
 BEGIN
 SELECT 
