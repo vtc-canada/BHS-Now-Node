@@ -803,7 +803,7 @@ module.exports = {
 		req.query.windows_installed_year_min == ''?null:req.query.windows_installed_year_min,		
 		req.query.windows_installed_year_max == ''?null:req.query.windows_installed_year_max,
 			
-		req.query.cable_internet_provider == ''?null:req.query.cable_internet_provider,	
+		(typeof(req.query.cable_internet_provider)=='undefined'||req.query.cable_internet_provider == '')?null:"'%"+req.query.cable_internet_provider+"%'",	
 			
 			
 		(typeof(req.query.start_mortgage_due_date)=='undefined'||req.query.start_mortgage_due_date == '')?null:"'"+req.query.start_mortgage_due_date+"'",	
