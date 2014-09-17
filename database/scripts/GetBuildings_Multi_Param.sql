@@ -42,7 +42,36 @@ SELECT
 	,cur_address.longitude
 	,cur_buildings.windows_installed_year
 	,IFNULL(sales_count.num_of_records,0) AS num_of_sales
-	
+	,ref_building_type.type 'building_type'
+	,cur_buildings.property_mgmt_company
+	,cur_buildings.prev_property_mgmt_company
+	,ref_heat_system_type.type 'heat_system'
+	,cur_buildings.heat_system_age
+	,cur_buildings.boiler_installed_year
+	,cur_buildings.last_boiler_upgrade_year
+	,cur_buildings.cable_internet_provider
+	,cur_buildings.has_elevator
+	,cur_buildings.elevator_installed_year
+	,cur_buildings.last_elevator_upgrade_year
+	,cur_buildings.windows_installed_year
+	,'parking_spots' as 'parking_spots'
+	,cur_buildings.assessed_value
+	,cur_buildings.mortgage_company
+	,cur_buildings.mortgage_due_date
+	,cur_buildings.bachelor_price
+	,cur_buildings.bedroom1_price
+	,cur_buildings.bedroom2_price
+	,cur_buildings.bedroom3_price
+	,cur_buildings.bachelor_units
+	,cur_buildings.bedroom1_units
+	,cur_buildings.bedroom2_units
+	,cur_buildings.bedroom3_units
+	,cur_buildings.unit_quantity
+	,cur_buildings.building_income
+	,cur_buildings.unit_price
+	,cur_buildings.cap_rate
+	,cur_buildings.sale_date
+	,cur_buildings.last_sale_price
 FROM cur_buildings
 	INNER JOIN cur_address ON (cur_address.id = cur_buildings.cur_address_id)
 	LEFT JOIN cur_owner_seller_property_mapping as mapping ON (mapping.property_address_id = cur_address.id)
