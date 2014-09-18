@@ -2850,7 +2850,7 @@
 	        			}
 	        		}else if($(event.target).attr('type')=='checkbox'){
 	        			building.set($(event.target).attr('id'),($(event.target).is(':checked')?1:0));
-	        		}else{
+	        		}else if($(event.target).attr('id')!="mortgage_due_date"&&$(event.target).attr('id')!="sale_date"){
 	        			building.set($(event.target).attr('id'),$(event.target).val());
 	        		}
 	        	}else if($(event.target).attr('id')=='income_calculated_radio'){
