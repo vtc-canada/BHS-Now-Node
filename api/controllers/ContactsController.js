@@ -117,11 +117,6 @@ module.exports = {
 		bodystring+=',"'+results[i].phone+'"';
 		bodystring+=',"'+results[i].email+'"';
 		bodystring+=',"'+results[i].company + '"';
-		//var timestamp = results[i].sale_date;
-		//timestamp = new Date(timestamp.setMinutes(timestamp.getMinutes() -req.query.timezoneoffset));
-		//bodystring+=','+toUTCDateTimeString(timestamp);
-		//bodystring+=','+results[i].owner;
-		bodystring+=','+buildAddressString(results[i]);
 		bodystring+='\r\n';
 	    }
 

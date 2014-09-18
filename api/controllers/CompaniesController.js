@@ -95,12 +95,7 @@ module.exports = {
 	    }
 	    var bodystring = 'Company,Address\r\n';
 	    for(var i=0;i<results.length;i++){
-		//bodystring+=results[i].company_id;
 		bodystring+='"'+(results[i].company_name==null?'':results[i].company_name) + '"';
-		//var timestamp = results[i].sale_date;
-		//timestamp = new Date(timestamp.setMinutes(timestamp.getMinutes() -req.query.timezoneoffset));
-		//bodystring+=','+toUTCDateTimeString(timestamp);
-		//bodystring+=','+results[i].owner;
 		bodystring+=',"'+buildAddressString(results[i])+'"';
 		bodystring+='\r\n';
 	    }

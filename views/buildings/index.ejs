@@ -1576,7 +1576,7 @@
 			});
 		});
 		$('#confirmdeletesale').click(function(){
-			socket.get('/buildings/deletesale/'+building.get('sale_id'),[],function(deleteResponse){
+			socket.get('/buildings/deletesale/'+building.get('sale_id'),{building:building},function(deleteResponse){
 		        	
         		leaveSalesExpanded = true;
         		building.fetch({id:parseInt(building.get('building_id'))});

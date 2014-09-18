@@ -53,17 +53,17 @@ module.exports = {
 	    if(err){
 		return res.json({error:'Database Error:'+err},500);
 	    }
-	    var bodystring = '';
+	    var bodystring = 'Date,User,Details,Company,Contact,Building\r\n';
 	    
 	    for(var i=0;i<responseNotes[0].length;i++){
 		var timestamp = responseNotes[0][i].timestamp;
 		timestamp = new Date(timestamp.setMinutes(timestamp.getMinutes() -timezoneoffset));
 		bodystring+=toUTCDateTimeString(timestamp);
 		bodystring+=','+responseNotes[0][i].user;
-		bodystring+=','+responseNotes[0][i].note;
-		bodystring+=','+(responseNotes[0][i].company==null?'':responseNotes[0][i].company);
-		bodystring+=','+(responseNotes[0][i].contact==null?'':responseNotes[0][i].contact);
-		bodystring+=','+buildAddressString(responseNotes[0][i]);
+		bodystring+=',"'+responseNotes[0][i].note+'"';
+		bodystring+=',"'+(responseNotes[0][i].company==null?'':responseNotes[0][i].company)+'"';
+		bodystring+=',"'+(responseNotes[0][i].contact==null?'':responseNotes[0][i].contact)+'"';
+		bodystring+=',"'+buildAddressString(responseNotes[0][i])+'"';
 		bodystring+='\r\n';
 	    }
 

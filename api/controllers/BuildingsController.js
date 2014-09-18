@@ -114,14 +114,17 @@ module.exports = {
     deletesale : function(req, res) {
 	if (typeof (req.params.id) != 'undefined' && !isNaN(parseInt(req.params.id))) {
 	    sails.controllers.database.credSproc('DeleteSaleAndMappings', [ parseInt(req.params.id) ], function(err, responseDelete) {
-		if (err)
+		if (err){
 		    return res.json({
 			error : 'Database Error' + err
 		    }, 500);
-
-		res.json({
-		    success : 'Sale Deleted'
+		}
+		checkAndUpdateBuildingLastSale(req.body.building,function(){
+			return res.json({
+			    success : 'Sale Deleted'
+			});
 		});
+		
 
 	    });
 
@@ -342,37 +345,7 @@ module.exports = {
 			
 		    }
 	    });
-	    function checkAndUpdateBuildingLastSale(buildingsale,cb){
-		if(isNaN(parseInt(buildingsale.building_id))){
-		    return console.log('invalid building id');
-		}
-		sails.controllers.database.credSproc('GetBuilding', [ buildingsale.building_id ], function(err, building) {
-
-		    if (err) {
-			res.json({
-			    error : 'Database Error'
-			}, 500);
-		    } else if(typeof(building[0][0])=='undefined'){
-			res.json({
-			    error : 'Database Error'
-			}, 500);
-		    }else {
-			building = building[0][0];
-			if(new Date(buildingsale.sale_date)>=building.sale_date){
-			    
-			    sails.controllers.database.credSproc('UpdateBuildingLastSale', [ building.building_id,  toUTCDateTimeString(buildingsale.sale_date) 
-			                                                                     , buildingsale.last_sale_price,], function(err, updatesale) {
-				if(err)
-				    return console.log('error'+err);
-				cb();
-			    });
-			}else{
-			    cb();
-			}
-			
-		    }
-		});
-	    }
+	    
 	    
 	    
 	}
@@ -615,7 +588,7 @@ module.exports = {
 		bodystring+=',"'+ (results[i].mortgage_company==null?'':results[i].mortgage_company)+'"';
 		var mortgagetime = results[i].mortgage_due_date;
 		mortgagetime = new Date(mortgagetime.setMinutes(mortgagetime.getMinutes() -req.query.timezoneoffset));
-		bodystring+=',"'+toUTCDateTimeString(mortgagetime);
+		bodystring+=',"'+toUTCDateTimeString(mortgagetime)+'"';
 		bodystring+=','+ (results[i].bachelor_price==null?'':results[i].bachelor_price);
 		bodystring+=','+ (results[i].bedroom1_price==null?'':results[i].bedroom1_price);
 		bodystring+=','+ (results[i].bedroom2_price==null?'':results[i].bedroom2_price);
@@ -630,8 +603,8 @@ module.exports = {
 		bodystring+=','+ (results[i].cap_rate==null?'':results[i].cap_rate);
 		var timestamp = results[i].sale_date;
 		timestamp = new Date(timestamp.setMinutes(timestamp.getMinutes() -req.query.timezoneoffset));
-		bodystring+=','+toUTCDateTimeString(timestamp);
-		bodystring+=','+ (results[i].last_sale_price==null?'':results[i].last_sale_price);
+		bodystring+=',"'+toUTCDateTimeString(timestamp)+'"';
+		bodystring+=',"'+ (results[i].last_sale_price==null?'':results[i].last_sale_price)+'"';
 		bodystring+='\r\n';
 	    }
 	    
@@ -964,5 +937,51 @@ function buildAddressString(data){
 	}
 	return street_number_begin+street_number_end+street_name+city+province+postal_code; 
 
+}
+
+function checkAndUpdateBuildingLastSale(buildingsale,cb){
+	if(isNaN(parseInt(buildingsale.building_id))){
+	    return console.log('invalid building id');
+	}
+	sails.controllers.database.credSproc('GetBuilding', [ buildingsale.building_id ], function(err, building) {
+	    if (err) {
+		res.json({
+		    error : 'Database Error'
+		}, 500);
+	    } else if(typeof(building[0][0])=='undefined'){
+		res.json({
+		    error : 'Database Error'
+		}, 500);
+	    }else {
+		building = building[0][0];
+		sails.controllers.database.credSproc('GetBuildingSales', [ building.building_id ], function(err, tempbuildingsales) {
+			if (err)
+			    return res.json({
+				error : err.toString()
+			    }, 500);
+			if(typeof(tempbuildingsales[0])!='undefined'){
+			    tempsales = tempbuildingsales[0];
+			    building.sale_date = null;
+			    building.last_sale_date = null;
+			    for(var i=0;i<tempsales.length;i++){
+				if(new Date(tempsales[i].sale_date)>=building.sale_date){
+				    building.sale_date = new Date(tempsales[i].sale_date);
+				    building.last_sale_price = tempsales[i].sale_price;
+				}
+			    }
+			    sails.controllers.database.credSproc('UpdateBuildingLastSale', [ building.building_id,  toUTCDateTimeString(building.sale_date) 
+			                                                                     , building.last_sale_price,], function(err, updatesale) {
+				if(err)
+				    return console.log('error'+err);
+				cb();
+			    });
+			    
+			}else{
+			    cb();
+			}
+		 });
+		
+	    }
+	});
 }
   
