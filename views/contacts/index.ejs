@@ -450,7 +450,13 @@
 	        			d.contact_search = $("#search_contact").val();
 	        		},
 	        		error: function(xhr, error, thrown){
-	        			alert('an error');
+	        			//alert('an error');
+	        			
+	    				$('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
+		                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+		                        ''+error.toString()+'</div>');
+		                $('.main-content')[0].scrollTop=0;
+	        			
 	        		}
 	        	},
 		        "aoColumns":[
@@ -584,13 +590,14 @@
 		});
 		
     	$('#save_contact').click(function(){
+    		$('.alert-success').remove();
+    		$('.alert-error').remove();
     		var wasnew = contact.get('contact_id')=='new'?true:false;
     		socket.get('/contacts/updatecontact/' + contact.get('contact_id'), {contact:contact.toJSON(), companies : companies.toJSON(), notes : notes.toJSON()},function(response){
     			if(typeof(response.success)!='undefined'){
     				if(contact.get('contact_id')=='new'){
     					contact.set('contact_id',response.contact_id);
     				}
-	    			$('.alert-success').remove();
 	                $('.page-banner').after('<div class="alert alert-success fade in" style="border-radius:0px;">'+
 	                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
 	                        '<strong>'+'Success'+':&nbsp</strong>'+'Changes have been saved'+'</div>');
@@ -617,12 +624,18 @@
 	                    $('.alert-success').removeClass('in');
 	                },alert_fadeout_time);
     			}else{
-    				alert(response.error);
+    				$('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
+	                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+	                        ''+response.error+'</div>');
+	                $('.main-content')[0].scrollTop=0;
 				}
     		});
     	});
     	
     	$('#save_notes').click(function(){
+    	
+    		$('.alert-success').remove();
+    		$('.alert-error').remove();
     		if($(this).hasClass('disabled')){
     			return;
     		}
@@ -647,7 +660,10 @@
 	                    $('.alert-success').removeClass('in');
 	                },alert_fadeout_time);
     			}else{
-    				alert(response.error);
+    				$('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
+	                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+	                        ''+response.error+'</div>');
+	                $('.main-content')[0].scrollTop=0;
 				}
     		});
     	});

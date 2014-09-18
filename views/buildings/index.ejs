@@ -1708,7 +1708,10 @@
 	        			d.checkbox_heating_types = checkbox_heating_types;
 	        		},
 	        		error: function(xhr, error, thrown){
-	        			
+	        			$('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
+		                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+		                        ''+error.toString()+'</div>');
+	                	$('.main-content')[0].scrollTop=0;
 	        		}
 	        	},
 		        "aoColumns":[
@@ -2613,7 +2616,10 @@
 		}
 		
 		function transferFailed(evt){
-			console.log('transfer failed');
+    			$('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
+                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+                        'Image Transfer Failed'+'</div>');
+            	$('.main-content')[0].scrollTop=0;
 		}
 		
 		
@@ -2671,35 +2677,39 @@
     		var wasnew = building.get('building_id')=='new'?true:false;
     		var sendobj = {building:building, buildingnotes : buildingnotes, buildingcontacts:buildingcontacts};
     		socket.get('/buildings/savebuilding',sendobj,function(response){
-    		
-                $('.alert-success').remove();
-                $('.page-banner').after('<div class="alert alert-success fade in" style="border-radius:0px;">'+
-                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
-                        '<strong>'+'Success'+':&nbsp</strong>'+'Changes have been saved'+'</div>');
-                $('.main-content')[0].scrollTop=0;
-                
-                setTimeout(function(){ // wait for database to be ready
-                	if(wasnew){
-						$('.edit-item-section').css('display','none');
-						$('#delete_building').css('display','none');
-                	}else{
-		                if(typeof(building.get('sale_id'))!='undefined'){
-		                	building.fetch({id:response.building_id, sale_id: building.get('sale_id')=='new'?response.sale_id:parseInt(building.get('sale_id'))});  
-		                }else{
-		                	building.fetch({id:response.building_id});  
-		                }
-                	}
-	                datatable.api().ajax.reload(function(){},false);
-                },100);
-                
-                
+    			if(typeof(response.success)!='undefined'){
+	                $('.alert-success').remove();
+	                $('.page-banner').after('<div class="alert alert-success fade in" style="border-radius:0px;">'+
+	                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+	                        '<strong>'+'Success'+':&nbsp</strong>'+'Changes have been saved'+'</div>');
+	                $('.main-content')[0].scrollTop=0;
+	                
+	                setTimeout(function(){ // wait for database to be ready
+	                	if(wasnew){
+							$('.edit-item-section').css('display','none');
+							$('#delete_building').css('display','none');
+	                	}else{
+			                if(typeof(building.get('sale_id'))!='undefined'){
+			                	building.fetch({id:response.building_id, sale_id: building.get('sale_id')=='new'?response.sale_id:parseInt(building.get('sale_id'))});  
+			                }else{
+			                	building.fetch({id:response.building_id});  
+			                }
+	                	}
+		                datatable.api().ajax.reload(function(){},false);
+	                },100);
                         
-                setTimeout(function(){
-                    setTimeout(function(){
-                        $('.alert-success').remove();
-                    },500);
-                    $('.alert-success').removeClass('in');
-                },alert_fadeout_time);
+	                setTimeout(function(){
+	                    setTimeout(function(){
+	                        $('.alert-success').remove();
+	                    },500);
+	                    $('.alert-success').removeClass('in');
+	                },alert_fadeout_time);
+                }else{
+    				$('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
+		                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+		                        ''+response.error.toString()+'</div>');
+	                $('.main-content')[0].scrollTop=0;
+                }
     		});
 		});
     	
@@ -2991,7 +3001,7 @@
 		    	$('.fileinput-button').click(function(){
 		    		if(typeof($(this).attr('disabled'))=='undefined')
 		    		{
-		    			alert('clicked it');
+		    			//alert('clicked it');
 		    			$('#filesToUpload').val('');
 			    		$('#filesToUpload').click();
 		    		}
@@ -3263,7 +3273,6 @@
 	        			if(selectedoption.length==1)
 	        			{
 	        				newContactId =  parseInt(selectedoption.attr('contact_id'));
-	        				console.log(newContactId);
 	        				
 	        				$('#mapping_new_contact_name').html(selectedoption.attr('value'));
 	        				$('#mapping_new_contact_name').attr('contact_id',selectedoption.attr('contact_id'));
@@ -3271,7 +3280,6 @@
 	        				$('#mapping_new_email').html(selectedoption.attr('email'));
 	        			}else{
 	        				newContactId = null;
-	        				console.log('cleared contact');
 	        				updateContactsCombobox();
 	        				
 	        				$('#mapping_new_contact_name').attr('contact_id','');
@@ -3336,8 +3344,6 @@
 	        			if(selectedoption.length==1)
 	        			{
 	        				newCompanyId = parseInt(selectedoption.attr('company_id'));
-	        				console.log(newCompanyId);
-	        				//updateContactsCombobox();
 	        				
 	        				$('#mapping_new_company_name').html(selectedoption.attr('value'));
 	        				$('#mapping_address').attr('mapping_street_number_begin',selectedoption.attr('mapping_street_number_begin'));
@@ -3346,7 +3352,6 @@
 	        				$('#mapping_address').attr('mapping_city',selectedoption.attr('mapping_city'));
 	        				$('#mapping_address').attr('mapping_province',selectedoption.attr('mapping_province'));
 	        				$('#mapping_address').attr('mapping_postal_code',selectedoption.attr('mapping_postal_code'));
-	        				
 	        				
 	        				$('#mapping_new_company_address_1').html(buildStreetString(selectedoption.attr('mapping_street_number_begin'),selectedoption.attr('mapping_street_number_end'),selectedoption.attr('mapping_street_name')));
 	        				$('#mapping_new_company_address_2').html(buildCityProvinceString(selectedoption.attr('mapping_city'),selectedoption.attr('mapping_province')));
@@ -3557,7 +3562,7 @@
 	        		//$('#building-sales').css('display','')
 	        	}
 	            var tcollection = this.collection.sortBy(function(notes){
-	                return notes.get("timestamp").toString().toUpperCase();
+	                return notes.get("timestamp")==null?0:notes.get("timestamp").toString().toUpperCase();
 	            });
 	
 	            for(var i=0; i<tcollection.length; i++)

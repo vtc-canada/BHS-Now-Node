@@ -493,7 +493,10 @@
 	        			d.contact_search = $("#search_company").val();
 	        		},
 	        		error: function(xhr, error, thrown){
-	        			//alert('an error');
+	    				$('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
+		                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+		                        ''+error.toString()+'</div>');
+		                $('.main-content')[0].scrollTop=0;
 	        		}
 	        	},
 		        "aoColumns":[
@@ -512,7 +515,6 @@
 					$(row).attr('company_id',data['company_id']);
 					$(row).attr('address_id',data['address_id']);
 					$(row).click(function(){
-						//alert('i like to click rows');
 						$('.edit-item-section').css('display','');
 						$('#delete_company').css('display','');
     					contacts.fetch({id:parseInt($(row).attr('company_id'))});
@@ -625,6 +627,8 @@
 		});
 		
 		$('#save_notes').click(function(){
+			$('.alert-success').remove();
+			$('.alert-danger').remove();
     		if($(this).hasClass('disabled')){
     			return;
     		}
@@ -633,7 +637,6 @@
     				if(company.get('company_id')=='new'){
     					company.set('company_id',response.company_id);
     				}
-	    			$('.alert-success').remove();
 	                $('.page-banner').after('<div class="alert alert-success fade in" style="border-radius:0px;">'+
 	                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
 	                        '<strong>'+'Success'+':&nbsp</strong>'+'Changes have been saved'+'</div>');
@@ -650,7 +653,11 @@
 	                    $('.alert-success').removeClass('in');
 	                },alert_fadeout_time);
     			}else{
-    				alert(response.error);
+
+    				$('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
+	                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+	                        ''+response.error.toString()+'</div>');
+	                $('.main-content')[0].scrollTop=0;
     			}
     		});
 		});
@@ -670,13 +677,14 @@
 		});
 		
     	$('#save_company').click(function(){
+			$('.alert-success').remove();
+			$('.alert-danger').remove();
     		var wasnew = company.get('company_id')=='new'?true:false;
     		socket.get('/companies/updatecompany', {company:company.toJSON(), contacts : contacts.toJSON(), notes: notes.toJSON()},function(response){
     			if(typeof(response.success)!='undefined'){
     				if(company.get('company_id')=='new'){
     					company.set('company_id',response.company_id);
     				}
-	    			$('.alert-success').remove();
 	                $('.page-banner').after('<div class="alert alert-success fade in" style="border-radius:0px;">'+
 	                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
 	                        '<strong>'+'Success'+':&nbsp</strong>'+'Changes have been saved'+'</div>');
@@ -700,7 +708,10 @@
 	                    $('.alert-success').removeClass('in');
 	                },alert_fadeout_time);
     			}else{
-    				alert(response.error);
+    				$('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
+		                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+		                        ''+response.error.toString()+'</div>');
+	                $('.main-content')[0].scrollTop=0;
     			}
     		});
     	});

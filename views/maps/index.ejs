@@ -648,7 +648,6 @@
 			        "rowCallback": function( row, data, displayIndex ) {
 						$(row).attr('building_id',data['building_id']);
 						$(row).click(function(){
-							console.log($(row).attr('building_id'));
 							markers.toggle(parseInt($(row).attr('building_id')));
 	    					//building.fetch({id:parseInt($(row).attr('building_id'))});
 	               		});

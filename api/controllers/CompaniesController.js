@@ -39,7 +39,7 @@ module.exports = {
 	res.view('companies/index', {});
   },
   getcontactsbyname : function(req,res){
-	sails.controllers.database.credSproc('GetContactsByName',[typeof (req.body.search) != 'undefined' ? "'" + req.body.search + "'" : null],function(err, contacts){
+	sails.controllers.database.credSproc('GetContactsByName',[typeof (req.body.search) != 'undefined' ?  req.body.search  : null],function(err, contacts){
 	    if(err||typeof(contacts[0])=='undefined')
 		return res.json({error:'Database Error'+err},500);
 	    res.json(contacts[0]);
@@ -153,7 +153,7 @@ module.exports = {
 		    address_search=address_search+ "+"+adr[i].trim()+"* ";
 		}
 	    }
-	    address_search = "'"+address_search.trim()+"'";
+	    address_search = address_search.trim();
 	}
 	if (req.query.contact_search != '') {
 	    contact_search = req.query.contact_search.trim().split(" ");
@@ -164,7 +164,7 @@ module.exports = {
 		    contact_search=contact_search+ "+"+adr[i].trim()+"* ";
 		}
 	    }
-	    contact_search = "'"+contact_search.trim()+"'";
+	    contact_search = contact_search.trim();
 	}
 
 
@@ -177,7 +177,7 @@ module.exports = {
 		}else{
 		    orderstring = req.query.columns[req.query.order[0].column].data;
 		}
-		orderstring = "'"+orderstring+'_'+req.query.order[0].dir+"'"
+		orderstring = orderstring+'_'+req.query.order[0].dir
 	};
 	
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
@@ -196,7 +196,7 @@ module.exports = {
 	
 	function updateCompany(contact,cb){
 	    if(company.company_id != 'new'&&typeof(company.modified)!='undefined'){
-		sails.controllers.database.credSproc('UpdateCompany',[company.company_id,"'"+company.company_name+"'"],function(err,resContact){
+		sails.controllers.database.credSproc('UpdateCompany',[company.company_id,company.company_name],function(err,resContact){
 		    if(err)
 			return res.json({error:'Database Error:'+err},500);
 		
@@ -222,7 +222,7 @@ module.exports = {
 			    lat = responseGeocode[0].latitude;
 			    lng = responseGeocode[0].longitude;
 			}
-			sails.controllers.database.credSproc('UpdateAddressByCompanyId',[company.company_id,"'"+company.street_number_begin+"'" ,"'"+company.street_number_end+"'","'"+company.street_name+"'","'"+company.postal_code+"'","'"+company.city+"'","'"+company.province+"'",lat, lng],function(err,resAddress){
+			sails.controllers.database.credSproc('UpdateAddressByCompanyId',[company.company_id,company.street_number_begin ,company.street_number_end,company.street_name,company.postal_code,company.city,company.province,lat, lng],function(err,resAddress){
     		        if(err)
       			    return res.json({error:'Database Error:'+err},500);
       			cb(); 
@@ -231,7 +231,7 @@ module.exports = {
 		});
 	    }else if(company.company_id == 'new'){
 		var outcompanyId = '@out' + Math.floor((Math.random() * 1000000) + 1);
-		sails.controllers.database.credSproc('CreateCompany',["'"+company.company_name+"'",outcompanyId],function(err, responseCreateCompany){
+		sails.controllers.database.credSproc('CreateCompany',[company.company_name,outcompanyId],function(err, responseCreateCompany){
 		    if(err)
   			return res.json({error:'Database Error:'+err},500);
 		    company.company_id = responseCreateCompany[1][outcompanyId];
@@ -260,7 +260,7 @@ module.exports = {
 			    lng = responseGeocode[0].longitude;
 			}
         		    var outaddressId = '@out' + Math.floor((Math.random() * 1000000) + 1);
-        		    sails.controllers.database.credSproc('CreateAddress',["'"+company.street_number_begin+"'" ,"'"+company.street_number_end+"'","'"+company.street_name+"'","'"+company.postal_code+"'","'"+company.city+"'",2,"'"+company.province+"'",lat, lng,outaddressId],function(err,resAddress){
+        		    sails.controllers.database.credSproc('CreateAddress',[company.street_number_begin ,company.street_number_end,company.street_name,company.postal_code,company.city,2,company.province,lat, lng,outaddressId],function(err,resAddress){
         		        if(err)
           			    return res.json({error:'Database Error:'+err},500);
         		        
@@ -285,7 +285,7 @@ module.exports = {
 		if (notes[i].id.toString().indexOf('new')>-1) { // new
 									// Note!
 		    var tempOutNoteVar = '@out' + Math.floor((Math.random() * 1000000) + 1);
-		    sails.controllers.database.credSproc('CreateNote', [ "'"+notes[i].note+"'", "'"+req.session.user.username+"'", 'NOW()',tempOutNoteVar], function(err, responseNote) {
+		    sails.controllers.database.credSproc('CreateNote', [ notes[i].note, req.session.user.username, 'NOW()',tempOutNoteVar], function(err, responseNote) {
 			if (err)
 			    return res.json({
 				error : 'Database Error:' + err
@@ -320,7 +320,7 @@ module.exports = {
 			}
 		    });
 		} else if (typeof (notes[i].modified) != 'undefined') {
-		    sails.controllers.database.credSproc('UpdateNote', [ notes[i].id, "'"+notes[i].note+"'", "'"+notes[i].user+"'", 'NOW()' ], function(err, responseNote) {
+		    sails.controllers.database.credSproc('UpdateNote', [ notes[i].id, notes[i].note, notes[i].user, 'NOW()' ], function(err, responseNote) {
 			if (err)
 			    return res.json({
 				error : 'Database Error:' + err
@@ -353,7 +353,7 @@ module.exports = {
 		if (notes[i].id.toString().indexOf('new')>-1) { // new
 									// Note!
 		    var tempOutNoteVar = '@out' + Math.floor((Math.random() * 1000000) + 1);
-		    sails.controllers.database.credSproc('CreateNote', [ "'"+notes[i].note+"'", "'"+req.session.user.username+"'", 'NOW()',tempOutNoteVar], function(err, responseNote) {
+		    sails.controllers.database.credSproc('CreateNote', [ notes[i].note, req.session.user.username, 'NOW()',tempOutNoteVar], function(err, responseNote) {
 			if (err)
 			    return res.json({
 				error : 'Database Error:' + err
@@ -404,7 +404,7 @@ module.exports = {
 			    return console.log('error verifying note');
 			}
 			if(resultMyNote[0][0].user==req.session.user.username){
-        		    sails.controllers.database.credSproc('UpdateNote', [ notes[i].id, "'"+notes[i].note+"'", "'"+notes[i].user+"'", 'NOW()' ], function(err, responseNote) {
+        		    sails.controllers.database.credSproc('UpdateNote', [ notes[i].id, notes[i].note, notes[i].user, 'NOW()' ], function(err, responseNote) {
         			if (err)
         			    return res.json({
         				error : 'Database Error:' + err

@@ -31,7 +31,7 @@ module.exports = function(req,res,next) {
                 }
             }else {
                 var path = req.route.path;
-                sails.controllers.database.localSproc("AuthorizeResourcePolicy", [ req.session.user.id,"'"+path+"'"], function(err,policy) {
+                sails.controllers.database.localSproc("AuthorizeResourcePolicy", [ req.session.user.id,path], function(err,policy) {
                     if(err){
                         res.json(500,{error:'Database Error'});
                     }else if(policy[0]&&policy[0].length==1&&typeof(policy[0][0].create)!='undefined'&&policy[0][0].create!=null){

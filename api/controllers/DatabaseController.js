@@ -236,8 +236,19 @@ function BuildSproc(data) {
 	if (data[curArg] == null||data[curArg]=="'null'") {
 	    sprocArgs += "NULL";
 	} else {
-	    sprocArgs += data[curArg].toString();
+	    if(typeof(data[curArg])=='string'&&data[curArg].substring(0, 1) != '@'&&data[curArg]!='NOW()'){  //puts very necessary quotes around strings  
+		sprocArgs += '"'+replaceAll(replaceAll(data[curArg],'\\','\\\\'),'"','\\"')+'"';
+	    }else{
+		sprocArgs += data[curArg].toString();
+	    }
 	}
     }
     return sprocArgs;
 };
+
+function replaceAll(string, find, replace) {
+    return string.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+  }
+function escapeRegExp(string) {
+    return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+}

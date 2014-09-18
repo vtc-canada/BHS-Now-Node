@@ -76,14 +76,14 @@ module.exports = {
 		    address_search=address_search+ "+"+adr[i].trim()+"* ";
 		}
 	    }
-	    address_search = "'"+address_search.trim()+"'";
+	    address_search = address_search.trim();
 	}
 	
 	sails.controllers.database.credSproc('GetCompaniesByContactOrName', [ address_search,
 		typeof (req.body.contactId) != 'undefined' ? req.body.contactId : null ], function(err, result) {
 	    if (err)
 		return res.json({
-		    error : 'Database Error:' + err
+		    error : err.toString()
 		});
 	    res.json(result[0]);
 	});
@@ -99,14 +99,14 @@ module.exports = {
 		    address_search=address_search+ "+"+adr[i].trim()+"* ";
 		}
 	    }
-	    address_search = "'"+address_search.trim()+"'";
+	    address_search = address_search.trim();
 	}
 	
 	sails.controllers.database.credSproc('GetContactsByCompanyOrName', [ address_search,
 		typeof (req.body.companyId) != 'undefined' ? req.body.companyId : null ], function(err, result) {
 	    if (err)
 		return res.json({
-		    error : 'Database Error:' + err
+		    error : err.toString()
 		});
 	    res.json(result[0]);
 	});
@@ -159,19 +159,19 @@ module.exports = {
 
 	    if (building.sale_id == 'new') {
 		new_sale_id = '@out' + Math.floor((Math.random() * 1000000) + 1);
-		sails.controllers.database.credSproc('CreateSalesRecord', [ building.last_sale_price, "'" + toUTCDateTimeString(building.sale_date) + "'", building.heat_system_age,
+		sails.controllers.database.credSproc('CreateSalesRecord', [ building.last_sale_price,  toUTCDateTimeString(building.sale_date) , building.heat_system_age,
 			building.windows_installed_year, building.elevator_installed_year, building.last_elevator_upgrade_year,building.has_elevator, building.boiler_installed_year,
-			"'" + building.cable_internet_provider + "'", building.assessed_value, building.heat_system_type, building.unit_quantity
+			 building.cable_internet_provider , building.assessed_value, building.heat_system_type, building.unit_quantity
 			,building.unit_price,building.unit_price_manual_mode,building.building_income,building.building_income_manual_mode
 			
 			, building.bachelor_price, building.bedroom1_price, building.bedroom2_price, building.bedroom3_price,
-			building.bachelor_units, building.bedroom1_units, building.bedroom2_units, building.bedroom3_units, "'"+building.property_mgmt_company+"'"
-			,"'"+building.prev_property_mgmt_company+"'", isNaN(building.cap_rate)?0:building.cap_rate,building.building_type , building.last_boiler_upgrade_year, "'"+ building.mortgage_company+"'", "'" + toUTCDateTimeString(building.mortgage_due_date) + "'"
+			building.bachelor_units, building.bedroom1_units, building.bedroom2_units, building.bedroom3_units, building.property_mgmt_company
+			,building.prev_property_mgmt_company, isNaN(building.cap_rate)?0:building.cap_rate,building.building_type , building.last_boiler_upgrade_year,  building.mortgage_company,  toUTCDateTimeString(building.mortgage_due_date) 
 			,new_sale_id ], function(err, responseSalesRecord) {
 		    if (err) {
 			console.log(err);
 			return res.json({
-			    error : 'Database Error:' + err
+			    error : err.toString()
 			}, 500);
 		    }
 		    function loop(i) {
@@ -220,12 +220,12 @@ module.exports = {
 		});
 
 	    } else if (!isNaN(parseInt(building.sale_id))) { // saving sale
-		sails.controllers.database.credSproc('UpdateSalesRecord', [ building.sale_id, building.last_sale_price, "'"+toUTCDateTimeString(building.sale_date)+"'",
+		sails.controllers.database.credSproc('UpdateSalesRecord', [ building.sale_id, building.last_sale_price, toUTCDateTimeString(building.sale_date),
 			building.heat_system_age, building.windows_installed_year, building.elevator_installed_year,building.last_elevator_upgrade_year, building.has_elevator, building.boiler_installed_year,
-			"'"+building.cable_internet_provider+"'", building.assessed_value, building.heat_system_type, building.unit_quantity, building.unit_price,
+			building.cable_internet_provider, building.assessed_value, building.heat_system_type, building.unit_quantity, building.unit_price,
 			building.unit_price_manual_mode, building.building_income, building.building_income_manual_mode,
 			building.bachelor_units, building.bedroom1_units, building.bedroom2_units, building.bedroom3_units, building.bachelor_price,
-			building.bedroom1_price, building.bedroom2_price, building.bedroom3_price,  "'"+building.property_mgmt_company+"'", "'"+building.prev_property_mgmt_company+"'", isNaN(building.cap_rate)?0:building.cap_rate, building.building_type, building.last_boiler_upgrade_year,"'"+ building.mortgage_company+"'", "'" + toUTCDateTimeString(building.mortgage_due_date) + "'",building.parking_spots], function(err,
+			building.bedroom1_price, building.bedroom2_price, building.bedroom3_price,  building.property_mgmt_company, building.prev_property_mgmt_company, isNaN(building.cap_rate)?0:building.cap_rate, building.building_type, building.last_boiler_upgrade_year, building.mortgage_company,  toUTCDateTimeString(building.mortgage_due_date) ,building.parking_spots], function(err,
 			responseUpdateSale) {
 
 		    // TODO : Update building..
@@ -268,24 +268,24 @@ module.exports = {
 		    lng = responseGeocode[0].longitude;
 		}
 		    if (building.building_id != 'new') {
-			sails.controllers.database.credSproc('UpdateAddress', [ building.address_id, "'" + building.street_number_begin + "'",
-				"'" + building.street_number_end + "'", "'" + building.street_name + "'", "'" + building.postal_code + "'",
-				"'" + building.city + "'", "'" + building.province + "'", lat, lng ],
+			sails.controllers.database.credSproc('UpdateAddress', [ building.address_id,  building.street_number_begin ,
+				 building.street_number_end ,  building.street_name ,  building.postal_code ,
+				 building.city ,  building.province , lat, lng ],
 				function(err, responseAddress) {
 			    		if(err)
 			    		    return res.json({error:'Database Error'+err},500);
 
 				    sails.controllers.database.credSproc('UpdateBuilding', [ building.building_id, building.address_id,
 					    tryParseInt(building.building_type), tryParseInt(building.heat_system_age), building.windows_installed_year,
-					    building.elevator_installed_year, building.boiler_installed_year, "'" + building.cable_internet_provider + "'",
-					    "'" + building.assessed_value + "'", tryParseInt(building.heat_system_type), tryParseInt(building.unit_quantity),
-					    "'" + toUTCDateTimeString(building.sale_date) + "'", building.unit_price,building.unit_price_manual_mode, "'" + building.property_mgmt_company + "'",
-					    "'" + building.prev_property_mgmt_company + "'", building.last_sale_price,
-					    "'" + JSON.stringify(building.images) + "'", building.bachelor_price, building.bedroom1_price,
+					    building.elevator_installed_year, building.boiler_installed_year,  building.cable_internet_provider ,
+					     building.assessed_value , tryParseInt(building.heat_system_type), tryParseInt(building.unit_quantity),
+					     toUTCDateTimeString(building.sale_date) , building.unit_price,building.unit_price_manual_mode,  building.property_mgmt_company ,
+					     building.prev_property_mgmt_company , building.last_sale_price,
+					     JSON.stringify(building.images) , building.bachelor_price, building.bedroom1_price,
 					    building.bedroom2_price, building.bedroom3_price, tryParseInt(building.bachelor_units),
 					    tryParseInt(building.bedroom1_units), tryParseInt(building.bedroom2_units), tryParseInt(building.bedroom3_units),
 					    building.building_income, building.building_income_manual_mode, building.has_elevator, building.last_elevator_upgrade_year,
-					    building.last_boiler_upgrade_year,"'"+building.mortgage_company+"'","'" + toUTCDateTimeString(building.mortgage_due_date) + "'", building.parking_spots], function(err, responseBuilding) {
+					    building.last_boiler_upgrade_year,building.mortgage_company, toUTCDateTimeString(building.mortgage_due_date) , building.parking_spots], function(err, responseBuilding) {
 
 					processContacts(function() {
 					    processNotes(function(){
@@ -299,14 +299,14 @@ module.exports = {
 				});
 		    }else{// new building!
 			var tempAddressId = '@out' + Math.floor((Math.random() * 1000000) + 1);
-			sails.controllers.database.credSproc('CreateAddress', [  "'" + building.street_number_begin + "'"
-			                        				,"'" + building.street_number_end + "'"
-			                        				, "'" + building.street_name + "'"
-			                        				, "'" + building.postal_code + "'"
-			                        				,"'" + building.city + "'"
+			sails.controllers.database.credSproc('CreateAddress', [   building.street_number_begin 
+			                        				, building.street_number_end 
+			                        				,  building.street_name 
+			                        				,  building.postal_code 
+			                        				, building.city 
 			                        				,1 // Type
 										    // Asset
-			                        				, "'" + building.province + "'"
+			                        				,  building.province 
 			                        				, lat
 			                        				, lng
 			                        				,tempAddressId],
@@ -318,15 +318,15 @@ module.exports = {
 			    var tempBuildingId = '@out' + Math.floor((Math.random() * 1000000) + 1);
 			    sails.controllers.database.credSproc('CreateBuilding', [ building.address_id,
 			                 					    tryParseInt(building.building_type), tryParseInt(building.heat_system_age), tryParseInt(building.windows_installed_year),
-			                 					   tryParseInt(building.elevator_installed_year), tryParseInt(building.boiler_installed_year), "'" + building.cable_internet_provider + "'",
-			                					    "'" + building.assessed_value + "'", tryParseInt(building.heat_system_type), tryParseInt(building.unit_quantity),
-			                					    "'" + toUTCDateTimeString(building.sale_date) + "'", tryParseFloat(building.unit_price), "'" + building.property_mgmt_company + "'",
-			                					    "'" + building.prev_property_mgmt_company + "'", building.last_sale_price,
-			                					    "'" + JSON.stringify(building.images) + "'", tryParseFloat(building.bachelor_price), tryParseFloat(building.bedroom1_price),
+			                 					   tryParseInt(building.elevator_installed_year), tryParseInt(building.boiler_installed_year),  building.cable_internet_provider ,
+			                					     building.assessed_value , tryParseInt(building.heat_system_type), tryParseInt(building.unit_quantity),
+			                					     toUTCDateTimeString(building.sale_date) , tryParseFloat(building.unit_price),  building.property_mgmt_company ,
+			                					     building.prev_property_mgmt_company , building.last_sale_price,
+			                					     JSON.stringify(building.images) , tryParseFloat(building.bachelor_price), tryParseFloat(building.bedroom1_price),
 			                					    tryParseFloat(building.bedroom2_price), tryParseFloat(building.bedroom3_price), tryParseInt(building.bachelor_units),
 			                					    tryParseInt(building.bedroom1_units), tryParseInt(building.bedroom2_units), tryParseInt(building.bedroom3_units),
 			                					    tryParseFloat(building.building_income), building.has_elevator, building.last_elevator_upgrade_year,
-			                					    building.last_boiler_upgrade_year, "'"+ building.mortgage_company+"'", "'" + toUTCDateTimeString(building.mortgage_due_date) + "'", tempBuildingId], function(err, responseBuilding) {
+			                					    building.last_boiler_upgrade_year,  building.mortgage_company,  toUTCDateTimeString(building.mortgage_due_date) , tempBuildingId], function(err, responseBuilding) {
 				building.building_id = responseBuilding[1][tempBuildingId];
 					// sails.controllers.database.credSproc('CreateCompanyAddressMapping',[null,
 					// ])
@@ -360,7 +360,7 @@ module.exports = {
 			building = building[0][0];
 			if(new Date(buildingsale.sale_date)>=building.sale_date){
 			    
-			    sails.controllers.database.credSproc('UpdateBuildingLastSale', [ building.building_id, "'" + toUTCDateTimeString(buildingsale.sale_date) + "'"
+			    sails.controllers.database.credSproc('UpdateBuildingLastSale', [ building.building_id,  toUTCDateTimeString(buildingsale.sale_date) 
 			                                                                     , buildingsale.last_sale_price,], function(err, updatesale) {
 				if(err)
 				    return console.log('error'+err);
@@ -384,7 +384,7 @@ module.exports = {
 		    sails.controllers.database.credSproc('DeletePropertyContactMapping', [ buildingcontacts[i].mapping_id ], function(err, responseMapping) {
 			if (err)
 			    res.json({
-				error : 'Database Error:' + err
+				error : err.toString()
 			    }, 500);
 			i++;
 			if (i < buildingcontacts.length) {
@@ -398,7 +398,7 @@ module.exports = {
 			    building.address_id, buildingcontacts[i].contact_type == 'owner' ? 1 : (buildingcontacts[i].contact_type == 'seller'?2:3), '@outId' ], function(err, responseMapping) {
 			if (err)
 			    res.json({
-				error : 'Database Error:' + err
+				error : err.toString()
 			    }, 500);
 			i++;
 			if (i < buildingcontacts.length) {
@@ -428,16 +428,16 @@ module.exports = {
 		if (buildingnotes[i].id.toString().indexOf('new')>-1) { // new
 									// Note!
 		    var tempOutNoteVar = '@out' + Math.floor((Math.random() * 1000000) + 1);
-		    sails.controllers.database.credSproc('CreateNote', [ "'"+buildingnotes[i].note+"'", "'"+req.session.user.username+"'", 'NOW()',tempOutNoteVar], function(err, responseNote) {
+		    sails.controllers.database.credSproc('CreateNote', [ buildingnotes[i].note, req.session.user.username, 'NOW()',tempOutNoteVar], function(err, responseNote) {
 			if (err)
 			    return res.json({
-				error : 'Database Error:' + err
+				error : err.toString()
 			    }, 500);
 			
 			sails.controllers.database.credSproc('CreateNoteMapping',[building.address_id, responseNote[1][tempOutNoteVar], 3,'@outId'],function(err,responseNoteMapping){
 			    if (err)
 				return res.json({
-					error : 'Database Error:' + err
+					error : err.toString()
 				    }, 500);
 			    
     				i++;
@@ -453,7 +453,7 @@ module.exports = {
 		    sails.controllers.database.credSproc('DeleteNote', [ buildingnotes[i].id ], function(err, responseNote) {
 			if (err)
 			    return res.json({
-				error : 'Database Error:' + err
+				error : err.toString()
 			    }, 500);
 			i++;
 			if (i < buildingnotes.length) {
@@ -463,10 +463,10 @@ module.exports = {
 			}
 		    });
 		} else if (typeof (buildingnotes[i].modified) != 'undefined') {
-		    sails.controllers.database.credSproc('UpdateNote', [ buildingnotes[i].id, "'"+buildingnotes[i].note+"'", "'"+buildingnotes[i].user+"'", 'NOW()' ], function(err, responseNote) {
+		    sails.controllers.database.credSproc('UpdateNote', [ buildingnotes[i].id, buildingnotes[i].note, buildingnotes[i].user, 'NOW()' ], function(err, responseNote) {
 			if (err)
 			    return res.json({
-				error : 'Database Error:' + err
+				error : err.toString()
 			    }, 500);
 			i++;
 			if (i < buildingnotes.length) {
@@ -497,16 +497,16 @@ module.exports = {
 		if (buildingnotes[i].id.toString().indexOf('new')>-1) { // new
 									// Note!
 		    var tempOutNoteVar = '@out' + Math.floor((Math.random() * 1000000) + 1);
-		    sails.controllers.database.credSproc('CreateNote', [ "'"+buildingnotes[i].note+"'", "'"+req.session.user.username+"'", 'NOW()',tempOutNoteVar], function(err, responseNote) {
+		    sails.controllers.database.credSproc('CreateNote', [ buildingnotes[i].note, req.session.user.username, 'NOW()',tempOutNoteVar], function(err, responseNote) {
 			if (err)
 			    return res.json({
-				error : 'Database Error:' + err
+				error : err.toString()
 			    }, 500);
 			
 			sails.controllers.database.credSproc('CreateNoteMapping',[building.address_id, responseNote[1][tempOutNoteVar], 3,'@outId'],function(err,responseNoteMapping){
 			    if (err)
 				return res.json({
-					error : 'Database Error:' + err
+					error : err.toString()
 				    }, 500);
 			    
     				i++;
@@ -530,7 +530,7 @@ module.exports = {
 			    sails.controllers.database.credSproc('DeleteNote', [ buildingnotes[i].id ], function(err, responseNote) {
 				if (err)
 				    return res.json({
-					error : 'Database Error:' + err
+					error : err.toString()
 				    }, 500);
 				i++;
 				if (i < buildingnotes.length) {
@@ -552,10 +552,10 @@ module.exports = {
 			    return console.log('error verifying note');
 			}
 			if(resultMyNote[0][0].user==req.session.user.username){
-        		    sails.controllers.database.credSproc('UpdateNote', [ buildingnotes[i].id, "'"+buildingnotes[i].note+"'", "'"+buildingnotes[i].user+"'", 'NOW()' ], function(err, responseNote) {
+        		    sails.controllers.database.credSproc('UpdateNote', [ buildingnotes[i].id, buildingnotes[i].note, buildingnotes[i].user, 'NOW()' ], function(err, responseNote) {
         			if (err)
         			    return res.json({
-        				error : 'Database Error:' + err
+        				error : err.toString()
         			    }, 500);
         			i++;
         			if (i < buildingnotes.length) {
@@ -682,7 +682,7 @@ module.exports = {
 		    address_search=address_search+ "+"+adr[i].trim()+"* ";
 		}
 	    }
-	    address_search = "'"+address_search.trim()+"'";
+	    address_search = address_search.trim();
 	}
 	var contact_search = null;
 	if (typeof(req.query.contact_search)!='undefined'&&req.query.contact_search != '') {
@@ -694,7 +694,7 @@ module.exports = {
 		    contact_search=contact_search+ "+"+adr[i].trim()+"* ";
 		}
 	    }
-	    contact_search = "'"+contact_search.trim()+"'";
+	    contact_search = contact_search.trim();
 	}
 
 	var company_search = null;
@@ -707,7 +707,7 @@ module.exports = {
 		    company_search=company_search+ "+"+adr[i].trim()+"* ";
 		}
 	    }
-	    company_search = "'"+company_search.trim()+"'";
+	    company_search = company_search.trim();
 	}
 
 	var mortgage_search = null;
@@ -720,7 +720,7 @@ module.exports = {
 		    mortgage_search=mortgage_search+ "+"+adr[i].trim()+"* ";
 		}
 	    }
-	    mortgage_search = "'"+mortgage_search.trim()+"'";
+	    mortgage_search = mortgage_search.trim();
 	}
 
 	
@@ -734,7 +734,7 @@ module.exports = {
         	}else{
         	    orderstring = req.query.columns[req.query.order[0].column].data;
         	}
-        	orderstring = "'"+orderstring+'_'+req.query.order[0].dir+"'";
+        	orderstring = orderstring+'_'+req.query.order[0].dir;
 	}
 	totalCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
@@ -743,8 +743,8 @@ module.exports = {
 		(req.query.unitQuantityMax == ''||req.query.unitQuantityMax==null) ? null : parseInt(req.query.unitQuantityMax),
 		(typeof(req.query.unit_price_min)=='undefined'||req.query.unit_price_min == ''||req.query.unit_price_min==null) ? null : parseInt(req.query.unit_price_min),
 		(typeof(req.query.unit_price_max)=='undefined'||req.query.unit_price_max == ''||req.query.unit_price_max==null) ? null : parseInt(req.query.unit_price_max),
-		(req.query.saleDateRangeStart == ''||req.query.saleDateRangeStart == null) ? null : "'"+toUTCDateTimeString(req.query.saleDateRangeStart)+"'",
-		(req.query.saleDateRangeEnd == ''||req.query.saleDateRangeEnd == null) ? null : "'"+toUTCDateTimeString(req.query.saleDateRangeEnd)+"'",
+		(req.query.saleDateRangeStart == ''||req.query.saleDateRangeStart == null) ? null : toUTCDateTimeString(req.query.saleDateRangeStart),
+		(req.query.saleDateRangeEnd == ''||req.query.saleDateRangeEnd == null) ? null : toUTCDateTimeString(req.query.saleDateRangeEnd),
 					
 		req.query.boundsLatitudeMin == ''?null:req.query.boundsLatitudeMin,
 		req.query.boundsLatitudeMax == ''?null:req.query.boundsLatitudeMax,
@@ -806,8 +806,8 @@ module.exports = {
 		(typeof(req.query.cable_internet_provider)=='undefined'||req.query.cable_internet_provider == '')?null:"'%"+req.query.cable_internet_provider+"%'",	
 			
 			
-		(typeof(req.query.start_mortgage_due_date)=='undefined'||req.query.start_mortgage_due_date == '')?null:"'"+req.query.start_mortgage_due_date+"'",	
-		(typeof(req.query.end_mortgage_due_date)=='undefined'||req.query.end_mortgage_due_date == '')?null:"'"+req.query.end_mortgage_due_date+"'",	
+		(typeof(req.query.start_mortgage_due_date)=='undefined'||req.query.start_mortgage_due_date == '')?null:req.query.start_mortgage_due_date,	
+		(typeof(req.query.end_mortgage_due_date)=='undefined'||req.query.end_mortgage_due_date == '')?null:req.query.end_mortgage_due_date,	
 			
 		req.query.sales_count_min == ''?null:req.query.sales_count_min,
 		req.query.sales_count_max == ''?null:req.query.sales_count_max,
@@ -845,7 +845,7 @@ module.exports = {
 		    sails.controllers.database.credSproc('GetSale', [ parseInt(req.body.sale_id) ], function(err, responseSale) {
 			if (err || responseSale[0].length < 1)
 			    return res.json({
-				error : 'Database error:' + err
+				error : err.toString()
 			    }, 500);
 
 			for ( var element in responseSale[0][0]) {
@@ -877,7 +877,7 @@ module.exports = {
 			buildingContacts) {
 		    if (err)
 			return res.json({
-			    error : 'Database Error:' + err
+			    error : err.toString()
 			}, 500);
 		    return res.json(buildingContacts);
 		});
@@ -885,7 +885,7 @@ module.exports = {
 		sails.controllers.database.credSproc('GetBuildingContacts', [ parseInt(req.params.id) ], function(err, buildingContacts) {
 		    if (err)
 			return res.json({
-			    error : 'Database Error:' + err
+			    error : err.toString()
 			}, 500);
 		    return res.json(buildingContacts);
 		});
@@ -897,7 +897,7 @@ module.exports = {
 	    sails.controllers.database.credSproc('GetBuildingSales', [ parseInt(req.params.id) ], function(err, buildingSales) {
 		if (err)
 		    return res.json({
-			error : 'Database Error:' + err
+			error : err.toString()
 		    }, 500);
 		return res.json(buildingSales);
 	    });
