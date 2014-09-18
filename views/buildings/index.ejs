@@ -2773,7 +2773,7 @@
 	        },
 	        updateCapRate:function(event){
 	        	var calculatedCapRate = ((building.get('building_income')/building.get('last_sale_price'))*100).toFixed(0);
-	        	building.set('cap_rate',calculatedCapRate=="Infinity"?null:calculatedCapRate);
+	        	building.set('cap_rate',calculatedCapRate=="Infinity"?null:parseInt(calculatedCapRate));
 	        	$('#cap_rate').html((calculatedCapRate=="Infinity"||isNaN(calculatedCapRate))?(0+'%'):(calculatedCapRate+'%'));
 	        },
 	        unitQuantityChange:function(event){
