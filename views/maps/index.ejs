@@ -226,7 +226,7 @@
 				{{ var tempimages = JSON.parse(images); if(tempimages!=null&&tempimages.length>0){ }}
 				<div class="building-card-images-wrapper">
 					{{var images = JSON.parse(images); for( key in images){ }}
-				 		<div class="span2 building-overlay-block-picture"><img src="{{=images[key].thumb}}"></div>
+				 		<a href="{{=images[key].image}}" data-lightbox="{{=images[key].image}}" class="span2 building-overlay-block-picture"><img src="{{=images[key].thumb}}"></a>
 					{{ } }}
 				</div>
 				{{ } }}

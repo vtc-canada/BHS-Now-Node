@@ -751,7 +751,7 @@
 
 
 <script type="text/template" id="building-photo-template">
-	<div class="span3 buildingimage">
+	<a href="{{=image}}" class="span3 buildingimage" data-lightbox="{{=image}}" >
 		<div class="row-fluid" style="position:relative;">
 			<img src="{{=image}}" thumb="{{=thumb}}">
 			{{if(enabled){ }}<div class="buildingimagetrash"><i class="icon-trash icon-2x"></i></div>{{ } }}
@@ -771,7 +771,7 @@
 				<div class="bar" style="width: 0%;"></div>
 			</div>
 		</div>
-	</div>
+	</a>
 </script>
 
 <script type="text/template" id="building-details-template">
