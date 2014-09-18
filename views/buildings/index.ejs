@@ -3060,7 +3060,7 @@
 			            pick12HourFormat: false,
 			            pickSeconds: false
 			        }).on('changeDate',function(e){
-			        	building.set('mortgage_due_date',$("#mortgage_due_date_gen").data('datetimepicker').getLocalDate());//$('#sale_date').val());
+			        	building.set('mortgage_due_date',$("#mortgage_due_date_gen").data('datetimepicker').getLocalDate().toUTCString());//$('#sale_date').val());
 			        	building.set('dosync',true);
 			        	setChangesPending();
 			        });
