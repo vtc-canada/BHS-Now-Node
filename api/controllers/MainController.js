@@ -140,7 +140,7 @@ module.exports = {
                     if (hasher.verify(password, usr.password)) {
                         req.session.user = usr;
                         req.session.user.policy = {};
-                        sails.controllers.database.localSproc("AuthorizeResourcePolicy", [ req.session.user.id,"'layout'"], function(err,policy) {
+                        sails.controllers.database.localSproc("AuthorizeResourcePolicy", [ req.session.user.id,"layout"], function(err,policy) {
                             if(err){
                                 console.log('Database Error'+err);
                                 res.json(500,{error:'Database Error'+err});
