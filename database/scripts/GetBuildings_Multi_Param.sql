@@ -33,7 +33,6 @@ SELECT
 	,GROUP_CONCAT(DISTINCT seller_company.name SEPARATOR ', ') AS 'seller_company'
 	,GROUP_CONCAT(DISTINCT agent_contact.name SEPARATOR ', ') AS 'agent'
 	,GROUP_CONCAT(DISTINCT agent_company.name SEPARATOR ', ') AS 'agent_company'
-	,cur_address.id 'address'
 	,cur_address.street_number_begin
 	,cur_address.street_number_end
 	,cur_address.street_name 
