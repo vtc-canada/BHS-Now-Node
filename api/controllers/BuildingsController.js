@@ -770,7 +770,7 @@ module.exports = {
 	totalCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
 	sails.controllers.database.credSproc('GetBuildings', [ owner_search, address_search, mortgage_search,
-	        owner_company_search, seller_search, seller_company_search, agent_search, agent_company_search,                     
+	        seller_search, agent_search, owner_company_search, seller_company_search, agent_company_search,                     
 		(req.query.unitQuantityMin == ''||req.query.unitQuantityMin==null) ? null : parseInt(req.query.unitQuantityMin),
 		(req.query.unitQuantityMax == ''||req.query.unitQuantityMax==null) ? null : parseInt(req.query.unitQuantityMax),
 		(typeof(req.query.unit_price_min)=='undefined'||req.query.unit_price_min == ''||req.query.unit_price_min==null) ? null : parseInt(req.query.unit_price_min),
