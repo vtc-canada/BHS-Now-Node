@@ -18,25 +18,18 @@
  */
 
 var mysql = require('mysql2');
-var connection = mysql.createConnection({
-    user : 'root',
-    password : 'Glasgow931',
-    database : 'bhs_scada',
-    host : 'localhost'
-});
-
 
 
 var localPool = mysql.createPool({
     connectionLimit : 1000,
-    user : 'root',
-    password : 'Glasgow931',
-    database : 'bhs_dummy',
-    host : 'localhost'
+    user : 'root', //paadmin
+    password : 'Glasgow931', //.SampsonMews8
+    database : 'bhs_dummy', //now_management_base
+    host : 'localhost' //pa-cred-database.c1midzvqwdqm.us-west-2.rds.amazonaws.com
 });
 
 var credPool = mysql.createPool({
-    connectionLimit : 1000,
+    connectionLimit : 1000, 
     user : 'root',//paadmin',
     password : 'Glasgow931',//.SampsonMews8',
     database : 'cred_test',
@@ -199,27 +192,6 @@ module.exports = {
 
 	});
 
-    },
-    sp : function(sprocName, data, cb) {
-
-	if (sails.config.adapters['default'] != "mssql") {
-
-	    var sprocArgs = "(";
-	    sprocArgs += BuildSproc(data);
-	    sprocArgs += ");";
-	    connection.query("call " + sprocName + sprocArgs, function(err, results) {
-		if (results != undefined && results[0] != undefined) {
-		    results = results[0];
-		}
-		cb(err, results || []);
-	    });
-	} else if (sails.config.adapters['default'] == "mssql") {
-	    var sprocArgs = " ";
-	    sprocArgs += BuildSproc(data);
-	    sails.adapters["sails-mssql"].query("users", sprocName + sprocArgs, function(err, results) {
-		cb(err, results);
-	    });
-	}
     }
 
 };
