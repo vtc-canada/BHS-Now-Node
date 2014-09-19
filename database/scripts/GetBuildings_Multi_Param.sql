@@ -103,7 +103,7 @@ WHERE
 	AND (mortgageCompanySearchTerms IS NULL OR MATCH (mortgage_company) AGAINST (mortgageCompanySearchTerms IN BOOLEAN MODE))
 	AND (ownerCompanySearchTerms IS NULL OR MATCH (owner_company.name) AGAINST (ownerCompanySearchTerms IN BOOLEAN MODE))
 	AND (sellerCompanySearchTerms IS NULL OR MATCH (seller_company.name) AGAINST (sellerCompanySearchTerms IN BOOLEAN MODE))
-	AND (agentCompanySearchTerms IS NULL OR MATCH (agent_company.name) AGAINST (ownerCompanySearchTerms IN BOOLEAN MODE))
+	AND (agentCompanySearchTerms IS NULL OR MATCH (agent_company.name) AGAINST (agentCompanySearchTerms IN BOOLEAN MODE))
 	AND (CASE WHEN unitQuantityMax IS NOT NULL THEN (cur_buildings.unit_quantity <= unitQuantityMax) ELSE 1 END)
 	AND (CASE WHEN unitQuantityMin IS NOT NULL THEN (cur_buildings.unit_quantity >= unitQuantityMin) ELSE 1 END)
 	AND (CASE WHEN saleDateRangeStart IS NOT NULL THEN (cur_buildings.sale_date >= saleDateRangeStart ) ELSE 1 END)
