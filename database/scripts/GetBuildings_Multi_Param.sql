@@ -27,7 +27,13 @@ CREATE PROCEDURE `GetBuildings`(IN contactSearchTerms VARCHAR(128), IN addressSe
 		IN offsetIndex int, IN recordCount INT, IN orderBy VARCHAR (255), OUT id int, OUT totalCount int)
 BEGIN
 SELECT 
-	 SQL_CALC_FOUND_ROWS GROUP_CONCAT(owner_contact.name SEPARATOR ', ') as 'owner'
+	 SQL_CALC_FOUND_ROWS GROUP_CONCAT(DISTINCT owner_contact.name SEPARATOR ', ') as 'owner'
+	,GROUP_CONCAT(DISTINCT owner_company.name SEPARATOR ', ') AS 'owner_company'
+	,GROUP_CONCAT(DISTINCT seller_contact.name SEPARATOR ', ') AS 'seller'
+	,GROUP_CONCAT(DISTINCT seller_company.name SEPARATOR ', ') AS 'seller_company'
+	,GROUP_CONCAT(DISTINCT agent_contact.name SEPARATOR ', ') AS 'agent'
+	,GROUP_CONCAT(DISTINCT agent_company.name SEPARATOR ', ') AS 'agent_company'
+	,cur_address.id 'address'
 	,cur_address.street_number_begin
 	,cur_address.street_number_end
 	,cur_address.street_name 
@@ -74,8 +80,15 @@ SELECT
 	,cur_buildings.last_sale_price
 FROM cur_buildings
 	INNER JOIN cur_address ON (cur_address.id = cur_buildings.cur_address_id)
-	LEFT JOIN cur_owner_seller_property_mapping as mapping ON (mapping.property_address_id = cur_address.id)
-	LEFT JOIN cred.cur_contacts AS owner_contact on (owner_contact.id = mapping.contact_id AND mapping.contact_type_id = '1')
+	LEFT JOIN cur_owner_seller_property_mapping AS owner_mapping ON (owner_mapping.property_address_id = cur_address.id AND owner_mapping.contact_type_id = 1)
+	LEFT JOIN cur_contacts AS owner_contact ON (owner_contact.id = owner_mapping.contact_id)
+	LEFT JOIN cur_company AS owner_company ON (owner_company.id = owner_mapping.company_id)
+	LEFT JOIN cur_owner_seller_property_mapping AS seller_mapping ON (seller_mapping.property_address_id = cur_address.id AND seller_mapping.contact_type_id = 2)
+	LEFT JOIN cred.cur_contacts AS seller_contact ON (seller_contact.id = seller_mapping.contact_id)
+	LEFT JOIN cur_company AS seller_company ON (seller_company.id = seller_mapping.company_id)
+	LEFT JOIN cur_owner_seller_property_mapping AS agent_mapping ON (agent_mapping.property_address_id = cur_address.id AND agent_mapping.contact_type_id = 3)
+	LEFT JOIN cred.cur_contacts AS agent_contact on (agent_contact.id = agent_mapping.contact_id)
+	LEFT JOIN cur_company AS agent_company ON (agent_company.id = agent_mapping.company_id)
 	LEFT JOIN ref_building_type ON (ref_building_type.id = cur_buildings.ref_building_type_id)
 	LEFT JOIN ref_heat_system_type ON (ref_heat_system_type.id = cur_buildings.heat_system_type_id)
 	LEFT JOIN (SELECT COUNT(DISTINCT cur_sales_record_history_id) AS 'num_of_records'
@@ -150,8 +163,8 @@ ORDER BY
 
 	CASE WHEN orderBy='property_mgmt_company_asc' THEN property_mgmt_company END ASC,
 	CASE WHEN orderBy='property_mgmt_company_desc' THEN property_mgmt_company END DESC,
-	CASE WHEN orderBy='owner_asc' THEN name END ASC,
-	CASE WHEN orderBy='owner_desc' THEN name END DESC,
+	CASE WHEN orderBy='owner_asc' THEN owner_contact.name END ASC,
+	CASE WHEN orderBy='owner_desc' THEN owner_contact.name END DESC,
 	CASE WHEN orderBy='street_number_begin_asc' THEN street_number_begin END ASC,
 	CASE WHEN orderBy='street_number_begin_desc' THEN street_number_begin END DESC,
 	CASE WHEN orderBy='street_number_end_asc' THEN street_number_end END ASC,
