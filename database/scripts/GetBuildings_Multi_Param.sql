@@ -1,7 +1,7 @@
 USE cred;
 DROP PROCEDURE if EXISTS `GetBuildings` ;
 DELIMITER $$
-CREATE PROCEDURE `GetBuildings`(IN ownerSearchTerms VARCHAR(128), IN addressSearchTerms VARCHAR(128),IN buildingSearchTerms VARCHAR(128), IN mortgageCompanySearchTerms VARCHAR(64),
+CREATE PROCEDURE `GetBuildings`(IN ownerSearchTerms VARCHAR(128), IN addressSearchTerms VARCHAR(128),IN mortgageCompanySearchTerms VARCHAR(64),
 		IN sellerSearchTerms VARCHAR(128), IN agentSearchTerms VARCHAR(128), IN ownerCompanySearchTerms VARCHAR(128), IN sellerCompanySearchTerms VARCHAR(128), IN agentCompanySearchTerms VARCHAR(128),
 		IN unitQuantityMin int, IN unitQuantityMax int, IN unitPriceMin INT, IN unitPriceMax INT, 
 		IN saleDateRangeStart datetime, IN saleDateRangeEnd datetime,
@@ -81,14 +81,14 @@ SELECT
 FROM cur_buildings
 	INNER JOIN cur_address ON (cur_address.id = cur_buildings.cur_address_id)
 	LEFT JOIN cur_owner_seller_property_mapping AS owner_mapping ON (owner_mapping.property_address_id = cur_address.id AND owner_mapping.contact_type_id = 1)
-	LEFT JOIN cur_contacts AS owner_contact ON (owner_contact.id = owner_mapping.contact_id)
-	LEFT JOIN cur_company AS owner_company ON (owner_company.id = owner_mapping.company_id)
+	LEFT JOIN cur_contacts AS owner_contact ON (owner_contact.id = owner_mapping.contact_id AND owner_contact.is_deleted = 0)
+	LEFT JOIN cur_company AS owner_company ON (owner_company.id = owner_mapping.company_id AND owner_company.is_deleted = 0)
 	LEFT JOIN cur_owner_seller_property_mapping AS seller_mapping ON (seller_mapping.property_address_id = cur_address.id AND seller_mapping.contact_type_id = 2)
-	LEFT JOIN cred.cur_contacts AS seller_contact ON (seller_contact.id = seller_mapping.contact_id)
-	LEFT JOIN cur_company AS seller_company ON (seller_company.id = seller_mapping.company_id)
+	LEFT JOIN cred.cur_contacts AS seller_contact ON (seller_contact.id = seller_mapping.contact_id AND seller_contact.is_deleted = 0)
+	LEFT JOIN cur_company AS seller_company ON (seller_company.id = seller_mapping.company_id AND seller_company.is_deleted = 0)
 	LEFT JOIN cur_owner_seller_property_mapping AS agent_mapping ON (agent_mapping.property_address_id = cur_address.id AND agent_mapping.contact_type_id = 3)
-	LEFT JOIN cred.cur_contacts AS agent_contact on (agent_contact.id = agent_mapping.contact_id)
-	LEFT JOIN cur_company AS agent_company ON (agent_company.id = agent_mapping.company_id)
+	LEFT JOIN cred.cur_contacts AS agent_contact on (agent_contact.id = agent_mapping.contact_id AND agent_contact.is_deleted = 0)
+	LEFT JOIN cur_company AS agent_company ON (agent_company.id = agent_mapping.company_id AND agent_company.is_deleted = 0)
 	LEFT JOIN ref_building_type ON (ref_building_type.id = cur_buildings.ref_building_type_id)
 	LEFT JOIN ref_heat_system_type ON (ref_heat_system_type.id = cur_buildings.heat_system_type_id)
 	LEFT JOIN (SELECT COUNT(DISTINCT cur_sales_record_history_id) AS 'num_of_records'
@@ -100,7 +100,6 @@ WHERE
 	AND (ownerSearchTerms IS NULL OR MATCH (owner_contact.name, owner_contact.email) AGAINST (ownerSearchTerms IN BOOLEAN MODE))
 	AND (sellerSearchTerms IS NULL OR MATCH (seller_contact.name, seller_contact.email) AGAINST (sellerSearchTerms IN BOOLEAN MODE))
 	AND (agentSearchTerms IS NULL OR MATCH (agent_contact.name, agent_contact.email) AGAINST (agentSearchTerms IN BOOLEAN MODE))
-	AND (buildingSearchTerms IS NULL OR MATCH (property_mgmt_company,prev_property_mgmt_company) AGAINST (buildingSearchTerms IN BOOLEAN MODE))
 	AND (mortgageCompanySearchTerms IS NULL OR MATCH (mortgage_company) AGAINST (mortgageCompanySearchTerms IN BOOLEAN MODE))
 	AND (ownerCompanySearchTerms IS NULL OR MATCH (owner_company.name) AGAINST (ownerCompanySearchTerms IN BOOLEAN MODE))
 	AND (sellerCompanySearchTerms IS NULL OR MATCH (seller_company.name) AGAINST (sellerCompanySearchTerms IN BOOLEAN MODE))
