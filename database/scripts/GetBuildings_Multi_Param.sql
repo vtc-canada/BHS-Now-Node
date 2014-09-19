@@ -1,7 +1,8 @@
 USE cred;
 DROP PROCEDURE if EXISTS `GetBuildings` ;
 DELIMITER $$
-CREATE PROCEDURE `GetBuildings`(IN contactSearchTerms VARCHAR(128), IN addressSearchTerms VARCHAR(128),IN buildingSearchTerms VARCHAR(128), IN mortgageCompanySearchTerms VARCHAR(64),
+CREATE PROCEDURE `GetBuildings`(IN ownerSearchTerms VARCHAR(128), IN addressSearchTerms VARCHAR(128),IN buildingSearchTerms VARCHAR(128), IN mortgageCompanySearchTerms VARCHAR(64),
+		IN sellerSearchTerms VARCHAR(128), IN agentSearchTerms VARCHAR(128), IN ownerCompanySearchTerms VARCHAR(128), IN sellerCompanySearchTerms VARCHAR(128), IN agentCompanySearchTerms VARCHAR(128),
 		IN unitQuantityMin int, IN unitQuantityMax int, IN unitPriceMin INT, IN unitPriceMax INT, 
 		IN saleDateRangeStart datetime, IN saleDateRangeEnd datetime,
 		IN boundsLatitudeMin FLOAT, IN boundsLatitudeMax FLOAT, IN boundsLongitudeMin FLOAT, IN boundsLongitudeMax FLOAT,
@@ -96,9 +97,14 @@ FROM cur_buildings
 				GROUP BY cur_buildings_id) AS sales_count ON (sales_count.cur_buildings_id = cur_buildings.id)
 WHERE
 	(addressSearchTerms IS NULL OR MATCH(street_name,postal_code,city,province) AGAINST (addressSearchTerms IN BOOLEAN MODE))
-	AND (contactSearchTerms IS NULL OR MATCH (owner_contact.name, owner_contact.email) AGAINST (contactSearchTerms IN BOOLEAN MODE))
+	AND (ownerSearchTerms IS NULL OR MATCH (owner_contact.name, owner_contact.email) AGAINST (ownerSearchTerms IN BOOLEAN MODE))
+	AND (sellerSearchTerms IS NULL OR MATCH (seller_contact.name, seller_contact.email) AGAINST (sellerSearchTerms IN BOOLEAN MODE))
+	AND (agentSearchTerms IS NULL OR MATCH (agent_contact.name, agent_contact.email) AGAINST (agentSearchTerms IN BOOLEAN MODE))
 	AND (buildingSearchTerms IS NULL OR MATCH (property_mgmt_company,prev_property_mgmt_company) AGAINST (buildingSearchTerms IN BOOLEAN MODE))
 	AND (mortgageCompanySearchTerms IS NULL OR MATCH (mortgage_company) AGAINST (mortgageCompanySearchTerms IN BOOLEAN MODE))
+	AND (ownerCompanySearchTerms IS NULL OR MATCH (owner_company.name) AGAINST (ownerCompanySearchTerms IN BOOLEAN MODE))
+	AND (sellerCompanySearchTerms IS NULL OR MATCH (seller_company.name) AGAINST (sellerCompanySearchTerms IN BOOLEAN MODE))
+	AND (agentCompanySearchTerms IS NULL OR MATCH (agent_company.name) AGAINST (ownerCompanySearchTerms IN BOOLEAN MODE))
 	AND (CASE WHEN unitQuantityMax IS NOT NULL THEN (cur_buildings.unit_quantity <= unitQuantityMax) ELSE 1 END)
 	AND (CASE WHEN unitQuantityMin IS NOT NULL THEN (cur_buildings.unit_quantity >= unitQuantityMin) ELSE 1 END)
 	AND (CASE WHEN saleDateRangeStart IS NOT NULL THEN (cur_buildings.sale_date >= saleDateRangeStart ) ELSE 1 END)
