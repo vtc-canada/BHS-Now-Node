@@ -16,7 +16,7 @@ SELECT
 FROM cur_company
 	LEFT JOIN cur_company_address_mapping ON (cur_company_address_mapping.cur_company_id = cur_company.id)
 	LEFT JOIN cur_address ON (cur_address.id = cur_company_address_mapping.cur_address_id)
-	INNER JOIN cur_contact_company_mapping ON (cur_contact_company_mapping.cur_company_id = cur_company.id)
+	INNER JOIN cur_contact_company_mapping ON (cur_contact_company_mapping.cur_company_id = cur_company.id AND cur_company.is_deleted = 0)
 WHERE  
 cur_contact_company_mapping.cur_contacts_id = contactId;
 END$$
