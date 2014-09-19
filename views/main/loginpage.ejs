@@ -783,11 +783,10 @@ input[type=url].form-error {
             <p class="profile-name"></p>
 
                 <label class="hidden-label" for="loginName">Email</label>
-                <input type="text" id="loginName" spellcheck="false" placeholder="<%= translate[locale]['User'] %>" value="admin" />
+                <input type="text" id="loginName" spellcheck="false" placeholder="<%= translate[locale]['User'] %>" value="" />
 
                 <label class="hidden-label" for="Passwd">Password</label>
-
-                <input type="password" id="loginPassword" placeholder="<%= translate[locale]['Password'] %>" value="asdf" />
+                <input type="password" id="loginPassword" placeholder="<%= translate[locale]['Password'] %>" value="" />
 
             <% if(typeof(errormessage)!='undefined'){ %>
                 <span role="alert" class="error-msg" id="errorMessage">

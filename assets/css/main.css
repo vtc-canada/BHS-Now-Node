@@ -851,17 +851,43 @@ div.language-flag.chile{
 
 
 .map-overlay-controls{
-	background-color:rgba(255,255,255,.7);
-	border:1px solid #696969;
+	/* background-color:rgba(255,255,255,.7); */
+	/* border:1px solid #696969; */
 	width:140px;
-	height:195px;
 	font-family:"OpenSans";
+}
+
+.title-collapse-wrapper{
+	height: 27px;
+	background-color: rgba(255,255,255,.7);  border: 1px solid #696969;  width: 140px;    font-family: "OpenSans";
+	cursor: pointer;
+}
+
+.title-collapse-wrapper i{
+	float:left;
+	margin-top: 7px;
+	margin-left: 5px;
+	font-size: 14px;
+}
+
+
+.title-collapse-wrapper div{
+	float:left;
+	
+	margin-left: 18px;
+	margin-top: 4px;
 }
 
 .map-control-row-wrapper{
 	
 }
-
+.map-collapse-content{
+    background-color: rgba(255,255,255,.7);  border: 1px solid #696969;  width: 140px;  font-family: "OpenSans";
+	
+    border-top: 0px;
+    margin-top: -1px;
+    padding-top: 6px;
+}
 .map-overlay-results-label{
 	font-size:11px;
 	font-weight:600;
@@ -877,11 +903,16 @@ div.language-flag.chile{
 	float:left;
 	width:112px;
 	margin-left:10px;
+	font-size: 12px;
 }
 
 .map-overlay-checkbox{
 	float:left;
 	margin-left:4px !important;
+}
+
+#resultsizewrapper{
+	font-size:10px;
 }
 
 .map-control-row-wrapper #building_length_select{

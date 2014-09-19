@@ -40,30 +40,30 @@ module.exports = {
 		    note_search=note_search+ "+"+adr[i].trim()+"* ";
 		}
 	    }
-	    note_search = "'"+note_search+"'";
+	    note_search = note_search;
 	}
 	var orderstring = null;
 	
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
 	totalCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
-	sails.controllers.database.credSproc('SearchNotes',[note_search, req.body.user==''?null:"'"+req.body.user+"'",
-        		(req.body.saleDateRangeStart == ''||req.body.saleDateRangeStart == null) ? null : "'"+toUTCDateTimeString(req.body.saleDateRangeStart)+"'",
-        		(req.body.saleDateRangeEnd == ''||req.body.saleDateRangeEnd == null) ? null : "'"+toUTCDateTimeString(req.body.saleDateRangeEnd)+"'",	                                            	
+	sails.controllers.database.credSproc('SearchNotes',[note_search, req.body.user==''?null:req.body.user,
+        		(req.body.saleDateRangeStart == ''||req.body.saleDateRangeStart == null) ? null : toUTCDateTimeString(req.body.saleDateRangeStart),
+        		(req.body.saleDateRangeEnd == ''||req.body.saleDateRangeEnd == null) ? null : toUTCDateTimeString(req.body.saleDateRangeEnd),	                                            	
 			req.body.start, 999999, orderstring,filteredCount,totalCount],function(err,responseNotes){
 	    if(err){
 		return res.json({error:'Database Error:'+err},500);
 	    }
-	    var bodystring = '';
+	    var bodystring = 'Date,User,Details,Company,Contact,Building\r\n';
 	    
 	    for(var i=0;i<responseNotes[0].length;i++){
 		var timestamp = responseNotes[0][i].timestamp;
 		timestamp = new Date(timestamp.setMinutes(timestamp.getMinutes() -timezoneoffset));
 		bodystring+=toUTCDateTimeString(timestamp);
 		bodystring+=','+responseNotes[0][i].user;
-		bodystring+=','+responseNotes[0][i].note;
-		bodystring+=','+(responseNotes[0][i].company==null?'':responseNotes[0][i].company);
-		bodystring+=','+(responseNotes[0][i].contact==null?'':responseNotes[0][i].contact);
-		bodystring+=','+buildAddressString(responseNotes[0][i]);
+		bodystring+=',"'+responseNotes[0][i].note+'"';
+		bodystring+=',"'+(responseNotes[0][i].company==null?'':responseNotes[0][i].company)+'"';
+		bodystring+=',"'+(responseNotes[0][i].contact==null?'':responseNotes[0][i].contact)+'"';
+		bodystring+=',"'+buildAddressString(responseNotes[0][i])+'"';
 		bodystring+='\r\n';
 	    }
 
@@ -103,7 +103,7 @@ module.exports = {
 		    note_search=note_search+ "+"+adr[i].trim()+"* ";
 		}
 	    }
-	    note_search = "'"+note_search+"'";
+	    note_search = note_search;
 	}
 
 	var orderstring = '';
@@ -114,13 +114,13 @@ module.exports = {
 	}else{
 	    orderstring = req.query.columns[req.query.order[0].column].data;
 	}
-	orderstring = "'"+orderstring+'_'+req.query.order[0].dir+"'";
+	orderstring = orderstring+'_'+req.query.order[0].dir;
 
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
 	totalCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
-	sails.controllers.database.credSproc('SearchNotes',[note_search, req.query.user==''?null:"'"+req.query.user+"'",
-        		(req.query.saleDateRangeStart == ''||req.query.saleDateRangeStart == null) ? null : "'"+toUTCDateTimeString(req.query.saleDateRangeStart)+"'",
-        		(req.query.saleDateRangeEnd == ''||req.query.saleDateRangeEnd == null) ? null : "'"+toUTCDateTimeString(req.query.saleDateRangeEnd)+"'",	                                            	
+	sails.controllers.database.credSproc('SearchNotes',[note_search, req.query.user==''?null:req.query.user,
+        		(req.query.saleDateRangeStart == ''||req.query.saleDateRangeStart == null) ? null : toUTCDateTimeString(req.query.saleDateRangeStart),
+        		(req.query.saleDateRangeEnd == ''||req.query.saleDateRangeEnd == null) ? null : toUTCDateTimeString(req.query.saleDateRangeEnd),	                                            	
 			req.query.start, req.query.length, orderstring,filteredCount,totalCount],function(err,responseNotes){
 	    if(err){
 		return res.json({error:'Database Error:'+err},500);

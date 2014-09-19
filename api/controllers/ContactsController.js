@@ -48,7 +48,7 @@ module.exports = {
 	}
     },
     getcontactsbyname : function(req,res){
-	sails.controllers.database.credSproc('GetContactsByName',[typeof (req.body.search) != 'undefined' ? "'" + req.body.search + "'" : null],function(err, contacts){
+	sails.controllers.database.credSproc('GetContactsByName',[typeof (req.body.search) != 'undefined' ?  req.body.search  : null],function(err, contacts){
 	    if(err||typeof(contacts[0])=='undefined')
 		return res.json({error:'Database Error'+err},500);
 	    res.json(contacts[0]);
@@ -65,7 +65,7 @@ module.exports = {
 	}
     },
     getcompaniesbyname : function(req,res){
-	    sails.controllers.database.credSproc('GetCompaniesByName',[typeof (req.body.search) != 'undefined' ? "'" + req.body.search + "'" : null],function(err, companies){
+	    sails.controllers.database.credSproc('GetCompaniesByName',[typeof (req.body.search) != 'undefined' ?  req.body.search  : null],function(err, companies){
 		if(err||typeof(companies[0])=='undefined')
 		    return res.json({error:'Database Error'+err},500);
 		
@@ -111,14 +111,12 @@ module.exports = {
 	    if(typeof(responseContacts[0])!='undefined'){
 		results = responseContacts[0];
 	    }
-	    var bodystring = '';
+	    var bodystring = 'Contact Name,Phone Number,Email,Associated Companies\r\n';
 	    for(var i=0;i<results.length;i++){
-		bodystring+=results[i].contact_id;
-		//var timestamp = results[i].sale_date;
-		//timestamp = new Date(timestamp.setMinutes(timestamp.getMinutes() -req.query.timezoneoffset));
-		//bodystring+=','+toUTCDateTimeString(timestamp);
-		//bodystring+=','+results[i].owner;
-		bodystring+=','+buildAddressString(results[i]);
+		bodystring+='"'+results[i].contact_name+'"';
+		bodystring+=',"'+results[i].phone+'"';
+		bodystring+=',"'+results[i].email+'"';
+		bodystring+=',"'+results[i].company + '"';
 		bodystring+='\r\n';
 	    }
 
@@ -171,7 +169,7 @@ module.exports = {
 		    contact_search=contact_search+ "+"+adr[i].trim()+"* ";
 		}
 	    }
-	    contact_search = "'"+contact_search.trim()+"'";
+	    contact_search = contact_search.trim();
 	}
 	
 	var orderstring = null;
@@ -183,7 +181,7 @@ module.exports = {
         	}else{
         	    orderstring = req.query.columns[req.query.order[0].column].data;
         	}
-        	orderstring = "'"+orderstring+'_'+req.query.order[0].dir+"'";
+        	orderstring = orderstring+'_'+req.query.order[0].dir;
 	}
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
 	sails.controllers.database.credSproc('SearchContacts',[contact_search,req.query.start, req.query.length, orderstring,filteredCount],function(err,responseContacts){
@@ -217,11 +215,11 @@ module.exports = {
 	notes = req.body.notes;
 	function updateContact(contact,cb){
 	    if(contact.contact_id != 'new'&&typeof(contact.modified)!='undefined'){
-		sails.controllers.database.credSproc('UpdateContact',[contact.contact_id,"'"+contact.contact_name+"'","'"+contact.email+"'"],function(err,resContact){
+		sails.controllers.database.credSproc('UpdateContact',[contact.contact_id,contact.contact_name,contact.email],function(err,resContact){
 		    if(err)
-			return res.json({error:'Database Error:'+err},500);
+			return res.json({error:err},500);
 		
-		   sails.controllers.database.credSproc('UpdatePhoneNumberByContactId',[contact.contact_id,"'"+contact.phone_number+"'"],function(err,resPhone){
+		   sails.controllers.database.credSproc('UpdatePhoneNumberByContactId',[contact.contact_id,contact.phone_number],function(err,resPhone){
 		        if(err)
     			    return res.json({error:'Database Error:'+err},500);
     			cb(); 
@@ -229,13 +227,13 @@ module.exports = {
 		});
 	    }else if(contact.contact_id == 'new'){
 		var outcontactId = '@out' + Math.floor((Math.random() * 1000000) + 1);
-		sails.controllers.database.credSproc('CreateContact',["'"+contact.contact_name+"'", "'"+contact.email+"'",outcontactId],function(err, responseCreateContact){
+		sails.controllers.database.credSproc('CreateContact',[contact.contact_name, contact.email,outcontactId],function(err, responseCreateContact){
 		    if(err)
-    			return res.json({error:'Database Error:'+err},500);
+    			return res.json({error:err.toString()},500);
 		    contact.contact_id = responseCreateContact[1][outcontactId];
-		    sails.controllers.database.credSproc('CreatePhoneNumber',["'"+contact.phone_number+"'",contact.contact_id,'@outparamphone'],function(err,resPhone){
+		    sails.controllers.database.credSproc('CreatePhoneNumber',[contact.phone_number,contact.contact_id,'@outparamphone'],function(err,resPhone){
 		        if(err)
-    			    return res.json({error:'Database Error:'+err},500);
+    			    return res.json({error:err.toString()},500);
     			cb(); 
 		   });
 		});
@@ -249,16 +247,16 @@ module.exports = {
 		if (notes[i].id.toString().indexOf('new')>-1) { // new
 									// Note!
 		    var tempOutNoteVar = '@out' + Math.floor((Math.random() * 1000000) + 1);
-		    sails.controllers.database.credSproc('CreateNote', [ "'"+notes[i].note+"'", "'"+req.session.user.username+"'", 'NOW()',tempOutNoteVar], function(err, responseNote) {
+		    sails.controllers.database.credSproc('CreateNote', [ notes[i].note, req.session.user.username, 'NOW()',tempOutNoteVar], function(err, responseNote) {
 			if (err)
 			    return res.json({
-				error : 'Database Error:' + err
+				error : err.toString()
 			    }, 500);
 			
 			sails.controllers.database.credSproc('CreateNoteMapping',[contact.contact_id, responseNote[1][tempOutNoteVar], 1,'@outId'],function(err,responseNoteMapping){
 			    if (err)
 				return res.json({
-					error : 'Database Error:' + err
+					error : err.toString()
 				    }, 500);
 			    
 				i++;
@@ -274,7 +272,7 @@ module.exports = {
 		    sails.controllers.database.credSproc('DeleteNote', [ notes[i].id ], function(err, responseNote) {
 			if (err)
 			    return res.json({
-				error : 'Database Error:' + err
+				error : err.toString()
 			    }, 500);
 			i++;
 			if (i < notes.length) {
@@ -284,10 +282,10 @@ module.exports = {
 			}
 		    });
 		} else if (typeof (notes[i].modified) != 'undefined') {
-		    sails.controllers.database.credSproc('UpdateNote', [ notes[i].id, "'"+notes[i].note+"'", "'"+notes[i].user+"'", 'NOW()' ], function(err, responseNote) {
+		    sails.controllers.database.credSproc('UpdateNote', [ notes[i].id, notes[i].note, notes[i].user, 'NOW()' ], function(err, responseNote) {
 			if (err)
 			    return res.json({
-				error : 'Database Error:' + err
+				error : err.toString()
 			    }, 500);
 			i++;
 			if (i < notes.length) {
@@ -317,16 +315,16 @@ module.exports = {
 		if (notes[i].id.toString().indexOf('new')>-1) { // new
 									// Note!
 		    var tempOutNoteVar = '@out' + Math.floor((Math.random() * 1000000) + 1);
-		    sails.controllers.database.credSproc('CreateNote', [ "'"+notes[i].note+"'", "'"+req.session.user.username+"'", 'NOW()',tempOutNoteVar], function(err, responseNote) {
+		    sails.controllers.database.credSproc('CreateNote', [ notes[i].note, req.session.user.username, 'NOW()',tempOutNoteVar], function(err, responseNote) {
 			if (err)
 			    return res.json({
-				error : 'Database Error:' + err
+				error : err.toString()
 			    }, 500);
 			
 			sails.controllers.database.credSproc('CreateNoteMapping',[contact.contact_id, responseNote[1][tempOutNoteVar], 1,'@outId'],function(err,responseNoteMapping){
 			    if (err)
 				return res.json({
-					error : 'Database Error:' + err
+					error : err.toString()
 				    }, 500);
 			    
 				i++;
@@ -349,7 +347,7 @@ module.exports = {
         		    sails.controllers.database.credSproc('DeleteNote', [ notes[i].id ], function(err, responseNote) {
         			if (err)
         			    return res.json({
-        				error : 'Database Error:' + err
+        				error : err.toString()
         			    }, 500);
         			i++;
         			if (i < notes.length) {
@@ -368,10 +366,10 @@ module.exports = {
 			    return console.log('error verifying note');
 			}
 			if(resultMyNote[0][0].user==req.session.user.username){
-        		    sails.controllers.database.credSproc('UpdateNote', [ notes[i].id, "'"+notes[i].note+"'", "'"+notes[i].user+"'", 'NOW()' ], function(err, responseNote) {
+        		    sails.controllers.database.credSproc('UpdateNote', [ notes[i].id, notes[i].note, notes[i].user, 'NOW()' ], function(err, responseNote) {
         			if (err)
         			    return res.json({
-        				error : 'Database Error:' + err
+        				error : err.toString()
         			    }, 500);
         			i++;
         			if (i < notes.length) {

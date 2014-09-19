@@ -15,10 +15,10 @@ CREATE PROCEDURE `GetBuildings`(IN contactSearchTerms VARCHAR(128), IN addressSe
 		IN assessedValueMin INT, IN assessedValueMax INT,
 		IN buildingIncomeMin INT, IN buildingIncomeMax INT,	
 		IN lastSalesPriceMin INT, IN lastSalesPriceMax INT,
-		IN numOf1BedroomMin INT, IN numOf1BedroomMax INT, IN numOf2BedroomMin INT, IN numOf2BedroomMax INT, 
-		IN numOf3BedroomMin INT, IN numOf3BedroomMax INT, IN numOfBachelorMin INT, IN numOfBachelorMax INT, 
-		IN priceOf1BedroomMin INT, IN priceOf1BedroomMax INT, IN priceOf2BedroomMin INT, IN priceOf2BedroomMax INT, 
-		IN priceOf3BedroomMin INT, IN priceOf3BedroomMax INT, IN priceOfBachelorMin INT, IN priceOfBachelorMax INT, 
+		IN numOfBachelorMin INT, IN numOfBachelorMax INT, IN numOf1BedroomMin INT, IN numOf1BedroomMax INT, IN numOf2BedroomMin INT, IN numOf2BedroomMax INT, 
+		IN numOf3BedroomMin INT, IN numOf3BedroomMax INT,
+		 IN priceOfBachelorMin INT, IN priceOfBachelorMax INT, IN priceOf1BedroomMin INT, IN priceOf1BedroomMax INT, IN priceOf2BedroomMin INT, IN priceOf2BedroomMax INT, 
+		IN priceOf3BedroomMin INT, IN priceOf3BedroomMax INT,
 		IN windowInstallYearMin INT, IN windowInstallYearMax INT,  
 		IN cableProvider VARCHAR(128),
 		IN mortgageDueDateRangeStart datetime, IN mortgageDueDateRangeEnd datetime,
@@ -151,9 +151,9 @@ WHERE
 	AND (CASE WHEN windowInstallYearMax IS NOT NULL THEN (cur_buildings.windows_installed_year <= windowInstallYearMax) ELSE 1 END)
 	AND (CASE WHEN windowInstallYearMin IS NOT NULL THEN (cur_buildings.windows_installed_year >= windowInstallYearMin) ELSE 1 END)
 	AND (CASE WHEN hasElevator IS NOT NULL THEN (cur_buildings.has_elevator = hasElevator) ELSE 1 END)
-	AND (CASE WHEN propMgmt IS NOT NULL THEN (cur_buildings.property_mgmt_company = propMgmt) ELSE 1 END)
-	AND (CASE WHEN prevPropMgmt IS NOT NULL THEN (cur_buildings.prev_property_mgmt_company = prevPropMgmt) ELSE 1 END)
-	AND (CASE WHEN cableProvider IS NOT NULL THEN (cur_buildings.cable_internet_provider = cableProvider) ELSE 1 END)
+	AND (CASE WHEN propMgmt IS NOT NULL THEN (cur_buildings.property_mgmt_company LIKE propMgmt) ELSE 1 END)
+	AND (CASE WHEN prevPropMgmt IS NOT NULL THEN (cur_buildings.prev_property_mgmt_company LIKE prevPropMgmt) ELSE 1 END)
+	AND (CASE WHEN cableProvider IS NOT NULL THEN (cur_buildings.cable_internet_provider LIKE cableProvider) ELSE 1 END)
 	AND (CASE WHEN buildingTypes IS NOT NULL THEN FIND_IN_SET(ref_building_type.id, buildingTYpes) ELSE 1 END)
 	AND (CASE WHEN heatSystemTypes IS NOT NULL THEN FIND_IN_SET(ref_heat_system_type.id, heatSystemTypes) ELSE 1 END)
 	AND (cur_buildings.is_deleted = 0)
