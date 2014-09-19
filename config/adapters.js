@@ -29,12 +29,12 @@ module.exports.adapters = {
   myLocalMySQLDatabase: {
 
     module: 'sails-mysql',
-    host: 'localhost',
-    user: 'root',
+    host: 'localhost', //pa-cred-database.c1midzvqwdqm.us-west-2.rds.amazonaws.com
+    user: 'root',  //paadmin
     // Psst.. You can put your password in config/local.js instead
     // so you don't inadvertently push it up if you're using version control
-    password: 'Glasgow931', 
-    database: 'bhs_dummy'
+    password: 'Glasgow931',  //.SampsonMews8
+    database: 'bhs_dummy'   //now_management_base
   },
 
   // MySQL is the world's most popular relational database.
