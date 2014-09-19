@@ -180,27 +180,27 @@
 		
 		<div class="row-fluid building-segment-wrapper">
 			<div class="span5 segment-label" >Company Name:</div>
-			<div class="span7" ><input type="text" id="company_name" class="company_name address-input" value="{{=company_name}}"></div>
+			<div class="span7" ><input type="text" id="company_name" class="company_name address-input"  maxlength="60" value="{{=company_name}}"></div>
 		</div>
 		<div class="row-fluid building-segment-wrapper">
 			<div class="span5 segment-label">Street Number Begin:</div>
-			<div class="span7"><input type="text" id="street_number_begin" class="address-input" value="{{=street_number_begin}}"></div>
+			<div class="span7"><input type="text" id="street_number_begin" class="address-input"  maxlength="60" value="{{=street_number_begin}}"></div>
 		</div>
 		<div class="row-fluid building-segment-wrapper">
 			<div class="span5 segment-label">Street Number End:</div>
-			<div class="span7"><input type="text" id="street_number_end" class="address-input" v value="{{=street_number_end}}" ></div>
+			<div class="span7"><input type="text" id="street_number_end" class="address-input"  maxlength="60" value="{{=street_number_end}}" ></div>
 		</div>
 		<div class="row-fluid building-segment-wrapper">
 			<div class="span5 segment-label">Street Name:</div>
-			<div class="span7"><input type="text" id="street_name" class="address-input" v value="{{=street_name}}" ></div>
+			<div class="span7"><input type="text" id="street_name" class="address-input"  maxlength="250" value="{{=street_name}}" ></div>
 		</div>
 		<div class="row-fluid building-segment-wrapper">
 			<div class="span5 segment-label">Postal Code:</div>
-			<div class="span7"><input type="text" id="postal_code" class="address-input" v value="{{=postal_code}}"></div>
+			<div class="span7"><input type="text" id="postal_code" class="address-input" maxlength="7" value="{{=postal_code}}"></div>
 		</div>
 		<div class="row-fluid building-segment-wrapper">
 			<div class="span5 segment-label">City:</div>
-			<div class="span7"><input type="text" id="city" class="address-input" v value="{{=city}}"></div>
+			<div class="span7"><input type="text" id="city" class="address-input"  maxlength="60" value="{{=city}}"></div>
 		</div>
 		<div class="row-fluid building-segment-wrapper">
 			<div class="span5 segment-label">Province:</div>
@@ -231,34 +231,6 @@
 		<div class="span3 ">{{=contact_name}}</div>
 		<div class="span3">{{=phone_number}}{{=email}}</div>
 		<div class="span3 ">{{ if(typeof(dodelete)=='undefined'){ }}<div class="pull-right btn btn-danger delete-contact-mapping">Delete</div>{{ }else{ }}<div class="pull-right btn btn-success cancel-delete-contact-mapping">Cancel</div>{{ } }}</div>
-	</div>
-</script>
-<script type="text/template" id="address-template">
-	<div class="row-fluid " style="position:relative; cursor:default;"">
-		<div class="row-fluid building-segment-wrapper">
-			<div class="span5 segment-label">Street Number Begin:</div>
-			<div class="span7"><input type="hidden" id="address_id" value="{{=address_id}}"><input type="text" id="street_number_begin" value="{{=street_number_begin}}"></div>
-		</div>
-		<div class="row-fluid building-segment-wrapper">
-			<div class="span5 segment-label">Street Number End:</div>
-			<div class="span7"><input type="text" id="street_number_end" value="{{=street_number_end}}"></div>
-		</div>
-		<div class="row-fluid building-segment-wrapper">
-			<div class="span5 segment-label">Street Name:</div>
-			<div class="span7"><input type="text" id="street_name" value="{{=street_name}}"></div>
-		</div>
-		<div class="row-fluid building-segment-wrapper">
-			<div class="span5 segment-label">Postal Code:</div>
-			<div class="span7"><input type="text" id="postal_code" value="{{=postal_code}}"></div>
-		</div>
-		<div class="row-fluid building-segment-wrapper">
-			<div class="span5 segment-label">City:</div>
-			<div class="span7"><input type="text" id="city" value="{{=city}}"></div>
-		</div>
-		<div class="row-fluid building-segment-wrapper">
-			<div class="span5 segment-label">Province:</div>
-			<div class="span7"><input type="text" id="province" value="{{=province}}" ></div>
-		</div>
 	</div>
 </script>
 

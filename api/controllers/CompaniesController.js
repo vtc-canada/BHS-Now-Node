@@ -534,7 +534,7 @@ function buildAddressString(data){
 	{
 		postal_code =  data.postal_code==null||data.postal_code=='null'?'':data.postal_code; 
 	}
-	return street_number_begin+street_number_end+','+street_name+','+city+','+province+','+postal_code; 
+	return street_number_begin+street_number_end+street_name+','+city+','+province+','+postal_code; 
 
 }
   

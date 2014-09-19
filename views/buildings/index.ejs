@@ -776,9 +776,9 @@
 
 
 <script type="text/template" id="building-photo-template">
-	<a href="{{=image}}" class="span3 buildingimage" data-lightbox="{{=image}}" >
+	<div class="span3 buildingimage" >
 		<div class="row-fluid" style="position:relative;">
-			<img src="{{=image}}" thumb="{{=thumb}}">
+			<a href="{{=image}}" data-lightbox="{{=image}}" ><img src="{{=image}}" thumb="{{=thumb}}"></a>
 			{{if(enabled){ }}<div class="buildingimagetrash"><i class="icon-trash icon-2x"></i></div>{{ } }}
 			
 			<div id="UploadGif" style="margin: auto; display: none;">
@@ -796,7 +796,7 @@
 				<div class="bar" style="width: 0%;"></div>
 			</div>
 		</div>
-	</a>
+	</div>
 </script>
 
 <script type="text/template" id="building-details-template">
@@ -2638,6 +2638,8 @@
 					$('.building-photo-wrapper > .span3:last').find('img').css('display','none');
 					$('.building-photo-wrapper > .span3:last').find('img').attr('src',lastImageUrl);
 					$('.building-photo-wrapper > .span3:last').find('img').attr('thumb',lastThumbUrl);
+					$('.building-photo-wrapper > .span3:last').find('a').attr('href',lastImageUrl);
+					$('.building-photo-wrapper > .span3:last').find('a').attr('data-lightbox',lastImageUrl);
 					
 					var tmpSlide = new Image();
 		            tmpSlide.onload = function () {
@@ -2653,9 +2655,19 @@
 					
 					lastThumbUrl = '';  // reset the thumbnail url's for next uploads
 					lastImageUrl = '';
-					$('.fileinput-button').removeAttr('disabled');
-					$('.building-photo-wrapper > .span3:last').find('.buildingimagetrash').click(function(){
+					
+					
+					if($('.buildingimage').size()<3){
+		            	$('#filesToUpload').removeAttr('disabled');
+		            	$('.fileinput-button').removeClass('disabled');
+					}
+					
+					//$('.fileinput-button').removeAttr('disabled');
+					$('.building-photo-wrapper > .span3:last').find('.buildingimagetrash').click(function(e){
+						e.preventDefault();
 						$(this).parents('.buildingimage').remove();
+		            	$('#filesToUpload').removeAttr('disabled');
+		            	$('.fileinput-button').removeClass('disabled');
 					});
 				},500);
 			}
@@ -3038,15 +3050,22 @@
 						$('.building-photo-wrapper').append(buildingphototemplate({image:images[image].image,thumb:images[image].thumb,enabled:typeof(building.get('sale_id'))=='undefined'}));
 						$('.building-photo-wrapper > .span3:last').find('.buildingimagetrash').click(function(){
 							$(this).parents('.buildingimage').remove();
+			            	$('#filesToUpload').removeAttr('disabled');
+			            	$('.fileinput-button').removeClass('disabled');
 							building.set('dosync',true);
 							setChangesPending();
 						});
 		            }
 	            }
+	            
+	            if($('.buildingimage').size()>=3){
+	            	$('#filesToUpload').attr('disabled','disabled');
+	            	$('.fileinput-button').removeClass('disabled').addClass('disabled');
+	            }
 	        
 	            
 		    	$('.fileinput-button').click(function(){
-		    		if(typeof($(this).attr('disabled'))=='undefined')
+		    		if(!$(this).is(':disabled'))
 		    		{
 		    			//alert('clicked it');
 		    			$('#filesToUpload').val('');
@@ -3055,14 +3074,16 @@
 		    	});
 		    	
 				$('#filesToUpload').change(function(){
-					if(typeof($('.fileinput-button').attr('disabled'))=='undefined')
-		    		{
+					//if(typeof($('.fileinput-button').attr('disabled'))=='undefined')
+		    		//{
 			    		if($(this).val()!='')
 			    		{
-				    		$('.fileinput-button').attr('disabled','disabled');
+			            	$('#filesToUpload').attr('disabled','disabled');
+			            	$('.fileinput-button').removeClass('disabled').addClass('disabled');
+				    		//$('.fileinput-button').attr('disabled','disabled');
 							fileSelect();
 			    		}
-		    		}
+		    		//}
 				});
 				
 					

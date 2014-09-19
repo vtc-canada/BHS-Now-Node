@@ -987,7 +987,7 @@ function buildAddressString(data){
 	}
 	if(data.street_name!=null&&data.street_name!='')
 	{
-		street_name= data.street_name==null||data.street_name=='null'?'':','+data.street_name;
+		street_name= data.street_name==null||data.street_name=='null'?'':' '+data.street_name;
 	}
 	if(data.city != null && data.city != '')
 	{
