@@ -236,7 +236,7 @@ function BuildSproc(data) {
 	if (data[curArg] == null||data[curArg]=="'null'") {
 	    sprocArgs += "NULL";
 	} else {
-	    if(typeof(data[curArg])=='string'&&data[curArg].substring(0, 1) != '@'&&data[curArg]!='NOW()'){  //puts very necessary quotes around strings  
+	    if(typeof(data[curArg])=='string'&&data[curArg].substring(0, 1) != '@'&&data[curArg]!='NOW()'&&data[curArg]!='true'&&data[curArg]!='false'){  //puts very necessary quotes around strings  
 		sprocArgs += '"'+replaceAll(replaceAll(data[curArg],'\\','\\\\'),'"','\\"')+'"';
 	    }else{
 		sprocArgs += data[curArg].toString();

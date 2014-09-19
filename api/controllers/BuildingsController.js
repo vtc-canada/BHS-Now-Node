@@ -169,7 +169,7 @@ module.exports = {
 			
 			, building.bachelor_price, building.bedroom1_price, building.bedroom2_price, building.bedroom3_price,
 			building.bachelor_units, building.bedroom1_units, building.bedroom2_units, building.bedroom3_units, building.property_mgmt_company
-			,building.prev_property_mgmt_company, isNaN(building.cap_rate)?0:building.cap_rate,building.building_type , building.last_boiler_upgrade_year,  building.mortgage_company,  toUTCDateTimeString(building.mortgage_due_date) 
+			,building.prev_property_mgmt_company, isNaN(building.cap_rate)?0:building.cap_rate,building.building_type , building.last_boiler_upgrade_year,  building.mortgage_company,  toUTCDateTimeString(building.mortgage_due_date), building.parking_spots
 			,new_sale_id ], function(err, responseSalesRecord) {
 		    if (err) {
 			console.log(err);
@@ -288,7 +288,7 @@ module.exports = {
 					    building.bedroom2_price, building.bedroom3_price, tryParseInt(building.bachelor_units),
 					    tryParseInt(building.bedroom1_units), tryParseInt(building.bedroom2_units), tryParseInt(building.bedroom3_units),
 					    building.building_income, building.building_income_manual_mode, building.has_elevator, building.last_elevator_upgrade_year,
-					    building.last_boiler_upgrade_year,building.mortgage_company, toUTCDateTimeString(building.mortgage_due_date) , building.parking_spots], function(err, responseBuilding) {
+					    building.last_boiler_upgrade_year,building.mortgage_company, toUTCDateTimeString(building.mortgage_due_date) , building.parking_spots, building.cap_rate], function(err, responseBuilding) {
 
 					processContacts(function() {
 					    processNotes(function(){
@@ -329,7 +329,7 @@ module.exports = {
 			                					    tryParseFloat(building.bedroom2_price), tryParseFloat(building.bedroom3_price), tryParseInt(building.bachelor_units),
 			                					    tryParseInt(building.bedroom1_units), tryParseInt(building.bedroom2_units), tryParseInt(building.bedroom3_units),
 			                					    tryParseFloat(building.building_income), building.has_elevator, building.last_elevator_upgrade_year,
-			                					    building.last_boiler_upgrade_year,  building.mortgage_company,  toUTCDateTimeString(building.mortgage_due_date) , tempBuildingId], function(err, responseBuilding) {
+			                					    building.last_boiler_upgrade_year,  building.mortgage_company,  toUTCDateTimeString(building.mortgage_due_date),building.parking_spots, building.cap_rate , tempBuildingId], function(err, responseBuilding) {
 				building.building_id = responseBuilding[1][tempBuildingId];
 					// sails.controllers.database.credSproc('CreateCompanyAddressMapping',[null,
 					// ])
@@ -588,7 +588,7 @@ module.exports = {
 		bodystring+=',"'+ (results[i].mortgage_company==null?'':results[i].mortgage_company)+'"';
 		var mortgagetime = results[i].mortgage_due_date;
 		mortgagetime = new Date(mortgagetime.setMinutes(mortgagetime.getMinutes() -req.query.timezoneoffset));
-		bodystring+=',"'+toUTCDateTimeString(mortgagetime)+'"';
+		bodystring+=',"'+toUTCDateTimeString(mortgagetime)==null?'':toUTCDateTimeString(mortgagetime)+'"';
 		bodystring+=','+ (results[i].bachelor_price==null?'':results[i].bachelor_price);
 		bodystring+=','+ (results[i].bedroom1_price==null?'':results[i].bedroom1_price);
 		bodystring+=','+ (results[i].bedroom2_price==null?'':results[i].bedroom2_price);
@@ -603,7 +603,7 @@ module.exports = {
 		bodystring+=','+ (results[i].cap_rate==null?'':results[i].cap_rate);
 		var timestamp = results[i].sale_date;
 		timestamp = new Date(timestamp.setMinutes(timestamp.getMinutes() -req.query.timezoneoffset));
-		bodystring+=',"'+toUTCDateTimeString(timestamp)+'"';
+		bodystring+=',"'+toUTCDateTimeString(timestamp)==null?'':toUTCDateTimeString(timestamp)+'"';
 		bodystring+=',"'+ (results[i].last_sale_price==null?'':results[i].last_sale_price)+'"';
 		bodystring+='\r\n';
 	    }
@@ -657,31 +657,89 @@ module.exports = {
 	    }
 	    address_search = address_search.trim();
 	}
-	var contact_search = null;
-	if (typeof(req.query.contact_search)!='undefined'&&req.query.contact_search != '') {
-	    contact_search = req.query.contact_search.trim().split(" ");
-	    adr = req.query.contact_search.trim().split(" ");
-	    contact_search = '';
+	var owner_search = null;
+	if (typeof(req.query.owner_search)!='undefined'&&req.query.owner_search != '') {
+	    owner_search = req.query.owner_search.trim().split(" ");
+	    adr = req.query.owner_search.trim().split(" ");
+	    owner_search = '';
 	    for(var i=0;i<adr.length;i++){
 		if(adr[i].trim()!=''){
-		    contact_search=contact_search+ "+"+adr[i].trim()+"* ";
+		    owner_search=owner_search+ "+"+adr[i].trim()+"* ";
 		}
 	    }
-	    contact_search = contact_search.trim();
+	    owner_search = owner_search.trim();
 	}
 
-	var company_search = null;
-	if (typeof(req.query.company_search)!='undefined'&&req.query.company_search != '') {
-	    company_search = req.query.company_search.trim().split(" ");
-	    adr = req.query.company_search.trim().split(" ");
-	    company_search = '';
+	var owner_company_search = null;
+	if (typeof(req.query.owner_company_search)!='undefined'&&req.query.owner_company_search != '') {
+	    owner_company_search = req.query.owner_company_search.trim().split(" ");
+	    adr = req.query.owner_company_search.trim().split(" ");
+	    owner_company_search = '';
 	    for(var i=0;i<adr.length;i++){
 		if(adr[i].trim()!=''){
-		    company_search=company_search+ "+"+adr[i].trim()+"* ";
+		    owner_company_search=owner_company_search+ "+"+adr[i].trim()+"* ";
 		}
 	    }
-	    company_search = company_search.trim();
+	    owner_company_search = owner_company_search.trim();
 	}
+	
+	
+	
+	
+	
+	var seller_search = null;
+	if (typeof(req.query.seller_search)!='undefined'&&req.query.seller_search != '') {
+	    seller_search = req.query.seller_search.trim().split(" ");
+	    adr = req.query.seller_search.trim().split(" ");
+	    seller_search = '';
+	    for(var i=0;i<adr.length;i++){
+		if(adr[i].trim()!=''){
+		    seller_search=seller_search+ "+"+adr[i].trim()+"* ";
+		}
+	    }
+	    seller_search = seller_search.trim();
+	}
+
+	var seller_company_search = null;
+	if (typeof(req.query.owner_company_search)!='undefined'&&req.query.seller_company_search != '') {
+	    seller_company_search = req.query.seller_company_search.trim().split(" ");
+	    adr = req.query.seller_company_search.trim().split(" ");
+	    seller_company_search = '';
+	    for(var i=0;i<adr.length;i++){
+		if(adr[i].trim()!=''){
+		    seller_company_search=seller_company_search+ "+"+adr[i].trim()+"* ";
+		}
+	    }
+	    seller_company_search = seller_company_search.trim();
+	}
+	var agent_search = null;
+	if (typeof(req.query.agent_search)!='undefined'&&req.query.agent_search != '') {
+	    agent_search = req.query.agent_search.trim().split(" ");
+	    adr = req.query.agent_search.trim().split(" ");
+	    agent_search = '';
+	    for(var i=0;i<adr.length;i++){
+		if(adr[i].trim()!=''){
+		    agent_search=agent_search+ "+"+adr[i].trim()+"* ";
+		}
+	    }
+	    agent_search = agent_search.trim();
+	}
+
+	var agent_company_search = null;
+	if (typeof(req.query.owner_company_search)!='undefined'&&req.query.agent_company_search != '') {
+	    agent_company_search = req.query.agent_company_search.trim().split(" ");
+	    adr = req.query.agent_company_search.trim().split(" ");
+	    agent_company_search = '';
+	    for(var i=0;i<adr.length;i++){
+		if(adr[i].trim()!=''){
+		    agent_company_search=agent_company_search+ "+"+adr[i].trim()+"* ";
+		}
+	    }
+	    agent_company_search = agent_company_search.trim();
+	}
+	
+	
+	
 
 	var mortgage_search = null;
 	if (typeof(req.query.mortgage_search)!='undefined'&&req.query.mortgage_search != '') {
@@ -711,7 +769,8 @@ module.exports = {
 	}
 	totalCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
-	sails.controllers.database.credSproc('GetBuildings', [ contact_search, address_search, company_search, mortgage_search,
+	sails.controllers.database.credSproc('GetBuildings', [ owner_search, address_search, mortgage_search,
+	        owner_company_search, seller_search, seller_company_search, agent_search, agent_company_search,                     
 		(req.query.unitQuantityMin == ''||req.query.unitQuantityMin==null) ? null : parseInt(req.query.unitQuantityMin),
 		(req.query.unitQuantityMax == ''||req.query.unitQuantityMax==null) ? null : parseInt(req.query.unitQuantityMax),
 		(typeof(req.query.unit_price_min)=='undefined'||req.query.unit_price_min == ''||req.query.unit_price_min==null) ? null : parseInt(req.query.unit_price_min),
@@ -734,8 +793,8 @@ module.exports = {
 		req.query.cap_rate_min == ''?null:req.query.cap_rate_min,	
 		req.query.cap_rate_max == ''?null:req.query.cap_rate_max,	
 			
-		(typeof(req.query.search_property_mgmt_company)=='undefined'||req.query.search_property_mgmt_company == '')?null:"'%"+req.query.search_property_mgmt_company+"%'",
-		(typeof(req.query.search_prev_property_mgmt_company)=='undefined'||req.query.search_prev_property_mgmt_company == '')?null:"'%"+req.query.search_prev_property_mgmt_company+"%'",	
+		(typeof(req.query.search_property_mgmt_company)=='undefined'||req.query.search_property_mgmt_company == '')?null:"%"+req.query.search_property_mgmt_company+"%",
+		(typeof(req.query.search_prev_property_mgmt_company)=='undefined'||req.query.search_prev_property_mgmt_company == '')?null:"%"+req.query.search_prev_property_mgmt_company+"%",	
 			
 		req.query.heat_age_min == ''?null:req.query.heat_age_min,		
 		req.query.heat_age_max == ''?null:req.query.heat_age_max,	
@@ -776,7 +835,7 @@ module.exports = {
 		req.query.windows_installed_year_min == ''?null:req.query.windows_installed_year_min,		
 		req.query.windows_installed_year_max == ''?null:req.query.windows_installed_year_max,
 			
-		(typeof(req.query.cable_internet_provider)=='undefined'||req.query.cable_internet_provider == '')?null:"'%"+req.query.cable_internet_provider+"%'",	
+		(typeof(req.query.cable_internet_provider)=='undefined'||req.query.cable_internet_provider == '')?null:"%"+req.query.cable_internet_provider+"%",	
 			
 			
 		(typeof(req.query.start_mortgage_due_date)=='undefined'||req.query.start_mortgage_due_date == '')?null:req.query.start_mortgage_due_date,	
@@ -891,6 +950,7 @@ function tryParseFloat(input) {
 
 function toUTCDateTimeString(date){
     if(date==null){
+	return null;
 	date = new Date();
     }else if(typeof(date)!=='object'){
 	date = new Date(date);
@@ -962,7 +1022,7 @@ function checkAndUpdateBuildingLastSale(buildingsale,cb){
 			if(typeof(tempbuildingsales[0])!='undefined'){
 			    tempsales = tempbuildingsales[0];
 			    building.sale_date = null;
-			    building.last_sale_date = null;
+			    building.last_sale_price = null;
 			    for(var i=0;i<tempsales.length;i++){
 				if(new Date(tempsales[i].sale_date)>=building.sale_date){
 				    building.sale_date = new Date(tempsales[i].sale_date);
@@ -970,7 +1030,7 @@ function checkAndUpdateBuildingLastSale(buildingsale,cb){
 				}
 			    }
 			    sails.controllers.database.credSproc('UpdateBuildingLastSale', [ building.building_id,  toUTCDateTimeString(building.sale_date) 
-			                                                                     , building.last_sale_price,], function(err, updatesale) {
+			                                                                     , building.last_sale_price], function(err, updatesale) {
 				if(err)
 				    return console.log('error'+err);
 				cb();

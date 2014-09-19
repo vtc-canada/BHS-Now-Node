@@ -8,7 +8,7 @@ CREATE PROCEDURE `CreateSalesRecord`(IN salePrice DECIMAL(13,2),IN saleDate DATE
 , IN bachelorPrice FLOAT, IN bedroom1Price FLOAT, IN bedroom2Price FLOAT, IN bedroom3Price FLOAT, IN bachelorUnits INT, IN bedroom1Units INT
 		,IN bedroom2Units INT, IN bedroom3Units INT, IN propertyMgmtCompany VARCHAR(45), IN prev_property_mgmt_company VARCHAR(45)
 , IN cap_rate INT, IN building_type INT, IN last_boiler_upgrade_year INT
-		,IN mortgage_company VARCHAR(64), IN mortgage_due_date TIMESTAMP
+		,IN mortgage_company VARCHAR(64), IN mortgage_due_date TIMESTAMP, IN parkingSpots INT
 ,OUT id INT)
 BEGIN
 	INSERT INTO cur_sales_record_history(sale_price,sale_date,heat_system_age,windows_installed_year,elevator_installed_year,last_elevator_upgrade_year, has_elevator,boiler_installed_year
@@ -16,12 +16,12 @@ BEGIN
 ,unit_price,unit_price_manual_mode,building_income,building_income_manual_mode
 ,bachelor_price,bedroom1_price,bedroom2_price,bedroom3_price 
 		,bachelor_units ,bedroom1_units ,bedroom2_units ,bedroom3_units,property_mgmt_company,prev_property_mgmt_company
-,cap_rate,ref_building_type_id,last_boiler_upgrade_year,mortgage_company,mortgage_due_date) 
+,cap_rate,ref_building_type_id,last_boiler_upgrade_year,mortgage_company,mortgage_due_date, parking_spots) 
 		VALUES (salePrice, saleDate, heatSystemAge, windowsInstalledYear, elevatorInstalledYear,elevatorUpgradeYear,has_elevator, boilerInstalledYear, cableInternetProvider
 		,assessedValue, heatSystemType, unitQuantity
 , unitPrice,unit_price_manual_mode,building_income,building_income_manual_mode
 , bachelorPrice,bedroom1Price,bedroom2Price,bedroom3Price,bachelorUnits,bedroom1Units,bedroom2Units,bedroom3Units, propertyMgmtCompany, prev_property_mgmt_company
-,cap_rate,building_type,last_boiler_upgrade_year,mortgage_company,mortgage_due_date);
+,cap_rate,building_type,last_boiler_upgrade_year,mortgage_company,mortgage_due_date, parkingSpots);
 	SET id = LAST_INSERT_ID();
 END$$
 DELIMITER ;

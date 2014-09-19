@@ -8,7 +8,7 @@ CREATE PROCEDURE `UpdateBuilding`(IN buildingID INT, IN addressID INT, IN buildi
 		,IN propertyMgmtCompany VARCHAR(45), IN prevPropertyMgmtCompany VARCHAR(45), IN lastSalePrice DECIMAL(13,2), IN images VARCHAR(1024)
 		,IN bachelorPrice FLOAT, IN bedroom1Price FLOAT, IN bedroom2Price FLOAT, IN bedroom3Price FLOAT, IN bachelorUnits INT, IN bedroom1Units INT
 		,IN bedroom2Units INT, IN bedroom3Units INT, IN buildingIncome DECIMAL(13,2), IN building_income_manual_mode BOOLEAN, IN hasElevator BOOLEAN, IN lastElevatorUpgradeYear INT, IN lastBoilerUpgradeYear INT
-		,IN mortgageCompany VARCHAR(64), IN mortgageDueDate TIMESTAMP, IN parkingSpots INT)
+		,IN mortgageCompany VARCHAR(64), IN mortgageDueDate TIMESTAMP, IN parkingSpots INT, IN capRate FLOAT)
 BEGIN
 
 	UPDATE cur_buildings
@@ -45,6 +45,7 @@ BEGIN
 			,mortgage_company = mortgageCompany
 			,mortgage_due_date = mortgageDueDate
 			,parking_spots = parkingSpots
+			,cap_rate = capRate
 	WHERE cur_buildings.id = buildingID;
 
 END$$
