@@ -29,7 +29,8 @@ module.exports.policies = {
 	 'deletebuilding':'RoutePolicy',
 	 'getcompaniesbycontactid':'RoutePolicy',
 	 'getcontactsbycompanyid':'RoutePolicy',
-	 'export':'RoutePolicy'
+	 'export':'RoutePolicy',
+	 'deletesale':'RoutePolicy'
     },
     'companies':{
 	'*' : 'isAuthenticated',

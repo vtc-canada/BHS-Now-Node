@@ -2431,7 +2431,7 @@
             pick12HourFormat: false,
             pickSeconds: false
         }).data('datetimepicker');
-		$("#start_mortgage_due_date_gen" ).data('datetimepicker').$element.on('start_mortgage_due_date_gen',function(e,y){
+		$("#start_mortgage_due_date_gen" ).data('datetimepicker').$element.on('changeDate',function(e,y){
 			setTimeout(function(){
 				datatable.api().ajax.reload();
 			},10);

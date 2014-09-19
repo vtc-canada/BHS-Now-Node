@@ -564,13 +564,19 @@ module.exports = {
 	    if(typeof(results[0])!='undefined'){
 		results = results[0];
 	    }
-	    var bodystring = 'Address,Building Type,Property Management Company,Previous Property Management Company,Heat System,Heat System Installed Year,Boiler Installed Year,Last Boiler Upgrade Year'
+	    var bodystring = 'Address,Owner,Owner Company,Seller,Seller Company,Agent,Agent Company,Building Type,Property Management Company,Previous Property Management Company,Heat System,Heat System Installed Year,Boiler Installed Year,Last Boiler Upgrade Year'
 		+',Cable Internet Provider,Elevator,Elevator Installed Year,Last Elevator Upgrade Year,Windows Installed Year,Parking Spots,Assessed Value,Mortgage Company,Mortgage Due Date,Bachelor Price,1 Bedroom Price,2 Bedroom Price,3 Bedroom Price'
 		+',Bachelor Units,1 Bedroom Units,2 Bedroom Units,3 Bedroom Units,Total Units,Building Income,Average Unit Price,CAP Rate,Last Sale Date,Last Sale Price'
 		+'\r\n';
 	    for(var i=0;i<results.length;i++){
 
 		bodystring+='"'+buildAddressString(results[i])+'"';
+		bodystring+=',"'+ (results[i].owner==null?'':results[i].owner)+'"';
+		bodystring+=',"'+ (results[i].owner_company==null?'':results[i].owner_company)+'"';
+		bodystring+=',"'+ (results[i].seller==null?'':results[i].seller)+'"';
+		bodystring+=',"'+ (results[i].seller_company==null?'':results[i].seller_company)+'"';
+		bodystring+=',"'+ (results[i].agent==null?'':results[i].agent)+'"';
+		bodystring+=',"'+ (results[i].agent_company==null?'':results[i].agent_company)+'"';
 		bodystring+=','+ (results[i].building_type==null?'':results[i].building_type);
 		bodystring+=',"'+ (results[i].property_mgmt_company==null?'':results[i].property_mgmt_company)+'"';
 		bodystring+=',"'+ (results[i].prev_property_mgmt_company==null?'':results[i].prev_property_mgmt_company)+'"';
@@ -588,7 +594,7 @@ module.exports = {
 		bodystring+=',"'+ (results[i].mortgage_company==null?'':results[i].mortgage_company)+'"';
 		var mortgagetime = results[i].mortgage_due_date;
 		mortgagetime = new Date(mortgagetime.setMinutes(mortgagetime.getMinutes() -req.query.timezoneoffset));
-		bodystring+=',"'+toUTCDateTimeString(mortgagetime)==null?'':toUTCDateTimeString(mortgagetime)+'"';
+		bodystring+=',"'+(toUTCDateTimeString(mortgagetime)==null?'':toUTCDateTimeString(mortgagetime))+'"';
 		bodystring+=','+ (results[i].bachelor_price==null?'':results[i].bachelor_price);
 		bodystring+=','+ (results[i].bedroom1_price==null?'':results[i].bedroom1_price);
 		bodystring+=','+ (results[i].bedroom2_price==null?'':results[i].bedroom2_price);
@@ -602,8 +608,8 @@ module.exports = {
 		bodystring+=','+ (results[i].unit_price==null?'':results[i].unit_price);
 		bodystring+=','+ (results[i].cap_rate==null?'':results[i].cap_rate);
 		var timestamp = results[i].sale_date;
-		timestamp = new Date(timestamp.setMinutes(timestamp.getMinutes() -req.query.timezoneoffset));
-		bodystring+=',"'+toUTCDateTimeString(timestamp)==null?'':toUTCDateTimeString(timestamp)+'"';
+		timestamp = timestamp==null?null:(new Date(timestamp.setMinutes(timestamp.getMinutes() -req.query.timezoneoffset)));
+		bodystring+=',"'+(toUTCDateTimeString(timestamp)==null?'':toUTCDateTimeString(timestamp))+'"';
 		bodystring+=',"'+ (results[i].last_sale_price==null?'':results[i].last_sale_price)+'"';
 		bodystring+='\r\n';
 	    }
