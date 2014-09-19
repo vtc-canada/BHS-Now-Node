@@ -490,6 +490,11 @@
     });
     function fixheight(){
         $('.main-content').css('height',$(window).height()-$('.navbar').height()+'px');
+        if($('body').width()>979){
+        	$('.isn-content-footer').width($('.main-content').width()-20);
+		}else{
+        	$('.isn-content-footer').width('');
+		}
     }
 
     function dateFromISO(s) {

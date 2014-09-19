@@ -137,7 +137,7 @@
     </div>
 </div>
 
-<div class="row-fluid" style="margin-top:19px;">
+<div class="row-fluid" style="margin-top:19px; margin-bottom:25px;">
     <div class="span10 offset1 page-controls-wrapper">
         <div class="row-fluid" id="reportheader"><span style="padding-left:10px;">Companies</span>
              <% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="create_company">Create New</div><% } %>
@@ -252,12 +252,12 @@
 	</div>
 </script>
 
-<div class="row-fluid edit-item-section" style="display:none; margin-top:19px;">
+<div class="row-fluid edit-item-section" style="display:none; margin-top:19px; margin-bottom:35px;">
     <div class="span10 offset1 page-controls-wrapper">
         <div class="row-fluid" id="reportheader"><span style="padding-left:10px;" id="building-section-title">Edit Company Details</span>
-         	<% if(req.session.user.policy[req.route.path].update==1){ %><button style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="save_company">Save</button><% } %>
-         	<% if(req.session.user.policy[req.route.path].delete==1){ %><button style="margin-right:10px;font-weight: 400;" class="btn btn-danger pull-right save_pull" id="delete_company">Delete</button><% } %>
-         	<button style="margin-right:10px;font-weight: 400;" class="btn pull-right save_pull" id="cancel_company">Cancel</button>
+         	<% if(req.session.user.policy[req.route.path].update==1){ %><button style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="save_company"><i class="only-mobile icon-save"></i><span class="only-desktop">Save</span></button><% } %>
+         	<% if(req.session.user.policy[req.route.path].delete==1){ %><button style="margin-right:10px;font-weight: 400;" class="btn btn-danger pull-right save_pull" id="delete_company"><i class="only-mobile icon-trash"></i><span class="only-desktop">Delete</span></button><% } %>
+         	<button style="margin-right:10px;font-weight: 400;" class="btn pull-right save_pull" id="cancel_company"><i class="only-mobile icon-circle-arrow-left"></i><span class="only-desktop">Cancel</span></button>
          	<% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right: 10px; color: rgb(153, 0, 0); font-weight: 400; display: none;" class="pull-right save_pull" id="changes_pending">Changes Pending. &nbsp;</div><% } %>
   		 </div>
         <div class="row-fluid " id="iframediv">
@@ -268,7 +268,7 @@
 							<div class="row-category">
 								<span class="" id="sales_title">
 									<i class="icon-plus-sign" style="margin-right:10px; display:none;"></i>
-									<i class="icon-pencil"></i> &nbsp&nbsp<b>Company Information</b>
+									<i class="icon-briefcase"></i> &nbsp&nbsp<b>Company Information</b>
 								</span>
 								<div class="pull-right" style="height:40px; display:none;">
 									<span  id="delete_mapping" class="row-category-button-wrapper">
@@ -339,7 +339,7 @@
 											<div class="pull-right" style="height:40px;">
 												<span class="row-category-button-wrapper" id="save_note_parent">
 													<span id="save_notes" class="btn btn-primary">
-									                    <span>Save Notes</span>
+									                    <span><i class="only-mobile icon-save"></i><span class="only-desktop">Save Notes</span></span>
 									                </span>
 												</span>
 											</div>
@@ -392,6 +392,19 @@
         <button class="btn btn-danger" data-dismiss="modal" aria-hidden="true" id="confirmdelete"><%= translate[locale]['Delete'] %></button>
     </div>
 </div>
+
+
+<div class="isn-content-footer">
+	<hr class="isn-footer-hr">
+	<div class="isn-margin-footer-wrapper">
+		<div class="isn-footer-image">
+			Powered By 
+			<img alt="iSystemsNow" class="logo isn-logo" src="/img/iSystemsNow-Logo-RGB-Black.png">'s Now Management Studio. 
+		</div>
+	</div>
+</div>
+
+
 
 <script>
 
@@ -455,6 +468,7 @@
         		
         		
 		var datatable = $('#companies').dataTable({
+				"scrollX": true,
 		        "processing": true,
 		        "serverSide": true,
 		        "dom":"tipr",

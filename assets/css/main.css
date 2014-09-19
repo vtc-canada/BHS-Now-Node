@@ -922,9 +922,72 @@ div.language-flag.chile{
 
 
 
+.isn-content-footer{
+	
+	
+    bottom: 0px;
+    background-color: #E8E8E8;
+}
+
+.isn-footer-hr{
+	
+	
+    border-top: 1px solid #E8E8E8;  
+    border-bottom: 1px solid #C8C8C8;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.isn-footer-image{
+    max-width: 334px;
+	
+    margin: auto;
+    font-size: 12px;
+}
+
+.isn-logo{
+	
+}
+
+.isn-margin-footer-wrapper{
+    padding-bottom: 0px;
+	
+    padding-top: 0px;
+}
+
+
+.report-control-right-control span{
+	font-size:13px;
+}
+
+#buildings_wrapper{
+	
+	width: 96%;
+	margin-left: 2%;
+	margin-right: 2%;
+	margin-bottom: 12px;
+}
+
+@media (min-width:768px){
+	
+	.only-mobile{
+		display:none !important;
+	}
+	
+	.dataTables_scrollBody{
+		overflow:hidden !important;
+	}
+    
+}
+
 @media (min-width: 980px){
     body {
         /* padding-top: 41px; 60px to make the container go all the way to the bottom of the topbar */
+    }
+
+
+    .isn-content-footer{
+    	position:fixed;	
     }
     .top-messages-span{
         display:none;
@@ -963,6 +1026,9 @@ div.language-flag.chile{
     }
 }
 
+.company-div{
+	margin-bottom: 5px;
+}
 
 .badge-div{
     position: absolute;
@@ -970,7 +1036,8 @@ div.language-flag.chile{
     top: 20px;
 }
 @media (max-width: 979px){
-
+	
+    
     .popover[sort_plan_id=myaccount]{
         display:none !important;
     }
@@ -1059,6 +1126,23 @@ div.language-flag.chile{
 }	
 	
 @media (max-width: 767px){
+	.only-desktop{
+    	display:none !important;
+    }
+    .company-div{
+		line-height: 20px;
+	}
+	
+	.delete-company-mapping{
+		margin:10px;
+	}
+	.cancel-delete-company-mapping{
+		margin:10px;
+	}
+	
+	.first-company-value{
+		margin-top:7px;
+	}
 	
 	#building-owners-wrapper .mobilehider{
 		display:none;

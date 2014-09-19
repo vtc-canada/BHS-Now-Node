@@ -11,7 +11,7 @@
             'Save Dialog':'Save Dialog',
             'Cancel':'Cancel',
             'Confirm':'Confirm',
-            'Change Password':'Change Password',
+            'Change Password':'Password',
             'New Password':'New Password',
             'Confirm Password':'Confirm Password',
             'Set':'Set',
@@ -24,7 +24,7 @@
             'is already in use.':'is already in use.',
             'Password must be at least 1 character long.':'Password must be at least 1 character long.',
             'You are about to delete the following user(s)':'You are about to delete the following user(s)',
-            'All messages associated with the user(s) will be deleted.':'All messages associated with the user(s) will be deleted.',
+            'All messages associated with the user(s) will be deleted.':'',
             'Are you sure you would like to make these changes?':'Are you sure you would like to make these changes?',
             'Operator':'Operator',
             'Admin':'Admin',
@@ -49,7 +49,7 @@
             'Save Dialog':'Save Dialog',
             'Cancel':'Cancel',
             'Confirm':'Confirm',
-            'Change Password':'Change Password',
+            'Change Password':'Password',
             'New Password':'New Password',
             'Confirm Password':'Confirm Password',
             'Set':'Set',
@@ -62,7 +62,7 @@
             'is already in use.':'is already in use.',
             'Password must be at least 1 character long.':'Password must be at least 1 character long.',
             'You are about to delete the following user(s)':'You are about to delete the following user(s)',
-            'All messages associated with the user(s) will be deleted.':'All messages associated with the user(s) will be deleted.',
+            'All messages associated with the user(s) will be deleted.':'',
             'Are you sure you would like to make these changes?':'Are you sure you would like to make these changes?',
             'Operator':'Operator',
             'Admin':'Admin',
@@ -84,7 +84,7 @@
 </div>
 
  <!-- The Main page Users Section -->
-<div class="row-fluid" style="margin-top:20px;">
+<div class="row-fluid" style="margin-top:20px; margin-bottom:35px;">
     <div class="span10 offset1 page-controls-wrapper">
         <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%= translate[locale]['Users'] %></span>
 
@@ -161,7 +161,7 @@
             <div class="row-fluid"><label class="change-label" for="newsecuritylevel"><%= translate[locale]['Group'] %>:</label>
                 <select class="securityselect security-select-new change-input" style="margin-top:0px; height:30px;" id="newsecuritylevel">
                 	<% for(var i=0;i<securityGroups.length;i++){ %>
-                    	<option value="<%=securityGroups[i].name%>"><%=securityGroups[i].name%></option>
+                    	<option value="<%=securityGroups[i].name%>"><%=(securityGroups[i].name=='ReadOnly'?'Read Only':securityGroups[i].name)%></option>
                 	<% } %>
                 </select>
             </div>
@@ -186,12 +186,12 @@
             
 		{{if(username=='<%=req.session.user.username%>'){ }}
 			<% for(var i=0;i<securityGroups.length;i++){ %>
-	            	{{ if(<%= securityGroups[i].name %>){ }}<%= securityGroups[i].name %>{{ } }}
+	            	{{ if(<%= securityGroups[i].name %>){ }}<%=(securityGroups[i].name=='ReadOnly'?'Read Only':securityGroups[i].name)%>{{ } }}
 			<% } %>
 		{{ }else{ }}
 					<select class="securityselect">
 			<% for(var i=0;i<securityGroups.length;i++){ %>
-                		<option value="<%= securityGroups[i].name %>"{{ if(<%= securityGroups[i].name %>){ }} selected="selected"{{ } }}><%= securityGroups[i].name %></option>
+                		<option value="<%= securityGroups[i].name %>"{{ if(<%= securityGroups[i].name %>){ }} selected="selected"{{ } }}><%=(securityGroups[i].name=='ReadOnly'?'Read Only':securityGroups[i].name)%></option>
 			<% } %>					
 			</select>
     	{{ } }}
@@ -218,7 +218,7 @@
         <div class="span2 admin-users-checkbox"><span class="mobilelabel"><%= translate[locale]['Security Level'] %>:</span>
             <select class="securityselect">
                 <% for(var i=0;i<securityGroups.length;i++){ %>
-                <option value="<%= securityGroups[i].name %>"{{ if(<%= securityGroups[i].name %>){ }} selected="selected"{{ } }}><%= securityGroups[i].name %></option>
+                <option value="<%= securityGroups[i].name %>"{{ if(<%= securityGroups[i].name %>){ }} selected="selected"{{ } }}><%=(securityGroups[i].name=='ReadOnly'?'Read Only':securityGroups[i].name)%></option>
                 <% } %>
             </select>
         </div>
@@ -227,6 +227,17 @@
         <div class="span2 user-delete-span"><div class="pull-right deleteadminuser btn {{ if(typeof(dodelete)!='undefined'){ }}btn-success{{ }else{ }}btn-danger{{ } }}">{{ if(typeof(dodelete)!='undefined'){ }}<%= translate[locale]['Cancel'] %>{{ }else{ }}<%= translate[locale]['Delete'] %>{{ } }}</div></div>
     </div>
 </script>
+
+
+<div class="isn-content-footer">
+	<hr class="isn-footer-hr">
+	<div class="isn-margin-footer-wrapper">
+		<div class="isn-footer-image">
+			Powered By 
+			<img alt="iSystemsNow" class="logo isn-logo" src="/img/iSystemsNow-Logo-RGB-Black.png">'s Now Management Studio. 
+		</div>
+	</div>
+</div>
 
 
 <script>

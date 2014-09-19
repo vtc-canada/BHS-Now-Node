@@ -120,7 +120,7 @@
 
     <div class="row-fluid">
         <div class="span8 offset2 create-report-controls" style="padding-top: 10px;">
-           <div class="row-fluid">
+           <div class="row-fluid" style="width: 95%;margin-left: 5%;">
                <div class="row">
                    <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_address">Address:</label></div>
                    <div class="span8 report-control-right-control">
@@ -303,13 +303,15 @@
 
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAbxXYHzi3ypnRymTns27yE_o-fEyj6cIE"></script>
 
+
+
 <script>
 
 
 
 	var markers,map;
     var alarms;
-    var minimumTableSize = 120;
+    var minimumTableSize = 420;
     var layers = {}
         
     
@@ -608,6 +610,7 @@
     		//search_controls
 			
 			datatable = $('#buildings').dataTable({
+					"scrollX": true,
 					"scrollY":        0+ "px",
 			        "processing": true,
 			        "serverSide": true,
@@ -919,6 +922,7 @@
         }
         
         function snapClose(){
+        	return;
         	if($('body').width()>979){
     			if($('.main-content').scrollTop()<($('#map_wrapper').height()+$('#building_slideup_wrapper').height())/2){
     				$('#search_toggler').attr('scrollstate','top');
