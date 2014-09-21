@@ -2868,10 +2868,10 @@
 	        	this.unitQuantityChange();
 	        },
 	        updateCalculatedPrice : function(){
-	        		var bachelorRent = isNaN(parseFloat($('#bachelor_price').autoNumeric('get')))?0:parseFloat($('#bachelor_price').autoNumeric('get'));
-	        		var bedroom1Rent = isNaN(parseFloat($('#bedroom1_price').autoNumeric('get')))?0:parseFloat($('#bedroom1_price').autoNumeric('get'));
-	        		var bedroom2Rent = isNaN(parseFloat($('#bedroom2_price').autoNumeric('get')))?0:parseFloat($('#bedroom2_price').autoNumeric('get'));
-	        		var bedroom3Rent = isNaN(parseFloat($('#bedroom3_price').autoNumeric('get')))?0:parseFloat($('#bedroom3_price').autoNumeric('get'));
+	        		//var bachelorRent = isNaN(parseFloat($('#bachelor_price').autoNumeric('get')))?0:parseFloat($('#bachelor_price').autoNumeric('get'));
+	        		//var bedroom1Rent = isNaN(parseFloat($('#bedroom1_price').autoNumeric('get')))?0:parseFloat($('#bedroom1_price').autoNumeric('get'));
+	        		//var bedroom2Rent = isNaN(parseFloat($('#bedroom2_price').autoNumeric('get')))?0:parseFloat($('#bedroom2_price').autoNumeric('get'));
+	        		//var bedroom3Rent = isNaN(parseFloat($('#bedroom3_price').autoNumeric('get')))?0:parseFloat($('#bedroom3_price').autoNumeric('get'));
 	        		
 	        		var bachelorUnits = isNaN(parseInt($('#bachelor_units').val()))?0:parseInt($('#bachelor_units').val());
 	        		var bedroom1Units = isNaN(parseInt($('#bedroom1_units').val()))?0:parseInt($('#bedroom1_units').val());
@@ -2892,11 +2892,21 @@
 	        },
 	        updateBuildingIncome : function(){
 	        	if(!building.get('building_income_manual_mode')){
-	        		var averageUnitPrice = isNaN(parseInt(building.get('unit_price')))?0:parseFloat(building.get('unit_price')).toFixed(2);
-	        		var numberOfUnits = isNaN(parseInt(building.get('unit_quantity')))?0:parseInt(building.get('unit_quantity'));
+	        		//var averageUnitPrice = isNaN(parseInt(building.get('unit_price')))?0:parseFloat(building.get('unit_price')).toFixed(2);
+	        		//var numberOfUnits = isNaN(parseInt(building.get('unit_quantity')))?0:parseInt(building.get('unit_quantity'));
+	        		var bachelorUnits = isNaN(parseInt($('#bachelor_units').val()))?0:parseInt($('#bachelor_units').val());
+	        		var bedroom1Units = isNaN(parseInt($('#bedroom1_units').val()))?0:parseInt($('#bedroom1_units').val());
+	        		var bedroom2Units = isNaN(parseInt($('#bedroom2_units').val()))?0:parseInt($('#bedroom2_units').val());
+	        		var bedroom3Units = isNaN(parseInt($('#bedroom3_units').val()))?0:parseInt($('#bedroom3_units').val());
+	        		
+	        		var bachelorRent = isNaN(parseFloat($('#bachelor_price').autoNumeric('get')))?0:parseFloat($('#bachelor_price').autoNumeric('get'));
+	        		var bedroom1Rent = isNaN(parseFloat($('#bedroom1_price').autoNumeric('get')))?0:parseFloat($('#bedroom1_price').autoNumeric('get'));
+	        		var bedroom2Rent = isNaN(parseFloat($('#bedroom2_price').autoNumeric('get')))?0:parseFloat($('#bedroom2_price').autoNumeric('get'));
+	        		var bedroom3Rent = isNaN(parseFloat($('#bedroom3_price').autoNumeric('get')))?0:parseFloat($('#bedroom3_price').autoNumeric('get'));
 	        		
 	        		
-	        		var buildingIncome = (averageUnitPrice*numberOfUnits*12).toFixed(2);
+	        		var buildingIncome = (((bachelorUnits*bachelorRent)+(bedroom1Units*bedroom1Rent)+(bedroom2Units*bedroom2Rent)+(bedroom3Units*bedroom3Rent))*12).toFixed(2); 
+	        		//(averageUnitPrice*numberOfUnits*12).toFixed(2);
 	        		
 	        		$('#income_calculated_radio_label').html('$'+parseFloat(buildingIncome).toFixed(2));
 	        		building.set('building_income',parseFloat(buildingIncome));
