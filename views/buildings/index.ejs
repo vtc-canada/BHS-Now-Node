@@ -2878,13 +2878,13 @@
 	        		var bedroom2Units = isNaN(parseInt($('#bedroom2_units').val()))?0:parseInt($('#bedroom2_units').val());
 	        		var bedroom3Units = isNaN(parseInt($('#bedroom3_units').val()))?0:parseInt($('#bedroom3_units').val());
 	        		
-	        		var averagePrice = 0;
-	        		if((bachelorUnits+bedroom1Units+bedroom2Units+bedroom3Units)!=0){
-	        			averagePrice = (((bachelorRent*bachelorUnits)+(bedroom1Rent*bedroom1Units)+(bedroom2Rent*bedroom2Units)+(bedroom3Rent*bedroom3Units))/(bachelorUnits+bedroom1Units+bedroom2Units+bedroom3Units)).toFixed(2);
+	        		var unitPrice = 0;
+	        		if(!isNaN(parseFloat(building.get('last_sale_price')))&&(bachelorUnits+bedroom1Units+bedroom2Units+bedroom3Units)!=0){
+	        			unitPrice =    ((parseFloat(building.get('last_sale_price')))/(bachelorUnits+bedroom1Units+bedroom2Units+bedroom3Units)).toFixed(2);
 	        		
 	        		}
-	        		$('#unit_price_calculated_radio_label').html('$'+(isNaN(parseFloat(averagePrice))?'0.00':parseFloat(averagePrice).toFixed(2)));
-	        		building.set('unit_price',parseFloat(averagePrice));
+	        		$('#unit_price_calculated_radio_label').html('$'+(isNaN(parseFloat(unitPrice))?'0.00':parseFloat(unitPrice).toFixed(2)));
+	        		building.set('unit_price',parseFloat(unitPrice));
 	        		this.unitQuantityChange();
 	        },
 	        updateBuildingManualPrice:function(){

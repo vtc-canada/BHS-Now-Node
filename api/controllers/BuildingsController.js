@@ -592,9 +592,13 @@ module.exports = {
 		bodystring+=','+ (results[i].parking_spots==null?'':results[i].parking_spots);
 		bodystring+=','+ (results[i].assessed_value==null?'':results[i].assessed_value);
 		bodystring+=',"'+ (results[i].mortgage_company==null?'':results[i].mortgage_company)+'"';
-		var mortgagetime = results[i].mortgage_due_date;
-		mortgagetime = new Date(mortgagetime.setMinutes(mortgagetime.getMinutes() -req.query.timezoneoffset));
-		bodystring+=',"'+(toUTCDateTimeString(mortgagetime)==null?'':toUTCDateTimeString(mortgagetime))+'"';
+		if(results[i].mortgage_due_date!=null){
+		    var mortgagetime = results[i].mortgage_due_date;
+		    mortgagetime = new Date(mortgagetime.setMinutes(mortgagetime.getMinutes() -req.query.timezoneoffset));
+		    bodystring+=',"'+(toUTCDateTimeString(mortgagetime)==null?'':toUTCDateTimeString(mortgagetime))+'"';
+		}else{
+		    bodystring+=','
+		}
 		bodystring+=','+ (results[i].bachelor_price==null?'':results[i].bachelor_price);
 		bodystring+=','+ (results[i].bedroom1_price==null?'':results[i].bedroom1_price);
 		bodystring+=','+ (results[i].bedroom2_price==null?'':results[i].bedroom2_price);
