@@ -1756,7 +1756,7 @@
 		        "aoColumns":[
 		        	{"mData":"building_id","visible":false}
 		         	,{"mData":function(data,b){ 
-			        	return "<b>"+data.street_number_begin+" "+data.street_name+", "+data.city+"</b>"; }
+			        	return "<b>"+buildAddressString(data)+"</b>"; }
 			        }
 			        ,{"mData":"units"}
 			        ,{"mData":"owner"}

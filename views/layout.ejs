@@ -554,7 +554,7 @@
         	if(data.street_number_begin!=null){
         		street_number_begin = data.street_number_begin;
         	}
-        	if(data.street_number_end!=null&&data.street_number_end!=''){
+        	if(data.street_number_end!=null&&data.street_number_end!=''&&data.street_number_end!='0'){
         		street_number_end = data.street_number_end==null||data.street_number_end=='null'?'':' - '+data.street_number_end;
         	}
         	if(data.street_name!=null&&data.street_name!='')
