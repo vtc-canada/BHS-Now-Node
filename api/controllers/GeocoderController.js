@@ -24,8 +24,15 @@ module.exports = {
      * GeocoderController)
      */
     _config : {},
-
-    updateBuildings : function(req, res) {
+    clearzeros : function(req,res){
+	sails.controllers.database.credQuery('UPDATE cur_address SET latitude = NULL, longitude = NULL WHERE latitude = 0', function(err, results) {
+	    if(err){
+		res.json(err.toString());
+	    }
+	    res.json(results);
+	});
+    },
+    batch : function(req, res) {
 	// sails
 	var count = 50;
 	if(typeof(req.params.id)!='undefined'){
@@ -54,6 +61,9 @@ module.exports = {
 		});
 	    function doLoop(i) {
 		var address = results[i];
+		if(typeof(address)=='undefined'){
+		    res.json({success:'Ran out of null addresses on index:'+i});
+		}
 		var street_number_end = (address.street_number_end == null || address.street_number_end == 0) ? '' : ' ' + address.street_number_end;
 		var addressSearch = address.street_number_begin + " " + street_number_end + " " + address.street_name + ', ' + address.city + ', '
 			+ address.province + ', Canada, ' + address.postal_code;
