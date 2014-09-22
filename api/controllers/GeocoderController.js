@@ -62,7 +62,7 @@ module.exports = {
 	    function doLoop(i) {
 		var address = results[i];
 		if(typeof(address)=='undefined'){
-		    res.json({success:'Ran out of null addresses on index:'+i});
+		    return res.json({success:'Ran out of null addresses on index:'+i});
 		}
 		var street_number_end = (address.street_number_end == null || address.street_number_end == 0) ? '' : ' ' + address.street_number_end;
 		var addressSearch = address.street_number_begin + " " + street_number_end + " " + address.street_name + ', ' + address.city + ', '
