@@ -113,10 +113,10 @@ module.exports = {
 	    }
 	    var bodystring = 'Contact Name,Phone Number,Email,Associated Companies\r\n';
 	    for(var i=0;i<results.length;i++){
-		bodystring+='"'+results[i].contact_name+'"';
-		bodystring+=',"'+results[i].phone+'"';
-		bodystring+=',"'+results[i].email+'"';
-		bodystring+=',"'+results[i].company + '"';
+		bodystring+='"'+(results[i].contact_name==null?'':results[i].contact_name)+'"';
+		bodystring+=',"'+(results[i].phone==null?'':results[i].phone)+'"';
+		bodystring+=',"'+(results[i].email==null?'':results[i].email)+'"';
+		bodystring+=',"'+(results[i].company==null?'':results[i].company) + '"';
 		bodystring+='\r\n';
 	    }
 
