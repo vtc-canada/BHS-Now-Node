@@ -923,16 +923,16 @@
     		this.selected = false;
     		
     		var blueColor = "2F76EE"; // a random blue color that i picked
-			this.blueImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + blueColor,
+			this.blueImage = new google.maps.MarkerImage("/img/markers/bluemarker.png",
             new google.maps.Size(21, 34),
             new google.maps.Point(0,0),
             new google.maps.Point(10, 34));
             var redColor = "F75448"
-            this.redImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + redColor,
+            this.redImage = new google.maps.MarkerImage("/img/markers/redmarker.png",
             new google.maps.Size(21, 34),
             new google.maps.Point(0,0),
             new google.maps.Point(10, 34));
-			this.pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
+			this.pinShadow = new google.maps.MarkerImage("/img/markers/shadow.png",
             new google.maps.Size(40, 37),
             new google.maps.Point(0, 0),
             new google.maps.Point(12, 35));
@@ -997,9 +997,9 @@
     		
     		map = new google.maps.Map($('#map_wrapper')[0],mapOptions);
     		
-    		layers.go = new google.maps.KmlLayer('https://rems.pricinpledadvisor.ca/layers/go.kmz',{preserveViewport: true});
-			layers.ttc = new google.maps.KmlLayer('https://rems.pricinpledadvisor.ca/layers/ttc.kmz',{preserveViewport: true});
-			layers.viva = new google.maps.KmlLayer('https://rems.pricinpledadvisor.ca/layers/viva.kmz',{preserveViewport: true});
+    		layers.go = new google.maps.KmlLayer('/img/layers/go.kmz',{preserveViewport: true});
+			layers.ttc = new google.maps.KmlLayer('/img/layers/ttc.kmz',{preserveViewport: true});
+			layers.viva = new google.maps.KmlLayer('/img/layers/viva.kmz',{preserveViewport: true});
 			
     		  // Create the DIV to hold the control and call the HomeControl() constructor
 			  // passing in this DIV.
