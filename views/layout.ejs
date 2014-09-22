@@ -402,7 +402,7 @@
            // Creates Popover when you click on your name at the top right
           $('#myaccount').popover('hide').click(function(e) {
                 e.preventDefault();
-                $('#myaccount').next('.popover').find('.popover-content').html('<a class="pull-right close myaccount-close-x popover-close" sort_plan_id="myaccount">&times;</a><div class="row-fluid myaccount-popover-username" style="width:100px;"><%= req.session.user.username %></div><div class="row-fluid" style="width:120px;"><a onclick="showChangeMyPasswordModal();" class="span12 btn"><%= translate[req.session.user.locale]['Settings'] %></a></div><div class="row-fluid" style="width:120px;"><a href="/logout" class="span12 btn btn-danger"><%= translate[req.session.user.locale]['Log Out'] %></a></div>');
+                $('#myaccount').next('.popover').find('.popover-content').html('<a class="pull-right close myaccount-close-x popover-close" sort_plan_id="myaccount">&times;</a><div class="row-fluid myaccount-popover-username" style="width:100px;"><%= req.session.user.username %></div><% if(req.session.user.username!='isnadmin'){ %><div class="row-fluid" style="width:120px;"><a onclick="showChangeMyPasswordModal();" class="span12 btn"><%= translate[req.session.user.locale]['Settings'] %></a></div><% } %><div class="row-fluid" style="width:120px;"><a href="/logout" class="span12 btn btn-danger"><%= translate[req.session.user.locale]['Log Out'] %></a></div>');
                 setTimeout(function(){
                     $('.popover[sort_plan_id=myaccount]').css('left',0);
                 },0);
