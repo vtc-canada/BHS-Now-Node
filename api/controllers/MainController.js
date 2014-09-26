@@ -38,22 +38,22 @@ module.exports = {
         //});
     },
     get_cfg_global_settings : function(req,res) {
-        sails.controllers.database.sp("BHS_UTIL_GetCfgGlobalSettings", [],
+        sails.controllers.database.localSproc("BHS_UTIL_GetCfgGlobalSettings", [],
             function(err,settings) {
                 if (err) {
                     res.json('error');
                     return;
                 }
-                res.json(settings);
+                res.json(settings[0]);
             });
     },
     get_fault_types : function(req, res) {
-        sails.controllers.database.sp("BHS_UTIL_GetFaultTypes", [], function(err, alarms_def) {
+        sails.controllers.database.localSproc("BHS_UTIL_GetFaultTypes", [], function(err, alarms_def) {
             if (err) {
                 res.json('error');
                 return;
             }
-            res.json(alarms_def);
+            res.json(alarms_def[0]);
         });
     },
     auth:function(req,res){

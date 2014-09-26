@@ -124,7 +124,7 @@
           }
       }
     %>
-    <title><%= translate[typeof(req.session.user.locale)=='undefined'?'en':req.session.user.locale]['pages'][req.url] %> | <%= translate[req.session.user.locale]['DefaultTitle'] %></title>
+    <title><%= translate[typeof(req.session.user.locale)=='undefined'?'en':req.session.user.locale]['pages'][(req.url.lastIndexOf('/buildings',0)===0?'/buildings':req.url)] %> | <%= translate[req.session.user.locale]['DefaultTitle'] %></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="description" content="">
     <meta name="author" content="">

@@ -160,13 +160,15 @@ module.exports = {
     },
     querycontacts:function(req,res,cb){
 	var contact_search = null;
+	var phone_search = null;
 	if (req.query.contact_search != '') {
+	    phone_search = req.query.contact_search;
 	    contact_search = req.query.contact_search.trim().split(" ");
 	    adr = req.query.contact_search.trim().split(" ");
 	    contact_search = '';
 	    for(var i=0;i<adr.length;i++){
 		if(adr[i].trim()!=''){
-		    contact_search=contact_search+ "+"+adr[i].trim()+"* ";
+		    contact_search=contact_search+ "+"+replaceAll(adr[i].trim(),'-','')+"* ";
 		}
 	    }
 	    contact_search = contact_search.trim();
@@ -184,7 +186,7 @@ module.exports = {
         	orderstring = orderstring+'_'+req.query.order[0].dir;
 	}
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
-	sails.controllers.database.credSproc('SearchContacts',[contact_search,req.query.start, req.query.length, orderstring,filteredCount],function(err,responseContacts){
+	sails.controllers.database.credSproc('SearchContacts',[contact_search,phone_search,req.query.start, req.query.length, orderstring,filteredCount],function(err,responseContacts){
 	    if(err){
 		return res.json({error:'Database Error:'+err},500);
 	    }
@@ -453,6 +455,12 @@ module.exports = {
 
 };
 
+function replaceAll(string, find, replace) {
+    return string.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+  }
+function escapeRegExp(string) {
+    return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+}
 
 function toUTCDateTimeString(date){
     if(date==null){

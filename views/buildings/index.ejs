@@ -123,12 +123,18 @@
 	                   </div>
 	               </div>
 	               <div class="row">
-	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_owner">Owner:</label></div>
+	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_owner">Owner Contact:</label></div>
 	                   <div class="span8 report-control-right-control">
 	                       <input type="text" id="search_owner" value="">
 	                   </div>
 	               </div>
 	               
+               		<div class="row">
+	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_owner_company">Owner Company:</label></div>
+	                   <div class="span8 report-control-right-control">
+	                       <input type="text" id="search_owner_company" value="">
+	                   </div>
+	               </div>
 	               <div class="row" style="min-height: 40px;">
 	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_property_mgmt_company">Property Management Company:</label></div>
 	                   <div class="span8 report-control-right-control">
@@ -195,14 +201,8 @@
          <div class="span8 offset2 create-report-controls" style="padding-top: 10px; padding-bottom:10px;">
            <div class="row-fluid">
                <div class="row collapse" id="collapseadvanced">
-               		<div class="row-fluid">
-	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_owner_company">Owner Company:</label></div>
-	                   <div class="span8 report-control-right-control">
-	                       <input type="text" id="search_owner_company" value="">
-	                   </div>
-	               </div>
 	               <div class="row-fluid">
-	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_seller">Seller:</label></div>
+	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_seller">Seller Contact:</label></div>
 	                   <div class="span8 report-control-right-control">
 	                       <input type="text" id="search_seller" value="">
 	                   </div>
@@ -214,7 +214,7 @@
 	                   </div>
 	               </div>
 	               <div class="row-fluid">
-	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_agent">Agent:</label></div>
+	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_agent">Agent Contact:</label></div>
 	                   <div class="span8 report-control-right-control">
 	                       <input type="text" id="search_agent" value="">
 	                   </div>
@@ -1414,8 +1414,8 @@
     	var MAX_BUILDING_INCOME = 10000000;
     	var STEP_BUILDING_INCOME = 1000;
     	
-    	var MIN_UNIT_PRICE = 0;
-    	var MAX_UNIT_PRICE = 10000;
+    	var MIN_UNIT_PRICE = 5000;
+    	var MAX_UNIT_PRICE = 300000;
     	var STEP_UNIT_PRICE = 10;
 
     	var MIN_SALE_PRICE = 0;
@@ -1490,7 +1490,7 @@
 				,mortgage_search : $('#search_mortgage').val()
 				,unitQuantityMin : unitsMin==0?null:unitsMin
 				,unitQuantityMax : unitsMax==sliderLimit?null:unitsMax
-				,unit_price_min:unit_price_min==0?null:unit_price_min
+				,unit_price_min:(parseInt(unit_price_min)==MIN_UNIT_PRICE)?null:unit_price_min
 				,unit_price_max:unit_price_max==MAX_UNIT_PRICE?null:unit_price_max
 				,saleDateRangeStart:$('#start_time').val()==''?null:typeof($('#start_time_gen').data('datetimepicker'))=='undefined'?null:$('#start_time_gen').data('datetimepicker').getLocalDate().toUTCString()        			
 				,saleDateRangeEnd : $('#end_time').val()==''?null: typeof($('#end_time_gen').data('datetimepicker'))=='undefined'?null:$('#end_time_gen').data('datetimepicker').getLocalDate().toUTCString()
@@ -1645,7 +1645,7 @@
 	        			
 	        			d.unitQuantityMin = unitsMin==0?null:unitsMin;
 	        			d.unitQuantityMax = unitsMax==sliderLimit?null:unitsMax;
-	        			d.unit_price_min = unit_price_min==0?null:unit_price_min;
+	        			d.unit_price_min = (parseInt(unit_price_min)==MIN_UNIT_PRICE)?null:unit_price_min;
 	        			d.unit_price_max = unit_price_max==MAX_UNIT_PRICE?null:unit_price_max;
 	        			
 	        			d.saleDateRangeStart = $('#start_time').val()==''?null:typeof($('#start_time_gen').data('datetimepicker'))=='undefined'?null:$('#start_time_gen').data('datetimepicker').getLocalDate().toUTCString();	        			
@@ -2100,14 +2100,24 @@
 			$('#unit_price_slider').attr('data-slider-min',MIN_UNIT_PRICE); // corrects limit
 			$('#unit_price_slider').attr('data-slider-max',MAX_UNIT_PRICE); // corrects limit
 			$('#unit_price_slider').attr('data-slider-step',STEP_UNIT_PRICE); // corrects limit
-			$('#unit_price_min').html(MIN_UNIT_PRICE);
+			$('#unit_price_min').html(MIN_UNIT_PRICE==0?0:(MIN_UNIT_PRICE+'-'));
 			$('#unit_price_max').html(MAX_UNIT_PRICE+'+');
 			$('#unit_price_slider').attr('data-slider-value','['+MIN_UNIT_PRICE+','+MAX_UNIT_PRICE+']');
 			$('#unit_price_slider').slider({tooltip: 'disabled'});
 			$('#unit_price_slider').on('slide',function(slideEvt){
 				unit_price_min = slideEvt.value[0];
 				unit_price_max = slideEvt.value[1];
-				$('#unit_price_min').html(unit_price_min);
+				if(unit_price_min==MIN_UNIT_PRICE)
+				{
+					if(MIN_UNIT_PRICE!=0){
+						$('#unit_price_min').html(unit_price_min+'-');
+					}else{
+						$('#unit_price_min').html(unit_price_min);
+					}
+				}else{
+					$('#unit_price_min').html(unit_price_min);
+				}
+				
 				
 				if(unit_price_max==MAX_UNIT_PRICE)
 				{
@@ -3346,7 +3356,7 @@
 	        socket.get('/buildings/getcontactsbycompanyid',{},function(res){
 	        	$('select.contactscombobox').empty();
 	        	for(var i=0;i<res.length;i++){
-	        		$('select.contactscombobox').append('<option email="'+res[i].email+'" phone_number="' + res[i].phone_number + '" contact_id="'+res[i].contact_id+'" value="'+res[i].contact+'">'+res[i].contact+'</option');
+	        		$('select.contactscombobox').append('<option email="'+(res[i].email==null?'':res[i].email)+'" phone_number="' + (res[i].phone_number==null?'':res[i].phone_number) + '" contact_id="'+res[i].contact_id+'" value="'+res[i].contact+'">'+res[i].contact+'</option');
 	        	}
 		        if(contactscombobox==null){
 		        	contactscombobox = $('select.contactscombobox').combobox();
@@ -3369,7 +3379,7 @@
 	        				$('#mapping_new_contact_name').html(selectedoption.attr('value'));
 	        				$('#mapping_new_contact_name').attr('contact_id',selectedoption.attr('contact_id'));
 	        				$('#mapping_new_phone').html(selectedoption.attr('phone_number'));
-	        				$('#mapping_new_email').html(selectedoption.attr('email'));
+	        				$('#mapping_new_email').html(selectedoption.attr('email')==null?'':selectedoption.attr('email'));
 	        			}else{
 	        				newContactId = null;
 	        				updateContactsCombobox();
@@ -3500,7 +3510,7 @@
     				var tempval = $('input.contactscombobox').val();
         			$('select.contactscombobox').empty();
 		        	for(var i=0;i<res.length;i++){
-		        		$('select.contactscombobox').append('<option email="'+res[i].email+'" phone_number="'+res[i].phone_number+'" contact_id="'+res[i].contact_id+'" value="'+res[i].contact+'">'+res[i].contact+'</option');
+		        		$('select.contactscombobox').append('<option email="'+(res[i].email==null?'':res[i].email)+'" phone_number="'+(res[i].phone_number==null?'':res[i].phone_number)+'" contact_id="'+res[i].contact_id+'" value="'+res[i].contact+'">'+res[i].contact+'</option');
 		        	}
         			contactscombobox.data('combobox').refresh(); 
         			$('input.contactscombobox').val(tempval);
@@ -3961,8 +3971,10 @@
 	        		$('#create_sale').parent().css('display','');
 	        		if(leaveSalesExpanded){
 	        			leaveSalesExpanded=false;
-	        			if($('#building-sales-wrapper').html()!=''){
+	        			if($('#building-sales-table').html()!=''){
 	        				$('#sales_title > i.icon-plus-sign').removeClass('icon-plus-sign').addClass('icon-minus-sign');
+	        			}else{
+	        				$('#building-sales-wrapper').css('display','none');
 	        			}
 	        		}else{
 			       		$('#building-sales-wrapper').css('display','none');

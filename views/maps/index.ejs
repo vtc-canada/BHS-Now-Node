@@ -120,12 +120,17 @@
                    </div>
                </div>
                <div class="row">
-                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_owner">Owner:</label></div>
+                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_owner">Owner Contact:</label></div>
                    <div class="span8 report-control-right-control">
                        <input type="text" id="search_owner" value="">
                    </div>
                </div>
-               
+               <div class="row">
+                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_owner_company">Owner Company:</label></div>
+                   <div class="span8 report-control-right-control">
+                       <input type="text" id="search_owner_company" value="">
+                   </div>
+               </div>
                <div class="row" style="min-height: 40px;">
                    <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_property_mgmt_company">Property Management Company:</label></div>
                    <div class="span8 report-control-right-control">
@@ -189,14 +194,9 @@
         <div class="span8 offset2 create-report-controls" style="padding-top: 10px;">
            <div class="row">
            		<div class="row collapse" id="collapseadvanced">
-               		<div class="row-fluid">
-	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_owner_company">Owner Company:</label></div>
-	                   <div class="span8 report-control-right-control">
-	                       <input type="text" id="search_owner_company" value="">
-	                   </div>
-	               </div>
+               		
 	               <div class="row-fluid">
-	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_seller">Seller:</label></div>
+	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_seller">Seller Contact:</label></div>
 	                   <div class="span8 report-control-right-control">
 	                       <input type="text" id="search_seller" value="">
 	                   </div>
@@ -208,7 +208,7 @@
 	                   </div>
 	               </div>
 	               <div class="row-fluid">
-	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_agent">Agent:</label></div>
+	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_agent">Agent Contact:</label></div>
 	                   <div class="span8 report-control-right-control">
 	                       <input type="text" id="search_agent" value="">
 	                   </div>
@@ -757,8 +757,8 @@
 	var MAX_BUILDING_INCOME = 10000000;
 	var STEP_BUILDING_INCOME = 1000;
 	
-	var MIN_UNIT_PRICE = 0;
-	var MAX_UNIT_PRICE = 10000;
+	var MIN_UNIT_PRICE = 5000;
+	var MAX_UNIT_PRICE = 300000;
 	var STEP_UNIT_PRICE = 10;
 
 	var MIN_SALE_PRICE = 0;
@@ -907,7 +907,9 @@
 			}
     		
     		this.toggle = function(building_id){
-    			self.collection[building_id].toggle();
+    			if(typeof(self.collection[building_id])!='undefined'){
+    				self.collection[building_id].toggle();
+    			}
     		}
     		
     		this.getPosition = function(building_id){
@@ -1105,7 +1107,7 @@
 		        			
 		        			d.unitQuantityMin = unitsMin==0?null:unitsMin;
 		        			d.unitQuantityMax = unitsMax==sliderLimit?null:unitsMax;
-		        			d.unit_price_min = unit_price_min==0?null:unit_price_min;
+		        			d.unit_price_min = (parseInt(unit_price_min)==MIN_UNIT_PRICE)?null:unit_price_min;
 		        			d.unit_price_max = unit_price_max==MAX_UNIT_PRICE?null:unit_price_max;
 		        			
 		        			d.saleDateRangeStart = $('#start_time').val()==''?null:typeof($('#start_time_gen').data('datetimepicker'))=='undefined'?null:$('#start_time_gen').data('datetimepicker').getLocalDate().toUTCString();	        			
@@ -1723,14 +1725,23 @@
 			$('#unit_price_slider').attr('data-slider-min',MIN_UNIT_PRICE); // corrects limit
 			$('#unit_price_slider').attr('data-slider-max',MAX_UNIT_PRICE); // corrects limit
 			$('#unit_price_slider').attr('data-slider-step',STEP_UNIT_PRICE); // corrects limit
-			$('#unit_price_min').html(MIN_UNIT_PRICE);
+			$('#unit_price_min').html(MIN_UNIT_PRICE==0?0:(MIN_UNIT_PRICE+'-'));
 			$('#unit_price_max').html(MAX_UNIT_PRICE+'+');
 			$('#unit_price_slider').attr('data-slider-value','['+MIN_UNIT_PRICE+','+MAX_UNIT_PRICE+']');
 			$('#unit_price_slider').slider({tooltip: 'disabled'});
 			$('#unit_price_slider').on('slide',function(slideEvt){
 				unit_price_min = slideEvt.value[0];
 				unit_price_max = slideEvt.value[1];
-				$('#unit_price_min').html(unit_price_min);
+				if(unit_price_min==MIN_UNIT_PRICE)
+				{
+					if(MIN_UNIT_PRICE!=0){
+						$('#unit_price_min').html(unit_price_min+'-');
+					}else{
+						$('#unit_price_min').html(unit_price_min);
+					}
+				}else{
+					$('#unit_price_min').html(unit_price_min);
+				}
 				
 				if(unit_price_max==MAX_UNIT_PRICE)
 				{

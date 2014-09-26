@@ -975,7 +975,7 @@ div.language-flag.chile{
 	}
 	
 	.dataTables_scrollBody{
-		overflow:hidden !important;
+		/*overflow:hidden !important;*/
 	}
     
 }

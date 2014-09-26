@@ -2,7 +2,7 @@ USE cred;
 DROP PROCEDURE if EXISTS `SearchContacts` ;
 
 DELIMITER $$
-CREATE PROCEDURE `SearchContacts`(IN contactSearchTerms VARCHAR(128)
+CREATE PROCEDURE `SearchContacts`(IN contactSearchTerms VARCHAR(128), IN unManipulatedContactSearch VARCHAR(128)
 							,IN offsetIndex int, IN recordCount INT, IN orderBy VARCHAR (255), OUT filteredCount INT)
 BEGIN
 	SELECT
@@ -17,7 +17,12 @@ BEGIN
 	LEFT JOIN cur_company ON (cur_company.id = cur_contact_company_mapping.cur_company_id)
 	WHERE 
 		cur_contacts.is_deleted = 0
-		AND (contactSearchTerms IS NULL OR MATCH (cur_contacts.name, cur_contacts.email) AGAINST (contactSearchTerms IN BOOLEAN MODE))
+		AND 
+		(		
+(contactSearchTerms IS NULL OR MATCH (cur_contacts.name, cur_contacts.email) AGAINST (contactSearchTerms IN BOOLEAN MODE))
+		OR
+(cur_phone_numbers.phone_number LIKE CONCAT('%',unManipulatedContactSearch,'%'))
+		)
 		
 	GROUP BY cur_contacts.id
 ORDER BY

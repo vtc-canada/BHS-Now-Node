@@ -43,7 +43,7 @@ module.exports.session = {
   collection: 'sessions',
   
   cookie:{
-      maxAge:30*60*1000 // 30 minutes
+      maxAge:30*1*1000 // 30 minutes
   }
   //
   // Optional Values:
