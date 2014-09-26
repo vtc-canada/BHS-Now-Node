@@ -40,7 +40,11 @@ module.exports.session = {
   host: 'localhost',
   port: 27017,
   db: 'sails',
-  collection: 'sessions'
+  collection: 'sessions',
+  
+  cookie:{
+      maxAge:1*60*1000 // 30 minutes
+  }
   //
   // Optional Values:
   //
