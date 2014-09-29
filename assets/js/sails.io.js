@@ -140,7 +140,11 @@
           if (typeof console !== 'undefined') {
             console.warn("Could not parse:", result, e);
           }
+          if(result == 'No session data returned, and an error was encountered saving session data for the first time: undefined'){
+              location.reload();
+          }
           throw new Error("Server response could not be parsed!\n" + result);
+          
         }
       }
 
