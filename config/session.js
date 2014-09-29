@@ -16,6 +16,11 @@ module.exports.session = {
   // Replace at your own risk in production-- you will invalidate the cookies of your users,
   // forcing them to log in again. 
   secret: '685ffe6508f991d8420ade878bf288c5',
+  
+  cookie:{
+      maxAge:10*1000, // 30 minutes,
+      expires:true
+  },
 
 
   // In production, uncomment the following lines to set up a shared redis session store
@@ -40,11 +45,7 @@ module.exports.session = {
   host: 'localhost',
   port: 27017,
   db: 'sails',
-  collection: 'sessions',
-  
-  cookie:{
-      maxAge:30*60*1000 // 30 minutes
-  }
+  collection: 'sessions'
   //
   // Optional Values:
   //
