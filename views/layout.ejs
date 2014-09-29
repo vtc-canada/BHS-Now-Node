@@ -399,6 +399,10 @@
           // First thing to do, is connect the socket.
           socket =  io.connect();
           
+          socket.on('connect_error',function(err){
+          	location.reload();
+          });
+          
            // Creates Popover when you click on your name at the top right
           $('#myaccount').popover('hide').click(function(e) {
                 e.preventDefault();
