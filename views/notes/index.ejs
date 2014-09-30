@@ -216,7 +216,7 @@
 
 	        		},
 	        		error: function(xhr, error, thrown){
-	        			if(error.toString()=='parseerror'){
+	        			if(error.toString()=='parsererror'){
 	        				location.reload();
 	        			}else{
 		    				$('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
