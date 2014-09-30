@@ -216,10 +216,14 @@
 
 	        		},
 	        		error: function(xhr, error, thrown){
-	    				$('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
-		                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
-		                        ''+error.toString()+'</div>');
-		                $('.main-content')[0].scrollTop=0;
+	        			if(error.toString()=='parseerror'){
+	        				location.reload();
+	        			}else{
+		    				$('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
+			                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+			                        ''+error.toString()+'</div>');
+			                $('.main-content')[0].scrollTop=0;
+		                }
 	        		}
 	        	},
 		        "aoColumns":[

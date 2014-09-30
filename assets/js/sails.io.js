@@ -142,8 +142,9 @@
           }
           if(result == 'No session data returned, and an error was encountered saving session data for the first time: undefined'){
               location.reload();
+          }else{
+              throw new Error("Server response could not be parsed!\n" + result);
           }
-          throw new Error("Server response could not be parsed!\n" + result);
           
         }
       }
