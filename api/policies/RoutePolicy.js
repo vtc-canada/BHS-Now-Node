@@ -1,5 +1,5 @@
 module.exports = function(req,res,next) {
-    if (req.session.user&&(new Date()<new Date(req.session.cookie.expires))) {
+    if (req.session.user) {
         Users.find({
             id : req.session.user.id,
             active:true

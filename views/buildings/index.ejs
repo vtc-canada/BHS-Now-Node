@@ -867,10 +867,6 @@
 			<div class="span7"><input type="text" id="street_name"  maxlength="250" value="{{=street_name}}"  {{=typeof(sale_id)!='undefined'?'disabled="disabled"':''}}></div>
 		</div>
 		<div class="row-fluid">
-			<div class="span5 segment-label">Postal Code:</div>
-			<div class="span7"><input type="text" id="postal_code" maxlength="7" value="{{=postal_code}}"  {{=typeof(sale_id)!='undefined'?'disabled="disabled"':''}}></div>
-		</div>
-		<div class="row-fluid">
 			<div class="span5 segment-label">City:</div>
 			<div class="span7"><input type="text" id="city" value="{{=city}}"  maxlength="60" {{=typeof(sale_id)!='undefined'?'disabled="disabled"':''}}></div>
 		</div>
@@ -892,6 +888,10 @@
 			<option value="YT" {{if(province=='YT'){ }}selected="selected"{{ } }}>YT</option>
 			
 			</select></div>
+		</div>
+		<div class="row-fluid">
+			<div class="span5 segment-label">Postal Code:</div>
+			<div class="span7"><input type="text" id="postal_code" maxlength="7" value="{{=postal_code}}"  {{=typeof(sale_id)!='undefined'?'disabled="disabled"':''}}></div>
 		</div>
 	</div>	
 	
@@ -994,7 +994,9 @@
 			<div class="span5 segment-label">Building Type:</div>
 			<div class="span7">
 			
-				<select type="text" id="building_type"><% for(var i=0;i<building_types.length;i++){ %><%-'<option value="'+building_types[i].id+'" {{ if(building_type=='+building_types[i].id+'){ }} selected="selected"{{ } }}  >'+building_types[i].type+'</option>'%><% } %></select>
+				<select type="text" id="building_type">
+				<option value=""></option>
+				<% for(var i=0;i<building_types.length;i++){ %><%-'<option value="'+building_types[i].id+'" {{ if(building_type=='+building_types[i].id+'){ }} selected="selected"{{ } }}  >'+building_types[i].type+'</option>'%><% } %></select>
 			</div>
 		</div>
 		<div class="row-fluid">
@@ -1582,7 +1584,7 @@
             setTimeout(function(){
 				if($('body').width()>979){
 					$('.main-content').animate({
-				        scrollTop: $(".edit-item-section").offset().top - $('.navbar-fixed-top').height()
+				        scrollTop: ($(".edit-item-section").offset().top+$('.main-content').scrollTop()-$('.navbar-fixed-top').height())
 				    }, 500);
 				}else{
 					$('html, body').animate({
@@ -2937,7 +2939,7 @@
 	        		if(['assessed_value','last_sale_price','building_income','unit_price','bachelor_price','bedroom1_price','bedroom2_price','bedroom3_price'].indexOf($(event.target).attr('id'))>-1){
 	        			building.set($(event.target).attr('id'),parseFloat($(event.target).autoNumeric('get')));
 	        			this.unitQuantityChange();
-	        		}else if(['heat_system_type'].indexOf($(event.target).attr('id'))>-1){
+	        		}else if(['heat_system_type'].indexOf($(event.target).attr('id'))>-1||['building_type'].indexOf($(event.target).attr('id'))>-1){
 	        			if(isNaN(parseInt($(event.target).val()))){
 	        				building.set($(event.target).attr('id'),null);
 	        			}else{

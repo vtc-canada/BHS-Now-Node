@@ -812,7 +812,7 @@
     				}
     				$('#building_slideup_wrapper').empty();
     				responseBuilding.address_1=buildStreetString(responseBuilding.street_number_begin,responseBuilding.street_number_end,responseBuilding.street_name);
-	    			responseBuilding.address_2=buildCityProvinceString(responseBuilding.city,responseBuilding.province);
+	    			responseBuilding.address_2=buildCityProvincePostalCodeString(responseBuilding.city,responseBuilding.province,responseBuilding.postal_code);
 	    			responseBuilding.sale_date=toDateTimeString(responseBuilding.sale_date);
 	    			
     				responseBuilding.unit_price = responseBuilding.unit_price==null?'$0.00':'$'+responseBuilding.unit_price.toFixed(2);
@@ -1241,7 +1241,7 @@
 				        ,{"mData":"owner"}
 				        ,{"mData":"property_mgmt_company"}
 				        ,{"mData":function(data,b){ 
-				        	return "<b>"+toDateTimeString(data.sale_date)+"</b>"; }
+				        	return ""+toDateTimeString(data.sale_date)+""; }
 				        	}
 			        ],
 			        "rowCallback": function( row, data, displayIndex ) {

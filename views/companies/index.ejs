@@ -195,10 +195,6 @@
 			<div class="span7"><input type="text" id="street_name" class="address-input"  maxlength="250" value="{{=street_name}}" ></div>
 		</div>
 		<div class="row-fluid building-segment-wrapper">
-			<div class="span5 segment-label">Postal Code:</div>
-			<div class="span7"><input type="text" id="postal_code" class="address-input" maxlength="7" value="{{=postal_code}}"></div>
-		</div>
-		<div class="row-fluid building-segment-wrapper">
 			<div class="span5 segment-label">City:</div>
 			<div class="span7"><input type="text" id="city" class="address-input"  maxlength="60" value="{{=city}}"></div>
 		</div>
@@ -220,6 +216,10 @@
 					<option value="SK" {{if(province=='SK'){ }}selected="selected"{{ } }}>SK</option>
 					<option value="YT" {{if(province=='YT'){ }}selected="selected"{{ } }}>YT</option>
 				</select>
+			</div>
+			<div class="row-fluid building-segment-wrapper">
+				<div class="span5 segment-label">Postal Code:</div>
+				<div class="span7"><input type="text" id="postal_code" class="address-input" maxlength="7" value="{{=postal_code}}"></div>
 			</div>
 			
 		</div>

@@ -39,6 +39,7 @@ SELECT
 	,cur_address.street_name 
 	,cur_address.postal_code
 	,cur_address.city
+	,cur_address.province
 	,cur_buildings.id as 'building_id'
 	,cur_buildings.unit_quantity as 'units'
 	,cur_buildings.property_mgmt_company 

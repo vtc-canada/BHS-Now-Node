@@ -539,6 +539,13 @@
         	return street_number_begin + street_number_end +street_name;
 	}
 	
+	function buildCityProvincePostalCodeString(city,province,postal_code){
+    		city = city==''||city==null||city=='null'?'':city;
+    		province = province==''||province==null||province=='null'?'':(city==''||city==null||city=='null'?'':', ')+province;
+    		postal_code = postal_code==''||postal_code==null||postal_code=='null'?'':(((city==''||city==null||city=='null')&&(province==''||province==null||province=='null'))?'':', ')+postal_code;
+    		return city + province + postal_code;
+	}
+	
 	function buildCityProvinceString(city,province){
     		city = city==''||city==null||city=='null'?'':city;
     		province = province==''||province==null||province=='null'?'':(city==''||city==null||city=='null'?'':', ')+province;
@@ -571,7 +578,7 @@
         	}
         	if(data.province != null && data.province != '')
         	{
-        		province = data.province==null||data.province=='null'?'':', '+data.province;
+        		province = (data.province==null||data.province=='null')?'':', '+data.province;
         	}
         	if(data.postal_code != null && data.postal_code != '')
         	{
