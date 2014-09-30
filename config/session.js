@@ -19,8 +19,7 @@ module.exports.session = {
   
   cookie:{
       secure:true,
-      maxAge:10*1000,
-      rolling:true
+      maxAge:30*1000
   },
 
 
