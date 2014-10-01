@@ -403,6 +403,7 @@
     	var blockNoteSave = false;
 		
     	socket.get('/contacts/getcompaniesbyname',{},function(res){
+    		$('select.companycombobox').append('<option company_name="" company_id=""></option>');
     		for(var i=0;i<res.length;i++){
         		if(parseInt(contact.get('contact_id'))!=parseInt(res[i].contact_id)){
 	        		$('select.companycombobox').append('<option company_name="'+res[i].company_name+'" company_id="'+res[i].company_id+'">'+res[i].company_name+'</option>');
@@ -421,8 +422,11 @@
     		});
     		$('#add_company_card').click(function(){
     			$('.associated-companies-alert').empty();
-    			var companyname = $('input.companycombobox').val()
+    			var companyname = $('input.companycombobox').val();
 				var companyid =  parseInt($('select.companycombobox option[company_name="'+companyname+'"]').attr('company_id'));
+				if(isNaN(companyid)){
+					return;
+				}
     			socket.get('/contacts/getaddressbycompanyid/'+companyid,{},function(addressval){
     				if(addressval.address_id!='new'&&typeof(companies.findWhere({company_id:companyid}))=='undefined'){ //new indicates an error
     					addressval.new = true;

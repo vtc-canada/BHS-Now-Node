@@ -3231,8 +3231,8 @@
 			        	setChangesPending();
 			        });
 					$('.bootstrap-datetimepicker-widget:not([picker_name])').attr('picker_name','mortgage_due_date_gen');
-			        var mortgageDate = new Date(building.get('mortgage_due_date'));
-					$("#mortgage_due_date_gen").data('datetimepicker').setLocalDate(mortgageDate);
+			        //var mortgageDate = new Date(building.get('mortgage_due_date'));
+					$("#mortgage_due_date_gen").data('datetimepicker').setLocalDate(building.get('mortgage_due_date')==null?null:new Date(building.get('mortgage_due_date')));
 	
 			        $('#mortgage_due_date_gen .add-on').click(function(){
 			         	building.set('dosync',true);
