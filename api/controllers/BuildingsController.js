@@ -565,7 +565,7 @@ module.exports = {
 		results = results[0];
 	    }
 	    var bodystring = 'Address,Owner,Owner Company,Seller,Seller Company,Agent,Agent Company,Building Type,Property Management Company,Previous Property Management Company,Heat System,Heat System Installed Year,Boiler Installed Year,Last Boiler Upgrade Year'
-		+',Cable Internet Provider,Elevator,Elevator Installed Year,Last Elevator Upgrade Year,Windows Installed Year,Parking Spots,Assessed Value,Mortgage Company,Mortgage Due Date,Bachelor Price,1 Bedroom Price,2 Bedroom Price,3 Bedroom Price'
+		+',Cable Internet Provider,Elevator,Elevator Installed Year,Last Elevator Upgrade Year,Windows Installed Year,Stories,Assessed Value,Mortgage Company,Mortgage Due Date,Bachelor Price,1 Bedroom Price,2 Bedroom Price,3 Bedroom Price'
 		+',Bachelor Units,1 Bedroom Units,2 Bedroom Units,3 Bedroom Units,Total Units,Building Income,Average Unit Price,CAP Rate,Last Sale Date,Last Sale Price'
 		+'\r\n';
 	    for(var i=0;i<results.length;i++){
@@ -1033,14 +1033,17 @@ function checkAndUpdateBuildingLastSale(buildingsale,cb){
 			    tempsales = tempbuildingsales[0];
 			    building.sale_date = null;
 			    building.last_sale_price = null;
+			    building.cap_rate = null;
 			    for(var i=0;i<tempsales.length;i++){
 				if(new Date(tempsales[i].sale_date)>=building.sale_date){
 				    building.sale_date = new Date(tempsales[i].sale_date);
 				    building.last_sale_price = tempsales[i].sale_price;
 				}
 			    }
+			    building.cap_rate = (building.building_income==null||building.last_sale_price==null||building.last_sale_price==0)?null:(100*parseFloat(building.building_income)/parseFloat(building.last_sale_price)).toFixed(0);
+
 			    sails.controllers.database.credSproc('UpdateBuildingLastSale', [ building.building_id,  toUTCDateTimeString(building.sale_date) 
-			                                                                     , building.last_sale_price], function(err, updatesale) {
+			                                                                     , building.last_sale_price, building.cap_rate], function(err, updatesale) {
 				if(err)
 				    return console.log('error'+err);
 				cb();

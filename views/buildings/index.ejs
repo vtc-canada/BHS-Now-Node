@@ -296,6 +296,18 @@
 	                   </div>
 	               </div>
                
+	              <div class="row-fluid" style="min-height: 40px;">
+	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="parking_spots_slider">Number of Stories:</label></div>
+	                   <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
+	                   		<div class="row-fluid">
+	                   			<div class="pull-left slider-min-val-label"><span id="parking_spots_min">0</span></div>
+	                   			
+	                   			<input id="parking_spots_slider" type="text"  value="" data-slider-min="" data-slider-max="" data-slider-step="" data-slider-value=""/>
+	                   			&nbsp&nbsp
+	                   			<span id="parking_spots_max">+</span>
+	                   		</div>
+	                   </div>
+	               </div>
 	               	<div class="row-fluid" style="min-height: 40px;">
 	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_elevator">Elevator:</label></div>
 	                   <div class="span8 report-control-right-control" >
@@ -345,19 +357,7 @@
 	                   			<span id="windows_installed_year_max">+</span>
 	                   		</div>
 	                   </div>
-	               </div> 
-	              <div class="row-fluid" style="min-height: 40px;">
-	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="parking_spots_slider">Number of Parking Spots:</label></div>
-	                   <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
-	                   		<div class="row-fluid">
-	                   			<div class="pull-left slider-min-val-label"><span id="parking_spots_min">0</span></div>
-	                   			
-	                   			<input id="parking_spots_slider" type="text"  value="" data-slider-min="" data-slider-max="" data-slider-step="" data-slider-value=""/>
-	                   			&nbsp&nbsp
-	                   			<span id="parking_spots_max">+</span>
-	                   		</div>
-	                   </div>
-	               </div>  
+	               </div>   
 	               <div class="row-fluid" style="min-height: 40px;">
 	                   <div class="span3 report-control-left-label" style="min-height: 30px;padding-top: 5px;"><label for="assessed_value_slider">Assessed Value:</label></div>
 	                   <div class="span7 report-control-right-control" style="min-height: 30px;padding-top: 5px;">
@@ -1031,6 +1031,10 @@
 			<div class="span7"><input type="text" id="cable_internet_provider" maxlength="40" value="{{=cable_internet_provider}}"></div>
 		</div>
 		<div class="row-fluid">
+			<div class="span5 segment-label">Number Of Stories:</div>
+			<div class="span7"><input type="text" min="0" max="2000" pattern="[0-9]" id="parking_spots" value="{{=parking_spots}}"></div>
+		</div>
+		<div class="row-fluid">
 			<div class="span5 segment-label">Has Elevator:</div>
 			<div class="span7" style="min-height:40px;">
 			<input type="checkbox" {{if(has_elevator){ }}checked="checked" {{ } }}id="has_elevator"></div>
@@ -1046,10 +1050,6 @@
 		<div class="row-fluid">
 			<div class="span5 segment-label">Windows Installed Year:</div>
 			<div class="span7"><input type="text" min="1900" max="2099" pattern="[0-9]{4}" id="windows_installed_year" value="{{=windows_installed_year}}"></div>
-		</div>
-		<div class="row-fluid">
-			<div class="span5 segment-label">Number Of Parking Spots:</div>
-			<div class="span7"><input type="text" min="0" max="2000" pattern="[0-9]" id="parking_spots" value="{{=parking_spots}}"></div>
 		</div>
 	</div>
 	
@@ -1136,7 +1136,7 @@
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">CAP Rate:</div>
-			<div class="span7 cap-rate"><span id="cap_rate">{{=cap_rate}}%</span></div>
+			<div class="span7 cap-rate"><span id="cap_rate" style="line-height:28px;">{{=cap_rate}}%</span></div>
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">{{if(typeof(sale_id)=='undefined'){ }}Last {{ } }}Sale Date:</div>
