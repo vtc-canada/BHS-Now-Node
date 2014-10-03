@@ -1,0 +1,315 @@
+.page-banner{
+    background-color:#E8E8E8;
+    color:#717171;
+    border-bottom: 1px solid #C8C8C8;
+    padding-top: 10px;
+    font-weight:bold;
+    padding-bottom: 10px;
+}
+
+#alarmsdiv > .section-config-wrapper{
+    border: 1px solid #BBBDBE;
+    background-color: #F6F7FA;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    height: 28px;
+    /*font-weight: 700;*/
+}
+
+#alarmsdiv > .section-config-wrapper > div > label.mobile-element{
+    font-weight: 500;
+}
+
+body{
+    background-color: #E8E8E8;
+}
+
+.page-controls-wrapper{
+    color: #717171;
+}
+
+.save_pull{
+    margin-right: 50px;
+}
+.create-report-controls{
+
+}
+
+.report-control-left-label{
+
+}
+
+.report-control-right-control{
+
+}
+
+
+.reports-criteria-banner{
+    line-height: 60px;
+    font-weight: bold;
+}
+
+.reports-arrow-wrapper{
+    padding-top: 50px;
+
+}
+
+.carrier_sort_mode{
+    width: 134px;
+}
+
+.carrier_select{
+    width: 134px;
+}
+
+
+
+.reports-controls-right-wrapper{
+
+    padding-top: 55px;
+}
+
+.banner-div{
+    margin-left: 31px;
+    font-size: 24px;
+}
+.banner-icon-top{
+    float:left;
+}
+
+.banner-div-text{
+    font-size: 18px;
+    margin-left: 36px;
+    line-height: 28px;
+}
+
+.top-page-title{
+    padding-top:20px;
+    font-size: 18px;
+    line-height: 28px;
+    color:rgb(103,103,103);
+    font-weight:900;
+    padding-bottom: 20px;
+}
+
+.sort-destination-plan-titles{
+    margin-bottom: 18px;
+    font-weight: 600;
+}
+
+.section-config-wrapper{
+    width: 92%;
+    margin-left: 4%;
+    height: 36px;
+    line-height: 44px;
+}
+
+.section-config-wrapper div:first-child label{
+    line-height: 36px;
+}
+
+.section-config-wrapper.odd{
+    border: 1px solid #E2E2E2;
+    background-color: rgb(246, 247, 250);
+}
+
+.section-config-wrapper.even{
+    border: 1px solid #FFFFFF;
+}
+
+
+.section-config-wrapper > div > label.mobile-label{
+    display:none;
+}
+
+div.section-config-wrapper >div > label{
+    margin-bottom:0px;
+}
+
+div.section-config-wrapper >div > .mobile-element{
+    margin-bottom:0px;
+}
+
+div.section-config-wrapper >div {
+    line-height:34px;
+}
+
+#alarmsdiv > .section-config-wrapper > div > label.mobile-element{
+    line-height: 28px;
+    min-height: 34px;
+}
+
+#alarmsdiv > .section-config-wrapper{
+    overflow: hidden;
+}
+
+.alarm-header{
+    width:92%; margin-left:4%;
+}
+
+
+@media (max-width: 767px) {
+
+    .top-page-title{
+        margin-left: 18px !important;
+
+        max-width: 290px;
+    }
+    .reports-arrow-wrapper{
+        padding-top: 0px;
+
+
+        padding-left: 10px;
+        float: left !important;
+        width: auto !important;
+    }
+
+    .reports-controls-right-wrapper{
+        padding-top: 6px;
+        margin-bottom:20px;
+
+        float: left !important;
+        width: auto !important;
+        padding-left: 10px;
+    }
+
+    .create-report-controls-wrapper{
+
+        width: 95%;
+        margin-left: 5%;
+    }
+
+    .create-reports-banner{
+        padding-left: 5%;
+    }
+    .page-controls-wrapper{
+        width: 96% !important;
+        margin: 0% 2% !important;
+
+    }
+
+    #defaultdestinations .row-fluid{
+        margin-bottom: 20px;
+    }
+
+    .section-config-wrapper{
+        width: 92%;
+        margin-left: 4%;
+        border: 1px solid rgb(187, 189, 190);
+        background-color: rgb(246, 247, 250);
+        margin-bottom: 10px;
+        height: auto;
+        line-height: auto;
+    }
+    .section-config-wrapper div:first-child label{
+        line-height: auto;
+    }
+
+    .section-config-wrapper > div > label.mobile-label{
+        display:block;
+        float:left;
+        width:47%;
+        padding-left:3%;
+        max-height: 36px;
+        overflow: hidden;
+    }
+
+    .section-config-wrapper > div > mobile-element{
+        float:left;
+        width:50%;
+    }
+
+    .section-config-wrapper > div > select.mobile-element{
+        max-width:40%;
+    }
+
+    .section-config-wrapper > div > label{
+        line-height: 36px;
+    }
+
+    div.section-config-wrapper >div > label{
+        margin-bottom:auto;
+    }
+
+    div.section-config-wrapper >div > .mobile-element{
+        margin-bottom: 6px;
+    }
+
+    div.section-config-wrapper >div {
+        line-height:auto;
+    }
+
+    #defaultdestinations{
+        /*width: 95%;
+        margin-left: 5%;  */
+    }
+
+    /*#defaultdestinations .row-fluid .span3.offset1 label{
+        font-weight: 600;
+    } */
+
+    .sort-destination-plan-titles{
+        display:none;
+    }
+}
+
+.runreports{
+
+}
+
+.iframe-header{
+    background: #ffffff; /* Old browsers */
+    background: -moz-linear-gradient(top,  #ffffff 0%, #f6f7f8 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#f6f7f8)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #ffffff 0%,#f6f7f8 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #ffffff 0%,#f6f7f8 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #ffffff 0%,#f6f7f8 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #ffffff 0%,#f6f7f8 100%); /* W3C */
+    /*filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f6f7f8',GradientType=0 ); /* IE6-9 */
+
+}
+
+#iframediv,#messagesListWrapper{
+    background-color: white;
+    border: 1px solid rgb(185, 185, 185);
+    border-radius: 0px 0px 7px 7px;
+    margin-left: 0px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-bottom:12px;
+}
+
+#messagesFullWrapper{
+    background-color: white;
+    border: 1px solid rgb(185, 185, 185);
+    border-radius: 0px;
+    margin-left: 0px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border-bottom: none;
+}
+
+#messagesListWrapper{
+    padding-left:20px;
+    padding-right:20px;
+}
+
+#reportheader , .messageslistheader{
+    margin-top: 12px;
+    line-height:30px;
+    padding-left:0px;
+    border: 1px solid rgb(185, 185, 185);
+    border-radius: 7px 7px 0px 0px;
+    background: #ffffff; /* Old browsers */
+    background: -moz-linear-gradient(top, #FFF 0%, #F2F2F2 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FFF), color-stop(100%,#F2F2F2 )); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #FFF 0%,#F2F2F2 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #FFF 0%,#F2F2F2 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #FFF 0%,#F2F2F2 100%); /* IE10+ */
+    background: linear-gradient(to bottom, #FFFFFF 0%,#F2F2F2 100%); /* W3C */
+    /*filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#edfaff',GradientType=0 ); /* IE6-9 */
+    font-weight:bold;
+    color: 12px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+}

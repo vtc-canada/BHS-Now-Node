@@ -1,0 +1,193 @@
+.create-reports-banner{
+    background-color:#E8E8E8;
+    color:#717171;
+    border-bottom: 1px solid #C8C8C8;
+    padding-top: 10px;
+    font-weight:bold;
+}
+
+body{
+    background-color: #E8E8E8;
+}
+
+.create-report-controls-wrapper{
+    color: #717171;
+
+}
+
+.create-report-controls{
+
+}
+
+.report-control-left-label{
+
+}
+
+.report-control-right-control{
+
+}
+
+
+.reports-criteria-banner{
+    line-height: 60px;
+    font-weight: bold;
+}
+
+.reports-arrow-wrapper{
+    padding-top: 50px;
+
+}
+
+
+
+.reports-controls-right-wrapper{
+
+    padding-top: 55px;
+}
+
+@media (max-width: 767px) {
+    .reports-arrow-wrapper{
+        padding-top: 0px;
+
+
+        padding-left: 10px;
+        float: left !important;
+        width: auto !important;
+    }
+
+    .reports-controls-right-wrapper{
+        padding-top: 6px;
+        margin-bottom:20px;
+
+        float: left !important;
+        width: auto !important;
+        padding-left: 10px;
+    }
+
+    .create-report-controls-wrapper{
+
+        width: 95%;
+        margin-left: 5%;
+    }
+
+    .create-reports-banner{
+        padding-left: 5%;
+    }
+
+}
+
+.runreports{
+
+}
+
+.iframe-header{
+    background: #ffffff; /* Old browsers */
+    background: -moz-linear-gradient(top,  #ffffff 0%, #f6f7f8 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#f6f7f8)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #ffffff 0%,#f6f7f8 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #ffffff 0%,#f6f7f8 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #ffffff 0%,#f6f7f8 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #ffffff 0%,#f6f7f8 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f6f7f8',GradientType=0 ); /* IE6-9 */
+
+}
+
+#iframediv{
+    background-color: white;
+    border: 1px solid rgb(185, 185, 185);
+    border-radius: 0px 0px 7px 7px;
+    margin-left: 0px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+#reportheader{
+    line-height:30px;
+    padding-left:10px;
+    border: 1px solid rgb(185, 185, 185);
+    border-radius: 7px 7px 0px 0px;
+    background: #ffffff; /* Old browsers */
+    background: -moz-linear-gradient(top, #ffffff 0%, #F2F2F2 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#F2F2F2)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #ffffff 0%,#F2F2F2 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #ffffff 0%,#F2F2F2 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #ffffff 0%,#F2F2F2 100%); /* IE10+ */
+    background: linear-gradient(to bottom, #ffffff 0%,#F2F2F2 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#F2F2F2',GradientType=0 ); /* IE6-9 */
+    font-weight:bold;
+    color: #717171;
+}
+
+#reportheader.report-heading-pad{
+    padding-left: 20px;
+    margin-left: 0px;
+}
+
+.printerror{
+    color: #990000;
+}
+@media print {
+    /*
+        .report-main-content {
+            margin: 0px ;
+            width: 100%;
+        }
+        img.report_header-url {
+            margin-left: 0px;
+        }  */
+
+    #iframediv{
+        border: none !important;
+        margin-left: 0px;
+    }
+
+    #reportheader{
+        display:none;
+    }
+    .iframe-header{
+        display:none;
+    }
+    .sidebar-background{
+        display:none;
+    }
+    .primary-sidebar{
+        display:none;
+    }
+
+    .navbar{
+        display  :none;
+    }
+    body{
+        padding-top:0px;
+        width:1024px;
+    }
+
+    .main-content{
+        margin-left:0px;
+        padding-left: 0px;
+        top:0px;
+    }
+
+    .page-banner{
+        display:none;
+    }
+
+    .create-report-controls-wrapper{
+        display:none;
+    }
+    .iframe-border{
+        margin-left:0px !important;
+        width:100%;
+    }
+
+    .report-header-wrapper{
+        background-color:#FFFFFF;
+    }
+
+    #iframediv{
+        padding-top: 0px;
+        padding-bottom: 0px;
+    }
+
+
+}

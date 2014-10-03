@@ -1,36 +1,65 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>New Sails App</title>
+	<head>
+		<% include ../assets/common/translations %>
+		<title><%= translate[locale]['DefaultTitle'] %> - <%= translate[locale]['routes'][req.url] %> </title>
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	    <meta name="description" content="">
+	    <meta name="author" content="">
+	    
+	   	<link href="/css/ui-lightness/jquery-ui-1.10.3.custom.min.css" rel="stylesheet">
+	    <link href="/css/jquery.ui.chatbox.css" rel="stylesheet">
+	    <link href="/css/bootstrap.css" rel="stylesheet">
+	    <link href="/css/bootstrap-responsive.css" rel="stylesheet">
+		<link href="/css/minidash.css" rel="stylesheet">
+		<link href="/css/main.css" rel="stylesheet">
+	    <link href="/css/chatboxlayout.css" rel="stylesheet">
+	    <link href="/css/font-awesome.css" rel="stylesheet">
+	    <link href="/css/flighttable.css" rel="stylesheet">
+	    <link href="/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+	    <link href="/css/bootstrap-combobox.css" rel="stylesheet">
+	
+	
+	
+	    <link href="/css/messages.css" rel="stylesheet">
+	    <link href="/css/create-reports.css" rel="stylesheet">
+	    <link href="/css/dropdownpages.css" rel="stylesheet">
+	    <link href="/css/dashboard.css" rel="stylesheet">
 
-    <!-- Viewport mobile tag for sensible mobile support -->
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    
-    <!--  
-        Stylesheets and Preprocessors
-        ==============================
+		<!--[if lt IE 9]>
+		<link href="/css/oldie.css" rel="stylesheet">
+		<![endif]-->
+		<!--[if lt IE 10]>
+		<link href="/css/ie9andbelow.css" rel="stylesheet">
+		<![endif]-->
 
-        You can always bring in CSS files manually with `<link>` tags, or asynchronously
-        using a solution like AMD (RequireJS).  Or, if you like, you can take advantage 
-        of Sails' conventional asset pipeline (boilerplate Gruntfile).
+		<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+		<!--[if lt IE 9]>
+		<script src="/js/html5shiv.js"></script>
+		<![endif]-->
 
-        By default, stylesheets from your `assets/styles` folder are included
-        here automatically (between STYLES and STYLES END). Both CSS (.css) and LESS (.less)
-        are supported. In production, your styles will be minified and concatenated into
-        a single file.
-        
-        To customize any part of the built-in behavior, just edit `tasks/pipeline.js`.
-        For example, here are a few things you could do:
-            
-            + Change the order of your CSS files
-            + Import stylesheets from other directories
-            + Use a different or additional preprocessor, like SASS, SCSS or Stylus
-    -->
 
-    <!--STYLES-->
-    <link rel="stylesheet" href="/styles/importer.css">
-    <!--STYLES END-->
+		<!-- Pre-Minimized assets are loaded here -->
+		<script type="text/javascript" src="/js/dependencies/sails.io.js"></script>
+		<script type="text/javascript" src="/js/jquery.js"></script>
+		<script type="text/javascript" src="/js/bootstrap-combobox.js"></script>
+		<script type="text/javascript" src="/js/bootstrap.js"></script>
+		<script type="text/javascript" src="/js/jquery-ui-1.10.3.custom.min.js"></script>
+		<script type="text/javascript" src="/js/jquery.ui.chatbox.js"></script>
+		<script type="text/javascript" src="/js/jquery.ui.chatboxManager.js"></script>
+		
+		
+		<!-- Fav and touch icons -->
+		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/favicon.ico">
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="/img/favicon.ico">
+		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="/img/favicon.ico">
+		<link rel="apple-touch-icon-precomposed" href="/img/favicon.png">
+		<link rel="shortcut icon" href="/img/favicon.ico">
+		<link rel="icon" href="/img/favicon.ico" type="image/x-icon">
+		<link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+		
+		
   </head>
 
   <body>
@@ -87,8 +116,5 @@
 
     -->
 
-    <!--SCRIPTS-->
-    <script src="/js/dependencies/sails.io.js"></script>
-    <!--SCRIPTS END-->
   </body>
 </html>

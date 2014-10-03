@@ -1,0 +1,523 @@
+@font-face {
+    font-family: 'OpenSans';
+    src: url('fonts/opensans-light-webfont.eot');
+    src: url('fonts/opensans-light-webfont.eot?iefix') format('eot'),
+    url('fonts/opensans-light-webfont.woff') format('woff'),
+    url('fonts/opensans-light-webfont.ttf') format('truetype'),
+    url('fonts/opensans-light-webfont.svg#opensans-light-webfont') format('svg');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'OpenSans';
+    src: url('fonts/opensans-regular-webfont.eot');
+    src: url('fonts/opensans-regular-webfont.eot?iefix') format('eot'),
+    url('fonts/opensans-regular-webfont.woff') format('woff'),
+    url('fonts/opensans-regular-webfont.ttf') format('truetype'),
+    url('fonts/opensans-regular-webfont.svg#opensans-regular-webfont') format('svg');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'OpenSans';
+    src: url('fonts/opensans-semibold-webfont.eot');
+    src: url('fonts/opensans-semibold-webfont.eot?iefix') format('eot'),
+    url('fonts/opensans-semibold-webfont.woff') format('woff'),
+    url('fonts/opensans-semibold-webfont.ttf') format('truetype'),
+    url('fonts/opensans-semibold-webfont.svg#OpenSans-Semibold') format('svg');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'OpenSans';
+    src: url('fonts/opensans-bold-webfont.eot');
+    src: url('fonts/opensans-bold-webfont.eot?iefix') format('eot'),
+    url('fonts/opensans-bold-webfont.woff') format('woff'),
+    url('fonts/opensans-bold-webfont.ttf') format('truetype'),
+    url('fonts/opensans-bold-webfont.svg#opensans-bold-webfont') format('svg');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'OpenSans';
+    src: url('fonts/opensans-extrabold-webfont.eot');
+    src: url('fonts/opensans-extrabold-webfont.eot?iefix') format('eot'),
+    url('fonts/opensans-extrabold-webfont.woff') format('woff'),
+    url('fonts/opensans-extrabold-webfont.ttf') format('truetype'),
+    url('fonts/opensans-extrabold-webfont.svg#opensans-extrabold-webfont') format('svg');
+    font-weight: 700;
+    font-style: normal;
+}
+
+
+body{
+    font-family: OpenSans;
+    -webkit-font-smoothing:antialiased;
+}
+
+
+
+.main-content {
+    position: relative;
+    padding-left: 201px;
+}
+
+@media (max-width: 979px){
+    .main-content {
+        margin: 0;
+        padding-left:0px;
+    }
+}
+
+body {
+    /* padding-top: 60px;  60px to make the container go all the way to the bottom of the topbar */
+    height:100%;
+}
+div.primary-sidebar > ul.nav > li > a > i{
+    line-height: 11px;
+    position: absolute;
+    top: 12px;
+    left: 22px;
+}
+
+.input-append > .add-on{
+    cursor:pointer;
+}
+
+
+table.dataTable > thead > tr > td {
+    cursor: pointer;
+}
+
+table.dataTable > thead > tr > td > i{
+    display: none;
+    /*float: right;*/
+    padding-left: 10px;
+}
+
+table.dataTable > thead > tr > td[aria-sort=descending] i.icon-caret-down {
+    display: inline-block;
+}
+
+table.dataTable > thead > tr > td[aria-sort=ascending] i.icon-caret-up {
+    display: inline-block;
+}
+table.dataTable > thead > tr > td:focus{
+    outline: none;/*-webkit-focus-ring-color auto 5px;*/
+}
+
+
+.main-search{
+    line-height: 15px !important;
+
+    height: 16px !important;
+    margin-top: 6px;
+    margin-bottom: 6px !important;
+    border-radius: 9px !important;
+    background-color: rgb(44, 47, 51) !important;
+    color: rgb(255, 255, 255) !important;
+    border-color: rgb(97, 97, 97) !important;
+}
+
+.top-search-icon{
+    margin-left: -20px;
+    color: rgb(162, 162, 162);
+}
+a.isys-a{
+    margin-top: 2px;
+    padding: 3px 0px 0px 25px !important;
+    font-size: 14px !important;
+    line-height: 14px;
+    width: 215px;
+    padding-top: 42px;
+    height:37px !important;
+}
+a.isys-a.small{
+    display:none;
+}
+@media (max-width:979px){
+    a.isys-a.small{
+        display:block;
+    }
+    a.isys-a.large{
+        display:none;
+    }
+}
+
+.top-isys-logo{
+    height:36px;
+}
+
+.webportal-top-text{
+    margin-top: 4px;
+
+}
+
+.top-location-text{
+
+}
+
+.popover[sort_plan_id=myaccount]{
+    top: 31px !important;
+    left: 274px !important;
+    display: block;
+    width: 185px;
+    border-radius: 0px 0px 0px 6px;
+    width: 185px;
+}
+
+.top-message-a{
+    padding-top: 14px !important;
+    padding-bottom: 5px !important;
+}
+
+.myaccount-popover-username{
+    font-weight: 600;
+    text-align: center;
+    display: none;
+}
+#adminusers div[userid]{
+    line-height: 36px;
+}
+
+#save_virt_2_phys{
+}
+
+#adminusers{
+    width:90%;
+    margin-left:5%;
+}
+
+.adminusersheader{
+    width:90%;
+    margin-left:5%;
+}
+
+.adminusersheader .rowflu{
+    font-weight: 600;
+}
+
+#adminusers div[userid].odd{
+    border: 1px solid #E2E2E2;
+    background-color: rgb(246, 247, 250);
+}
+
+#adminusers div[userid].even{
+    margin-left: 1px;
+}
+
+
+.virtual-to-physical-table-headers{
+    width: 92%;
+    margin-left: 4%;
+}
+
+
+#adminusers > div.user-delete{
+    /* border-color: #990000 !important; */
+    /* background-color:#C2AEAE !important; */
+    opacity: 0.4;
+    filter: alpha(opacity=40);
+}
+
+#adminusers div[userid] > div > span.mobilelabel{
+    display: none;
+}
+
+div.language-flag{
+    height: 32px;
+    width:32px;
+}
+
+div.language-flag.english{
+    background-image: url('/img/flags/flat/32/United-States.png');
+}
+
+div.language-flag.chile{
+    background-image: url('/img/flags/flat/32/Chile.png');
+}
+
+.top-flag-span{
+    display:none;
+}
+
+.language-a{
+    padding-top:5px !important;
+    padding-right: 5px !important;
+}
+
+
+
+.deleteadminuser{
+    line-height: 20px;
+    margin-top: 3px;
+    margin-right: 4px;
+}
+
+.change-password{
+    /* line-height: 22px; */
+    margin-top: 3px;
+}
+
+.myaccount-topmenu{
+    width: 130px;
+}
+
+.datetimepicker-gen input{
+    width: 180px;
+}
+
+.operation-start-datetimepicker-gen input{
+    width: 180px;
+}
+
+#changeModal label.change-label{
+    float: left;
+
+    line-height: 30px;
+    min-width: 160px;
+}
+
+#changeModal input.change-input{
+    float: left;
+
+}
+
+#changepasswordModal label.change-label{
+    float: left;
+
+    line-height: 30px;
+    min-width: 160px;
+}
+
+#changepasswordModal input.change-input{
+    float: left;
+
+}
+
+
+#addUserModal label.change-label{
+    float: left;
+
+    line-height: 30px;
+    min-width: 160px;
+}
+
+#addUserModal input.change-input{
+    float: left;
+
+}
+
+
+#changeModal div.error-message{
+    color:#990000;
+}
+
+#addUserModal div.error-message{
+    color:#990000;
+}
+
+.admin-users-checkbox{
+}
+
+.securityselect{
+    max-width: 150px;
+    width: 100%;
+    margin-bottom: 0px;
+    margin-top: -2px;
+}
+
+.security-select-new{
+    margin-top: 0px;
+    height: 30px;
+    width: 220px;
+    max-width: none;
+}
+
+.tc-lines-wrapper{
+	position:relative;
+	width: 1470px;
+	height: 396px;
+}
+
+.tc-lines-wrapper-div{
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+}
+
+@media (min-width: 980px){
+    body {
+        /* padding-top: 41px; 60px to make the container go all the way to the bottom of the topbar */
+    }
+    .top-messages-span{
+        display:none;
+    }
+    .top-messages-icon{
+        display:block;
+        line-height:10px !important;
+    }
+
+    .navbar-inner{
+        height:41px !important;
+    }
+	#myaccountmobile{
+		display:none;
+	}
+	
+    #myaccountmobile li{
+        visibility:hidden;
+    }
+
+    .main-content-padder{
+        height:41px;
+    }
+
+    .main-content{
+        overflow-y: auto;
+        top: 42px;
+    }
+
+    body{
+        height:100%;
+        overflow-y:hidden;
+    }
+    html{
+        height:100%;
+    }
+}
+
+
+.badge-div{
+    position: absolute;
+    left: 30px;
+    top: 20px;
+}
+@media (max-width: 979px){
+
+    .popover[sort_plan_id=myaccount]{
+        display:none !important;
+    }
+    .top-messages-span{
+        display: block;
+        margin-left: 0px;
+        font-weight: bold;
+        color: #777;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        float: none;
+    }
+
+    li.active > a > div.top-messages-span{
+        color:white;
+    }
+    .top-messages-icon{
+        display:none !important;
+    }
+
+    .badge-div{
+        /*display:none !important;*/
+        left: 95px;
+        top: 14px;
+    }
+
+
+    .top-flag-span{
+        display: block;
+        margin-left: 0px;
+        font-weight: bold;
+        color: #777;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        float: none;
+    }
+
+    div.language-flag{
+        display:none;
+    }
+
+    .language-a{
+        padding-top:15px !important;
+    }
+
+    #users-toggler{
+        display:none;
+    }
+    .nav-collapse .nav > li > a, .nav-collapse .dropdown-menu a {
+        padding-top: 8px !important;
+    }
+
+    .nav-collapse-topbar ul{
+        margin-bottom: 0px !important;
+    }
+
+    #myaccountmobile li{
+        padding-top: 4px;
+        padding-bottom: 4px;
+        padding-left: 20px;
+    }
+    #myaccountmobile{
+        margin-left: 0px;
+    }
+
+    #myaccountmobile li a{
+        color: #999 !important;
+    }
+
+    #myaccountmobile > li:hover {
+        background-color: #111;
+    }
+
+    .myaccount-topmenu{
+        width: 100%;
+    }
+
+}
+
+@media (max-width: 767px){
+
+    .adminusersheader{
+        display:none;
+    }
+
+    .admin-users-checkbox{
+        text-align: left;
+    }
+
+    #adminusers div[userid]{
+        border: 1px solid #BBBDBE;
+        background-color: rgb(246, 247, 250);
+        margin-bottom: 20px;
+    }
+    #adminusers div[userid] > div > span.mobilelabel{
+        display: inline;
+        width: 150px;
+        float: left;
+        margin-left: 10px;
+    }
+    #adminusers div[userid] > div > div.deleteadminuser{
+        float: right;
+        margin: 10px;
+    }
+
+    #adminusers div[userid] > div.user-delete-span{
+        float:right;
+        width:auto;
+    }
+
+    #adminusers div[userid] > div > div.change-password{
+        float:left ;
+        margin: 10px;
+    }
+
+    #adminusers div[userid] > div.user-changepassword-span{
+        float:left;
+        width:auto;
+    }
+
+}
+
