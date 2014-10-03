@@ -1,173 +1,49 @@
 /**
- * Routes
+ * Route Mappings
+ * (sails.config.routes)
  *
- * Sails uses a number of different strategies to route requests.
- * Here they are top-to-bottom, in order of precedence.
+ * Your routes map URLs to views and controllers.
  *
- * For more information on routes, check out:
- * http://sailsjs.org/#documentation
- */
-
-
-
-/**
- * (1) Core middleware
+ * If Sails receives a URL that doesn't match any of the routes below,
+ * it will check for matching files (images, scripts, stylesheets, etc.)
+ * in your assets directory.  e.g. `http://localhost:1337/images/foo.jpg`
+ * might match an image file: `/assets/images/foo.jpg`
  *
- * Middleware included with `app.use` is run first, before the router
- */
-
-
-/**
- * (2) Static routes
+ * Finally, if those don't match either, the default 404 handler is triggered.
+ * See `api/responses/notFound.js` to adjust your app's 404 logic.
  *
- * This object routes static URLs to handler functions--
- * In most cases, these functions are actions inside of your controllers.
- * For convenience, you can also connect routes directly to views or external URLs.
+ * Note: Sails doesn't ACTUALLY serve stuff from `assets`-- the default Gruntfile in Sails copies
+ * flat files from `assets` to `.tmp/public`.  This allows you to do things like compile LESS or
+ * CoffeeScript for the front-end.
  *
+ * For more information on configuring custom routes, check out:
+ * http://sailsjs.org/#/documentation/concepts/Routes/RouteTargetSyntax.html
  */
 
 module.exports.routes = {
 
-	'/' : {
-	    controller : 'main',
-	    action : 'index'
-	  },
-	  '/auth' : {
-	    controller : 'main',
-	    action : 'index'
-	  },
-	  '/login' : {
-	    controller : 'main',
-	    action : 'login'
-	  },
-	  '/dialhomelastonline' : {
-	    controller : 'main',
-	    action : 'dialhomelastonline'
-	  },
-	  '/getactivechatboxes' : {
-	    controller : 'main',
-	    action : 'getactivechatboxes'
-	  },
-	  '/savechatboxestosession' : {
-	    controller : 'main',
-	    action : 'savechatboxestosession'
-	  },
-	  '/joinrooms' : {
-	    controller : 'main',
-	    action : 'joinrooms'
-	  },
-	  '/loadpreviousmessagesPriorId' : {
-	    controller : 'main',
-	    action : 'loadpreviousmessagesPriorId'
-	  },
-	  '/loadpreviousmessages' : {
-	    controller : 'main',
-	    action : 'loadpreviousmessages'
-	  },
-	  '/readmessage' : {
-	    controller : 'main',
-	    action : 'readmessage'
-	  },
-	  '/sendtousername' : {
-	    controller : 'main',
-	    action : 'sendtousername'
-	  },
-	  '/signup' : {
-	    controller : 'main',
-	    action : 'signup'
-	  },
-	  '/logout' : {
-	    controller : 'main',
-	    action : 'logout'
-	  },
-	  '/search' : {
-	    controller : 'search',
-	    action : 'index'
-	  },
-	  '/airlineconfiguration' : {
-	    controller : 'defaultcarrierdestination',
-	    action : 'index'
-	  },
-	  '/flighttable/saveFlightsByCarouselandDate' : {
-	    controller : 'flighttable',
-	    action : 'saveFlightsByCarouselandDate'
-	  },
-	  '/flighttable/findByCarouselandDate' : {
-	    controller : 'flighttable',
-	    action : 'findByCarouselandDate'
-	  },
-	  '/flighttable/:date' : {
-	    controller : 'flighttable',
-	    action : 'getbydate'
-	  }
+  /***************************************************************************
+  *                                                                          *
+  * Make the view located at `views/homepage.ejs` (or `views/homepage.jade`, *
+  * etc. depending on your default view engine) your home page.              *
+  *                                                                          *
+  * (Alternatively, remove this and add an `index.html` file in your         *
+  * `assets` directory)                                                      *
+  *                                                                          *
+  ***************************************************************************/
+
+  '/': {
+    view: 'homepage'
+  }
+
+  /***************************************************************************
+  *                                                                          *
+  * Custom routes here...                                                    *
+  *                                                                          *
+  *  If a request to a URL doesn't match any of the custom routes above, it  *
+  * is matched against Sails route blueprints. See `config/blueprints.js`    *
+  * for configuration options and examples.                                  *
+  *                                                                          *
+  ***************************************************************************/
+
 };
-
-
-
-/** 
- * (3) Action blueprints
- * These routes can be disabled by setting (in `config/controllers.js`):
- * `module.exports.controllers.blueprints.actions = false`
- *
- * All of your controllers ' actions are automatically bound to a route.  For example:
- *   + If you have a controller, `FooController`:
- *     + its action `bar` is accessible at `/foo/bar`
- *     + its action `index` is accessible at `/foo/index`, and also `/foo`
- */
-
-
-/**
- * (4) Shortcut CRUD blueprints
- *
- * These routes can be disabled by setting (in config/controllers.js)
- *			`module.exports.controllers.blueprints.shortcuts = false`
- *
- * If you have a model, `Foo`, and a controller, `FooController`,
- * you can access CRUD operations for that model at:
- *		/foo/find/:id?	->	search lampshades using specified criteria or with id=:id
- *
- *		/foo/create		->	create a lampshade using specified values
- *
- *		/foo/update/:id	->	update the lampshade with id=:id
- *
- *		/foo/destroy/:id	->	delete lampshade with id=:id
- *
- */
-
-/**
- * (5) REST blueprints
- *
- * These routes can be disabled by setting (in config/controllers.js)
- *		`module.exports.controllers.blueprints.rest = false`
- *
- * If you have a model, `Foo`, and a controller, `FooController`,
- * you can access CRUD operations for that model at:
- *
- *		get /foo/:id?	->	search lampshades using specified criteria or with id=:id
- *
- *		post /foo		-> create a lampshade using specified values
- *
- *		put /foo/:id	->	update the lampshade with id=:id
- *
- *		delete /foo/:id	->	delete lampshade with id=:id
- *
- */
-
-/**
- * (6) Static assets
- *
- * Flat files in your `assets` directory- (these are sometimes referred to as 'public')
- * If you have an image file at `/assets/images/foo.jpg`, it will be made available
- * automatically via the route:  `/images/foo.jpg`
- *
- */
-
-
-
-/**
- * (7) 404 (not found) handler
- *
- * Finally, if nothing else matched, the default 404 handler is triggered.
- * See `config/404.js` to adjust your app's 404 logic.
- */
- 

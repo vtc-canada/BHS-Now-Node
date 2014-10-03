@@ -1,2 +1,3 @@
-# BHS-Now-Management-Studio
-### a Sails application
+# Now-Management-Studio
+
+a [Sails](http://sailsjs.org) application
