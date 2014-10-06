@@ -167,11 +167,15 @@ module.exports = {
 	    adr = req.query.contact_search.trim().split(" ");
 	    contact_search = '';
 	    for(var i=0;i<adr.length;i++){
+		adr[i] = replaceAll(replaceAll(replaceAll(adr[i].trim(),'(',''),')',''),'-','');
 		if(adr[i].trim()!=''){
-		    contact_search=contact_search+ "+"+replaceAll(adr[i].trim(),'-','')+"* ";
+		    contact_search=contact_search+ "+"+adr[i]+"* ";
 		}
 	    }
 	    contact_search = contact_search.trim();
+	    if(contact_search==''){
+		contact_search = null;
+	    }
 	}
 	
 	var orderstring = null;

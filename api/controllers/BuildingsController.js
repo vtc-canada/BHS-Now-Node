@@ -655,115 +655,14 @@ module.exports = {
 
     },
     querybuildings:function(req,res,cb){
-	var address_search = null;
-	if (typeof(req.query.address_search)!='undefined'&&req.query.address_search != '') {
-	    address_search = req.query.address_search.trim().split(" ");
-	    adr = req.query.address_search.trim().split(" ");
-	    address_search = '';
-	    for(var i=0;i<adr.length;i++){
-		if(adr[i].trim()!=''){
-		    address_search=address_search+ "+"+adr[i].trim()+"* ";
-		}
-	    }
-	    address_search = address_search.trim();
-	}
-	var owner_search = null;
-	if (typeof(req.query.owner_search)!='undefined'&&req.query.owner_search != '') {
-	    owner_search = req.query.owner_search.trim().split(" ");
-	    adr = req.query.owner_search.trim().split(" ");
-	    owner_search = '';
-	    for(var i=0;i<adr.length;i++){
-		if(adr[i].trim()!=''){
-		    owner_search=owner_search+ "+"+adr[i].trim()+"* ";
-		}
-	    }
-	    owner_search = owner_search.trim();
-	}
-
-	var owner_company_search = null;
-	if (typeof(req.query.owner_company_search)!='undefined'&&req.query.owner_company_search != '') {
-	    owner_company_search = req.query.owner_company_search.trim().split(" ");
-	    adr = req.query.owner_company_search.trim().split(" ");
-	    owner_company_search = '';
-	    for(var i=0;i<adr.length;i++){
-		if(adr[i].trim()!=''){
-		    owner_company_search=owner_company_search+ "+"+adr[i].trim()+"* ";
-		}
-	    }
-	    owner_company_search = owner_company_search.trim();
-	}
-	
-	
-	
-	
-	
-	var seller_search = null;
-	if (typeof(req.query.seller_search)!='undefined'&&req.query.seller_search != '') {
-	    seller_search = req.query.seller_search.trim().split(" ");
-	    adr = req.query.seller_search.trim().split(" ");
-	    seller_search = '';
-	    for(var i=0;i<adr.length;i++){
-		if(adr[i].trim()!=''){
-		    seller_search=seller_search+ "+"+adr[i].trim()+"* ";
-		}
-	    }
-	    seller_search = seller_search.trim();
-	}
-
-	var seller_company_search = null;
-	if (typeof(req.query.owner_company_search)!='undefined'&&req.query.seller_company_search != '') {
-	    seller_company_search = req.query.seller_company_search.trim().split(" ");
-	    adr = req.query.seller_company_search.trim().split(" ");
-	    seller_company_search = '';
-	    for(var i=0;i<adr.length;i++){
-		if(adr[i].trim()!=''){
-		    seller_company_search=seller_company_search+ "+"+adr[i].trim()+"* ";
-		}
-	    }
-	    seller_company_search = seller_company_search.trim();
-	}
-	var agent_search = null;
-	if (typeof(req.query.agent_search)!='undefined'&&req.query.agent_search != '') {
-	    agent_search = req.query.agent_search.trim().split(" ");
-	    adr = req.query.agent_search.trim().split(" ");
-	    agent_search = '';
-	    for(var i=0;i<adr.length;i++){
-		if(adr[i].trim()!=''){
-		    agent_search=agent_search+ "+"+adr[i].trim()+"* ";
-		}
-	    }
-	    agent_search = agent_search.trim();
-	}
-
-	var agent_company_search = null;
-	if (typeof(req.query.owner_company_search)!='undefined'&&req.query.agent_company_search != '') {
-	    agent_company_search = req.query.agent_company_search.trim().split(" ");
-	    adr = req.query.agent_company_search.trim().split(" ");
-	    agent_company_search = '';
-	    for(var i=0;i<adr.length;i++){
-		if(adr[i].trim()!=''){
-		    agent_company_search=agent_company_search+ "+"+adr[i].trim()+"* ";
-		}
-	    }
-	    agent_company_search = agent_company_search.trim();
-	}
-	
-	
-	
-
-	var mortgage_search = null;
-	if (typeof(req.query.mortgage_search)!='undefined'&&req.query.mortgage_search != '') {
-	    mortgage_search = req.query.mortgage_search.trim().split(" ");
-	    adr = req.query.mortgage_search.trim().split(" ");
-	    mortgage_search = '';
-	    for(var i=0;i<adr.length;i++){
-		if(adr[i].trim()!=''){
-		    mortgage_search=mortgage_search+ "+"+adr[i].trim()+"* ";
-		}
-	    }
-	    mortgage_search = mortgage_search.trim();
-	}
-
+	var address_search = sails.controllers.utilities.prepfulltext(req.query.address_search);
+	var owner_search = sails.controllers.utilities.prepfulltext(req.query.owner_search);
+	var owner_company_search = sails.controllers.utilities.prepfulltext(req.query.owner_company_search);
+	var seller_search = sails.controllers.utilities.prepfulltext(req.query.seller_search);
+	var seller_company_search = sails.controllers.utilities.prepfulltext(req.query.seller_company_search);
+	var agent_search = sails.controllers.utilities.prepfulltext(req.query.agent_search);
+	var agent_company_search = sails.controllers.utilities.prepfulltext(req.query.agent_company_search);
+	var mortgage_search = sails.controllers.utilities.prepfulltext(req.query.mortgage_search);
 	
 	
 	var orderstring = null;

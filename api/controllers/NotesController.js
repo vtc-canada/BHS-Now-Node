@@ -30,17 +30,7 @@ module.exports = {
     },
     export : function(req, res) {
 	var timezoneoffset = req.body.timezoneoffset;
-	var note_search = null;
-	if (req.body.note_search != '') {
-	    adr = req.body.note_search.trim().split(" ");
-	    note_search = '';
-	    for (var i = 0; i < adr.length; i++) {
-		if (adr[i].trim() != '') {
-		    note_search = note_search + "+" + adr[i].trim() + "* ";
-		}
-	    }
-	    note_search = note_search;
-	}
+	var note_search = sails.controllers.utilities.prepfulltext(req.body.note_search);
 	var orderstring = null;
 
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
@@ -107,17 +97,7 @@ module.exports = {
 
     },
     searchnotes : function(req, res) {
-	var note_search = null;
-	if (req.query.note_search != '') {
-	    adr = req.query.note_search.trim().split(" ");
-	    note_search = '';
-	    for (var i = 0; i < adr.length; i++) {
-		if (adr[i].trim() != '') {
-		    note_search = note_search + "+" + adr[i].trim() + "* ";
-		}
-	    }
-	    note_search = note_search;
-	}
+	var note_search = sails.controllers.utilities.prepfulltext(req.query.note_search);
 
 	var orderstring = '';
 	if (typeof (req.query.order) != 'undefined') {

@@ -138,30 +138,9 @@ module.exports = {
 	
   },
   querycompanies:function(req,res,cb){
-      	var address_search = null;
-	var contact_search = null;
-	if (req.query.address_search != '') {
-	    adr = req.query.address_search.trim().split(" ");
-	    address_search = '';
-	    for(var i=0;i<adr.length;i++){
-		if(adr[i].trim()!=''){
-		    address_search=address_search+ "+"+adr[i].trim()+"* ";
-		}
-	    }
-	    address_search = address_search.trim();
-	}
-	if (req.query.contact_search != '') {
-	    contact_search = req.query.contact_search.trim().split(" ");
-	    adr = req.query.contact_search.trim().split(" ");
-	    contact_search = '';
-	    for(var i=0;i<adr.length;i++){
-		if(adr[i].trim()!=''){
-		    contact_search=contact_search+ "+"+adr[i].trim()+"* ";
-		}
-	    }
-	    contact_search = contact_search.trim();
-	}
-
+      	var address_search = sails.controllers.utilities.prepfulltext(req.query.address_search);
+	var contact_search = sails.controllers.utilities.prepfulltext(req.query.contact_search);
+	
 
 	var orderstring = null;
 	if(typeof(req.query.order)!='undefined'){
@@ -487,7 +466,6 @@ module.exports = {
 
   
 };
-
 
 
 function toUTCDateTimeString(date){
