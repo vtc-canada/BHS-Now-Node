@@ -21,7 +21,7 @@ var mysql = require('mysql2');
 
 
 var localPool = mysql.createPool({
-    connectionLimit : 1000,
+    connectionLimit : 25,
     user : 'root', //paadmin
     password : 'Glasgow931', //.SampsonMews8
     database : 'bhs_dummy', //now_management_base
@@ -29,7 +29,7 @@ var localPool = mysql.createPool({
 });
 
 var credPool = mysql.createPool({
-    connectionLimit : 1000, 
+    connectionLimit : 25, 
     user : 'root',//paadmin',
     password : 'Glasgow931',//.SampsonMews8',
     database : 'cred',
@@ -67,6 +67,7 @@ module.exports = {
 		console.log("call " + sprocName + sprocArgs);
 		connection.query("call " + sprocName + sprocArgs, function(err, results) {
 		    if (err) {
+			connection.release();
 			cb(err);
 		    } else {
 			if (typeof (results) != 'undefined'&&typeof(results.serverStatus)!='undefined') {
@@ -122,6 +123,7 @@ module.exports = {
 	console.log(query);
 	credPool.getConnection(function(err, connection) {
 	    if (err) {
+		connection.release();
 		cb(err);
 	    } else {
 		connection.query(query, function(err, results) {
