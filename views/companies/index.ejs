@@ -508,6 +508,9 @@
 		        "aoColumns":[
 		        	{"mData":"mapping_id","visible":false}
 			        ,{"mData":function(data,b){
+			        	if(data.company_name==null){
+			        		return '';
+			        	}
 			        	return "<b>"+data.company_name.toString()+"</b>";
 			        }
 			        }
