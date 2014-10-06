@@ -176,14 +176,15 @@ module.exports = {
 	
 	var orderstring = null;
 	if(typeof(req.query.order)!='undefined'){	  
-        	if(req.query.order[0].column==1){  //Address column
-        	    orderstring = 'contact_name';
+	    	if(req.query.order[0].column==0){
+	    	    orderstring = 'contact_name' +'_'+req.query.order[0].dir;
+	    	}else if(req.query.order[0].column==1){  //Address column
+        	    orderstring = 'contact_name' +'_'+req.query.order[0].dir;
         	}else if(req.query.order[0].column==4){
         	    orderstring = 'invalid';
         	}else{
-        	    orderstring = req.query.columns[req.query.order[0].column].data;
+        	    orderstring = req.query.columns[req.query.order[0].column].data +'_'+req.query.order[0].dir;
         	}
-        	orderstring = orderstring+'_'+req.query.order[0].dir;
 	}
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
 	sails.controllers.database.credSproc('SearchContacts',[contact_search,phone_search,req.query.start, req.query.length, orderstring,filteredCount],function(err,responseContacts){

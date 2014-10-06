@@ -968,6 +968,10 @@ div.language-flag.chile{
 	margin-bottom: 12px;
 }
 
+table.dataTable > thead > tr > th.sorting_disabled {
+cursor: default;
+}
+
 @media (min-width:768px){
 	
 	.only-mobile{

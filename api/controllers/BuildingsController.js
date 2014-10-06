@@ -768,14 +768,15 @@ module.exports = {
 	
 	var orderstring = null;
 	if(typeof(req.query.order)!='undefined'){
-        	if(req.query.order[0].column==1){  //Address column
-        	    orderstring = 'street_number_begin';
+    	    	if(req.query.order[0].column==0){  //ID column
+        	    orderstring = 'street_number_begin'+'_'+req.query.order[0].dir;
+        	}else if(req.query.order[0].column==1){  //Address column
+        	    orderstring = 'street_number_begin'+'_'+req.query.order[0].dir;
         	}else if(req.query.order[0].column==5){
-        	    orderstring = 'sale_date';
+        	    orderstring = 'sale_date'+'_'+req.query.order[0].dir;
         	}else{
-        	    orderstring = req.query.columns[req.query.order[0].column].data;
+        	    orderstring = req.query.columns[req.query.order[0].column].data+'_'+req.query.order[0].dir;
         	}
-        	orderstring = orderstring+'_'+req.query.order[0].dir;
 	}
 	totalCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
