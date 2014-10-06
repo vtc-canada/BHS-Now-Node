@@ -29,7 +29,7 @@ var localPool = mysql.createPool({
 });
 
 var credPool = mysql.createPool({
-    connectionLimit : 25, 
+    connectionLimit : 50, 
     user : 'root',//paadmin',
     password : 'Glasgow931',//.SampsonMews8',
     database : 'cred',
@@ -144,6 +144,7 @@ module.exports = {
 		console.log("call " + sprocName + sprocArgs);
 		connection.query("call " + sprocName + sprocArgs, function(err, results) {
 		    if (err) {
+			connection.release();
 			cb(err);
 		    } else {
 			if (typeof (results) != 'undefined'&&typeof(results.serverStatus)!='undefined') {
@@ -154,7 +155,6 @@ module.exports = {
 				connection.query('SELECT ' + data[i], function(outerr, outresult) {
 				    if (outerr) {
 					console.log('broke out of parameters early:' + outerr);
-
 					connection.release();
 					cb(err, results);
 				    } else {
