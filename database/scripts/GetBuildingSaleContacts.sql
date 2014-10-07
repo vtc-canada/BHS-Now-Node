@@ -11,7 +11,7 @@ SELECT
 	,cur_company.name as 'cur_company_name'
 	,ref_contact_type.type as 'contact_type'
 	,cur_contacts.name as 'contact_name'	
-	,GROUP_CONCAT(DISTINCT cur_phone_numbers.phone_number) as 'phone_number' 
+	,cur_phone_numbers.phone_number as 'phone_number' 
 	,cur_contacts.email 
 	,cur_address.street_number_begin
 	,cur_address.street_number_end
@@ -23,7 +23,7 @@ FROM
 	cur_sales_history_contact_mapping
 	LEFT JOIN cur_company ON (cur_company.id = cur_sales_history_contact_mapping.cur_company_id)
 	LEFT JOIN ref_contact_type ON (ref_contact_type.id = cur_sales_history_contact_mapping.ref_contact_type_id)
-	INNER JOIN cur_contacts  ON (cur_contacts.id = cur_sales_history_contact_mapping.contact_id)	
+	LEFT JOIN cur_contacts  ON (cur_contacts.id = cur_sales_history_contact_mapping.contact_id)	
 	LEFT OUTER JOIN cur_phone_numbers  ON (cur_phone_numbers.contact_ID = cur_sales_history_contact_mapping.contact_id)
 	INNER JOIN cur_buildings ON (cur_buildings.id = cur_sales_history_contact_mapping.cur_buildings_id)
 	LEFT JOIN cur_company_address_mapping ON (cur_company_address_mapping.cur_company_id = cur_sales_history_contact_mapping.cur_company_id)
@@ -32,7 +32,8 @@ WHERE
 	cur_buildings.id = buildingID
 	AND cur_sales_history_contact_mapping.cur_sales_record_history_id = saleID
 	AND cur_buildings.is_deleted = 0
-	AND cur_contacts.is_deleted = 0
-GROUP BY cur_sales_history_contact_mapping.contact_id;
+
+	AND  (CASE WHEN cur_contacts.id IS NOT NULL THEN cur_contacts.is_deleted = 0 ELSE 1 END)
+	AND  (CASE WHEN cur_company.id IS NOT NULL THEN cur_company.is_deleted = 0 ELSE 1 END);
 END$$
 DELIMITER ;	
