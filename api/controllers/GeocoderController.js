@@ -83,7 +83,12 @@ module.exports = {
 
 		geocoder.geocode(addressSearch, function(err, resgeo) {
 		    if(err){
-			return res.json({error:'error geocoding'+err});
+
+			if(err.toString()=='Error: Status is ZERO_RESULTS.'){
+			    console.log('zero results');
+			}else{
+			    return res.json({error:'error geocoding'+err});
+			}
 		    }
 		    console.log(resgeo);
 		    if (typeof (resgeo) != 'undefined' && resgeo.length > 0) {
@@ -95,7 +100,9 @@ module.exports = {
 				if(i>count){
 				    return res.json({success:'success'});
 				}
-				doLoop(i);
+				setTimeout(function(){
+					doLoop(i);
+				},300);
 			});
 		    }else{
 			sails.controllers.database.credQuery('UPDATE cur_address SET latitude = ' + 0 + ', longitude = ' + 0
@@ -106,7 +113,9 @@ module.exports = {
 				if(i>count){
 				    return res.json({success:'success'});
 				}
-				doLoop(i);
+				setTimeout(function(){
+					doLoop(i);
+				},300);
 			});
 		    }
 		});
@@ -167,7 +176,11 @@ module.exports = {
 
 		geocoder.geocode(addressSearch, function(err, resgeo) {
 		    if(err){
-			return res.json({error:'error geocoding'+err});
+			if(err.toString()=='Error: Status is ZERO_RESULTS.'){
+			    console.log('zero results');
+			}else{
+			    return res.json({error:'error geocoding'+err});
+			}
 		    }
 		    console.log(resgeo);
 		    if (typeof (resgeo) != 'undefined' && resgeo.length > 0) {
@@ -179,7 +192,9 @@ module.exports = {
 				if(i>count){
 				    return res.json({success:'success'});
 				}
-				doLoop(i);
+				setTimeout(function(){
+					doLoop(i);
+				},300);
 			});
 		    }else{
 			sails.controllers.database.credQuery('UPDATE cur_address SET latitude = ' + 0 + ', longitude = ' + 0
@@ -190,7 +205,9 @@ module.exports = {
 				if(i>count){
 				    return res.json({success:'success'});
 				}
-				doLoop(i);
+				setTimeout(function(){
+					doLoop(i);
+				},300);
 			});
 		    }
 		});
@@ -251,7 +268,11 @@ module.exports = {
 
 		geocoder.geocode(addressSearch, function(err, resgeo) {		    
 		    if(err){
-			return res.json({error:'error geocoding'+err});
+			if(err.toString()=='Error: Status is ZERO_RESULTS.'){
+			    console.log('zero results');
+			}else{
+			    return res.json({error:'error geocoding'+err});
+			}
 		    }
 		    console.log(resgeo);
 		    if (typeof (resgeo) != 'undefined' && resgeo.length > 0) {
@@ -263,7 +284,9 @@ module.exports = {
 				if(i>count){
 				    return res.json({success:'success'});
 				}
-				doLoop(i);
+				setTimeout(function(){
+					doLoop(i);
+				},300);
 			});
 		    }else{
 			sails.controllers.database.credQuery('UPDATE cur_address SET latitude = ' + 0 + ', longitude = ' + 0
@@ -274,7 +297,9 @@ module.exports = {
 				if(i>count){
 				    return res.json({success:'success'});
 				}
-				doLoop(i);
+				setTimeout(function(){
+					doLoop(i);
+				},300);
 			});
 		    }
 		});
