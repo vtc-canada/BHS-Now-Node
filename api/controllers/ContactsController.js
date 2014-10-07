@@ -167,7 +167,7 @@ module.exports = {
 	    adr = req.query.contact_search.trim().split(" ");
 	    contact_search = '';
 	    for(var i=0;i<adr.length;i++){
-		adr[i] = replaceAll(replaceAll(replaceAll(adr[i].trim(),'(',''),')',''),'-','');
+		adr[i] = adr[i].trim().replace(/[~@%*()\-+<>"]/g, "");
 		if(adr[i].trim()!=''){
 		    contact_search=contact_search+ "+"+adr[i]+"* ";
 		}
