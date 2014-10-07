@@ -813,7 +813,7 @@
     				$('#building_slideup_wrapper').empty();
     				responseBuilding.address_1=buildStreetString(responseBuilding.street_number_begin,responseBuilding.street_number_end,responseBuilding.street_name);
 	    			responseBuilding.address_2=buildCityProvincePostalCodeString(responseBuilding.city,responseBuilding.province,responseBuilding.postal_code);
-	    			responseBuilding.sale_date=toDateTimeString(responseBuilding.sale_date);
+	    			responseBuilding.sale_date=toSaleDateTimeString(responseBuilding.sale_date);
 	    			
     				responseBuilding.unit_price = responseBuilding.unit_price==null?'$0.00':'$'+responseBuilding.unit_price.toFixed(2);
     				responseBuilding.last_sale_price = responseBuilding.last_sale_price==null?'$0.00':'$'+responseBuilding.last_sale_price;
@@ -1241,10 +1241,13 @@
 				        ,{"mData":"owner"}
 				        ,{"mData":"property_mgmt_company"}
 				        ,{"mData":function(data,b){ 
-				        	return ""+toDateTimeString(data.sale_date)+""; }
+				        	return ""+toSaleDateTimeString(data.sale_date)+""; }
 				        	}
 			        ],
 			        "rowCallback": function( row, data, displayIndex ) {
+			        	if(data['latitude'] == null){
+			        		$(row).css('background-color','#fcf8e3');
+			        	}
 						$(row).attr('building_id',data['building_id']);
 						$(row).click(function(){
 							markers.toggle(parseInt($(row).attr('building_id')));
@@ -2151,11 +2154,20 @@
 	    
         $("#start_time_gen" ).datetimepicker({
             language: 'en',
-            format: 'yyyy-MM-dd hh:mm',
+            format: 'yyyy-MM-dd',
             pick12HourFormat: false,
             pickSeconds: false
         }).data('datetimepicker');
 		$("#start_time_gen" ).data('datetimepicker').$element.on('changeDate',function(e,y){
+			if(e.localDate!=null){
+				$(e.currentTarget).data('datetimepicker').setLocalDate(new Date(
+					e.localDate.getFullYear()
+					,e.localDate.getMonth()
+					,e.localDate.getDate()
+					,0
+					,0
+					,0));
+			}
 			setTimeout(function(){
 				datatable.api().ajax.reload();
 			},10);
@@ -2164,11 +2176,20 @@
 
         $("#end_time_gen" ).datetimepicker({
             language: 'en',
-            format: 'yyyy-MM-dd hh:mm',
+            format: 'yyyy-MM-dd',
             pick12HourFormat: false,
             pickSeconds: false
         }).data('datetimepicker');
 		$("#end_time_gen" ).data('datetimepicker').$element.on('changeDate',function(e,y){
+			if(e.localDate!=null){
+				$(e.currentTarget).data('datetimepicker').setLocalDate(new Date(
+					e.localDate.getFullYear()
+					,e.localDate.getMonth()
+					,e.localDate.getDate()
+					,23
+					,59
+					,59));
+			}
 			setTimeout(function(){
 				datatable.api().ajax.reload();
 			},10);
@@ -2177,11 +2198,20 @@
 		
 		$("#start_mortgage_due_date_gen" ).datetimepicker({
             language: 'en',
-            format: 'yyyy-MM-dd hh:mm',
+            format: 'yyyy-MM-dd',
             pick12HourFormat: false,
             pickSeconds: false
         }).data('datetimepicker');
 		$("#start_mortgage_due_date_gen" ).data('datetimepicker').$element.on('changeDate',function(e,y){
+			if(e.localDate!=null){
+				$(e.currentTarget).data('datetimepicker').setLocalDate(new Date(
+					e.localDate.getFullYear()
+					,e.localDate.getMonth()
+					,e.localDate.getDate()
+					,0
+					,0
+					,0));
+			}
 			setTimeout(function(){
 				datatable.api().ajax.reload();
 			},10);
@@ -2190,12 +2220,21 @@
 		
         $("#end_mortgage_due_date_gen" ).datetimepicker({
             language: 'en',
-            format: 'yyyy-MM-dd hh:mm',
+            format: 'yyyy-MM-dd',
             pick12HourFormat: false,
             pickSeconds: false
         }).data('datetimepicker');
         $("#end_mortgage_due_date_gen" ).data('datetimepicker').setDate(null);
 		$("#end_mortgage_due_date_gen" ).data('datetimepicker').$element.on('changeDate',function(e,y){
+			if(e.localDate!=null){
+				$(e.currentTarget).data('datetimepicker').setLocalDate(new Date(
+					e.localDate.getFullYear()
+					,e.localDate.getMonth()
+					,e.localDate.getDate()
+					,23
+					,59
+					,59));
+			}
 			setTimeout(function(){
 				datatable.api().ajax.reload();
 			},10);

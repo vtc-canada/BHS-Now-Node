@@ -133,7 +133,7 @@ table.dataTable > thead > tr > th:focus{
 }
 
 table.dataTable > tbody > tr.selected{
-    background: #0F74BC;/*-webkit-focus-ring-color auto 5px;*/
+    background: #0F74BC !important;/*-webkit-focus-ring-color auto 5px;*/
    color:white;
 }
 

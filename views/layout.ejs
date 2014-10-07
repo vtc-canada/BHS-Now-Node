@@ -515,6 +515,16 @@
     function padLeft(nr, n, str){
 	    return Array(n-String(nr).length+1).join(str||'0')+nr;
 	}
+	
+	function toSaleDateTimeString(date){
+		if(typeof(date)!=='object'){
+	        date = new Date(date.toString());
+	    }else if(date==null){
+	    	return '';
+	    }
+	
+	    return date.getFullYear()+'-'+padLeft((date.getMonth()+1).toString(),2)+'-'+ padLeft(date.getDate(),2);
+	}
     
     function toDateTimeString(date){   // takes date object or date string.
 		if(typeof(date)!=='object'){
