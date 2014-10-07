@@ -844,7 +844,7 @@
 		</div>
 	</div>
 	{{ if(building_id!='new'&&latitude==null){ }}
-	<div class="alert fade in" style="margin-bottom:0px; border-radius:0px;">
+	<div class="alert fade in" style="margin-bottom:20px; border-radius:0px;">
 		<!-- <button type="button" class="close" data-dismiss="alert">&times</button>-->
 		<strong>Warning:&nbsp;</strong>This address is invalid and cannot be geocoded by Google Maps. This address will not display on the maps screen.
 	</div>
@@ -3320,7 +3320,7 @@
 						if(newContactId==null&&newCompanyId==null)
 						{
 							$('#addContactModal div.modal-header').after(
-	                    '<div class="alert alert-error fade in" style="margin-bottom:20px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong>Error:&nbsp;</strong>Please select a Contact, Company or both.</div>');
+	                    '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong>Error:&nbsp;</strong>Please select a Contact, Company or both.</div>');
 	            			return;
 						}else if(newContactId==null){
 							
