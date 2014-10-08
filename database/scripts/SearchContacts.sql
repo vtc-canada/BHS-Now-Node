@@ -31,7 +31,8 @@ ORDER BY
 	CASE WHEN orderBy='phone_asc' THEN phone_number END ASC,
 	CASE WHEN orderBy='phone_desc' THEN phone_number END DESC,
 	CASE WHEN orderBy='email_asc' THEN email END ASC,
-	CASE WHEN orderBy='email_desc' THEN email END DESC
+	CASE WHEN orderBy='email_desc' THEN email END DESC,
+	CASE WHEN orderBy='' THEN contact_name END ASC
 	LIMIT recordCount OFFSET offsetIndex;
 	SET filteredCount = FOUND_ROWS();
 END$$
