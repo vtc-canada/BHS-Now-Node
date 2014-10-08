@@ -630,7 +630,7 @@ a.isys-a.small{
 
 .popover[sort_plan_id=myaccount]{
     top: 31px !important;
-    left: -57px !important;
+    left: -26px !important;
     display: block;
     width: 185px;
     border-radius: 0px 0px 0px 6px;
@@ -775,7 +775,7 @@ div.language-flag.chile{
 }
 
 .myaccount-topmenu{
-    width: 130px;
+    width: 160px;
 }
 
 .datetimepicker-gen input{
