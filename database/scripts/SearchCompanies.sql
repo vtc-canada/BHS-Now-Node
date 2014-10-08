@@ -21,7 +21,7 @@ BEGIN
 		LEFT JOIN cur_address ON (cur_address.id = cur_company_address_mapping.cur_address_id)
 	WHERE 
 		cur_company.is_deleted = 0
-		AND (addressSearchTerms IS NULL OR MATCH(street_name,postal_code,city,province) AGAINST (addressSearchTerms IN BOOLEAN MODE))	
+		AND (addressSearchTerms IS NULL OR MATCH(street_name,postal_code,city,province,street_number_begin) AGAINST (addressSearchTerms IN BOOLEAN MODE))	
 		AND (companySearchTerms IS NULL OR MATCH (cur_company.name) AGAINST (companySearchTerms IN BOOLEAN MODE))
 	ORDER BY
 		CASE WHEN orderBy='company_name_asc' THEN company_name END ASC,
