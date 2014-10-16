@@ -162,12 +162,9 @@ a.isys-a.small{
 }
 
 .popover[sort_plan_id=myaccount]{
-    top: 31px !important;
-    left: 274px !important;
-    display: block;
-    width: 185px;
     border-radius: 0px 0px 0px 6px;
     width: 185px;
+    margin-top: 1px;
 }
 
 .top-message-a{
@@ -350,6 +347,53 @@ div.language-flag.chile{
 	overflow: auto;
 }
 
+.datatable_table_wrapper{
+	width: 96%;
+	margin-left: 2%;
+	margin-right: 2%;
+	margin-top: 24px;
+	margin-bottom: 12px;
+}
+table.selectable tr{
+	cursor:pointer;
+}
+
+.content-wrapper {
+	margin-top: 10px;
+	width: 96%;
+	margin-left: 2%;
+	margin-right: 2%;
+}
+
+.form-segment-wrapper .segment-label {
+	text-align: right;
+	line-height: 28px;
+	font-weight: bold;
+}
+
+.form-segment-wrapper .segment-value {
+	min-height:40px;
+	line-height: 28px;
+} 
+
+.row-category {
+	background: #E8E8EA;
+	line-height: 32px;
+	padding-left: 12px;
+	margin-top: 12px;
+	margin-bottom: 20px;
+	position: relative;
+}
+
+.segment-value input[type=checkbox]{
+	margin-top:0px;
+}
+
+.mobile-security-access-label{
+	margin-left:20px;
+}
+
+
 @media (min-width: 980px){
     body {
         /* padding-top: 41px; 60px to make the container go all the way to the bottom of the topbar */
@@ -478,8 +522,20 @@ div.language-flag.chile{
 
 }
 
+@media (min-width:768px){
+	.only-mobile{
+		display:none !important;
+	}
+}
+
 @media (max-width: 767px){
 
+	.form-segment-wrapper .segment-label {
+		text-align: left;
+	}
+	.only-desktop{
+    	display:none !important;
+    }
     .adminusersheader{
         display:none;
     }

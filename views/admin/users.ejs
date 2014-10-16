@@ -1,0 +1,321 @@
+<div class="row-fluid page-banner">
+    <div class="banner-div"><i class="icon-group icon-1x banner-icon-top"></i><div class="banner-div-text"><%= translate[req.session.user.locale]['Users Administration'] %></div></div>
+</div>
+
+
+<div class="row-fluid" style="margin-top:19px; margin-bottom:25px;">
+    <div class="span10 offset1 page-controls-wrapper">
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%=translate[req.session.user.locale]['Users']%></span>
+             <% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="create_new"><%=translate[req.session.user.locale]['Create New User']%></div><% } %>
+        </div>
+        <div class="row-fluid key-indicaters-frame" id="iframediv">
+            <div class="row-fluid">
+            	<div class="datatable_table_wrapper">
+	                <table id="datatable" class="display selectable" cellspacing="0" width="100%">
+				        <thead>
+				            <tr>
+				            	<th>Id</th>
+				                <th>Username</th>
+				                <th>Email</th>
+				                <th>Login Attempts</th>
+				                <th>Active</th>
+				            </tr>
+				        </thead>
+				    </table>
+			    </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row-fluid edit-item-section" style="display:none; margin-top:19px; margin-bottom:35px;">
+    <div class="span10 offset1 page-controls-wrapper">
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;" id="edit-section-title"></span>
+         	<% if(req.session.user.policy[req.route.path].update==1){ %><button style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="save_item"><i class="only-mobile icon-save"></i><span class="only-desktop">Save</span></button><% } %>
+         	<% if(req.session.user.policy[req.route.path].update==1){ %><button style="margin-right:10px;font-weight: 400;" class="btn btn-danger pull-right save_pull" id="delete_item"><i class="only-mobile icon-trash"></i><span class="only-desktop">Delete</span></button><% } %>
+         	<button style="margin-right:10px;font-weight: 400;" class="btn pull-right save_pull" id="cancel_item"><i class="only-mobile icon-circle-arrow-left"></i><span class="only-desktop">Cancel</span></button>
+         	<% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right: 10px; color: rgb(153, 0, 0); font-weight: 400; display: none;" class="pull-right save_pull" id="changes_pending">Changes Pending. &nbsp;</div><% } %>
+  		 </div>
+        <div class="row-fluid " id="iframediv">
+        	<div class="content-wrapper edit-details-frame">
+    			<div class="row-fluid">
+					<div class="span12">
+						<div class="row-fluid">
+							<div class="row-category">
+								<span class="" id="sales_title">
+									<i class="icon-plus-sign" style="margin-right:10px; display:none;"></i>
+									<i class="icon-pencil"></i> &nbsp&nbsp<b>User Information</b>
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			
+				<div id="details_information_section" class="row-fluid">
+				</div>
+				
+    			<div class="row-fluid">
+					<div class="span12">
+						<div class="row-fluid">
+							<div class="row-category">
+								<span class="" id="sales_title">
+									<i class="icon-plus-sign" style="margin-right:10px; display:none;"></i>
+									<i class="icon-pencil"></i> &nbsp&nbsp<b>Security Groups</b>
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			
+				<div id="secondary_information_section" class="row-fluid">
+				</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="template" id="edit_user_template">
+
+	<div class="edit-user-template" userid="{{=id}}">
+		<div class="row-fluid " style="position:relative; cursor:default;"">
+			{{if(id=='new'){ }}
+			<div class="row-fluid form-segment-wrapper">
+				<div class="span5 segment-label">Username:</div>
+				<div class="span7 segment-value"><input type="text" key="username" value="{{=username}}"></div>
+			</div>
+			{{ } }}
+			<div class="row-fluid form-segment-wrapper">
+				<div class="span5 segment-label">Email:</div>
+				<div class="span7 segment-value"><input type="text" key="email" value="{{=email}}"></div>
+			</div>
+			<div class="row-fluid form-segment-wrapper">
+				<div class="span5 segment-label">Active:</div>
+				<div class="span7 segment-value"><input type="checkbox" key="active" {{if(active){}}checked="checked"{{ } }}></div>
+			</div>
+			<div class="row-fluid form-segment-wrapper">
+				<div class="span5 segment-label">New Password:</div>
+				<div class="span7 segment-value"><input type="password" id="input_password"></div>
+			</div>
+			<div class="row-fluid form-segment-wrapper">
+				<div class="span5 segment-label">Confirm Password:</div>
+				<div class="span7 segment-value"><input type="password" id="input_confirm_password"></div>
+			</div>
+		</div>
+	</div>
+</script>
+
+<script type="template" id="edit_user_security">
+	<div class="edit-user-security-template" groupid="{{=id}}">
+		<div class="row-fluid " style="position:relative; cursor:default;"">
+			<div class="row-fluid form-segment-wrapper">
+				<div class="span5 segment-label">{{=name}}:</div>
+				<div class="span7 segment-value"><input type="checkbox" key="securitygroup" {{if(member){}}checked="checked"{{ } }}></div>
+			</div>
+		</div>
+	</div>
+</script>
+
+<script type="text/javascript">
+$(function(){
+	var datatable = $('#datatable').dataTable({
+			"ajax": {
+	        	"url":"/users/findAll",
+        		"data":function(d){
+        			
+        		}
+    		},
+	        "aoColumns":[
+	        	{"mData":"id","visible":false}
+		        ,{"mData":function(data,b){
+		        	return '<b>'+data.username+'</b>';
+		        }
+				}
+		        ,{"mData":"email"}
+		        ,{"mData":"loginattempts"}
+		        ,{"mData":"active"}
+	        ],
+	        "rowCallback": function( row, data, displayIndex ) {
+				$(row).attr('user_id',data['id']);
+				$(row).click(function(){
+			    	$(this).siblings().removeClass('selected');
+			    	$(this).removeClass('selected').addClass('selected');
+					//alert('i like to click rows');
+					$('.edit-item-section').css('display','');
+					$('#delete_item').css('display','');
+					user.fetch({id:parseInt($(row).attr('user_id'))});
+    				
+					//company.fetch({id:parseInt($(row).attr('company_id'))});
+					//address.fetch({id:parseInt($(row).attr('address_id'))});
+           		});
+	        }
+    });
+
+    $('#datatable').on('draw.dt',function(event,datatable){
+     	//if(!isNaN(parseInt(contact.get('contact_id')))){
+     	//	$('#contacts tbody tr[contact_id='+contact.get('contact_id')+']').addClass('selected');
+     	//}
+	});
+	
+	
+	$('#create_new').click(function(){
+		$('.edit-item-section').css('display','');
+		$('#delete_item').css('display','none');
+ 		$('#datatable tbody tr').removeClass('selected');
+		socket.get('/security/getsecuritygroups',[],function(securitygroups){
+			user.clear();
+			for(key in securitygroups){
+				securitygroups[key].member = false;
+			}
+			user.set({id:'new','username':null,'password':null,'email':null,'loginattempts':0,'active':1,locale:'en','groups':securitygroups});
+			userView.render();
+		});
+	});
+	
+	$('#cancel_item').click(function(){
+		user.clear();
+		$('.edit-item-section').css('display','none');
+ 		$('#datatable tbody tr').removeClass('selected');
+	});
+	
+	$('#delete_item').click(function(){
+		socket.get('/users/delete',{id:user.get('id')},function(response){
+			if(response.success){
+				datatable.api().ajax.reload(function(){},false);
+				bannerAlert('success','<%=translate[req.session.user.locale]['FormSuccess']%>','<%=translate[req.session.user.locale]['User Deleted']%>');
+				user.clear();
+				$('.edit-item-section').css('display','none');
+		 		$('#datatable tbody tr').removeClass('selected');
+			}
+			
+		});
+	});
+	
+	$('#save_item').click(function(){
+		clearBanners();
+		if(user.get('username')==null||user.get('username')==''){
+			bannerAlert('error','<%=translate[req.session.user.locale]['FormError']%>','<%=translate[req.session.user.locale]['Invalid Username']%>');
+			return;
+		}
+		if($('#input_password').val()!=''||$('#input_confirm_password').val()!=''||user.get('id')=='new'){
+			 if($('#input_password').val()==''||$('#input_password').val()!=$('#input_confirm_password').val()){  //password mismatch
+				bannerAlert('error','<%=translate[req.session.user.locale]['FormError']%>','<%=translate[req.session.user.locale]['Password Mismatch']%>');
+				return;
+			}else{
+				user.set('password',$('#input_password').val());
+				$('.edit-item-section').css('display','none');
+		 		$('#datatable tbody tr').removeClass('selected');
+			}
+		}
+		socket.get('/users/saveuserandgroups',{user:user},function(response){
+			if(response.success){
+				bannerAlert('success','<%=translate[req.session.user.locale]['FormSuccess']%>','<%=translate[req.session.user.locale]['User Saved']%>');
+				if(user.get('id')=='new'){
+					datatable.api().ajax.reload();
+				}else{
+					$('#datatable tbody tr.selected').click();
+				}
+			}
+		});
+		
+	});
+	
+	
+	
+	///////////////////////////
+    /// USER Model     ////////
+    ///////////////////////////   
+	var UserModel = Backbone.Model.extend({
+        urlRoot: '/users/getuserandgroups',
+        socket:null,
+        sync:function(method,model,options){
+            if(typeof this.urlRoot === "string" && this.urlRoot !== "") {
+                this.socket = io.socket;
+                this.socket.request(this.urlRoot, options, _.bind(function(user){
+                    if(user.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
+                        location.reload(); // Will boot back to login screen
+                    }
+                    this.clear();
+                    this.set(user);
+                	userView.render();
+                    
+                }, this));
+            }
+        
+        }
+    });
+    var user = new UserModel();
+	
+    	
+    ///////////////////////////
+    /// User          View ////
+    ///////////////////////////	
+    var UserBackboneView = Backbone.View.extend({
+        el: '#details_information_section',
+        groupselement:'#secondary_information_section',
+        events: {
+           "keyup input[key]":"userChange",
+           "change input[key]":"userChange"
+           
+        },
+        userChange:function(event){
+        	if($(event.target).attr('type')=='checkbox'){
+        		user.set($(event.target).attr('key'),$(event.target).is(':checked')?1:0);
+        	}else{
+        		user.set($(event.target).attr('key'),$(event.target).val());
+        	}
+        	user.set('modified',true);
+        	setChangesPending();
+        },
+        initialize: function () {
+            //this.render();
+        },
+        template: _.template($('#edit_user_template').html()),
+        grouptemplate:_.template($('#edit_user_security').html()),
+        render: function () {
+    	    this.$el.empty();
+    	    $(this.groupselement).empty();
+        	this.$el.append(this.template(this.model.toJSON()));
+        	$('#input_password').keydown(function(){
+        		user.set('modified',true);
+        		setChangesPending();
+        	});
+        	$('#input_confirm_password').keydown(function(){
+        		user.set('modified',true);
+        		setChangesPending();
+        	});
+        	for(var group in this.model.get('groups')){
+        		$(this.groupselement).append(this.grouptemplate(this.model.get('groups')[group]));
+        		$('.edit-user-security-template input[key=securitygroup]:last').click(function(){
+        			var securitygroups = user.get('groups');
+        			securitygroups[group]['member'] = $(this).is(':checked');
+        			user.set('groups',securitygroups);
+        			user.set('modified',true);
+        			setChangesPending();
+        		});
+        	}
+        	if(user.get('id')=='new'){
+				$('#edit-section-title').html('<%=translate[req.session.user.locale]['Create User']%>');
+        	}else{
+        		$('#edit-section-title').html('<%=translate[req.session.user.locale]['Edit']%>&nbsp'+user.get('username'));
+        	}
+        	setChangesPending();
+        }
+    });
+    var userView = new UserBackboneView({model:user});
+	
+	function setChangesPending(){
+		if(typeof(user.get('modified'))!='undefined'){
+			$('#changes_pending').css('display','');
+			$('#save_item').removeAttr('disabled');
+		}else{
+			$('#changes_pending').css('display','none');
+			$('#save_item').attr('disabled','disabled');
+		}
+	
+	}
+	
+	
+});
+    	
+</script>

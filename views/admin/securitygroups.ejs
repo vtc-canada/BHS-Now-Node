@@ -1,0 +1,307 @@
+<div class="row-fluid page-banner">
+    <div class="banner-div"><i class="icon-group icon-1x banner-icon-top"></i><div class="banner-div-text"><%= translate[req.session.user.locale]['Users Administration'] %></div></div>
+</div>
+
+
+<div class="row-fluid" style="margin-top:19px; margin-bottom:25px;">
+    <div class="span10 offset1 page-controls-wrapper">
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%=translate[req.session.user.locale]['Users']%></span>
+             <% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="create_new"><%=translate[req.session.user.locale]['Create New User']%></div><% } %>
+        </div>
+        <div class="row-fluid key-indicaters-frame" id="iframediv">
+            <div class="row-fluid">
+            	<div class="datatable_table_wrapper">
+	                <table id="datatable" class="display selectable" cellspacing="0" width="100%">
+				        <thead>
+				            <tr>
+				            	<th>Id</th>
+				                <th>Security Group</th>
+				            </tr>
+				        </thead>
+				    </table>
+			    </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row-fluid edit-item-section" style="display:none; margin-top:19px; margin-bottom:35px;">
+    <div class="span10 offset1 page-controls-wrapper">
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;" id="edit-section-title"></span>
+         	<% if(req.session.user.policy[req.route.path].update==1){ %><button style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="save_item"><i class="only-mobile icon-save"></i><span class="only-desktop">Save</span></button><% } %>
+         	<% if(req.session.user.policy[req.route.path].update==1){ %><button style="margin-right:10px;font-weight: 400;" class="btn btn-danger pull-right save_pull" id="delete_item"><i class="only-mobile icon-trash"></i><span class="only-desktop">Delete</span></button><% } %>
+         	<button style="margin-right:10px;font-weight: 400;" class="btn pull-right save_pull" id="cancel_item"><i class="only-mobile icon-circle-arrow-left"></i><span class="only-desktop">Cancel</span></button>
+         	<% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right: 10px; color: rgb(153, 0, 0); font-weight: 400; display: none;" class="pull-right save_pull" id="changes_pending">Changes Pending. &nbsp;</div><% } %>
+  		 </div>
+        <div class="row-fluid " id="iframediv">
+        	<div class="content-wrapper edit-details-frame">
+    			<div class="row-fluid">
+					<div class="span12">
+						<div class="row-fluid">
+							<div class="row-category">
+								<span class="" id="sales_title">
+									<i class="icon-plus-sign" style="margin-right:10px; display:none;"></i>
+									<i class="icon-pencil"></i> &nbsp&nbsp<b>Security Group Information</b>
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			
+				<div id="details_information_section" class="row-fluid">
+				</div>
+				
+    			<div class="row-fluid">
+					<div class="span12">
+						<div class="row-fluid">
+							<div class="row-category">
+								<span class="" id="sales_title">
+									<i class="icon-plus-sign" style="margin-right:10px; display:none;"></i>
+									<i class="icon-pencil"></i> &nbsp&nbsp<b>Security Groups</b>
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="edit-user-security-template only-desktop" >
+					<div class="row-fluid " style="position:relative; cursor:default;"">
+						<div class="row-fluid form-segment-wrapper">
+							<div class="span7 segment-label"><%=translate[req.session.user.locale]['SecurityResource']%></div>
+							<div class="span1 segment-value"><%=translate[req.session.user.locale]['LevelCreate']%></div>
+							<div class="span1 segment-value"><%=translate[req.session.user.locale]['LevelRead']%></div>
+							<div class="span1 segment-value"><%=translate[req.session.user.locale]['LevelUpdate']%></div>
+							<div class="span1 segment-value"><%=translate[req.session.user.locale]['LevelDelete']%></div>
+						</div>
+					</div>
+				</div>
+				
+				<div id="secondary_information_section" class="row-fluid">
+				
+				</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="template" id="edit_securitygroup_template">
+
+	<div class="edit-user-template" userid="{{=id}}">
+		<div class="row-fluid " style="position:relative; cursor:default;"">
+			<div class="row-fluid form-segment-wrapper">
+				<div class="span5 segment-label">Security Group:</div>
+				<div class="span7 segment-value"><input type="text" key="name" value="{{=name}}"></div>
+			</div>
+		</div>
+	</div>
+</script>
+
+<script type="template" id="edit_securitygroup_resources">
+	<div class="edit-user-security-template" groupid="{{=id}}">
+		<div class="row-fluid " style="position:relative; cursor:default;"">
+			<div class="row-fluid form-segment-wrapper">
+				<div class="span7 segment-label">{{=name}}:</div>
+				<div class="span1 segment-value"><input type="checkbox" key="create" {{if(create){ }}checked="checked"{{ } }}><span class="only-mobile mobile-security-access-label"><%=translate[req.session.user.locale]['LevelCreate']%></span></div>
+				<div class="span1 segment-value"><input type="checkbox" key="read" {{if(read){ }}checked="checked"{{ } }}><span class="only-mobile mobile-security-access-label"><%=translate[req.session.user.locale]['LevelRead']%></span></div>
+				<div class="span1 segment-value"><input type="checkbox" key="update" {{if(update){ }}checked="checked"{{ } }}><span class="only-mobile mobile-security-access-label"><%=translate[req.session.user.locale]['LevelUpdate']%></span></div>
+				<div class="span1 segment-value"><input type="checkbox" key="delete" {{if(destroy){ }}checked="checked"{{ } }}><span class="only-mobile mobile-security-access-label"><%=translate[req.session.user.locale]['LevelDelete']%></span></div>
+			</div>
+		</div>
+	</div>
+</script>
+
+<script type="text/javascript">
+$(function(){
+	var datatable = $('#datatable').dataTable({
+			"ajax": {
+	        	"url":"/securitygroups/findAll",
+        		"data":function(d){
+        			
+        		}
+    		},
+	        "aoColumns":[
+	        	{"mData":"id","visible":false}
+		        ,{"mData":function(data,b){
+		        	return '<b>'+data.name+'</b>';
+		        }
+				}
+	        ],
+	        "rowCallback": function( row, data, displayIndex ) {
+				$(row).attr('item_id',data['id']);
+				$(row).click(function(){
+					//alert('i like to click rows');
+			    	$(this).siblings().removeClass('selected');
+			    	$(this).removeClass('selected').addClass('selected');
+					$('.edit-item-section').css('display','');
+					$('#delete_item').css('display','');
+					securitygroup.fetch({id:parseInt($(row).attr('item_id'))});
+    				
+					//company.fetch({id:parseInt($(row).attr('company_id'))});
+					//address.fetch({id:parseInt($(row).attr('address_id'))});
+           		});
+	        }
+    });
+    
+    $('#datatable').on('draw.dt',function(event,datatable){
+     	//if(!isNaN(parseInt(contact.get('contact_id')))){
+     	//	$('#contacts tbody tr[contact_id='+contact.get('contact_id')+']').addClass('selected');
+     	//}
+	});
+	
+	
+	$('#create_new').click(function(){
+		$('.edit-item-section').css('display','');
+		$('#delete_item').css('display','none');
+ 		$('#datatable tbody tr').removeClass('selected');
+		socket.get('/security/getresourcegroups',[],function(resources){
+			securitygroup.clear();
+			for(key in resources){
+				resources[key].create = 1;
+				resources[key].read = 1;
+				resources[key].update = 1;
+				resources[key].delete = 1;
+				
+			}
+			securitygroup.set({id:'new','name':null,'resources':resources});
+			securityGroupView.render();
+		});
+	});
+	
+	$('#cancel_item').click(function(){
+		user.clear();
+		$('.edit-item-section').css('display','none');
+ 		$('#datatable tbody tr').removeClass('selected');
+	});
+	
+	$('#delete_item').click(function(){
+		socket.get('/securitygroups/delete',{id:securitygroup.get('id')},function(response){
+			if(response.success){
+				datatable.api().ajax.reload(function(){},false);
+				bannerAlert('success','<%=translate[req.session.user.locale]['FormSuccess']%>','<%=translate[req.session.user.locale]['Security Group Deleted']%>');
+				securitygroup.clear();
+				$('.edit-item-section').css('display','none');
+		 		$('#datatable tbody tr').removeClass('selected');
+			}
+			
+		});
+	});
+	
+	$('#save_item').click(function(){
+		clearBanners();
+		if(securitygroup.get('name')==null||securitygroup.get('name')==''){
+			bannerAlert('error','<%=translate[req.session.user.locale]['FormError']%>','<%=translate[req.session.user.locale]['Invalid Security Group Name']%>');
+			return;
+		}
+		if(securitygroup.get('id')=='new'){
+			$('.edit-item-section').css('display','none');
+	 		$('#datatable tbody tr').removeClass('selected');
+		}
+		socket.get('/securitygroups/savesecuritygroupandresources',{securitygroup:securitygroup},function(response){
+			if(response.success){
+				bannerAlert('success','<%=translate[req.session.user.locale]['FormSuccess']%>','<%=translate[req.session.user.locale]['Security Group Saved']%>');
+				if(securitygroup.get('id')=='new'){
+					datatable.api().ajax.reload();
+				}else{
+					$('#datatable tbody tr.selected').click();
+				}
+			}
+		});
+	});
+	
+	
+	
+	///////////////////////////
+    /// Security Group Model //
+    ///////////////////////////   
+	var SecurityGroupModel = Backbone.Model.extend({
+        urlRoot: '/securitygroups/getsecuritygroupandresources',
+        socket:null,
+        sync:function(method,model,options){
+            if(typeof this.urlRoot === "string" && this.urlRoot !== "") {
+                this.socket = io.socket;
+                this.socket.request(this.urlRoot, options, _.bind(function(securitygroup){
+                    if(securitygroup.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
+                        location.reload(); // Will boot back to login screen
+                    }
+                    this.clear();
+                    this.set(securitygroup);
+                	securityGroupView.render();
+                    
+                }, this));
+            }
+        
+        }
+    });
+    var securitygroup = new SecurityGroupModel();
+	
+    	
+    ///////////////////////////
+    /// SecurityGroup View ////
+    ///////////////////////////	
+    var SecurityGroupBackboneView = Backbone.View.extend({
+        el: '#details_information_section',
+        groupselement:'#secondary_information_section',
+        events: {
+           "keyup input[key]":"userChange"
+           
+        },
+        userChange:function(event){
+        	securitygroup.set($(event.target).attr('key'),$(event.target).val());
+        	securitygroup.set('modified',true);
+        	setChangesPending();
+        },
+        initialize: function () {
+            //this.render();
+        },
+        template: _.template($('#edit_securitygroup_template').html()),
+        grouptemplate:_.template($('#edit_securitygroup_resources').html()),
+        render: function () {
+    	    this.$el.empty();
+    	    $(this.groupselement).empty();
+        	this.$el.append(this.template(this.model.toJSON()));
+        	/*$('#input_password').keydown(function(){
+        		user.set('modified',true);
+        		setChangesPending();
+        	});
+        	$('#input_confirm_password').keydown(function(){
+        		user.set('modified',true);
+        		setChangesPending();
+        	});*/
+        	for(var group in this.model.get('resources')){
+        		var jsonResource = this.model.get('resources')[group];
+        		jsonResource.destroy = jsonResource.delete;
+        		$(this.groupselement).append(this.grouptemplate(jsonResource));
+        		$('.edit-user-security-template:last input[key]').click(function(){
+        			var resources = securitygroup.get('resources');
+        			resources[group][$(this).attr('key')] = $(this).is(':checked')?1:0;
+        			securitygroup.set('resources',resources);
+        			securitygroup.set('modified',true);
+        			setChangesPending();
+        		});
+        	}
+        	if(securitygroup.get('id')=='new'){
+				$('#edit-section-title').html('<%=translate[req.session.user.locale]['Create Security Group']%>');
+        	}else{
+        		$('#edit-section-title').html('<%=translate[req.session.user.locale]['Edit']%>&nbsp'+securitygroup.get('name'));
+        	}
+        	setChangesPending();
+        }
+    });
+    var securityGroupView = new SecurityGroupBackboneView({model:securitygroup});
+	
+	function setChangesPending(){
+		if(typeof(securitygroup.get('modified'))!='undefined'){
+			$('#changes_pending').css('display','');
+			$('#save_item').removeAttr('disabled');
+		}else{
+			$('#changes_pending').css('display','none');
+			$('#save_item').attr('disabled','disabled');
+		}
+	
+	}
+	
+	
+});
+    	
+</script>

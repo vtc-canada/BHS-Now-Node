@@ -12,27 +12,37 @@
 
 module.exports = {
 
-  /***************************************************************************
-   * Set the default database connection for models in the production        *
-   * environment (see config/connections.js and config/models.js )           *
-   ***************************************************************************/
+    /***************************************************************************
+     * Set the default database connection for models in the production        *
+     * environment (see config/connections.js and config/models.js )           *
+     ***************************************************************************/
 
-  // models: {
-  //   connection: 'someMysqlServer'
-  // },
+    /***************************************************
+     *  ORM database mapping.  Used for generating user base tables
+     ***************************************************/
+    models : {
+	connection : 'nowManagementBaseMysql',
+	migrate : 'drop' //safe //alter
+    },
 
-  /***************************************************************************
-   * Set the port in the production environment to 80                        *
-   ***************************************************************************/
+    /***************************************************
+     *  Database Controller connections mapping
+     ***************************************************/
+    connections : {
+	'base_default' : 'nowManagementBaseMysql',
+	'data_default' : 'nowManagementDataMysql'
+    },
 
-  // port: 80,
+/***************************************************************************
+ * Set the port in the production environment to 80                        *
+ ***************************************************************************/
 
-  /***************************************************************************
-   * Set the log level in production environment to "silent"                 *
-   ***************************************************************************/
+    port: 80,
+/***************************************************************************
+ * Set the log level in production environment to "silent"                 *
+ ***************************************************************************/
 
-  // log: {
-  //   level: "silent"
-  // }
-
+// log: {
+//   level: "silent"
+// }
 };
