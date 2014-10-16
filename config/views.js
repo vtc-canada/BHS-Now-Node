@@ -99,6 +99,17 @@ module.exports.views = {
 	        'DB Error':'Database Error.',
 	        'FormError':'Error',
 	        'FormSuccess':'Success',
+	        'Password fields do not match.':'Password fields do not match.',
+	        'Password must be at least 1 character long.':'Password must be at least 1 character long.',
+	        'Enter a new password for':'Enter a new password for',
+	        'Current Password':'Current Password',
+	        'New Password':'New Password',
+	        'Confirm Password':'Confirm Password',
+	        'FormCancel':'Cancel',
+	        'FormSet':'Set',
+	        'Current password was incorrect.':'Current password was incorrect.',
+	        'Password has been successfully changed.':'Password has been successfully changed.',
+	        
 	        
 	        
 	        'Users Administration':'Users Administration',

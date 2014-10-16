@@ -36,7 +36,7 @@ module.exports = {
 	    if (err) {
 		return res.json(err);
 	    }
-	    user[0][0].password = null; //hides the password
+	    user[0][0].password = null; // hides the password
 	    Database.localSproc('getUserSecurityGroups', [ parseInt(req.body.id) ], function(err, groups) {
 		if (err) {
 		    return res.json(err);
@@ -53,7 +53,7 @@ module.exports = {
 	async.series([
 	    function(callback){ // NEW user
 		if(user.id!='new'){
-		    return callback(null);//skip out otherwise
+		    return callback(null);// skip out otherwise
 		}
 		var hasher = require("password-hash");
 		user.password = hasher.generate(user.password);
@@ -71,7 +71,7 @@ module.exports = {
 		if(user.id=='new'){ 
 		    user.id = user.newid;
 		    delete user.newid;
-		    return callback(null);//skip out otherwise
+		    return callback(null);// skip out otherwise
 		}
 		if(user.password!=null){
 		    var hasher = require("password-hash");

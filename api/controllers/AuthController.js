@@ -88,5 +88,49 @@ module.exports = {
 		});
 	    }
 	});
+    },
+    checkandchangemypassword : function(req,res) {
+	var username = req.session.user.username;
+	var currentpassword = req.param('currentpassword');
+	var newpassword = req.param('newpassword');
+	
+	if (typeof (username) == 'undefined' || typeof (currentpassword) == 'undefined' ||typeof (newpassword) == 'undefined') {
+	    res.json({
+		error : 'Missing Parameters!'
+	    },500);
+	    return false;
+	}
+
+	Database.localSproc('getUserByUsername', [ username ], function(err, user) {
+	    if (err) {
+		console.log('Error getUserByUsername :' + err.toString());
+		return res.send(500, {
+		    error : "DB Error:" + err.toString()
+		});
+	    }
+	    if (user[0] && user[0][0]) {
+		var foundUser = user[0][0];
+		if (!foundUser.active) {
+		    res.send(400, {
+			error : "Locked"
+		    });
+		    return 
+		}
+		var hasher = require("password-hash");
+		if (hasher.verify(currentpassword, foundUser.password)) { // here
+		    Database.localSproc('updateUser',[foundUser.id,hasher.generate(newpassword),foundUser.email,foundUser.active,foundUser.loginattempts,foundUser.locale],function(err,user){
+			if (err) {
+			    console.log('Error updateUser :' + err.toString());
+			    return res.send(500, {
+				error : "updateUser Error:" + err.toString()
+			    });
+			}
+			res.json({success:true});
+		    });
+		}else {
+                    res.json({failure : "Wrong Password"});
+                }
+	    }
+	});
     }
 };

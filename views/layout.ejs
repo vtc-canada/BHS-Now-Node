@@ -78,8 +78,8 @@
               <div class="row-fluid"><label class="change-label" for="confirmmypassword"><%= translate[req.session.user.locale]['Confirm Password']  %>:</label><input class="change-input"  id="confirmmypassword" type="password"> </div>
           </div>
           <div class="modal-footer">
-              <button class="btn" data-dismiss="modal" id="confirmmypasswordchangecancel" aria-hidden="true"><%= translate[req.session.user.locale]['Cancel']  %></button>
-              <button class="btn btn-primary" id="confirmmypasswordchange"><%= translate[req.session.user.locale]['Set']  %></button>
+              <button class="btn" data-dismiss="modal" id="confirmmypasswordchangecancel" aria-hidden="true"><%= translate[req.session.user.locale]['FormCancel']  %></button>
+              <button class="btn btn-primary" id="confirmmypasswordchange"><%= translate[req.session.user.locale]['FormSet']  %></button>
           </div>
       </div>
       
@@ -250,7 +250,24 @@
 	            $('.main-content > .page-banner').next('.alert').removeClass('in');
 	    	},5000);
 	    }
+	    
 	
+		// Layout Javascript
+		
+		/// This makes the timezone tooltip hover above the location
+        var now = new Date().toString();
+		var TZ = now.indexOf('(') > -1 ?
+		now.match(/\([^\)]+\)/)[0].match(/[A-Z]/g).join('') :
+		now.match(/[A-Z]{3,4}/)[0];
+		if (TZ == "GMT" && /(GMT\W*\d{4})/.test(now)) TZ = RegExp.$1;
+
+        $('#liLocation').attr('title',TZ);
+	
+	
+		//////////////////////////////////////////////
+		///  MY Account Section //////////////////////
+		//////////////////////////////////////////////
+		
 		$('#myaccount').popover({
 			container:'#top_right_desktop'
 			,placement:'bottom'
@@ -280,6 +297,7 @@
 	    });
 	    
 	    function showChangeMyPasswordModal(){
+	    	$('#myaccount').popover('hide');
 	        $('#changepasswordModal').modal('show');
 	        $('#changepasswordModal div.alert-error').remove();
 	        $('#mycurrentpassword').val('');
@@ -288,6 +306,53 @@
 	        $('#confirmmypasswordchange').removeAttr('disabled');
 	        $('#confirmmypasswordchangecancel').removeAttr('disabled');
 	    }
+	    $('#confirmmypasswordchange').click(function(){
+            $('#changepasswordModal div.alert-error').remove();
+            if($('#mynewpassword').val()!=$('#confirmmypassword').val()){
+                $('#changepasswordModal div.modal-header').after(
+                        '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong><%= translate[locale]['FormError'] %>:&nbsp;</strong><%= translate[locale]['Password fields do not match.'] %></div>');//' .error-message').html('Password fields do not match.');
+
+            }else if($('#mynewpassword').val()==''){
+
+                $('#changepasswordModal div.modal-header').after(
+                        '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong><%= translate[locale]['FormError'] %>:&nbsp;</strong><%= translate[locale]['Password must be at least 1 character long.'] %></div>');
+
+            }else{
+                socket.request('/auth/checkandchangemypassword',{currentpassword:$('#mycurrentpassword').val(),newpassword:$('#mynewpassword').val()},function(data){
+                    if(typeof(data.error)!='undefined'){
+                        location.reload(); // Will boot back to login screen
+                        return;
+                    }
+                    if(typeof(data.failure)!='undefined'){
+                        $('#changepasswordModal div.modal-header').after(
+                                '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong><%= translate[locale]['FormError'] %>:&nbsp;</strong><%= translate[locale]['Current password was incorrect.'] %></div>');
+                        return;
+                    }
+                    if(typeof(data.success)!='undefined'){
+	                    $('#changepasswordModal div.modal-header').after(
+	                            '<div class="alert alert-success fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong><%= translate[locale]['FormSuccess'] %>:&nbsp;</strong><%= translate[locale]['Password has been successfully changed.'] %></div>');
+	                    setTimeout(function(){
+	                        $('#changepasswordModal .alert-success').remove();
+	                        $('.alert-success').removeClass('in');
+	                        $('#changepasswordModal').modal('hide');
+	                    },1000);
+	                    $('#confirmmypasswordchange').attr('disabled','disabled');
+	                    $('#confirmmypasswordchangecancel').attr('disabled','disabled');
+                    }else{
+						alert('no handler for repsonse'+JSON.stringify(data));
+                    }
+                });
+            }
+        });
+        // End of My Account Section
+        
+        
+        
+        
+        
+        
+        
+        
 	  
 	</script>
   
