@@ -272,14 +272,20 @@ $(function(){
         		var jsonResource = this.model.get('resources')[group];
         		jsonResource.destroy = jsonResource.delete;
         		$(this.groupselement).append(this.grouptemplate(jsonResource));
-        		$('.edit-user-security-template:last input[key]').click(function(){
-        			var resources = securitygroup.get('resources');
-        			resources[group][$(this).attr('key')] = $(this).is(':checked')?1:0;
-        			securitygroup.set('resources',resources);
-        			securitygroup.set('modified',true);
-        			setChangesPending();
-        		});
         	}
+        	
+    		$('.edit-user-security-template input[key]').click(function(){
+    		    var resources = securitygroup.get('resources');
+    			var elementGroupId = $(this).closest('.edit-user-security-template').attr('groupid');
+    			$.grep(resources, function(e){ 
+    				return e.id == elementGroupId;
+    			})[0][$(this).attr('key')] = $(this).is(':checked')?1:0;
+    			securitygroup.set('resources',resources);
+    			securitygroup.set('modified',true);
+    			setChangesPending();
+    		});
+        		
+        		
         	if(securitygroup.get('id')=='new'){
 				$('#edit-section-title').html('<%=translate[req.session.user.locale]['Create Security Group']%>');
         	}else{

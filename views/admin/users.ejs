@@ -286,7 +286,6 @@ $(function(){
         	});
         	for(var group in this.model.get('groups')){
         		$(this.groupselement).append(this.grouptemplate(this.model.get('groups')[group]));
-
         	}
     		$('.edit-user-security-template input[key=securitygroup]').click(function(){
     			var securitygroups = user.get('groups');
