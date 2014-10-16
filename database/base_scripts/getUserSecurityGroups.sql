@@ -8,7 +8,8 @@ BEGIN
 SELECT securitygroups.id, securitygroups.name, IF(usersecuritygroupmappings.userId IS NULL,false,true) AS 'member' FROM 
 securitygroups
 LEFT JOIN
-usersecuritygroupmappings ON(securitygroups.id = usersecuritygroupmappings.securityGroupId AND userId = paramUserId);
+usersecuritygroupmappings ON(securitygroups.id = usersecuritygroupmappings.securityGroupId AND userId = paramUserId)
+ORDER BY securitygroups.name ASC;
 END$$
 
 DELIMITER ;

@@ -165,7 +165,7 @@ $(function(){
 		socket.get('/security/getsecuritygroups',[],function(securitygroups){
 			user.clear();
 			for(key in securitygroups){
-				securitygroups[key].member = false;
+				securitygroups[key].member = 0;
 			}
 			user.set({id:'new','username':null,'password':null,'email':null,'loginattempts':0,'active':1,locale:'en','groups':securitygroups});
 			userView.render();
@@ -286,14 +286,18 @@ $(function(){
         	});
         	for(var group in this.model.get('groups')){
         		$(this.groupselement).append(this.grouptemplate(this.model.get('groups')[group]));
-        		$('.edit-user-security-template input[key=securitygroup]:last').click(function(){
-        			var securitygroups = user.get('groups');
-        			securitygroups[group]['member'] = $(this).is(':checked');
-        			user.set('groups',securitygroups);
-        			user.set('modified',true);
-        			setChangesPending();
-        		});
+
         	}
+    		$('.edit-user-security-template input[key=securitygroup]').click(function(){
+    			var securitygroups = user.get('groups');
+    			var elementGroupId = $(this).closest('.edit-user-security-template').attr('groupid');
+    			$.grep(securitygroups, function(e){ 
+    				return e.id == elementGroupId;
+    			})[0]['member'] = $(this).is(':checked')?1:0;
+    			user.set('groups',securitygroups);
+    			user.set('modified',true);
+    			setChangesPending();
+    		});
         	if(user.get('id')=='new'){
 				$('#edit-section-title').html('<%=translate[req.session.user.locale]['Create User']%>');
         	}else{
