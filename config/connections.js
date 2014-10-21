@@ -45,14 +45,16 @@ module.exports.connections = {
     host: '10.1.1.60',
     user: 'root',
     password: 'Glasgow931',
-    database: 'now_management_base'
+    database: 'now_management_base',
+    timezone: 'utc'
   },
   nowManagementDataMysql: {
       adapter: 'sails-mysql',
       host: '10.1.1.60',
       user: 'root',
       password: 'Glasgow931',
-      database: 'bhs_scada'
+      database: 'bhs_scada',
+      timezone: 'utc'
   },
 
   /***************************************************************************
