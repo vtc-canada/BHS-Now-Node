@@ -58,6 +58,12 @@ module.exports.views = {
 	    desktop:'/img/ISN-International-Airport-4.png',
 	    mobile:'/img/ISN-International-Airport-3.png'
 	},
+	messaging : false,
+	search:{
+	    enabled:false,
+	    url:'/search'
+	},
+	i18n:true,
 	navpages : {
 	    '/dashboard':{
 		enabled:true,
@@ -224,7 +230,6 @@ module.exports.views = {
 		}
 	    }
 	},
-	messaging : true,
 	templateHelper:{
 	    hasChildPage:function(navpage,url){
 		if(typeof(navpage.children)!='undefined'){

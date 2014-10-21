@@ -261,7 +261,7 @@ div.language-flag.chile{
 }
 
 .myaccount-topmenu{
-    width: 130px;
+    /*width: 130px;*/
 }
 
 .datetimepicker-gen input{
@@ -296,6 +296,11 @@ div.language-flag.chile{
 
 }
 
+#myaccount{
+	/*text-align:right;
+	 * 
+	 */
+}
 
 #addUserModal label.change-label{
     float: left;

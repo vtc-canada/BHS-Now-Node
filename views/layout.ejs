@@ -94,15 +94,18 @@
           <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse-primary">
               <span class="icon-list"></span>
           </button>
+          <% if(messaging){ %>
           <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target="#chat-section-wrapper">
               <span class="icon-envelope"></span>
           </button>
+          <% } %>
             <a class="brand isys-a large" href="/auth" style="height:40px; width: 407px; padding-left: 12px !important;"><img src="<%=logo.desktop%>" /></a>
             </a>
             <a class="brand isys-a small" href="/auth" style="height: 40px; width: 110px;background-image: url(&quot;<%=logo.mobile%>&quot;);background-size: 140px;background-repeat: no-repeat;background-position-x: 11px;">
             </a>
           <div class="nav-collapse collapse nav-collapse-topbar">
             <ul class="nav pull-right" id="top_right_desktop">
+<% if(i18n){ %> 
               <li id="liLocation">
                   <% if(req.session.user.locale=='en'){ %>
                     <a class="top-message-a language-a" style="position:relative;"><div class="language-flag english"></div><div class="top-flag-span top-messages-span">English</div></a>
@@ -111,9 +114,13 @@
                     <a class="top-message-a language-a" style="position:relative;"><div class="language-flag chile"></div><div class="top-flag-span top-messages-span">Español</div></a>
                   <% } %>
               </li>
-
+<% } %> 
+<% if(messaging){ %> 
               <li <% if (req.url=='/messages'){ %>class="active"<% } %>><a class="top-message-a" href="/messages" style="position:relative;"><div style="display:none;" class="badge-div" ><span class="badge badge-important">6</span></div><i class="icon-envelope-alt icon-2x top-messages-icon"></i><div class="top-messages-span"><%= translate[req.session.user.locale]['Messages'] %></div></a></li>
-              <li><form id="search-form" action="/search" method="post" style="margin-bottom: 0px;" ><input name="search_field" type="text" placeholder="<%= translate[req.session.user.locale]['Search'] %>" id="main-search" class="main-search"><i class="icon-search top-search-icon"></i></form></li>
+<% } %> 
+              <%if(search.enabled){%>
+              <li><form id="search-form" action="<%=search.url%>" method="post" style="margin-bottom: 0px;" ><input name="search_field" type="text" placeholder="<%= translate[req.session.user.locale]['Search'] %>" id="main-search" class="main-search"><i class="icon-search top-search-icon"></i></form></li>
+              <% } %>
               <li class="myaccount-topmenu"><a id="myaccount" data-placement="bottom" data-content="Loading.." title="" data-original-title="" ><i class="icon-user"></i>&nbsp<%= req.session.user.username %></a>
                   <!--[if lt IE 9]>
                   <![endif]-->
@@ -124,7 +131,7 @@
                           </a>
                       </li>
                       <li class="">
-                          <a href="/logout">
+                          <a href="/auth/logout">
                               <i class="icon-signout"></i> <%= translate[req.session.user.locale]['Sign Out']  %>
                           </a>
                       </li>
@@ -179,7 +186,7 @@
   				</li>
   			<% } %>
       </ul>
-
+<% if(messaging){ %> 
         <div id="chat-section-wrapper" class="showchatusers collapse nav-collapse">
             <div class="row-fluid" id="users-toggler"><i class="icon-envelope-alt"></i> &nbsp&nbsp<%= translate[req.session.user.locale]['Messaging'] %></div>
             <div id="user-search-box" class="user-search-box"><input type="text" id="users-search" placeholder="<%= translate[req.session.user.locale]['Search people'] %>..."></div>
@@ -187,6 +194,7 @@
 
             </ul>
         </div>
+<% } %> 
 	  </div>
     </div>
  
@@ -217,7 +225,7 @@
 <!-- This Section contains the messaging scripts, socket calls, and many other utility functions for all the pages -->
 	<script>
 		
-		if(typeof(io)=='undefined'){ // failed to load scripts properly
+		if(typeof(io)=='undefined'||typeof(_)=='undefined'){ // failed to load scripts properly
 			location.reload();
 		}
 		
@@ -260,16 +268,6 @@
 		});
 		var bannertimer = null;
 		
-		  //Hides and shows the users list(messaging button)
-	    $('#users-toggler').click(function(){
-	        if($('#chat-section-wrapper').hasClass('hidechatusers')){
-	            $('#chat-section-wrapper').removeClass('hidechatusers').addClass('showchatusers');
-	        }
-	        else
-	        {
-	            $('#chat-section-wrapper').removeClass('showchatusers').addClass('hidechatusers');
-	        }
-	    });
 		$(window).resize(function(){
 	        fixheight();
 	    });
@@ -282,6 +280,11 @@
                  location.reload();                           // This login will guarentee any session is still valid anyways
             });
         });
+        //Change password Modal
+        $('#changemypasswordmobile').click(function(){
+            showChangeMyPasswordModal();
+        });
+        
 	    function padLeft(nr, n, str){
 	        return Array(n-String(nr).length+1).join(str||'0')+nr;
 	    }
@@ -437,11 +440,11 @@
         
         
         
-        
+    <% if(messaging){ %>    
         //////////***************************************//////////
         //////////    Messaging                          //////////
         //////////***************************************//////////
-        
+    
         //////////////////////////////////////////////////
         //////// CHAT STUFF //////////////////////////////
         //////////////////////////////////////////////////
@@ -565,6 +568,17 @@
           	}
       	});
       	
+		  //Hides and shows the users list(messaging button)
+	    $('#users-toggler').click(function(){
+	        if($('#chat-section-wrapper').hasClass('hidechatusers')){
+	            $('#chat-section-wrapper').removeClass('hidechatusers').addClass('showchatusers');
+	        }
+	        else
+	        {
+	            $('#chat-section-wrapper').removeClass('showchatusers').addClass('hidechatusers');
+	        }
+	    });
+	    
       	// Search Users Constrainer
         $('#users-search').keyup(function(){
             usersView.render();
@@ -695,7 +709,7 @@
 	        }
 	    }
     
-    //End of messaging
+    <% } %>//End of messaging
     
     
 

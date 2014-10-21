@@ -38,7 +38,7 @@ module.exports = {
 		break;
 	    }
 	}
-	Database.localSproc('updateUser',[req.session.user.id, null, req.session.user.email, req.session.user.active, req.session.user.loginattempts, req.session.user.localse],function(err,response){
+	Database.localSproc('updateUser',[req.session.user.id, null, req.session.user.email, req.session.user.active, req.session.user.loginattempts, req.session.user.locale],function(err,response){
 	    res.send(req.session.user);
 	});
     },
