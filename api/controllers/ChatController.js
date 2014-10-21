@@ -30,7 +30,7 @@ module.exports = {
 	});
     },
     seenmessage:function(req,res){
-	Database.localSproc('seenUserMessages',[req.session.user.id,req.param('fromUserId')],function(err,seen){
+	Database.localSproc('updateSeenUserMessages',[req.session.user.id,req.param('fromUserId')],function(err,seen){
 	    if (err) {
 		console.log('Error getUnreadUserMessages :' + err.toString());
 		return res.send(500, {
@@ -83,64 +83,6 @@ module.exports = {
 	}
 	return res.json({
 	    failure : 'no user found'
-	});
-	Users.findByUsername(req.param('tousername')).done(function(err, usr) {
-	    if (err)
-		res.send(500, {
-		    error : "DB Error"
-		}); // will cause page reload on client
-	    else if (usr.length == 1) {
-		usr = usr[0];
-		// / MAKE DATA!!!
-		Messages.create({
-		    userId : req.session.user.id,
-		    fromusername : req.session.user.username,
-		    touserId : usr.id,
-		    message : req.param('message'),
-		    seen : 0
-		}, function(err, result) {
-		    if (sails.io.rooms['/' + req.session.user.id] != undefined) {
-			for (var i = 0; i < sails.io.rooms['/' + req.session.user.id].length; i++) {
-			    sails.io.sockets.sockets[sails.io.rooms['/' + req.session.user.id][i]].emit(req.session.user.id, {
-				id : result.id,
-				userId : req.session.user.id,
-				fromusername : req.session.user.username,
-				touserId : usr.id,
-				message : req.param('message'),
-				seen : 0,
-				createdAt : result.createdAt,
-				updatedAt : result.updatedAt
-			    });
-			}
-		    }
-
-		    if (sails.io.rooms['/' + usr.id] === undefined) {
-			res.json({
-			    success : 'user offline'
-			});
-			return;
-		    }
-		    if (usr.id != req.session.user.id) {
-			for (var i = 0; i < sails.io.rooms['/' + usr.id].length; i++) {
-			    sails.io.sockets.sockets[sails.io.rooms['/' + usr.id][i]].emit(usr.id, {
-				id : result.id,
-				userId : req.session.user.id,
-				fromusername : req.session.user.username,
-				touserId : usr.id,
-				message : req.param('message'),
-				seen : 0,
-				createdAt : result.createdAt,
-				updatedAt : result.updatedAt
-			    });
-			}
-		    }
-		    res.json({
-			success : 'user online'
-		    });
-		    return;
-
-		});
-	    }
 	});
     },
     // loads older messages before a certain message ID

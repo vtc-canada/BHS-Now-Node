@@ -19,6 +19,29 @@ module.exports = {
 	req.socket.join('onlinestatus');
 	req.socket.join(req.session.user.id);
     },
+    togglelocale:function(req,res){
+	var found = false;
+	var next=false;
+	for(key in sails.config.views.locals.translate){
+	    if(next){
+		req.session.user.locale = key;
+		found = true;
+		break;
+	    }
+	    if(key==req.session.user.locale){
+		next=true;
+	    }
+	}
+	if(!found){ // get the first one
+	    for(key in sails.config.views.locals.translate){
+		req.session.user.locale = key;
+		break;
+	    }
+	}
+	Database.localSproc('updateUser',[req.session.user.id, null, req.session.user.email, req.session.user.active, req.session.user.loginattempts, req.session.user.localse],function(err,response){
+	    res.send(req.session.user);
+	});
+    },
     login : function(req, res) {
 
 	var username = req.param("username");

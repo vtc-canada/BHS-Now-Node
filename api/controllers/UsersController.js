@@ -147,6 +147,7 @@ module.exports = {
 			console.log('Error Saving Mappings:'+err);
 			return res.json({error:'Error Saving Mappings:'+err},500);
 		    }
+		    UsersService.pushNewUser();
 		    res.json({success:true});
 		});
 	    });

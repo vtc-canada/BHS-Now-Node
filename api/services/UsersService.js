@@ -5,7 +5,8 @@ var onlineservicecounter = 0;
 var fetchUsersInterval = 30000;
 var monitorRate = 500;
 
-setInterval(function(){
+
+function doInterval(){
     function processStatus(){
 	for(var i=0;i<users.length;i++){
 	    users[i].online = false;
@@ -34,10 +35,15 @@ setInterval(function(){
     }else{
 	processStatus();
     }
-},monitorRate);
+}
+
+var intervaltimer = setInterval(doInterval,monitorRate);
 
 module.exports = {
-    status : function(){
-	return status;
+    pushNewUser : function(){
+	clearInterval(intervaltimer);
+	intervaltimer = setInterval(doInterval,monitorRate);
+	onlineservicecounter = fetchUsersInterval; //forces it to get new users.
+	doInterval();
     }
 }

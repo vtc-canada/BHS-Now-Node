@@ -112,7 +112,7 @@
                   <% } %>
               </li>
 
-              <li <% if (typeof(url)!='undefined'&&url=='communication'){ %>class="active"<% } %>><a class="top-message-a" href="/communication" style="position:relative;"><div style="display:none;" class="badge-div" ><span class="badge badge-important">6</span></div><i class="icon-envelope-alt icon-2x top-messages-icon"></i><div class="top-messages-span"><%= translate[req.session.user.locale]['Messages'] %></div></a></li>
+              <li <% if (req.url=='/messages'){ %>class="active"<% } %>><a class="top-message-a" href="/messages" style="position:relative;"><div style="display:none;" class="badge-div" ><span class="badge badge-important">6</span></div><i class="icon-envelope-alt icon-2x top-messages-icon"></i><div class="top-messages-span"><%= translate[req.session.user.locale]['Messages'] %></div></a></li>
               <li><form id="search-form" action="/search" method="post" style="margin-bottom: 0px;" ><input name="search_field" type="text" placeholder="<%= translate[req.session.user.locale]['Search'] %>" id="main-search" class="main-search"><i class="icon-search top-search-icon"></i></form></li>
               <li class="myaccount-topmenu"><a id="myaccount" data-placement="bottom" data-content="Loading.." title="" data-original-title="" ><i class="icon-user"></i>&nbsp<%= req.session.user.username %></a>
                   <!--[if lt IE 9]>
@@ -260,13 +260,38 @@
 		});
 		var bannertimer = null;
 		
-		
+		  //Hides and shows the users list(messaging button)
+	    $('#users-toggler').click(function(){
+	        if($('#chat-section-wrapper').hasClass('hidechatusers')){
+	            $('#chat-section-wrapper').removeClass('hidechatusers').addClass('showchatusers');
+	        }
+	        else
+	        {
+	            $('#chat-section-wrapper').removeClass('showchatusers').addClass('hidechatusers');
+	        }
+	    });
 		$(window).resize(function(){
 	        fixheight();
 	    });
 	    function fixheight(){
 	        $('.main-content').css('height',$(window).height()-$('.navbar').height()+'px');
 	    }
+	    // Clicking the Locale Flag, triggers a page refresh. Just rotates the locale according to serverside
+        $('.language-a').click(function(event){
+            socket.request('/auth/togglelocale',{},function(data){
+                 location.reload();                           // This login will guarentee any session is still valid anyways
+            });
+        });
+	    function padLeft(nr, n, str){
+	        return Array(n-String(nr).length+1).join(str||'0')+nr;
+	    }
+	    function toLocaleDateTimeString(date){
+	    	if(typeof(date)=='string'){
+	    		date = new Date(date);
+	    	}
+	        return date.getFullYear()+'-'+padLeft((date.getMonth()+1).toString(),2)+'-'+ padLeft(date.getDate(),2) + ' ' + padLeft(date.getHours(),2)+':'+padLeft(date.getMinutes(),2)+':'+padLeft(date.getSeconds(),2);
+	    }
+	    
 	    $(document).ready(function(){
 	    	fixheight();
 	    });
@@ -453,88 +478,13 @@
                     	}
                         this.set(users);
 	                	usersView = new UsersView({collection: this});
-	                	var sessionboxes = <%=(typeof(req.session.user.boxes)=='undefined')?'[]':''%><%-JSON.stringify(req.session.user.boxes)%>;
-	                	for(var i=0;i<sessionboxes.length;i++){
-                        	chatboxManager.addBox('chatbox_'+sessionboxes[i].id,{first_name : this.get(sessionboxes[i].id).get('username'), last_name:""});
-                        	if(sessionboxes[i].maximized==0){
-                        		$('#chatbox_'+sessionboxes[i].id).parent().css('display','none');
-                        	}
-                        	$('#chatbox_'+sessionboxes[i].id+' div.chatbox-load-previous a').trigger('click');
-                   		}
-                        bindchatboxclicks();
-                        setchatboxstatuses();
+	                	
 	                	
 	                	this.socket.on('onlinestatus', _.bind(function(users){
 	                		this.set(users);
 	                		usersView.render();
-	                		/*
-                              var m = msg.verb;
-                              if (m === "create") {
-                                  this.add(msg.data);
-                              } else if (m === "update") {
-                              		if(typeof(this.get(msg.data.id))!='undefined')
-                              		{
-                                  		this.get(msg.data.id).set(msg.data);
-                                  	}
-                              } else if (m === "destroy") {
-                                  chatboxManager.delBox('chatbox_'+msg.id);
-                                  this.remove(this.get(msg.id));
-                              }*/
 						}, this));
 	                	
-                          /*alert('found messages');
-                               //preload the namesbyID lookup object
-                    	for(var i=0; i<msgs.length;i++){
-                    		namesbyID[msgs[i].id] = msgs[i].username;
-                    	}
-
-                              // This gets and builds the chatboxes that were open previously
-                              socket.get('/getactivechatboxes',{},function(data){
-                                  if(data==null){
-                                      return;
-                                  }
-                                  if(data.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
-                                      location.reload(); // Will boot back to login screen
-                                  }
-                                  // Sets up the chatboxes the way you had it on the last page
-                                  for(var i=0;i<data.length;i++){
-                                      chatboxManager.addBox('chatbox_'+data[i].id,{first_name : namesbyID[data[i].id], last_name:""});
-                                      if(data[i].maximized==0){
-                                          $('#chatbox_'+data[i].id).parent().css('display','none');
-                                      }
-                                      $('#chatbox_'+data[i].id+' div.chatbox-load-previous a').trigger('click');
-                                  }
-                                  bindchatboxclicks();
-                                  setchatboxstatuses();
-                              });
-
-                              this.set(msgs);
-
-                              // Once we've got all the users for the first time, set up the View (Users List)
-                              uView = new UsersView({collection: users});
-                              <% if(req.route.url=='communication') { %>
-                              fillautocompletebox();     // This utility function exists on the comminications page. It builds the combo dropdown for sending a new message
-                              <% } %>
-                          }, this));
-
-                          //Event handler for receiving user updates.
-                          this.socket.on("message", _.bind(function(msg){
-                              if(msg.model!='users'){
-                                  return;
-                              }
-                              var m = msg.verb;
-                              if (m === "create") {
-                                  this.add(msg.data);
-                              } else if (m === "update") {
-                              		if(typeof(this.get(msg.data.id))!='undefined')
-                              		{
-                                  		this.get(msg.data.id).set(msg.data);
-                                  	}
-                              } else if (m === "destroy") {
-                                  chatboxManager.delBox('chatbox_'+msg.id);
-                                  this.remove(this.get(msg.id));
-                              }
-                          }, this));*/
 					}, this));
               	}, this));
             }
@@ -568,6 +518,15 @@
                         	users.get(msgs[i].fromUserId).set('unreadmessages',true);
                     	}
                 	}
+                	var sessionboxes = <%=(typeof(req.session.user.boxes)=='undefined')?'[]':''%><%-JSON.stringify(req.session.user.boxes)%>;
+                	for(var i=0;i<sessionboxes.length;i++){
+                    	chatboxManager.addBox('chatbox_'+sessionboxes[i].id,{first_name : users.get(sessionboxes[i].id).get('username'), last_name:""});
+                    	if(sessionboxes[i].maximized==0){
+                    		$('#chatbox_'+sessionboxes[i].id).parent().css('display','none');
+                    	}
+                    	$('#chatbox_'+sessionboxes[i].id+' div.chatbox-load-previous a').trigger('click');
+               		}
+                    bindchatboxclicks();
 	                savechatboxestosession();
 					updateBadge();
 					setchatboxstatuses();
@@ -578,7 +537,7 @@
             	this.$el.html("");
             	var tcollection = this.collection.sortBy(function(user){
                     var onlinetemp = '1';
-                    if(typeof(user.get("online"))!='undefined'){
+                    if(user.get("online")){
                         onlinetemp = '0';
                     }
                     return onlinetemp+'_'+user.get("username");
@@ -605,6 +564,11 @@
                   setchatboxstatuses();*/
           	}
       	});
+      	
+      	// Search Users Constrainer
+        $('#users-search').keyup(function(){
+            usersView.render();
+        });
       	
       	// Pops up a chatbox when you click on a users name
       	// This binds regardless of redraws.. very useful.
