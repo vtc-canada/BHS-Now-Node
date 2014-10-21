@@ -22,7 +22,7 @@ module.exports = {
      ***************************************************/
     models : {
 	connection : 'nowManagementBaseMysql',
-	migrate : 'drop' //safe //alter
+	migrate : 'safe' //safe //alter
     },
 
     /***************************************************

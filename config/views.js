@@ -58,9 +58,9 @@ module.exports.views = {
 	    desktop:'/img/ISN-International-Airport-4.png',
 	    mobile:'/img/ISN-International-Airport-3.png'
 	},
-	messaging : false,
+	messaging : true,
 	search:{
-	    enabled:false,
+	    enabled:true,
 	    url:'/search'
 	},
 	i18n:true,

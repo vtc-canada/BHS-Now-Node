@@ -137,7 +137,6 @@
                       </li>
                   </ul>
               </li>
-              
             </ul>
           </div><!--/.nav-collapse -->
         </div>
@@ -425,6 +424,28 @@
         });
         // End of My Account Section
         
+	        // Does Popup Hiding for popovers
+	      // This makes popups hide when you click somewhere off them
+	    $('body').on('click', function (e) {
+	        $('.ganntbar').each(function () {
+	            if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0&&$('.bootstrap-datetimepicker-widget').has(e.target).length ===0) {
+	                $(this).popover('hide');
+	            }
+	        });
+	
+	        $('#myaccount').each(function () {
+	            if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0&&$('.bootstrap-datetimepicker-widget').has(e.target).length ===0) {
+	                $(this).popover('hide');
+	            }
+	        });
+	    });
+	
+	      // binds search enter key to submit
+	    $('#main-search').keydown(function(event){
+	        if(event.keyCode == 13 && !event.shiftKey){
+	            $('#search-form').submit();
+	        }
+	    });
         
         
         
@@ -712,56 +733,7 @@
     
     <% } %>//End of messaging
     
-    
-
-/*
-           // UsersView definition
-          
-              
-              initialize: function () {
-                  this.collection.on('add', this.render, this);
-                  this.collection.on('change', this.render, this);
-                  this.collection.on('remove', this.render, this);
-                  this.render();
-                  messages = new MessageCollection();
-                  messages.fetch();
-              },
-              template: _.template($('#userlist-template').html()),
-              render: function () {
-                  this.$el.html("");
-                  var renderstring = "";
-                  var tcollection = this.collection.sortBy(function(message){
-                      var onlinetemp = '1';
-                      if(message.get("lastonline")!=''&&(new Date()-dateFromISO(message.get("lastonline"))-timeoffset <last_online_config)){
-                          onlinetemp = '0';
-                      }
-                      return onlinetemp+'_'+message.get("username");
-                  });
-
-                  for(var i=0; i<tcollection.length; i++)
-                  {
-                      var searchval = $('#users-search').val();
-                      if(tcollection[i].get('username').toString().indexOf(searchval)!=-1)
-                      {
-                          if (tcollection[i].get('username')!='<%= req.session.user.username%>'){
-                              renderstring +=  this.template(tcollection[i].toJSON());
-                          }
-                      }
-                  }
-                  this.$el.append(renderstring);
-                  setchatboxstatuses();
-              }
-          });
-
-          var uView; // This is instantiated once the usersCollection gets it's users the first time
-        
-	  */
 	</script>
-  
-  
-  
-  
-  
   
   
   
