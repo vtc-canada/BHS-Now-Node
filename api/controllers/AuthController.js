@@ -15,6 +15,10 @@ module.exports = {
 	delete req.session.user;
 	res.redirect('/auth');
     },
+    joinrooms:function(req,res){
+	req.socket.join('onlinestatus');
+	req.socket.join(req.session.user.id);
+    },
     login : function(req, res) {
 
 	var username = req.param("username");
@@ -44,21 +48,26 @@ module.exports = {
 		}
 		var hasher = require("password-hash");
 		if (hasher.verify(password, foundUser.password)) { // here
-		    req.session.user = foundUser;
-		    req.session.user.policy = {};
-		    Database.localSproc("AuthorizeResourcePolicy", [ req.session.user.id, "default" ], function(err, policy) {
+		    Database.localSproc("AuthorizeResourcePolicy", [ foundUser.id, "default" ], function(err, policy) {
 			if (err) {
 			    console.log('Database Error' + err);
 			    res.json(500, {
 				error : 'Database Error' + err
 			    });
 			} else if (policy[0] && policy[0][0]) { // }.length==1&&typeof(policy[0][0].create)!='undefined'&&policy[0][0].create!=null){
-			    req.session.user.policy['default'] = policy[0][0];
-			    Database.localSproc('updateUserActiveLoginAttempts', [ foundUser.id, 1, 0 ], function(err, result) {
-				if (err)
-				    console.log('Unable to update User Login Attempts');
-			    });
-			    res.send(foundUser);
+			    if(typeof(policy[0][0].create)!='undefined'&&policy[0][0].create!=null){
+
+				req.session.user = foundUser;
+				req.session.user.policy = {};
+				req.session.user.policy['default'] = policy[0][0];
+				Database.localSproc('updateUserActiveLoginAttempts', [ foundUser.id, 1, 0 ], function(err, result) {
+				    if (err)
+					console.log('Unable to update User Login Attempts');
+				});
+				res.send(foundUser);
+			    }else{
+				res.json({error:'This account does not have access privileges'});
+			    }
 			}
 		    });
 		} else {// increment login count

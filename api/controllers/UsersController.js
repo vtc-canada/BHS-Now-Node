@@ -13,6 +13,37 @@ module.exports = {
 		return res.json(err);
 	    }
 	    if (users[0]) {
+		res.json(users[0]);
+	    }
+	});
+    },
+    getUsersAndStatus:function(req,res){
+	Database.localSproc('getUsers', [], function(err, users) {
+	    if (err) {
+		console.log('getUsers Error: ' + err);
+		return res.json(err);
+	    }
+	    
+	    if (users[0]) {
+		users = users[0];
+		for(var i=0;i<users.length;i++){
+		    if(typeof(sails.io.rooms['/' + users[i].id]) != 'undefined'&&sails.io.rooms['/' + users[i].id].length>0){
+			users[i].online = true;
+		    }else{
+			users[i].online = false;
+		    }
+		}
+		res.json(users);
+	    }
+	});
+    },
+    datatables : function(req, res) {
+	Database.localSproc('getUsers', [], function(err, users) {
+	    if (err) {
+		console.log('getUsers Error: ' + err);
+		return res.json(err);
+	    }
+	    if (users[0]) {
 		res.json({
 		    'data' : users[0]
 		});

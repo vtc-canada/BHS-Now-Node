@@ -191,6 +191,16 @@
     </div>
  
  
+    <script type="text/template" id="userlist-template">
+            <li class="{{ if(typeof(online)!='undefined'&&online){ }}online{{ }else{ }}offline{{ } }}" userid="{{= id }}" >
+                <span class="glow"></span>
+                <a>
+                    <span>{{= username }}</span>
+                </a>
+            </li>
+    </script>
+ 
+ 
      <!-- Scripts are loaded here at the latest possible place to allow the layout html to be rendered ASAP -->
     <script src="/js/underscore-min.js"></script>
     <script src="/js/backbone-min.js"></script>
@@ -206,12 +216,50 @@
 <!-- MAIN LAYOUT Script-->
 <!-- This Section contains the messaging scripts, socket calls, and many other utility functions for all the pages -->
 	<script>
-		var socket = io.connect();
-		var bannertimer = null;
+		
+		if(typeof(io)=='undefined'){ // failed to load scripts properly
+			location.reload();
+		}
+		
 		_.templateSettings = {
 		    interpolate : /\{\{\=(.+?)\}\}/g,
 		    evaluate: /\{\{(.+?)\}\}/g
 		};
+		
+		var fulluserIDselected=0;
+		var socket = io.connect();
+		socket.on("connect",function(){
+			socket.get('/auth/joinrooms');
+			socket.on('<%=req.session.user.id%>',function(data){
+				if(data.message){
+				  var message = data.message;
+				  if(message.fromUserId == <%=req.session.user.id%>){    // if the message is from YOUrself
+                      // if OPEN or CLOSED AND screen != fulluserIDselected
+                      if(showList.indexOf('chatbox_'+message.toUserId)!=-1||(showList.indexOf('chatbox_'+message.toUserId)==-1&&message.toUserId!=fulluserIDselected ))
+                      {
+                          chatboxManager.addBox('chatbox_'+message.toUserId,{first_name : users.get(message.toUserId).get('username'), last_name:""});
+                          $("#chatbox_" + message.toUserId).chatbox("option", "boxManager").addMsg('You', message.message,message.id);
+                      }
+                  }
+                  else     // if the message was from someone else
+                  {
+                      if(showList.indexOf('chatbox_'+message.fromUserId)!=-1||(showList.indexOf('chatbox_'+message.fromUserId)==-1&&message.fromUserId!=fulluserIDselected ))
+                      {
+                          chatboxManager.addBox('chatbox_'+message.fromUserId,{first_name : users.get(message.fromUserId).get('username'), last_name:""});
+                          $("#chatbox_" + message.fromUserId).chatbox("option", "boxManager").addMsg(users.get(message.fromUserId).get('username'), message.message,message.id);
+                          users.get(message.fromUserId).set('unreadmessages',true);    
+                      }
+                  }
+
+                  savechatboxestosession();   //Saves open chatboxes to serverside session variable
+                  updateBadge();              // updates the badge to alert new messages
+                  setchatboxstatuses();       // Updates online/offline
+				}
+			
+			});
+		});
+		var bannertimer = null;
+		
 		
 		$(window).resize(function(){
 	        fixheight();
@@ -222,6 +270,8 @@
 	    $(document).ready(function(){
 	    	fixheight();
 	    });
+	    
+		
 	    function clearBanners(){
 	    	$('.main-content > .page-banner').next('.alert').remove();
 	    }
@@ -318,7 +368,7 @@
                         '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong><%= translate[locale]['FormError'] %>:&nbsp;</strong><%= translate[locale]['Password must be at least 1 character long.'] %></div>');
 
             }else{
-                socket.request('/auth/checkandchangemypassword',{currentpassword:$('#mycurrentpassword').val(),newpassword:$('#mynewpassword').val()},function(data){
+                socket.get('/auth/checkandchangemypassword',{currentpassword:$('#mycurrentpassword').val(),newpassword:$('#mynewpassword').val()},function(data){
                     if(typeof(data.error)!='undefined'){
                         location.reload(); // Will boot back to login screen
                         return;
@@ -353,7 +403,380 @@
         
         
         
-	  
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //////////***************************************//////////
+        //////////    Messaging                          //////////
+        //////////***************************************//////////
+        
+        //////////////////////////////////////////////////
+        //////// CHAT STUFF //////////////////////////////
+        //////////////////////////////////////////////////
+        // This function triggers when a message is sent (outgoing) via a chatbox
+        var broadcastMessageCallback = function(tousername, msg) {
+            // pushes the message to serverside
+            socket.get('/chat/sendmessage',{toUserId:users.findWhere({username:tousername}).get('id'),message:msg},function(data){
+                if(data.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
+                    location.reload(); // Will boot back to login screen
+                }
+            });
+        }
+        // this initially initialzes the chatbox manager.
+        chatboxManager.init({messageSent : broadcastMessageCallback,loadearliertext:'<%= translate[locale]['Load Earlier Messages'] %>'});
+        
+        //////////////////////////////////////////////////
+        //////// USERS ///////////////////////////////////
+        //////////////////////////////////////////////////
+        // This sets up the users collection.
+        //
+        
+        var UsersModel = Backbone.Model.extend();
+
+        var SailsUsersCollection = Backbone.Collection.extend({
+        	sailsCollection: "",
+            socket: null,
+            sync: function(method, model, options){
+            	this.socket = socket;
+                this.socket.on("connect", _.bind(function(){
+                          //Once Connected, request all the users from serverside
+                	this.socket.get("/" + this.sailsCollection, options, _.bind(function(users){
+                		if(users.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
+                        	location.reload(); // Will boot back to login screen
+                    	}
+                        this.set(users);
+	                	usersView = new UsersView({collection: this});
+	                	var sessionboxes = <%=(typeof(req.session.user.boxes)=='undefined')?'[]':''%><%-JSON.stringify(req.session.user.boxes)%>;
+	                	for(var i=0;i<sessionboxes.length;i++){
+                        	chatboxManager.addBox('chatbox_'+sessionboxes[i].id,{first_name : this.get(sessionboxes[i].id).get('username'), last_name:""});
+                        	if(sessionboxes[i].maximized==0){
+                        		$('#chatbox_'+sessionboxes[i].id).parent().css('display','none');
+                        	}
+                        	$('#chatbox_'+sessionboxes[i].id+' div.chatbox-load-previous a').trigger('click');
+                   		}
+                        bindchatboxclicks();
+                        setchatboxstatuses();
+	                	
+	                	this.socket.on('onlinestatus', _.bind(function(users){
+	                		this.set(users);
+	                		usersView.render();
+	                		/*
+                              var m = msg.verb;
+                              if (m === "create") {
+                                  this.add(msg.data);
+                              } else if (m === "update") {
+                              		if(typeof(this.get(msg.data.id))!='undefined')
+                              		{
+                                  		this.get(msg.data.id).set(msg.data);
+                                  	}
+                              } else if (m === "destroy") {
+                                  chatboxManager.delBox('chatbox_'+msg.id);
+                                  this.remove(this.get(msg.id));
+                              }*/
+						}, this));
+	                	
+                          /*alert('found messages');
+                               //preload the namesbyID lookup object
+                    	for(var i=0; i<msgs.length;i++){
+                    		namesbyID[msgs[i].id] = msgs[i].username;
+                    	}
+
+                              // This gets and builds the chatboxes that were open previously
+                              socket.get('/getactivechatboxes',{},function(data){
+                                  if(data==null){
+                                      return;
+                                  }
+                                  if(data.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
+                                      location.reload(); // Will boot back to login screen
+                                  }
+                                  // Sets up the chatboxes the way you had it on the last page
+                                  for(var i=0;i<data.length;i++){
+                                      chatboxManager.addBox('chatbox_'+data[i].id,{first_name : namesbyID[data[i].id], last_name:""});
+                                      if(data[i].maximized==0){
+                                          $('#chatbox_'+data[i].id).parent().css('display','none');
+                                      }
+                                      $('#chatbox_'+data[i].id+' div.chatbox-load-previous a').trigger('click');
+                                  }
+                                  bindchatboxclicks();
+                                  setchatboxstatuses();
+                              });
+
+                              this.set(msgs);
+
+                              // Once we've got all the users for the first time, set up the View (Users List)
+                              uView = new UsersView({collection: users});
+                              <% if(req.route.url=='communication') { %>
+                              fillautocompletebox();     // This utility function exists on the comminications page. It builds the combo dropdown for sending a new message
+                              <% } %>
+                          }, this));
+
+                          //Event handler for receiving user updates.
+                          this.socket.on("message", _.bind(function(msg){
+                              if(msg.model!='users'){
+                                  return;
+                              }
+                              var m = msg.verb;
+                              if (m === "create") {
+                                  this.add(msg.data);
+                              } else if (m === "update") {
+                              		if(typeof(this.get(msg.data.id))!='undefined')
+                              		{
+                                  		this.get(msg.data.id).set(msg.data);
+                                  	}
+                              } else if (m === "destroy") {
+                                  chatboxManager.delBox('chatbox_'+msg.id);
+                                  this.remove(this.get(msg.id));
+                              }
+                          }, this));*/
+					}, this));
+              	}, this));
+            }
+        });
+        
+        var UsersCollection = SailsUsersCollection.extend({
+			sailsCollection: 'users/getUsersAndStatus',
+			model: UsersModel
+		});
+        users = new UsersCollection();
+        users.fetch();
+        // create the collection, which in turn once the users are received the first time, creates the usersView
+
+
+		var UsersView = Backbone.View.extend({
+        	el: '#chatwrapper',
+			initialize: function () {
+            	this.render();  // initializes the view the first time!
+                  
+                socket.get('/chat/getunreadmessages',{},function(msgs){  // gets the unread messages the first time it renders the 
+                	for(var i=0;i<msgs.length;i++){
+                	
+						if(msgs[i].fromUserId == <%=req.session.user.id%>){
+                        	chatboxManager.addBox('chatbox_'+msgs[i].toUserId,{first_name : users.get(msgs[i].toUserId).get('username'), last_name:""});
+                        	$("#chatbox_" + msgs[i].toUserId).chatbox("option", "boxManager").addMsg('You', msgs[i].message,msgs[i].id);
+                    	}
+                    	else// to me
+                        {
+                        	chatboxManager.addBox('chatbox_'+msgs[i].fromUserId,{first_name : users.get(msgs[i].fromUserId).get('username'), last_name:""});
+                        	$("#chatbox_" + msgs[i].fromUserId).chatbox("option", "boxManager").addMsg(users.get(msgs[i].fromUserId).get('username'), msgs[i].message,msgs[i].id);
+                        	users.get(msgs[i].fromUserId).set('unreadmessages',true);
+                    	}
+                	}
+	                savechatboxestosession();
+					updateBadge();
+					setchatboxstatuses();
+				});
+            },
+          	template: _.template($('#userlist-template').html()),
+          	render: function () {
+            	this.$el.html("");
+            	var tcollection = this.collection.sortBy(function(user){
+                    var onlinetemp = '1';
+                    if(typeof(user.get("online"))!='undefined'){
+                        onlinetemp = '0';
+                    }
+                    return onlinetemp+'_'+user.get("username");
+                });
+                var renderstring = '';
+            	for(var i=0; i<tcollection.length; i++)
+                {
+                	var searchval = $('#users-search').val();
+                	if(tcollection[i].get('username').toString().indexOf(searchval)!=-1)
+                 	{
+                    	if (tcollection[i].get('username')!='<%= req.session.user.username%>'){
+                       		renderstring +=  this.template(tcollection[i].toJSON());
+                    	}
+                	}
+            	}
+            	this.$el.append(renderstring);
+				// Binds some classes to make sure they look right.
+				$('.primary-sidebar > div#chat-section-wrapper > ul.chatnav > li.online:first').addClass('first-child');
+				$('.primary-sidebar > div#chat-section-wrapper > ul.chatnav > li.online:last').addClass('last-child');
+				$('.primary-sidebar > div#chat-section-wrapper > ul.chatnav > li.offline:first').addClass('first-child');
+				$('.primary-sidebar > div#chat-section-wrapper > ul.chatnav > li.offline:last').addClass('last-child');
+				setchatboxstatuses();
+            	/*
+                  setchatboxstatuses();*/
+          	}
+      	});
+      	
+      	// Pops up a chatbox when you click on a users name
+      	// This binds regardless of redraws.. very useful.
+	    $('#chatwrapper').on('click','li',function(){
+	        chatboxManager.addBox('chatbox_'+$(this).attr('userid'),{first_name : users.get($(this).attr('userid')).get('username'), last_name:""});
+	        $('#chatbox_'+$(this).attr('userid') + ' + div.ui-chatbox-input > textarea').focus();
+	        savechatboxestosession(); // saves chatboxes! // also binds chatbox clicks.. which binds savechatboxestosession() events to minimizing/max boxes.
+	        setchatboxstatuses();
+	    });
+	    // Utility function for updating the online and offline status of the users in the users list.
+		function setchatboxstatuses(){
+			users.each(function(user) {
+				if($('#chatbox_'+user.get('id')).size()>0){
+					if(user.get('online')==1){
+						$('#chatbox_'+user.get('id')).parent().parent().removeClass('offline').removeClass('online').addClass('online');
+					}else{
+						$('#chatbox_'+user.get('id')).parent().parent().removeClass('offline').removeClass('online').addClass('offline');
+					}
+				}
+			}, this);
+		}
+		  //calls serverside and stores the list of open chatboxes to the session!
+		function savechatboxestosession(){
+	        if(this.updateboxes!==undefined){
+	            clearTimeout(this.updateboxes);
+	        }
+	        bindchatboxclicks();
+	        this.updateboxes = setTimeout(function(){
+	            var boxes = new Array();
+	            for(var i =0; i<showList.length; i++){
+	                boxes.push({id: parseInt(showList[i].substring(8,showList[i].length)), maximized:$('#'+showList[i]).parent().css('display')=='none'?0:1})
+	            }
+	            socket.get('/chat/saveopenboxes',{list:boxes},function(data){
+	                if(data.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
+	                    location.reload(); // Will boot back to login screen
+	                }
+	            });
+			},200);
+	    }
+	    // rebinds chatboxes for open-awareness
+		function bindchatboxclicks(){
+	        $('.ui-chatbox .ui-widget-header .ui-chatbox-icon span').unbind('click',savechatboxestosession);
+	        $('.ui-chatbox .ui-widget-header .ui-chatbox-icon span').bind('click',savechatboxestosession);
+	        $('.ui-chatbox .ui-widget-header').unbind('click',savechatboxestosession);
+	        $('.ui-chatbox .ui-widget-header').bind('click',savechatboxestosession);
+    	}
+    	
+    	  // Loads more of the old conversation into the chatbox
+	      // attaches infinity-scroll
+	    $(document).on('click','div.chatbox-load-previous a',function(event){
+	        var boxId=$(this).parent().parent().attr('id').substring(8,$(this).parent().parent().attr('id').length);
+	        var priorID = null;
+	        if($(this).parent().parent().find('.ui-chatbox-msg[messageid]').length>0){
+	            priorID =  parseInt($(this).parent().parent().find('.ui-chatbox-msg[messageid]').attr('messageid'));
+	        }
+	        $(this).remove();
+	        socket.request("/chat/loadpreviousmessagesPriorId",{priorID: priorID,boxId:boxId},function(msgs){
+	            if(msgs.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
+	                location.reload(); // Will boot back to login screen
+	            }
+	            for(var i=0;i<msgs.length;i++){
+	            	if(msgs[i].fromUserId == <%=req.session.user.id%>){
+	                    $("#chatbox_" + msgs[i].toUserId).chatbox("option", "boxManager").prependMsg('You', msgs[i].message,msgs[i].id);
+	                }
+	                else // to me
+	                {
+	                    $("#chatbox_" + msgs[i].fromUserId).chatbox("option", "boxManager").prependMsg(users.get(msgs[i].fromUserId).get('username'), msgs[i].message,msgs[i].id);
+	                }
+	            }
+	            if(priorID!=null){
+	                $("#chatbox_" + boxId).scrollTop($("div.ui-chatbox-msg[messageid=" + priorID+']').position().top);
+	            }else{
+	                $("#chatbox_" + boxId).scrollTop($("#chatbox_" + boxId).get(0).scrollHeight);
+	            }
+	            $("#chatbox_" + boxId).scroll(function(){
+	                if($("#chatbox_" + boxId).scrollTop()==0){
+	                    var scrollID = parseInt($("#chatbox_" + boxId).find('div.ui-chatbox-msg[messageid]').attr('messageid'));
+	
+	                    socket.request("/chat/loadpreviousmessagesPriorId",{priorID: scrollID,boxId:boxId},function(msgs){
+	                        if(msgs.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
+	                            location.reload(); // Will boot back to login screen
+	                        }
+	                        if(msgs.length==0){
+	                            $("#chatbox_" + boxId).unbind();
+	                            $("#chatbox_" + boxId).chatbox("option", "boxManager").prependMsg('', '<%= translate[locale]['End of messages'] %>',0);
+	                            $("#chatbox_" + boxId).scrollTop(100);
+	                            return;
+	                        }
+	                        for(var i=0; i<msgs.length; i++){
+	                            if(msgs[i].fromUserId == <%=req.session.user.id%>){
+	                                $("#chatbox_" + boxId).chatbox("option", "boxManager").prependMsg('You', msgs[i].message,msgs[i].id);
+	                            }
+	                            else                     // to me
+	                            {
+	                                $("#chatbox_" + boxId).chatbox("option", "boxManager").prependMsg(users.get(msgs[i].fromUserId).get('username'), msgs[i].message,msgs[i].id);
+	                            }
+	                        }
+	                        $("#chatbox_" + boxId).scrollTop($("#chatbox_" + boxId + ' div.ui-chatbox-msg[messageid='+scrollID+']').position().top);
+	                    });
+	                }
+	            });
+	        });
+	    });
+	    
+	    // Chatboxes - Keeps track of which chatboxes have been READ
+	    $(document).on('focus','[id^=chatbox_] + div.ui-chatbox-input > textarea',function(){
+	        var numIdt = parseInt($(this).parent().prev().attr('id').substring(8,$(this).parent().prev().attr('id').length));
+	        users.get(numIdt).unset('unreadmessages');
+	        updateBadge();
+	        socket.request("/chat/seenmessage",{fromUserId:$(this).parent().prev().attr('id').substring(8,$(this).parent().prev().attr('id').length)},function(msg){
+	            if(msg.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
+	                location.reload(); // Will boot back to login screen
+	            }
+	        });
+	    });
+	    //Makes the badge at the top right show the correct number of unread messages
+	    function updateBadge(){
+	        if(users.where({unreadmessages:true}).length<=0){
+	            $('.badge-div').css('display','none');
+	        }
+	        else{
+	            $('.badge-div').css('display','block');
+	            $('.badge-div span').html(users.where({unreadmessages:true}).length);
+	        }
+	    }
+    
+    //End of messaging
+    
+    
+
+/*
+           // UsersView definition
+          
+              
+              initialize: function () {
+                  this.collection.on('add', this.render, this);
+                  this.collection.on('change', this.render, this);
+                  this.collection.on('remove', this.render, this);
+                  this.render();
+                  messages = new MessageCollection();
+                  messages.fetch();
+              },
+              template: _.template($('#userlist-template').html()),
+              render: function () {
+                  this.$el.html("");
+                  var renderstring = "";
+                  var tcollection = this.collection.sortBy(function(message){
+                      var onlinetemp = '1';
+                      if(message.get("lastonline")!=''&&(new Date()-dateFromISO(message.get("lastonline"))-timeoffset <last_online_config)){
+                          onlinetemp = '0';
+                      }
+                      return onlinetemp+'_'+message.get("username");
+                  });
+
+                  for(var i=0; i<tcollection.length; i++)
+                  {
+                      var searchval = $('#users-search').val();
+                      if(tcollection[i].get('username').toString().indexOf(searchval)!=-1)
+                      {
+                          if (tcollection[i].get('username')!='<%= req.session.user.username%>'){
+                              renderstring +=  this.template(tcollection[i].toJSON());
+                          }
+                      }
+                  }
+                  this.$el.append(renderstring);
+                  setchatboxstatuses();
+              }
+          });
+
+          var uView; // This is instantiated once the usersCollection gets it's users the first time
+        
+	  */
 	</script>
   
   

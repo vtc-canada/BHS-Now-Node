@@ -11,14 +11,16 @@ module.exports = function(req,res,next) {
             }else if(policy[0]&&policy[0].length==1&&typeof(policy[0][0].create)!='undefined'&&policy[0][0].create!=null){
                 req.session.user.policy[path] = policy[0][0];
                 if(!req.session.user.active||(policy[0][0].create== 0&&policy[0][0].read == 0&&policy[0][0].update== 0&&policy[0][0].delete== 0)){
-                    res.json(500,{error:'Invalid Access!@'+req.session.user.id+':'+path});
+                    res.json(403,{error:'Invalid Access!@'+req.session.user.id+':'+path});
                     return;
                 }
                 next();
             }else{
         	console.log('Policy Missing!@'+req.session.user.id+':'+path);
-        	return autoGenRoute();
-                //res.json(500,{error:'Policy Missing!@'+req.session.user.id+':'+path});
+        	if(sails.config.environment=='development'){//}&&req.session.user.username==sails.config.autogenerate.user.username){
+            		return autoGenRoute();
+        	}
+        	failResponse();//res.json(500,{error:'Policy Missing!@'+req.session.user.id+':'+path});
             }
 	});
     }
@@ -39,11 +41,20 @@ module.exports = function(req,res,next) {
                  error : "Session not found"
              }, 403);
          } else {
-             req.flash('errormessage','You are not logged into the system. Please log in.');
-             res.writeHead(302,{
-         	'Location':'/auth'
-             });
-             res.end();
+             try{
+                 res.writeHead(302,{
+              	'Location':'/auth'
+                  });
+                 req.flash('errormessage','You are not logged into the system. Please log in.');
+                 res.end();
+             }
+             catch(err){
+        	 console.log('Error sending fail Response.'+err);
+                 res.json({error:'Invalid Access!@'},403);
+//                 res.json({
+//                     error : "Session not found"
+//                 }, 403);
+             }
              
              //res.view('auth/loginpage', {
              //    layout : false,

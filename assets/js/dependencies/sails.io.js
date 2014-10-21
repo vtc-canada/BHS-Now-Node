@@ -780,6 +780,7 @@ var io="undefined"==typeof module?{}:module.exports;(function(){(function(a,b){v
               // io.socket.on('reconnect_failed', function () {
               //  consolog('io.socket emitted `reconnect_failed`');
               // });
+        	location.reload();
 
               consolog(
                 'Failed to connect socket (probably due to failed authorization on server)',

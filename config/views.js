@@ -83,6 +83,7 @@ module.exports.views = {
 		'DefaultTitle' : 'BHS Now',
 		'Login Title':'Manage your Baggage Handling System',
 	        'You are not logged into the system. Please log in.':'You are not signed into the system. Your session may have automatically expired. Please sign in.',
+	        'This account does not have access privileges':'This account does not have access privileges.',
 	        'Main Title':'Manage your Real Estate.',
 	        'Sign in':'Sign in',
 	        'Change Password':'Change Password',
@@ -109,6 +110,10 @@ module.exports.views = {
 	        'FormSet':'Set',
 	        'Current password was incorrect.':'Current password was incorrect.',
 	        'Password has been successfully changed.':'Password has been successfully changed.',
+	        
+	        
+	        'Load Earlier Messages':'Load Earlier Messages',
+	        'End of messages':'End of messages',
 	        
 	        
 	        
