@@ -65,7 +65,7 @@ module.exports = {
     index : function(req, res) {
         if (req.session&&req.session.user) {
             res.writeHead(302,{
-        	'Location':'/maps'
+        	'Location':'/buildings'
             });
             res.end();
             //res.view('maps/index', {});

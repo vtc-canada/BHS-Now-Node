@@ -220,10 +220,10 @@
 
               <span class="icon-list"></span>
           </button>
-            <a class="brand isys-a large" href="/maps" style="height:40px; width: 407px; padding-left: 12px !important;"><img style="padding-top: 3px; padding-left: 3px;"src="/img/CRED-Application-Logo-Desktop.png" /></a>
+            <a class="brand isys-a large" href="/buildings" style="height:40px; width: 407px; padding-left: 12px !important;"><img style="padding-top: 3px; padding-left: 3px;"src="/img/CRED-Application-Logo-Desktop.png" /></a>
             <div class="templatedebug" style="display:none;"><%-req.route.path%> -<%-JSON.stringify(req.session.user.policy['layout'])%></div>
            
-            <a class="brand isys-a small" href="/maps" style="height: 40px; width: 130px;background-image: url(&quot;/img/CRED-Application-Logo-Mobile.png&quot;);background-size: 140px;background-repeat: no-repeat;background-position-x: 11px;">
+            <a class="brand isys-a small" href="/buildings" style="height: 40px; width: 130px;background-image: url(&quot;/img/CRED-Application-Logo-Mobile.png&quot;);background-size: 140px;background-repeat: no-repeat;background-position-x: 11px;">
 
                 <!-- <img src="/img/isyslogo.png" class="top-isys-logo pull-left"><span class="pull-left top-location-text">Airport BHS</span><i class="icon-plane icon-2x pull-right"></i><span class="pull-right webportal-top-text">Web Portal</span>
                 -->
@@ -273,14 +273,14 @@
 	  <!-- Main nav -->
 	  <ul class="nav nav-collapse collapse nav-collapse-primary">
 
-          <li <% if (typeof(req.url)!=='undefined'&&req.url=='/maps'){ %>class="active"<% } %>>
+          <!--<li <% if (typeof(req.url)!=='undefined'&&req.url=='/maps'){ %>class="active"<% } %>>
           <span class="glow"></span>
           <a href="/maps">
               <i class="icon-globe icon-2x"></i>
               <span><%= translate[req.session.user.locale]['Maps'] %></span>
           </a>
           </li>
-          
+          -->
             <li <% if (typeof(req.url)!=='undefined'&&req.url=='/buildings'){ %>class="active"<% } %>>
               <span class="glow"></span>
               <a href="/buildings">
