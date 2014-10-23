@@ -59,7 +59,7 @@ module.exports = {
 			return console.log('couldnt SELECT cur_buildings:'+err);
 	      
 	      for(var i=0;i<response.length;i++){
-		  var unitprice = Math.floor(parseInt(response[i].last_sale_price)/response[i].unit_quantity).toFixed(2);
+		  var unitprice = parseInt(parseInt(response[i].last_sale_price)/response[i].unit_quantity).toFixed(2);
 		  var id = response[i].id;
 		  sails.controllers.database.credQuery('UPDATE cur_buildings SET unit_price_manual_mode = 0, unit_price = '+unitprice+' WHERE id = '+id,function(err,response){
 		      if(err) 
