@@ -71,6 +71,22 @@
     }
 %>
 
+<div id="map_pane_wrapper" style="height:50px;">
+	<div id="map_pane">
+		<div id="map_wrapper" style="width:100%;">
+		</div>
+		<div id="building_slideup_wrapper" style="width:100%;position:absolute;bottom:50px;">
+		</div>
+		<div class="row-fluid" id="search_toggler" style="position:absolute;bottom:0px;" scrollstate="top">
+			<div class="arrow-down search-toggler-arrow"><i class="icon-chevron-down icon-3x"></i></div>
+			<div class="arrow-down scroll-icon"><i class="icon-globe icon-3x"></i></div>
+			<div class="arrow-up search-toggler-arrow"><i class="icon-chevron-up icon-3x"></i></div>
+			<div class="arrow-up scroll-icon"><i class="icon-globe icon-3x"></i></div>
+		</div>
+	</div>
+</div>
+
+
 <div class="row-fluid page-banner">
     <div class="banner-div"><i class="icon-building icon-1x banner-icon-top"></i><div class="banner-div-text"><%= translate[req.session.user.locale]['Buildings'] %></div></div>
 </div>
@@ -87,8 +103,9 @@
 
 <div class="row-fluid create-report-controls-wrapper">
 <div class="span10 offset1 report-control-left-label"  style="min-height: 30px;padding-top: 5px; font-size:18px; font-weight:bold;margin-top: 33px;">
-	<i class="icon-search icon-2x banner-icon-top" style="margin-top: -12px; margin-right: 10px;"></i><div class="banner-div-text">Search Filters</div>
-
+	<i class="icon-search icon-2x banner-icon-top" style="margin-top: -12px; margin-right: 10px;"></i>
+	<div class="buildings-search-filters banner-div-text">Search Filters</div>
+	<div class="buildings-search-filters-toggle btn btn-primary">Filters Enabled</div>
 </div>
 </div>
 
@@ -581,6 +598,7 @@
 				        <thead>
 				            <tr>
 				            	<th>Id<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+				            	<th></th>
 				                <th>Address<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
 				                <th>Units<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
 				                <th>Owner<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
@@ -597,7 +615,7 @@
 </div>
 
 
-<div class="row-fluid edit-item-section" style="display:none; margin-top:19px; margin-bottom:35px;">
+<div id="edit_item_section" class="row-fluid edit-item-section" style="display:none; margin-top:19px; margin-bottom:35px;">
     <div class="span10 offset1 page-controls-wrapper">
         <div class="row-fluid" id="reportheader"><span style="padding-left:10px;" id="building-section-title">Edit Building Details</span>
          	<% if(req.session.user.policy[req.route.path].update==1){ %><button style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="save_building"><i class="only-mobile icon-save"></i><span class="only-desktop">Save</span></button><% } %>
@@ -1331,9 +1349,102 @@
 </div>
 
 
+<script type="text/template" id="building-template">
+	<div class="row-fluid building-map-details" style="position:relative; cursor:default;" building_id="{{=building_id}}">
+		<div style="position: absolute;top: 0px;right: 0px;color: #C52D22;cursor: pointer;margin-right: 12px;margin-top: 7px;">
+		<i class="icon-remove-sign icon-2x close-building-map-details"></i>
+		</div>
+		<div class="building-details-padder">	
+			<div class="row-fluid" style="white-space:nowrap;">
+				{{ var tempimages = JSON.parse(images); if(tempimages!=null&&tempimages.length>0){ }}
+				<div class="building-card-images-wrapper">
+					{{var images = JSON.parse(images); for( key in images){ }}
+				 		<a href="{{=images[key].image}}" data-lightbox="{{=images[key].image}}" class="span2 building-overlay-block-picture"><img src="{{=images[key].thumb}}"></a>
+					{{ } }}
+				</div>
+				{{ } }}
+				<div class="span3 building-overlay-block-address">
+					<div class="row-fluid">Address:</div>
+					<div class="row-fluid block-value">{{=address_1}}</div>
+					<div class="row-fluid block-value">{{=address_2}}</div>
+					<div class="row-fluid block-value"><div id="view_history">View History</div></div>
+				</div>
+				
+				<div class="span3 building-overlay-block-details">
+					{{ for(var i=0; i<contacts.length; i++){ if(contacts[i].contact_type=='owner'){ }}
+					<div class="row-fluid" contact_id="{{=contacts[i].contact_id}}">
+						<div class="pull-left">Owner:</div>
+						<div class="pull-right">{{=contacts[i].contact_name}}</div>
+					</div>
+					{{ } } }}
+					{{ for(var i=0; i<contacts.length; i++){ if(contacts[i].contact_type=='seller'){ }}
+					<div class="row-fluid" contact_id="{{=contacts[i].contact_id}}">
+						<div class="pull-left">Seller:</div>
+						<div class="pull-right">{{=contacts[i].contact_name}}</div>
+					</div>
+					{{ } } }}
+					<div class="row-fluid">
+						<div class="pull-left">Prop. Mngr:</div>
+						<div class="pull-right">{{=property_mgmt_company}}</div>
+					</div>
+					<div class="row-fluid">
+						<div class="pull-left">Price:</div>
+						<div class="pull-right block-value">{{=last_sale_price}}</div>
+					</div>
+				</div>
+				<div class="span3 building-overlay-block-details">
+					<div class="row-fluid">
+						<div class="pull-left">Amount of Suites:</div>
+						<div class="pull-right block-value">{{=unit_quantity}}</div>
+					</div>
+					<div class="row-fluid">
+						<div class="pull-left">Sale Date:</div>
+						<div class="pull-right block-value">{{=(sale_date==null||sale_date=='')?'':(new Date(sale_date).toDateString())}}</div>
+					</div>
+					<div class="row-fluid">
+						<div class="pull-left">Price Per Unit:</div>
+						<div class="pull-right block-value">{{=unit_price}}</div>
+					</div>
+					<div class="row-fluid">
+						<div class="pull-left">Price:</div>
+						<div class="pull-right block-value">{{=last_sale_price}}</div>
+					</div>
+					
+				</div>
+				<div class="span3 building-overlay-block-details">
+					<div class="row-fluid">
+						<div class="pull-left">Bachelor Rent:</div>
+						<div class="pull-right block-value">{{=bachelor_price}}</div>
+					</div>
+					<div class="row-fluid">
+						<div class="pull-left">1 Bdrm Rent:</div>
+						<div class="pull-right block-value">{{=bedroom1_price}}</div>
+					</div>
+					<div class="row-fluid">
+						<div class="pull-left">2 Bdrm Rent:</div>
+						<div class="pull-right block-value">{{=bedroom2_price}}</div>
+					</div>
+					<div class="row-fluid">
+						<div class="pull-left">3 Bdrm Rent:</div>
+						<div class="pull-right block-value">{{=bedroom3_price}}</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAbxXYHzi3ypnRymTns27yE_o-fEyj6cIE"></script>
 
 <script>
     var alarms;
+    var markers,map;
+    var alarms;
+    var layers = {};
+    var selectedBuilding = null;
+    var filtersEnabled = true;
+    var sliders = [];
+    
     $(document).ready(function(){
     
     	var unitsMax = null;
@@ -1452,11 +1563,312 @@
     	var MAX_ELEVATOR_INSTALLED_YEAR = 2100;
     	var STEP_ELEVATOR_INSTALLED_YEAR = 10;
     	
-    	
+		  	
+    	var buildingtemplate = _.template($('#building-template').html());
     	var buildingphototemplate = _.template($('#building-photo-template').html());
     	
     	var blockNoteSave = false;
     	
+    	
+    	
+    	function buildingSelected(building_id,pan){
+    		//$('#building_slideup_wrapper').empty();
+    		selectedBuilding = building_id;
+			setMapSize();
+    		socket.get('/buildings/getbuilding/'+building_id,{},function(responseBuilding){
+    			socket.get('/buildings/getcontacts/'+building_id,{},function(responseContacts){
+    				if(typeof(responseContacts[0])!='undefined'){
+    					responseBuilding.contacts = responseContacts[0];
+    				}else{
+    					responseBuilding.contacts = [];
+    				}
+    				$('#building_slideup_wrapper').empty();
+    				responseBuilding.address_1=buildStreetString(responseBuilding.street_number_begin,responseBuilding.street_number_end,responseBuilding.street_name);
+	    			responseBuilding.address_2=buildCityProvincePostalCodeString(responseBuilding.city,responseBuilding.province,responseBuilding.postal_code);
+	    			responseBuilding.sale_date=toSaleDateTimeString(responseBuilding.sale_date);
+	    			
+    				responseBuilding.unit_price = responseBuilding.unit_price==null?'$0':'$'+commaSeparateNumber(responseBuilding.unit_price.toFixed(0));
+    				responseBuilding.last_sale_price = responseBuilding.last_sale_price==null?'$0':'$'+commaSeparateNumber(parseInt(responseBuilding.last_sale_price).toFixed(0));
+    				responseBuilding.bachelor_price = responseBuilding.bachelor_price==null?'$0':'$'+commaSeparateNumber(parseInt(responseBuilding.bachelor_price).toFixed(0));
+    				responseBuilding.bedroom1_price = responseBuilding.bedroom1_price==null?'$0':'$'+commaSeparateNumber(parseInt(responseBuilding.bedroom1_price).toFixed(0));
+    				responseBuilding.bedroom2_price = responseBuilding.bedroom2_price==null?'$0':'$'+commaSeparateNumber(parseInt(responseBuilding.bedroom2_price).toFixed(0));
+    				responseBuilding.bedroom3_price = responseBuilding.bedroom3_price==null?'$0':'$'+commaSeparateNumber(parseInt(responseBuilding.bedroom3_price).toFixed(0));
+    				
+    				
+	    			$('#building_slideup_wrapper').append(buildingtemplate(responseBuilding));
+	    			
+	    			$('#view_history').unbind();
+	    			$('#view_history').click(function(){
+	    				$('#search_toggler').click();
+	    				$('#buildings tbody tr[building_id='+$(this).closest('.building-map-details').attr('building_id')+']').click();
+	    				
+	    			});
+	    			$('.close-building-map-details').click(function(){
+	    				$(this).parents('.building-map-details').remove();
+	    				setMapSize();
+	    			});
+	    			setTimeout(function(){
+						setMapSize();
+	    			},500);
+					setMapSize();
+					
+					
+					if(pan){
+						markers.blockIdleEvent = true;
+						map.panTo(markers.getPosition(building_id));
+					}
+    			});
+    			
+    		});
+    	
+    		// if it's being filled for the first time:
+    		//if($('#building_slideup_wrapper').html()!=''){
+    		//	$('#map_wrapper').height($('#map_wrapper').height()-$('#building_slideup_wrapper').height()); //shrink the map height
+    		//}
+    	}
+    	
+    	$('#search_toggler').click(function(){
+			if($('#map_pane_wrapper').height()==50){
+				$('#map_pane_wrapper').animate({
+					height:$(window).height()-$('.navbar-fixed-top').height()+'px'
+				},300,function(){
+					$('#search_toggler').attr('scrollstate','bottom');
+					$('.main-content').addClass('map-hidden');
+				});
+			}else{
+				$('.main-content').removeClass('map-hidden');
+				$('#map_pane_wrapper').animate({
+					height:50+'px'
+				},300,function(){
+					$('#search_toggler').attr('scrollstate','top');
+				});
+			}
+			
+			
+			
+    	});
+    
+    
+    	function Markers(){
+    		var self = this;
+    		
+    		this.constrainGPS = false;
+    		this.blockIdleEvent = true;
+    		this.collection = {};
+    		
+    		this.clearMarkers = function (){
+    			for(marker in self.collection){
+    				self.collection[marker].destroy();
+    			}
+    			self.collection = {};
+    		}
+    		
+    		this.addMarker = function(building)
+    		{
+    			if(building.latitude !=null)
+    			{
+    				self.collection[building.building_id] = (new ActiveMarker(building,map));
+				}
+    			//if(!constrainGPS&&!map.getBounds().contains(self.collection[building.building_id].googleMarker.getPosition())){
+    				
+    			//}
+    		}
+    		
+    		this.checkMarkersBounded = function(){
+    			for(marker in self.collection){
+    				if(typeof(self.collection[marker].googleMarker)!='undefined'){
+	    				if(!map.getBounds().contains(self.collection[marker].googleMarker.getPosition())){
+	    					return false;
+	    				}
+    				}
+    			}
+    			return true;
+    		}
+    		
+    		this.verifyBounds = function(){
+				//  Create a new viewpoint bound
+				if(!self.constrainGPS&&!self.checkMarkersBounded()){  // only attempting to check and correct position if we're not in lat/lng mode
+    				self.blockIdleEvent = true;
+    				var bounds = new google.maps.LatLngBounds ();
+	    			for(marker in self.collection){
+	    				if(typeof(self.collection[marker].googleMarker)!='undefined'){
+	    					bounds.extend(self.collection[marker].googleMarker.getPosition());
+	    				}
+	    			}
+					map.fitBounds(bounds);
+				}
+    		}
+    		
+			this.clearSelected = function(){
+				for(marker in self.collection){
+    				self.collection[marker].clearSelected();
+    			}
+			}
+    		
+    		this.toggle = function(building_id,pan){
+    		
+
+    			if(typeof(self.collection[building_id])!='undefined'){
+    				self.collection[building_id].toggle(pan);
+    			}else{
+					building.fetch({id:parseInt(building_id)});
+					$('#buildings tbody tr').removeClass('selected');
+					$('#buildings tbody tr[building_id='+building_id+']').removeClass('selected').addClass('selected');    			
+    			}
+    		}
+    		
+    		this.getPosition = function(building_id){
+    			return self.collection[building_id].getPosition();
+    		}
+    		
+    	} 
+    	
+    	function ActiveMarker(tempbuilding){
+    		var self = this;
+    		this.building = tempbuilding;
+    		this.googleMarker;
+    		this.selected = false;
+    		
+    		var blueColor = "2F76EE"; // a random blue color that i picked
+			this.blueImage = new google.maps.MarkerImage("/img/markers/bluemarker.png",
+            new google.maps.Size(21, 34),
+            new google.maps.Point(0,0),
+            new google.maps.Point(10, 34));
+            var redColor = "F75448"
+            this.redImage = new google.maps.MarkerImage("/img/markers/redmarker.png",
+            new google.maps.Size(21, 34),
+            new google.maps.Point(0,0),
+            new google.maps.Point(10, 34));
+			this.pinShadow = new google.maps.MarkerImage("/img/markers/shadow.png",
+            new google.maps.Size(40, 37),
+            new google.maps.Point(0, 0),
+            new google.maps.Point(12, 35));
+            
+            this.getPosition = function(){
+            	return self.googleMarker.getPosition();
+            }
+    		
+    		if(self.building.latitude!=null)
+			{
+    			self.googleMarker = new google.maps.Marker({
+				    position: new google.maps.LatLng(self.building.latitude,self.building.longitude),
+				    map: map,
+				    icon:this.redImage,
+				    title:(typeof(self.building.street_number_begin)!='undefined'?self.building.street_number_begin:'')+(typeof(self.building.street_number_end)!='undefined'?'-'+self.building.street_number_end:'')+(typeof(self.building.street_name)!='undefined'?' '+self.building.street_name:'')
+				});
+				google.maps.event.addListener(self.googleMarker,'click',function(){
+					self.toggle(true);
+				});
+			}
+			this.clearSelected = function(){
+				self.selected = false;
+				$('#buildings > tbody > tr[building_id='+self.building.building_id+']').removeClass('selected');
+				self.googleMarker.setIcon(self.redImage);
+			}
+			this.toggle = function(pan){
+				self.selected = !self.selected;
+				if(self.selected){
+					building.fetch({id:parseInt(self.building.building_id)});
+					$('#buildings tbody tr').removeClass('selected');
+					$('#buildings tbody tr[building_id='+self.building.building_id+']').removeClass('selected').addClass('selected'); 
+					markers.clearSelected();
+					$('#buildings > tbody > tr[building_id='+self.building.building_id+']').addClass('selected');
+					self.googleMarker.setIcon(self.blueImage);
+					buildingSelected(self.building.building_id,pan);
+				}else{
+					$('#buildings > tbody > tr[building_id='+self.building.building_id+']').removeClass('selected');
+					self.googleMarker.setIcon(self.redImage);
+				}
+			}
+			this.destroy = function(){
+    				google.maps.event.clearListeners(self.googleMarker, 'click');
+    				self.googleMarker.setMap(null);
+    				self.googleMarker = null;
+			}
+    	}
+    
+    
+    	function initMap(){
+	    	var mapOptions = {
+	          center: new google.maps.LatLng(43.7, -79.4),
+	          zoom: 10,
+	          panControl:false,
+	          streetViewControl:true,
+	          streetViewControlOptions:{
+			        position: google.maps.ControlPosition.TOP_LEFT
+			    },
+	          mapTypeControl:true,
+	          mapTypeControlOptions: {
+			        style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+			        position: google.maps.ControlPosition.TOP_LEFT
+			    },
+	          overviewMapControl:false
+	        };
+    		
+    		//$('#map_wrapper').height($('body').height()-$('.navbar-fixed-top').height()-50);
+    		setMapSize();
+    		
+    		map = new google.maps.Map($('#map_wrapper')[0],mapOptions);
+    		
+    		layers.go = new google.maps.KmlLayer('https://rems.principledadvisor.ca/img/layers/go.kmz',{preserveViewport: true});
+			layers.ttc = new google.maps.KmlLayer('https://rems.principledadvisor.ca/img/layers/ttc.kmz',{preserveViewport: true});
+			layers.viva = new google.maps.KmlLayer('https://rems.principledadvisor.ca/img/layers/viva.kmz',{preserveViewport: true});
+			
+		  	
+		  	var filtersToggleDiv = document.createElement('div');
+		  	var filtersToggle = new FiltersToggleControl(filtersToggleDiv,map);
+    		
+    		filtersToggleDiv.index = 1;
+		  	map.controls[google.maps.ControlPosition.RIGHT_TOP].push(filtersToggleDiv);
+			//var layerGo = new google.maps.KmlLayer('http://isystemsnow.com/layers/ttc.kmz');
+			//layerGo.setMap(map);
+    		
+    		  // Create the DIV to hold the control and call the HomeControl() constructor
+			  // passing in this DIV.
+		  	var homeControlDiv = document.createElement('div');
+		  	var homeControl = new HomeControl(homeControlDiv, map);
+		
+		  	homeControlDiv.index = 1;
+		  	map.controls[google.maps.ControlPosition.RIGHT_TOP].push(homeControlDiv);
+    		
+    		
+    		google.maps.event.addListener(map, 'tilesloaded', function() {
+    			google.maps.event.clearListeners(map, 'tilesloaded');
+    			initDataTable();
+    			
+				$('.title-collapse-wrapper').click(function(){
+					if($('.map-collapse-content').css('display')=='none'){  //currently empty
+		        		$('.title-collapse-wrapper > i.icon-plus-sign').removeClass('icon-plus-sign').addClass('icon-minus-sign');
+		        	}else{  // currently shown
+		        		$('.title-collapse-wrapper > i.icon-minus-sign').removeClass('icon-minus-sign').addClass('icon-plus-sign');
+		        	}
+		        	$('.map-collapse-content').slideToggle('medium',function(){
+	
+		        	});
+				});
+	        });
+	        google.maps.event.addListener(map, 'idle', function() {  
+	        	if(typeof(datatable)!='undefined'&&$('#map_pane_wrapper').height()!=50)
+	        	{
+	        		//if(typeof(this.firstrun)=='undefined'){
+	        		//	this.firstrun = false;
+	        		//	markers.blockIdleEvent = false;
+	        		//}
+        			if(!markers.blockIdleEvent){
+        				markers.constrainGPS = true;
+        				$('#constrain_gps').prop('checked',true);
+						datatable.api().ajax.reload(); // INITIAL/IDLE/PAN/ZOOM
+        			}else{
+        				markers.blockIdleEvent = false;
+    				}
+    			}
+	        });
+    		markers = new Markers();
+    	}
+    
+    	google.maps.event.addDomListener(window, 'load', initMap);
+    
+
     	
     	
 		$('#export_building').click(function(){
@@ -1610,7 +2022,7 @@
 		
 		$('#confirmdelete').click(function(){
 			socket.get('/buildings/deletebuilding',{building_id:building.get('building_id')},function(response){
-				datatable.api().ajax.reload(function(){},false);
+				datatable.api().ajax.reload(function(){},false); //delete building
 				$('#delete_building').css('display','none');
 				$('.edit-item-section').css('display','none');			
 				//contact = new ContactModel({contact_id:'new',contact_name:'',email:'',phone_number:''});
@@ -1627,6 +2039,8 @@
         	});
 		});
 		
+		$('.buildings-search-filters-toggle').click(toggleFilters);
+		
 		        	
 		
 		$('#cancel_building').click(function(){
@@ -1636,133 +2050,192 @@
 		});
 		
 
-		var datatable = $('#buildings').dataTable({
-		        "processing": true,
-		        "serverSide": true,
-		        "dom":"tipr",
-		        "ajax": {
-		        	"url":"/buildings/getajax",
-	        		"data":function(d){
-	        			d.address_search = $("#search_address").val();
-	        			d.owner_search = $("#search_owner").val();
-	        			d.owner_company_search = $("#search_owner_company").val();
-	        			d.seller_search = $("#search_seller").val();
-	        			d.seller_company_search = $("#search_seller_company").val();
-	        			d.agent_search = $("#search_agent").val();
-	        			d.agent_company_search = $("#search_agent_company").val();
-	        			d.mortgage_search = $('#search_mortgage').val();
-	        			
-	        			d.unitQuantityMin = unitsMin==0?null:unitsMin;
-	        			d.unitQuantityMax = unitsMax==sliderLimit?null:unitsMax;
-	        			d.unit_price_min = (parseInt(unit_price_min)==MIN_UNIT_PRICE)?null:unit_price_min;
-	        			d.unit_price_max = unit_price_max==MAX_UNIT_PRICE?null:unit_price_max;
-	        			
-	        			d.saleDateRangeStart = $('#start_time').val()==''?null:typeof($('#start_time_gen').data('datetimepicker'))=='undefined'?null:$('#start_time_gen').data('datetimepicker').getLocalDate().toUTCString();	        			
-        				d.saleDateRangeEnd =$('#end_time').val()==''?null: typeof($('#end_time_gen').data('datetimepicker'))=='undefined'?null:$('#end_time_gen').data('datetimepicker').getLocalDate().toUTCString();
-
-	        			d.has_elevator = ($('#search_elevator').val()=='null'||$('#search_elevator').val()==null)?null:($('#search_elevator').val()=='true'||$('#search_elevator').val()==true?true:false);
-	        			d.elevator_installed_year_min = elevator_installed_year_min==MIN_ELEVATOR_INSTALLED_YEAR?null:elevator_installed_year_min;
-	        			d.elevator_installed_year_max = elevator_installed_year_max==MAX_ELEVATOR_INSTALLED_YEAR?null:elevator_installed_year_max;
-	        			d.elevator_upgrade_year_min = elevator_upgrade_year_min==MIN_ELEVATOR_UPGRADE_YEAR?null:elevator_upgrade_year_min;
-	        			d.elevator_upgrade_year_max = elevator_upgrade_year_max==MAX_ELEVATOR_UPGRADE_YEAR?null:elevator_upgrade_year_max;
-	        			
-	        			d.cap_rate_min = cap_rate_min==MIN_CAP_RATE?null:cap_rate_min;
-	        			d.cap_rate_max = cap_rate_max==MAX_CAP_RATE?null:cap_rate_max;
-	        			d.search_property_mgmt_company = $('#search_property_mgmt_company').val();
-	        			d.search_prev_property_mgmt_company = $('#search_prev_property_mgmt_company').val();
-	        			d.heat_age_min = heat_age_min==MIN_HEAT_AGE?null:heat_age_min;
-	        			d.heat_age_max = heat_age_max==MAX_HEAT_AGE?null:heat_age_max;
-	        			
-	        			d.boiler_installed_year_min = boiler_installed_year_min==MIN_BOILER_INSTALLED_YEAR?null:boiler_installed_year_min;
-	        			d.boiler_installed_year_max = boiler_installed_year_max==MAX_BOILER_INSTALLED_YEAR?null:boiler_installed_year_max;
-	        			
-	        			d.boiler_upgrade_min = boiler_upgrade_min==MIN_BOILER_UPGRADE?null:boiler_upgrade_min;
-	        			d.boiler_upgrade_max = boiler_upgrade_max==MAX_BOILER_UPGRADE?null:boiler_upgrade_max;
-	        			
-	        			d.assessed_value_min = assessed_value_min==MIN_ASSESSED_VALUE?null:assessed_value_min;
-	        			d.assessed_value_max = assessed_value_max==MAX_ASSESSED_VALUE?null:assessed_value_max;
-	        			
-	        			d.building_income_min = building_income_min==MIN_BUILDING_INCOME?null:building_income_min;
-	        			d.building_income_max = building_income_max==MAX_BUILDING_INCOME?null:building_income_max;
-	        			
-	        			d.sale_price_min = sale_price_min==MIN_SALE_PRICE?null:sale_price_min;
-	        			d.sale_price_max = sale_price_max==MAX_SALE_PRICE?null:sale_price_max;
-	        			
-	        			d.bachelor_units_min = bachelor_units_min==MIN_ROOM_UNITS?null:bachelor_units_min;
-	        			d.bachelor_units_max = bachelor_units_max==MAX_ROOM_UNITS?null:bachelor_units_max;
-	        			
-	        			d.bedroom1_units_min = bedroom1_units_min==MIN_ROOM_UNITS?null:bedroom1_units_min;
-	        			d.bedroom1_units_max = bedroom1_units_max==MAX_ROOM_UNITS?null:bedroom1_units_max;
-	        			
-	        			d.bedroom2_units_min = bedroom2_units_min==MIN_ROOM_UNITS?null:bedroom2_units_min;
-	        			d.bedroom2_units_max = bedroom2_units_max==MAX_ROOM_UNITS?null:bedroom2_units_max;
-	        			
-	        			d.bedroom3_units_min = bedroom3_units_min==MIN_ROOM_UNITS?null:bedroom3_units_min;
-	        			d.bedroom3_units_max = bedroom3_units_max==MAX_ROOM_UNITS?null:bedroom3_units_max;
-	        			
-	        			d.bachelor_rent_min = bachelor_rent_min==MIN_ROOM_RENT?null:bachelor_rent_min;
-	        			d.bachelor_rent_max = bachelor_rent_max==MAX_ROOM_RENT?null:bachelor_rent_max;
-	        			
-	        			d.bedroom1_rent_min = bedroom1_rent_min==MIN_ROOM_RENT?null:bedroom1_rent_min;
-	        			d.bedroom1_rent_max = bedroom1_rent_max==MAX_ROOM_RENT?null:bedroom1_rent_max;
-	        			
-	        			d.bedroom2_rent_min = bedroom2_rent_min==MIN_ROOM_RENT?null:bedroom2_rent_min;
-	        			d.bedroom2_rent_max = bedroom2_rent_max==MAX_ROOM_RENT?null:bedroom2_rent_max;
-	        			
-	        			d.bedroom3_rent_min = bedroom3_rent_min==MIN_ROOM_RENT?null:bedroom3_rent_min;
-	        			d.bedroom3_rent_max = bedroom3_rent_max==MAX_ROOM_RENT?null:bedroom3_rent_max;
-	        			
-	        			d.windows_installed_year_min = windows_installed_year_min==MIN_WINDOWS_INSTALLED_YEAR?null:windows_installed_year_min;
-	        			d.windows_installed_year_max = windows_installed_year_max==MAX_WINDOWS_INSTALLED_YEAR?null:windows_installed_year_max;
-	        			
-	        			d.parking_spots_min = parking_spots_min==MIN_PARKING_SPOTS?null:parking_spots_min;
-	        			d.parking_spots_max = parking_spots_max==MAX_PARKING_SPOTS?null:parking_spots_max;
-	        			
-				
-	        			d.cable_internet_provider = $('#search_isp').val();
-	        			
-	        			
-	        			d.start_mortgage_due_date = $('#start_mortgage_due_date').val();
-	        			d.end_mortgage_due_date = $('#end_mortgage_due_date').val();
-	        			
-	        			d.sales_count_min = sales_count_min==MIN_SALES_COUNT?null:sales_count_min;
-	        			d.sales_count_max = sales_count_max==MAX_SALES_COUNT?null:sales_count_max;
-	        			var checkbox_building_types = '';
-	        			$('.building-type-checkboxes').each(function(){
-	        				if($(this).is(':checked')){
-	        					if(checkbox_building_types != ''){
-	        						checkbox_building_types = checkbox_building_types + ',';
-	        					}
-	        					checkbox_building_types = checkbox_building_types + $(this).attr('building_type');
-	        				}
-	        			});	        			
-	        			if(checkbox_building_types!=''){
-	        				checkbox_building_types = checkbox_building_types;
-	        			}
-	        			d.checkbox_building_types = checkbox_building_types;
-	        			
-	        			var checkbox_heating_types = '';
-	        			$('.heating-type-checkboxes').each(function(){
-	        				if($(this).is(':checked')){
-	        					if(checkbox_heating_types != ''){
-	        						checkbox_heating_types = checkbox_heating_types + ',';
-	        					}
-	        					checkbox_heating_types = checkbox_heating_types + $(this).attr('heat_type');
-	        				}
-	        			});        			
-	        			if(checkbox_heating_types!=''){
-	        				checkbox_heating_types = checkbox_heating_types;
-	        			}
-	        			d.checkbox_heating_types = checkbox_heating_types;
-	        		},
-	        		error: function(xhr, error, thrown){
-	        			if(error.toString()=='parsererror'){
-	        				location.reload();
-	        			}else{
-		        			$('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
-			                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
-			                        ''+error.toString()+'</div>');
-		                	if($('body').width()>979){
+		var datatable 
+		function initDataTable(){
+			datatable = $('#buildings').dataTable({
+					//"scrollY":  ($(window).width()<768)?false:400+ "px",
+					//"scrollX": false,
+        			//"scrollCollapse": true,
+			        "processing": true,
+			        "serverSide": true,
+			        "iDisplayLength": 50,
+			        "lengthMenu":[[25,50,100],[25,50,100]], //,250,500,1000,"All"
+			        "dom":"ltipr",
+			        "ajax": {
+			        	"url":"/buildings/getajax",
+		        		"data":function(d){
+		        			if(filtersEnabled){
+			        			d.address_search = $("#search_address").val();
+			        			d.owner_search = $("#search_owner").val();
+			        			d.owner_company_search = $("#search_owner_company").val();
+			        			d.seller_search = $("#search_seller").val();
+			        			d.seller_company_search = $("#search_seller_company").val();
+			        			d.agent_search = $("#search_agent").val();
+			        			d.agent_company_search = $("#search_agent_company").val();
+			        			d.mortgage_search = $('#search_mortgage').val();
+			        			
+			        			d.unitQuantityMin = unitsMin==0?null:unitsMin;
+			        			d.unitQuantityMax = unitsMax==sliderLimit?null:unitsMax;
+			        			d.unit_price_min = (parseInt(unit_price_min)==MIN_UNIT_PRICE)?null:unit_price_min;
+			        			d.unit_price_max = unit_price_max==MAX_UNIT_PRICE?null:unit_price_max;
+			        			
+			        			d.saleDateRangeStart = $('#start_time').val()==''?null:typeof($('#start_time_gen').data('datetimepicker'))=='undefined'?null:$('#start_time_gen').data('datetimepicker').getLocalDate().toUTCString();	        			
+		        				d.saleDateRangeEnd =$('#end_time').val()==''?null: typeof($('#end_time_gen').data('datetimepicker'))=='undefined'?null:$('#end_time_gen').data('datetimepicker').getLocalDate().toUTCString();
+		
+			        			d.has_elevator = ($('#search_elevator').val()=='null'||$('#search_elevator').val()==null)?null:($('#search_elevator').val()=='true'||$('#search_elevator').val()==true?true:false);
+			        			d.elevator_installed_year_min = elevator_installed_year_min==MIN_ELEVATOR_INSTALLED_YEAR?null:elevator_installed_year_min;
+			        			d.elevator_installed_year_max = elevator_installed_year_max==MAX_ELEVATOR_INSTALLED_YEAR?null:elevator_installed_year_max;
+			        			d.elevator_upgrade_year_min = elevator_upgrade_year_min==MIN_ELEVATOR_UPGRADE_YEAR?null:elevator_upgrade_year_min;
+			        			d.elevator_upgrade_year_max = elevator_upgrade_year_max==MAX_ELEVATOR_UPGRADE_YEAR?null:elevator_upgrade_year_max;
+			        			
+			        			d.cap_rate_min = cap_rate_min==MIN_CAP_RATE?null:cap_rate_min;
+			        			d.cap_rate_max = cap_rate_max==MAX_CAP_RATE?null:cap_rate_max;
+			        			d.search_property_mgmt_company = $('#search_property_mgmt_company').val();
+			        			d.search_prev_property_mgmt_company = $('#search_prev_property_mgmt_company').val();
+			        			d.heat_age_min = heat_age_min==MIN_HEAT_AGE?null:heat_age_min;
+			        			d.heat_age_max = heat_age_max==MAX_HEAT_AGE?null:heat_age_max;
+			        			
+			        			d.boiler_installed_year_min = boiler_installed_year_min==MIN_BOILER_INSTALLED_YEAR?null:boiler_installed_year_min;
+			        			d.boiler_installed_year_max = boiler_installed_year_max==MAX_BOILER_INSTALLED_YEAR?null:boiler_installed_year_max;
+			        			
+			        			d.boiler_upgrade_min = boiler_upgrade_min==MIN_BOILER_UPGRADE?null:boiler_upgrade_min;
+			        			d.boiler_upgrade_max = boiler_upgrade_max==MAX_BOILER_UPGRADE?null:boiler_upgrade_max;
+			        			
+			        			d.assessed_value_min = assessed_value_min==MIN_ASSESSED_VALUE?null:assessed_value_min;
+			        			d.assessed_value_max = assessed_value_max==MAX_ASSESSED_VALUE?null:assessed_value_max;
+			        			
+			        			d.building_income_min = building_income_min==MIN_BUILDING_INCOME?null:building_income_min;
+			        			d.building_income_max = building_income_max==MAX_BUILDING_INCOME?null:building_income_max;
+			        			
+			        			d.sale_price_min = sale_price_min==MIN_SALE_PRICE?null:sale_price_min;
+			        			d.sale_price_max = sale_price_max==MAX_SALE_PRICE?null:sale_price_max;
+			        			
+			        			d.bachelor_units_min = bachelor_units_min==MIN_ROOM_UNITS?null:bachelor_units_min;
+			        			d.bachelor_units_max = bachelor_units_max==MAX_ROOM_UNITS?null:bachelor_units_max;
+			        			
+			        			d.bedroom1_units_min = bedroom1_units_min==MIN_ROOM_UNITS?null:bedroom1_units_min;
+			        			d.bedroom1_units_max = bedroom1_units_max==MAX_ROOM_UNITS?null:bedroom1_units_max;
+			        			
+			        			d.bedroom2_units_min = bedroom2_units_min==MIN_ROOM_UNITS?null:bedroom2_units_min;
+			        			d.bedroom2_units_max = bedroom2_units_max==MAX_ROOM_UNITS?null:bedroom2_units_max;
+			        			
+			        			d.bedroom3_units_min = bedroom3_units_min==MIN_ROOM_UNITS?null:bedroom3_units_min;
+			        			d.bedroom3_units_max = bedroom3_units_max==MAX_ROOM_UNITS?null:bedroom3_units_max;
+			        			
+			        			d.bachelor_rent_min = bachelor_rent_min==MIN_ROOM_RENT?null:bachelor_rent_min;
+			        			d.bachelor_rent_max = bachelor_rent_max==MAX_ROOM_RENT?null:bachelor_rent_max;
+			        			
+			        			d.bedroom1_rent_min = bedroom1_rent_min==MIN_ROOM_RENT?null:bedroom1_rent_min;
+			        			d.bedroom1_rent_max = bedroom1_rent_max==MAX_ROOM_RENT?null:bedroom1_rent_max;
+			        			
+			        			d.bedroom2_rent_min = bedroom2_rent_min==MIN_ROOM_RENT?null:bedroom2_rent_min;
+			        			d.bedroom2_rent_max = bedroom2_rent_max==MAX_ROOM_RENT?null:bedroom2_rent_max;
+			        			
+			        			d.bedroom3_rent_min = bedroom3_rent_min==MIN_ROOM_RENT?null:bedroom3_rent_min;
+			        			d.bedroom3_rent_max = bedroom3_rent_max==MAX_ROOM_RENT?null:bedroom3_rent_max;
+			        			
+			        			d.windows_installed_year_min = windows_installed_year_min==MIN_WINDOWS_INSTALLED_YEAR?null:windows_installed_year_min;
+			        			d.windows_installed_year_max = windows_installed_year_max==MAX_WINDOWS_INSTALLED_YEAR?null:windows_installed_year_max;
+			        			
+			        			d.parking_spots_min = parking_spots_min==MIN_PARKING_SPOTS?null:parking_spots_min;
+			        			d.parking_spots_max = parking_spots_max==MAX_PARKING_SPOTS?null:parking_spots_max;
+			        			
+						
+			        			d.cable_internet_provider = $('#search_isp').val();
+			        			
+			        			
+			        			d.start_mortgage_due_date = $('#start_mortgage_due_date').val();
+			        			d.end_mortgage_due_date = $('#end_mortgage_due_date').val();
+			        			
+			        			d.sales_count_min = sales_count_min==MIN_SALES_COUNT?null:sales_count_min;
+			        			d.sales_count_max = sales_count_max==MAX_SALES_COUNT?null:sales_count_max;
+			        			var checkbox_building_types = '';
+			        			$('.building-type-checkboxes').each(function(){
+			        				if($(this).is(':checked')){
+			        					if(checkbox_building_types != ''){
+			        						checkbox_building_types = checkbox_building_types + ',';
+			        					}
+			        					checkbox_building_types = checkbox_building_types + $(this).attr('building_type');
+			        				}
+			        			});	        			
+			        			if(checkbox_building_types!=''){
+			        				checkbox_building_types = checkbox_building_types;
+			        			}
+			        			d.checkbox_building_types = checkbox_building_types;
+			        			
+			        			var checkbox_heating_types = '';
+			        			$('.heating-type-checkboxes').each(function(){
+			        				if($(this).is(':checked')){
+			        					if(checkbox_heating_types != ''){
+			        						checkbox_heating_types = checkbox_heating_types + ',';
+			        					}
+			        					checkbox_heating_types = checkbox_heating_types + $(this).attr('heat_type');
+			        				}
+			        			});        			
+			        			if(checkbox_heating_types!=''){
+			        				checkbox_heating_types = checkbox_heating_types;
+			        			}
+			        			d.checkbox_heating_types = checkbox_heating_types;
+		        			}
+		        			
+		        			if(markers.constrainGPS)
+		        			{
+			        			d.boundsLatitudeMin = map.getBounds().getSouthWest().lat();
+			        			d.boundsLatitudeMax = map.getBounds().getNorthEast().lat();
+			        			d.boundsLongitudeMin = map.getBounds().getSouthWest().lng();
+			        			d.boundsLongitudeMax = map.getBounds().getNorthEast().lng();
+		        			}else{
+			        			d.boundsLatitudeMin = null;
+			        			d.boundsLatitudeMax = null;
+			        			d.boundsLongitudeMin = null;
+			        			d.boundsLongitudeMax = null;
+		        			}
+		        		},
+		        		error: function(xhr, error, thrown){
+		        			if(error.toString()=='parsererror'){
+		        				location.reload();
+		        			}else{
+			        			$('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
+				                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+				                        ''+error.toString()+'</div>');
+			                	if($('body').width()>979){
+									$('.main-content').animate({
+								        scrollTop: 0
+								    }, 500);
+								}else{
+									$('html, body').animate({
+								        scrollTop: 0
+								    }, 500);
+								}
+		                	}
+		        		}
+		        	},
+			        "aoColumns":[
+			        	{"mData":"building_id","visible":false}
+			         	,{"mData":function(data,b){ 
+			         		if(data['latitude']==null){
+			         			return '';
+			         		}
+				        	return '<i class="map-link icon icon-2x icon-globe"></i>'; }
+				        },{"mData":function(data,b){ 
+				        	return "<b>"+buildAddressString(data)+"</b>"; }
+				        }
+				        ,{"mData":"units"}
+				        ,{"mData":"owner"}
+				        ,{"mData":"property_mgmt_company"}
+				        ,{"mData":function(data,b){
+				        	if(data.sale_date==null)
+				        		return '';
+				        	return toSaleDateTimeString(new Date(data.sale_date));
+				        }}
+			        ],
+			        "rowCallback": function( row, data, displayIndex ) {
+			        
+			        	if(data['latitude'] == null){
+			        		$(row).css('background-color','#fcf8e3');
+			        	}
+			        	$(row).find('.map-link').click(function(){
+			        		if($('body').width()>979){
 								$('.main-content').animate({
 							        scrollTop: 0
 							    }, 500);
@@ -1771,124 +2244,350 @@
 							        scrollTop: 0
 							    }, 500);
 							}
-	                	}
-	        		}
-	        	},
-		        "aoColumns":[
-		        	{"mData":"building_id","visible":false}
-		         	,{"mData":function(data,b){ 
-			        	return "<b>"+buildAddressString(data)+"</b>"; }
+			        		$('#search_toggler').click();
+			        	});
+						$(row).attr('building_id',data['building_id']);
+						$(row).click(function(){
+							$('#delete_building').css('display','');
+							markers.toggle(parseInt($(row).attr('building_id')),true);
+							setTimeout(function(){
+								if($('body').width()>979){
+									$('.main-content').animate({
+								        scrollTop: $('.main-content').scrollTop() + $('.edit-item-section').position().top
+								    }, 500);
+								}else{
+									$('html, body').animate({
+								        scrollTop: $('.edit-item-section').offset().top
+								    }, 500);
+								}
+							},100);
+	    					
+	               		});
+	               		//$(row).dblclick(function(){
+							/*$('#delete_building').css('display','');
+	    					building.fetch({id:parseInt($(row).attr('building_id'))});
+	    					$(this).siblings().removeClass('selected');
+        					$(this).removeClass('selected').addClass('selected');
+							markers.toggle(parseInt($(row).attr('building_id')));
+	    					*/
+	               		//});
+		               
 			        }
-			        ,{"mData":"units"}
-			        ,{"mData":"owner"}
-			        ,{"mData":"property_mgmt_company"}
-			        ,{"mData":function(data,b){
-			        	if(data.sale_date==null)
-			        		return '';
-			        	return toSaleDateTimeString(new Date(data.sale_date));
-			        }}
-		        ],
-		        "rowCallback": function( row, data, displayIndex ) {
-		        
-		        	if(data['latitude'] == null){
-		        		$(row).css('background-color','#fcf8e3');
-		        	}
-					$(row).attr('building_id',data['building_id']);
-					$(row).click(function(){
-						$('#delete_building').css('display','');
-    					building.fetch({id:parseInt($(row).attr('building_id'))});
-               		});
-	               
-		        }
-	    });
-	    $('select[name=buildings_length]').css('margin-top','10px');
-	    $('#buildings_length label').css('margin-bottom','0px');
-	    
-	     $('#buildings').on('draw.dt',function(event,datatable){
-	     	if(init_id){
-				building.fetch({id:init_id});
-	     		init_id = null;
-	     		leaveSalesExpanded = true;
-	     		triggerScroll = true;
-	     	}
-	     	
-	     	if(!isNaN(parseInt(building.get('building_id')))){
-	     		$('#buildings tbody tr[building_id='+building.get('building_id')+']').addClass('selected');
-	     	}
-    	});
+		    });
+		    //$('select[name=buildings_length]').css('margin-top','10px');
+		    //$('#buildings_length label').css('margin-bottom','0px');
+		    
+		     $('#buildings').on('draw.dt',function(event,datatable){
+		     	if(init_id){
+					building.fetch({id:init_id});
+		     		init_id = null;
+		     		leaveSalesExpanded = true;
+		     		triggerScroll = true;
+		     	}
+		     	
+		     	if(!isNaN(parseInt(building.get('building_id')))){
+		     		$('#buildings tbody tr[building_id='+building.get('building_id')+']').addClass('selected');
+		     	}
+		     	
+	    		markers.clearMarkers();
+		    	if(datatable.json.data instanceof Array)
+		    	{
+		    		for(var i=0; i< datatable.json.data.length; i++){
+		    			markers.addMarker(datatable.json.data[i]);
+		    		}
+		    	}
+		    	markers.verifyBounds();
+		    	if(selectedBuilding!=null){
+		    		//setTimeout(function(){
+		    			markers.toggle(selectedBuilding,false);
+		    			//buildingSelected(selectedBuilding,false);
+	    			//},10);
+		    	}
+	    	});
+	    	
+	    	$('#buildings_length select').attr('id','building_length_select');
+		    
+		    $('#result_size_wrapper').append($('#building_length_select'));
+		    $('#buildings_length').remove();
+		    //datatable.api().fnLengthChange($('#result_size').val());
+		    
+        
+	        $('#buildings tbody').on('click', 'tr', function () {
+	       // 	$(this).siblings().removeClass('selected');
+	       // 	$(this).removeClass('selected').addClass('selected');
+		    });
+    	}
+    	/*
+    	$('#buildings').on('draw.dt',function(event,datatable){
+	    		//if($('#building_slideup_wrapper').html()!='')
+	    		//{
+	    		
+	    		//}
+	    		$('#building_slideup_wrapper').empty();
+				setMapSize();
+				setMapTableSize();
+	    		markers.clearMarkers();
+		    	if(datatable.json.data instanceof Array)
+		    	{
+		    		for(var i=0; i< datatable.json.data.length; i++){
+		    			markers.addMarker(datatable.json.data[i]);
+		    		}
+		    	}
+		    	markers.verifyBounds();
+    	});*/
+    	function FiltersToggleControl(filterDiv,map){
+    		filterDiv.style.padding = '5px 3px 5px 0px';
+    		var filterButton = document.createElement('div');
+    		filterButton.className="btn filter-button btn-primary";
+    		filterButton.innerHTML = 'Filters Enabled';
+    		filterDiv.appendChild(filterButton);
+    		
+    		google.maps.event.addDomListener(filterButton, 'click', function() {
+				toggleFilters();
+			});
+    	}
+    	function toggleFilters(){
+    		filtersEnabled = !filtersEnabled;
+    		if(filtersEnabled){
+    			$('.filter-button').addClass('btn-primary');
+    			$('.filter-button').html('Filters Enabled');
+    			$('.buildings-search-filters-toggle').addClass('btn-primary');
+    			$('.buildings-search-filters-toggle').html('Filters Enabled');
+    			$('.create-report-controls input[type=text]').removeAttr('disabled');
+    			$('.create-report-controls input[type=checkbox]').removeAttr('disabled');
+    			$('.create-report-controls select').removeAttr('disabled');
+    			$('.create-report-controls .add-on').css('display','');
+    			
+    			for(key in sliders){
+    				sliders[key].slider('enable');
+    			}
+    			
+    		}else{
+    			$('.filter-button').removeClass('btn-primary');
+    			$('.filter-button').html('Filters Disabled');
+    			$('.buildings-search-filters-toggle').removeClass('btn-primary');
+    			$('.buildings-search-filters-toggle').html('Filters Disabled');
+    			$('.create-report-controls input[type=text]').attr('disabled','disabled');
+    			$('.create-report-controls input[type=checkbox]').attr('disabled','disabled');
+    			$('.create-report-controls select').attr('disabled','disabled');
+    			$('.create-report-controls .add-on').css('display','none');
+    			for(key in sliders){
+    				sliders[key].slider('disable');
+    			}
+    		}
+    		if(typeof(datatable)!='undefined'){
+    			datatable.api().ajax.reload();
+    		}
+    	}
     	
-    	
+    	function HomeControl(controlDiv, map) {
+		
+			  // Set CSS styles for the DIV containing the control
+			  // Setting padding to 5 px will offset the control
+			  // from the edge of the map.
+			  controlDiv.style.padding = '5px';
+			
+			  // Set CSS for the control border.
+			  var controlUI = document.createElement('div');
+			  controlUI.id = 'map_control';
+			  controlUI.className="map-overlay-controls";
+			  controlDiv.appendChild(controlUI);
+			  
+			  var titlecollapsewrapper = document.createElement('div');
+			  titlecollapsewrapper.className = 'title-collapse-wrapper';
+			  controlUI.appendChild(titlecollapsewrapper);
+			  
+			  var collapseicon = document.createElement('i');
+			  collapseicon.className = 'icon-plus-sign';
+			  titlecollapsewrapper.appendChild(collapseicon);
+			  
+			  var mapcontrolstitlediv = document.createElement('div');
+			  mapcontrolstitlediv.className = 'map-overlay-title-label';
+			  mapcontrolstitlediv.innerHTML = 'Map Controls';
+			  titlecollapsewrapper.appendChild(mapcontrolstitlediv);
+			  
+			  
+			  
+			  var collapsecontent = document.createElement('div');
+			  collapsecontent.className = 'map-collapse-content';
+			  collapsecontent.style.display='none';
+			  controlUI.appendChild(collapsecontent);
+			  
+			  // Set CSS for the control interior.
+			  var constrainLabel = document.createElement('label');
+			  constrainLabel.htmlFor  = 'constrain_gps';
+			  constrainLabel.className= 'map-overlay-label';
+			  constrainLabel.innerHTML = 'Constrain result to map bounds';
+			  
+			  // Set CSS for the control interior.
+			  var constrainGPSCheckbox = document.createElement('input');
+			  constrainGPSCheckbox.id = 'constrain_gps'
+			  constrainGPSCheckbox.type = 'checkbox';
+			  constrainGPSCheckbox.className = 'map-overlay-checkbox';
+			  var condiv = document.createElement('div');
+			  condiv.style.display = 'none';
+			  condiv.className = 'map-control-row-wrapper';
+			  condiv.appendChild(constrainGPSCheckbox);
+			  condiv.appendChild(constrainLabel);
+			  collapsecontent.appendChild(condiv);
+			  
+			  
+			  
+			  // Set CSS for the control interior.
+			  var layerGo = document.createElement('label');
+			  layerGo.htmlFor  = 'layer_go';
+			  layerGo.className= 'map-overlay-label';
+			  layerGo.innerHTML = 'Go Transit';
+			  // Set CSS for the control interior.
+			  var inputGo = document.createElement('input');
+			  inputGo.id = 'layer_go'
+			  inputGo.type = 'checkbox';
+			  inputGo.className = 'map-overlay-checkbox';
+			  
+			  var godiv = document.createElement('div');
+			  godiv.className = 'map-control-row-wrapper';
+			  godiv.appendChild(inputGo);
+			  godiv.appendChild(layerGo);
+			  collapsecontent.appendChild(godiv);
+			  
+			  
+			  
+			  // Set CSS for the control interior.
+			  var layerTTC = document.createElement('label');
+			  layerTTC.htmlFor  = 'layer_ttc';
+			  layerTTC.className= 'map-overlay-label';
+			  layerTTC.innerHTML = 'TTC';
+			  
+			  // Set CSS for the control interior.
+			  var inputTTC = document.createElement('input');
+			  inputTTC.id = 'layer_ttc'
+			  inputTTC.type = 'checkbox';
+			  inputTTC.className = 'map-overlay-checkbox';
+			  
+			  var ttcdiv = document.createElement('div');
+			  ttcdiv.className = 'map-control-row-wrapper';
+			  ttcdiv.appendChild(inputTTC);
+			  ttcdiv.appendChild(layerTTC);
+			  collapsecontent.appendChild(ttcdiv);
+			  
+			  
+			   // Set CSS for the control interior.
+			  var layerViva = document.createElement('label');
+			  layerViva.htmlFor  = 'layer_viva';
+			  layerViva.className= 'map-overlay-label';
+			  layerViva.innerHTML = 'VIVA';
+			  
+			  // Set CSS for the control interior.
+			  var inputViva = document.createElement('input');
+			  inputViva.id = 'layer_viva'
+			  inputViva.type = 'checkbox';
+			  inputViva.className = 'map-overlay-checkbox';
+			  
+			  var vivadiv = document.createElement('div');
+			  vivadiv.className = 'map-control-row-wrapper';
+			  vivadiv.appendChild(inputViva);
+			  vivadiv.appendChild(layerViva);
+			  collapsecontent.appendChild(vivadiv);
+			  
+			  
+			  var resultSizeLabel = document.createElement('label');
+			  resultSizeLabel.htmlFor  = 'building_length_select';
+			  resultSizeLabel.className= 'map-overlay-label map-overlay-results-label';
+			  resultSizeLabel.innerHTML = 'Result Size:';
+			  
+			  var resultsizediv = document.createElement('div');
+			  resultsizediv.className = 'map-control-row-wrapper';
+			  resultsizediv.id = 'result_size_wrapper';
+			  resultsizediv.appendChild(resultSizeLabel);
+			  collapsecontent.appendChild(resultsizediv);
+			  			
+			  
+			google.maps.event.addDomListener(inputGo, 'change', function() {
+				if(layers.go.getMap()==null){
+					layers.go.setMap(map);
+				}else{
+					layers.go.setMap(null);
+				}
+			});
+			google.maps.event.addDomListener(inputTTC, 'change', function() {
+				if(layers.ttc.getMap()==null){
+					layers.ttc.setMap(map);
+				}else{
+					layers.ttc.setMap(null);
+				}
+			});
+			google.maps.event.addDomListener(inputViva, 'change', function() {
+				if(layers.viva.getMap()==null){
+					layers.viva.setMap(map);
+				}else{
+					layers.viva.setMap(null);
+				}
+			});
+			google.maps.event.addDomListener(constrainGPSCheckbox, 'click', function() {
+				markers.constrainGPS = $('#constrain_gps').is(':checked');
+				if(markers.constrainGPS&&!markers.checkMarkersBounded()) //markers aren't bounded correct.
+				{
+					datatable.api().ajax.reload(); //Toggled constrainGPS
+				}else if(!markers.constrainGPS){  // this is the case where maybe you've typed in new search terms.
+					datatable.api().ajax.reload();
+				}
+			});
+		}
+		
+		function changedSearchParameter(){
+			if(markers.constrainGPS){
+				markers.constrainGPS = false;
+				$('#constrain_gps').prop('checked',false);
+			}
+			setTimeout(function(){
+				datatable.api().ajax.reload(); // Searching
+			},10);
+		}
 
 		$('#search_address').keydown(function(){
-			setTimeout(function(){
-				datatable.api().ajax.reload();
-			},10);
+			changedSearchParameter();
 		});
 		$('#search_owner').keydown(function(){
-			setTimeout(function(){
-				datatable.api().ajax.reload();
-			},10);
+			changedSearchParameter();
 		});
 		$('#search_owner_company').keydown(function(){
-			setTimeout(function(){
-				datatable.api().ajax.reload();
-			},10);
+			changedSearchParameter();
 		});
 		$('#search_seller').keydown(function(){
-			setTimeout(function(){
-				datatable.api().ajax.reload();
-			},10);
+			changedSearchParameter();
 		});
 		$('#search_seller_company').keydown(function(){
-			setTimeout(function(){
-				datatable.api().ajax.reload();
-			},10);
+			changedSearchParameter();
 		});
 		$('#search_agent').keydown(function(){
-			setTimeout(function(){
-				datatable.api().ajax.reload();
-			},10);
+			changedSearchParameter();
 		});
 		$('#search_agent_company').keydown(function(){
-			setTimeout(function(){
-				datatable.api().ajax.reload();
-			},10);
+			changedSearchParameter();
 		});
 		$('#search_mortgage').keydown(function(){
-			setTimeout(function(){
-				datatable.api().ajax.reload();
-			},10);
+			changedSearchParameter();
 		});
 		
 		$('.building-type-checkboxes').click(function(){
-			setTimeout(function(){
-				datatable.api().ajax.reload();
-			},10);
+			changedSearchParameter();
 		
 		});
 		$('.heating-type-checkboxes').click(function(){
-			setTimeout(function(){
-				datatable.api().ajax.reload();
-			},10);
+			changedSearchParameter();
 		
 		});
 		$('#search_elevator').change(function(){
-			datatable.api().ajax.reload();
+			changedSearchParameter();
 		});
 		$('#search_property_mgmt_company').keydown(function(){
-			setTimeout(function(){
-				datatable.api().ajax.reload();
-			},10);
+			changedSearchParameter();
 		});
 		$('#search_prev_property_mgmt_company').keydown(function(){
-			setTimeout(function(){
-				datatable.api().ajax.reload();
-			},10);
+			changedSearchParameter();
 		});
 		$('#search_isp').keydown(function(){
-			setTimeout(function(){
-				datatable.api().ajax.reload();
-			},10);
+			changedSearchParameter();
 		});
 		
 		function initSliders(){
@@ -1899,13 +2598,18 @@
 			$('.rent-slider').attr('data-slider-max',MAX_ROOM_RENT); // corrects limit
 			$('.rent-slider').attr('data-slider-step',STEP_ROOM_RENT); // corrects limit
 			$('.rent-slider').attr('data-slider-value','['+MIN_ROOM_RENT+','+MAX_ROOM_RENT+']');
-			$('.rent-slider').slider({tooltip: 'disabled'});
+			$('.rent-slider').each(function(){
+				sliders.push($(this).slider({tooltip: 'disabled'}));
+			});
+			
 			$('.units-slider').attr('data-slider-min',MIN_ROOM_UNITS); // corrects limit
 			$('.units-slider').attr('data-slider-max',MAX_ROOM_UNITS); // corrects limit
 			$('.units-slider').attr('data-slider-step',STEP_ROOM_UNITS); // corrects limit
 			$('.units-slider').attr('data-slider-value','['+MIN_ROOM_UNITS+','+MAX_ROOM_UNITS+']');
-			$('.units-slider').slider({tooltip: 'disabled'});
 			
+			$('.units-slider').each(function(){
+				sliders.push($(this).slider({tooltip: 'disabled'}));
+			});
 			
 			$('#bachelor_rent_min').html(MIN_ROOM_RENT);
 			$('#bachelor_rent_max').html(MAX_ROOM_RENT+'+');
@@ -1922,9 +2626,7 @@
 				}
 			});
 			$('#bachelor_rent_slider').on('slideStop',function(slideEvt){
-				setTimeout(function(){
-					datatable.api().ajax.reload();
-				},10);
+				changedSearchParameter();
 			});
 			
 			$('#bedroom1_rent_min').html(MIN_ROOM_RENT);
@@ -1942,9 +2644,7 @@
 				}
 			});
 			$('#bedroom1_rent_slider').on('slideStop',function(slideEvt){
-				setTimeout(function(){
-					datatable.api().ajax.reload();
-				},10);
+				changedSearchParameter();
 			});
 			
 			$('#bedroom2_rent_min').html(MIN_ROOM_RENT);
@@ -1962,9 +2662,7 @@
 				}
 			});
 			$('#bedroom2_rent_slider').on('slideStop',function(slideEvt){
-				setTimeout(function(){
-					datatable.api().ajax.reload();
-				},10);
+				changedSearchParameter();
 			});
 			
 			$('#bedroom3_rent_min').html(MIN_ROOM_RENT);
@@ -1982,9 +2680,7 @@
 				}
 			});
 			$('#bedroom3_rent_slider').on('slideStop',function(slideEvt){
-				setTimeout(function(){
-					datatable.api().ajax.reload();
-				},10);
+				changedSearchParameter();
 			});
 			
 			
@@ -2004,9 +2700,7 @@
 				}
 			});
 			$('#bachelor_units_slider').on('slideStop',function(slideEvt){
-				setTimeout(function(){
-					datatable.api().ajax.reload();
-				},10);
+				changedSearchParameter();
 			});
 			
 			$('#bedroom1_units_min').html(MIN_ROOM_UNITS);
@@ -2024,9 +2718,7 @@
 				}
 			});
 			$('#bedroom1_units_slider').on('slideStop',function(slideEvt){
-				setTimeout(function(){
-					datatable.api().ajax.reload();
-				},10);
+				changedSearchParameter();
 			});
 			
 			$('#bedroom2_units_min').html(MIN_ROOM_UNITS);
@@ -2044,9 +2736,7 @@
 				}
 			});
 			$('#bedroom2_units_slider').on('slideStop',function(slideEvt){
-				setTimeout(function(){
-					datatable.api().ajax.reload();
-				},10);
+				changedSearchParameter();
 			});
 			
 			$('#bedroom3_units_min').html(MIN_ROOM_UNITS);
@@ -2065,9 +2755,7 @@
 			});
 			
 			$('#bedroom3_units_slider').on('slideStop',function(slideEvt){
-				setTimeout(function(){
-					datatable.api().ajax.reload();
-				},10);
+				changedSearchParameter();
 			});
 			
 			
@@ -2077,7 +2765,7 @@
 			$('#building_income_min').html(MIN_BUILDING_INCOME);
 			$('#building_income_max').html(MAX_BUILDING_INCOME+'+');
 			$('#building_income_slider').attr('data-slider-value','['+MIN_BUILDING_INCOME+','+MAX_BUILDING_INCOME+']');
-			$('#building_income_slider').slider({tooltip: 'disabled'});
+			sliders.push($('#building_income_slider').slider({tooltip: 'disabled'}));
 			$('#building_income_slider').on('slide',function(slideEvt){
 				building_income_min = slideEvt.value[0];
 				building_income_max = slideEvt.value[1];
@@ -2091,9 +2779,7 @@
 				}
 			});
 			$('#building_income_slider').on('slideStop',function(slideEvt){
-				setTimeout(function(){
-					datatable.api().ajax.reload();
-				},10);
+				changedSearchParameter();
 			});
 			
 			
@@ -2103,7 +2789,7 @@
 			$('#elevator_installed_year_min').html(MIN_ELEVATOR_INSTALLED_YEAR);
 			$('#elevator_installed_year_max').html(MAX_ELEVATOR_INSTALLED_YEAR+'+');
 			$('#elevator_installed_year_slider').attr('data-slider-value','['+MIN_ELEVATOR_INSTALLED_YEAR+','+MAX_ELEVATOR_INSTALLED_YEAR+']');
-			$('#elevator_installed_year_slider').slider({tooltip: 'disabled'});
+			sliders.push($('#elevator_installed_year_slider').slider({tooltip: 'disabled'}));
 			$('#elevator_installed_year_slider').on('slide',function(slideEvt){
 				elevator_installed_year_min = slideEvt.value[0];
 				elevator_installed_year_max = slideEvt.value[1];
@@ -2117,9 +2803,7 @@
 				}
 			});
 			$('#elevator_installed_year_slider').on('slideStop',function(slideEvt){
-				setTimeout(function(){
-					datatable.api().ajax.reload();
-				},10);
+				changedSearchParameter();
 			});
 			
 			$('#unit_price_slider').attr('data-slider-min',MIN_UNIT_PRICE); // corrects limit
@@ -2128,7 +2812,7 @@
 			$('#unit_price_min').html(MIN_UNIT_PRICE==0?0:(MIN_UNIT_PRICE+'-'));
 			$('#unit_price_max').html(MAX_UNIT_PRICE+'+');
 			$('#unit_price_slider').attr('data-slider-value','['+MIN_UNIT_PRICE+','+MAX_UNIT_PRICE+']');
-			$('#unit_price_slider').slider({tooltip: 'disabled'});
+			sliders.push($('#unit_price_slider').slider({tooltip: 'disabled'}));
 			$('#unit_price_slider').on('slide',function(slideEvt){
 				unit_price_min = slideEvt.value[0];
 				unit_price_max = slideEvt.value[1];
@@ -2152,9 +2836,7 @@
 				}
 			});
 			$('#unit_price_slider').on('slideStop',function(slideEvt){
-				setTimeout(function(){
-					datatable.api().ajax.reload();
-				},10);
+				changedSearchParameter();
 			});
 			
 			
@@ -2164,7 +2846,7 @@
 			$('#elevator_upgrade_year_min').html(MIN_ELEVATOR_UPGRADE_YEAR);
 			$('#elevator_upgrade_year_max').html(MAX_ELEVATOR_UPGRADE_YEAR+'+');
 			$('#elevator_upgrade_year_slider').attr('data-slider-value','['+MIN_ELEVATOR_UPGRADE_YEAR+','+MAX_ELEVATOR_UPGRADE_YEAR+']');
-			$('#elevator_upgrade_year_slider').slider({tooltip: 'disabled'});
+			sliders.push($('#elevator_upgrade_year_slider').slider({tooltip: 'disabled'}));
 			$('#elevator_upgrade_year_slider').on('slide',function(slideEvt){
 				elevator_upgrade_year_min = slideEvt.value[0];
 				elevator_upgrade_year_max = slideEvt.value[1];
@@ -2178,9 +2860,7 @@
 				}
 			});
 			$('#elevator_upgrade_year_slider').on('slideStop',function(slideEvt){
-				setTimeout(function(){
-					datatable.api().ajax.reload();
-				},10);
+				changedSearchParameter();
 			});
 			
 			
@@ -2190,7 +2870,7 @@
 			$('#cap_rate_min').html(MIN_CAP_RATE);
 			$('#cap_rate_max').html(MAX_CAP_RATE+'+');
 			$('#cap_rate_slider').attr('data-slider-value','['+MIN_CAP_RATE+','+MAX_CAP_RATE+']');
-			$('#cap_rate_slider').slider({tooltip: 'disabled'});
+			sliders.push($('#cap_rate_slider').slider({tooltip: 'disabled'}));
 			$('#cap_rate_slider').on('slide',function(slideEvt){
 				cap_rate_min = slideEvt.value[0];
 				cap_rate_max = slideEvt.value[1];
@@ -2204,9 +2884,7 @@
 				}
 			});
 			$('#cap_rate_slider').on('slideStop',function(slideEvt){
-				setTimeout(function(){
-					datatable.api().ajax.reload();
-				},10);
+				changedSearchParameter();
 			});
 			
 			
@@ -2216,7 +2894,7 @@
 			$('#sale_price_min').html(MIN_SALE_PRICE);
 			$('#sale_price_max').html(MAX_SALE_PRICE+'+');
 			$('#sale_price_slider').attr('data-slider-value','['+MIN_SALE_PRICE+','+MAX_SALE_PRICE+']');
-			$('#sale_price_slider').slider({tooltip: 'disabled'});
+			sliders.push($('#sale_price_slider').slider({tooltip: 'disabled'}));
 			$('#sale_price_slider').on('slide',function(slideEvt){
 				sale_price_min = slideEvt.value[0];
 				sale_price_max = slideEvt.value[1];
@@ -2230,9 +2908,7 @@
 				}
 			});
 			$('#sale_price_slider').on('slideStop',function(slideEvt){
-				setTimeout(function(){
-					datatable.api().ajax.reload();
-				},10);
+				changedSearchParameter();
 			});
 			
 		
@@ -2243,7 +2919,7 @@
 			$('#assessed_value_min').html(MIN_ASSESSED_VALUE);
 			$('#assessed_value_max').html(MAX_ASSESSED_VALUE+'+');
 			$('#assessed_value_slider').attr('data-slider-value','['+MIN_ASSESSED_VALUE+','+MAX_ASSESSED_VALUE+']');
-			$('#assessed_value_slider').slider({tooltip: 'disabled'});
+			sliders.push($('#assessed_value_slider').slider({tooltip: 'disabled'}));
 			$('#assessed_value_slider').on('slide',function(slideEvt){
 				assessed_value_min = slideEvt.value[0];
 				assessed_value_max = slideEvt.value[1];
@@ -2257,9 +2933,7 @@
 				}
 			});
 			$('#assessed_value_slider').on('slideStop',function(slideEvt){
-				setTimeout(function(){
-					datatable.api().ajax.reload();
-				},10);
+				changedSearchParameter();
 			});
 			
 			$('#boiler_installed_year_slider').attr('data-slider-min',MIN_BOILER_INSTALLED_YEAR); // corrects limit
@@ -2268,7 +2942,7 @@
 			$('#boiler_installed_year_min').html(MIN_BOILER_INSTALLED_YEAR);
 			$('#boiler_installed_year_max').html(MAX_BOILER_INSTALLED_YEAR+'+');
 			$('#boiler_installed_year_slider').attr('data-slider-value','['+MIN_BOILER_INSTALLED_YEAR+','+MAX_BOILER_INSTALLED_YEAR+']');
-			$('#boiler_installed_year_slider').slider({tooltip: 'disabled'});
+			sliders.push($('#boiler_installed_year_slider').slider({tooltip: 'disabled'}));
 			$('#boiler_installed_year_slider').on('slide',function(slideEvt){
 				boiler_installed_year_min = slideEvt.value[0];
 				boiler_installed_year_max = slideEvt.value[1];
@@ -2282,9 +2956,7 @@
 				}
 			});
 			$('#boiler_installed_year_slider').on('slideStop',function(slideEvt){
-				setTimeout(function(){
-					datatable.api().ajax.reload();
-				},10);
+				changedSearchParameter();
 			});
 			
 			$('#boiler_upgrade_slider').attr('data-slider-min',MIN_BOILER_UPGRADE); // corrects limit
@@ -2293,7 +2965,7 @@
 			$('#boiler_upgrade_min').html(MIN_BOILER_UPGRADE);
 			$('#boiler_upgrade_max').html(MAX_BOILER_UPGRADE+'+');
 			$('#boiler_upgrade_slider').attr('data-slider-value','['+MIN_BOILER_UPGRADE+','+MAX_BOILER_UPGRADE+']');
-			$('#boiler_upgrade_slider').slider({tooltip: 'disabled'});
+			sliders.push($('#boiler_upgrade_slider').slider({tooltip: 'disabled'}));
 			$('#boiler_upgrade_slider').on('slide',function(slideEvt){
 				boiler_upgrade_min = slideEvt.value[0];
 				boiler_upgrade_max = slideEvt.value[1];
@@ -2307,9 +2979,7 @@
 				}
 			});
 			$('#boiler_upgrade_slider').on('slideStop',function(slideEvt){
-				setTimeout(function(){
-					datatable.api().ajax.reload();
-				},10);
+				changedSearchParameter();
 			});
 			
 		
@@ -2319,7 +2989,7 @@
 			$('#heat_age_min').html(MIN_HEAT_AGE);
 			$('#heat_age_max').html(MAX_HEAT_AGE+'+');
 			$('#heat_age_slider').attr('data-slider-value','['+MIN_HEAT_AGE+','+MAX_HEAT_AGE+']');
-			$('#heat_age_slider').slider({tooltip: 'disabled'});
+			sliders.push($('#heat_age_slider').slider({tooltip: 'disabled'}));
 			$('#heat_age_slider').on('slide',function(slideEvt){
 				heat_age_min = slideEvt.value[0];
 				heat_age_max = slideEvt.value[1];
@@ -2333,9 +3003,7 @@
 				}
 			});
 			$('#heat_age_slider').on('slideStop',function(slideEvt){
-				setTimeout(function(){
-					datatable.api().ajax.reload();
-				},10);
+				changedSearchParameter();
 			});
 		
 			$('#sales_count_slider').attr('data-slider-min',MIN_SALES_COUNT); // corrects limit
@@ -2344,7 +3012,7 @@
 			$('#sales_count_min').html(MIN_SALES_COUNT);
 			$('#sales_count_max').html(MAX_SALES_COUNT+'+');
 			$('#sales_count_slider').attr('data-slider-value','['+MIN_SALES_COUNT+','+MAX_SALES_COUNT+']');
-			$('#sales_count_slider').slider({tooltip: 'disabled'});
+			sliders.push($('#sales_count_slider').slider({tooltip: 'disabled'}));
 			$('#sales_count_slider').on('slide',function(slideEvt){
 				sales_count_min = slideEvt.value[0];
 				sales_count_max = slideEvt.value[1]
@@ -2358,9 +3026,7 @@
 				}
 			});
 			$('#sales_count_slider').on('slideStop',function(slideEvt){
-				setTimeout(function(){
-					datatable.api().ajax.reload();
-				},10);
+				changedSearchParameter();
 			});
 			
 			$('#windows_installed_year_slider').attr('data-slider-min',MIN_WINDOWS_INSTALLED_YEAR); // corrects limit
@@ -2369,7 +3035,7 @@
 			$('#windows_installed_year_min').html(MIN_WINDOWS_INSTALLED_YEAR);
 			$('#windows_installed_year_max').html(MAX_WINDOWS_INSTALLED_YEAR+'+');
 			$('#windows_installed_year_slider').attr('data-slider-value','['+MIN_WINDOWS_INSTALLED_YEAR+','+MAX_WINDOWS_INSTALLED_YEAR+']');
-			$('#windows_installed_year_slider').slider({tooltip: 'disabled'});
+			sliders.push($('#windows_installed_year_slider').slider({tooltip: 'disabled'}));
 			$('#windows_installed_year_slider').on('slide',function(slideEvt){
 				windows_installed_year_min = slideEvt.value[0];
 				windows_installed_year_max = slideEvt.value[1]
@@ -2383,9 +3049,7 @@
 				}
 			});
 			$('#windows_installed_year_slider').on('slideStop',function(slideEvt){
-				setTimeout(function(){
-					datatable.api().ajax.reload();
-				},10);
+				changedSearchParameter();
 			});
 			
 			
@@ -2395,7 +3059,7 @@
 			$('#parking_spots_min').html(MIN_PARKING_SPOTS);
 			$('#parking_spots_max').html(MAX_PARKING_SPOTS+'+');
 			$('#parking_spots_slider').attr('data-slider-value','['+MIN_PARKING_SPOTS+','+MAX_PARKING_SPOTS+']');
-			$('#parking_spots_slider').slider({tooltip: 'disabled'});
+			sliders.push($('#parking_spots_slider').slider({tooltip: 'disabled'}));
 			$('#parking_spots_slider').on('slide',function(slideEvt){
 				parking_spots_min = slideEvt.value[0];
 				parking_spots_max = slideEvt.value[1]
@@ -2409,14 +3073,12 @@
 				}
 			});
 			$('#parking_spots_slider').on('slideStop',function(slideEvt){
-				setTimeout(function(){
-					datatable.api().ajax.reload();
-				},10);
+				changedSearchParameter();
 			});
 			
 		
 			$('#units_slider').attr('data-slider-max',sliderLimit); // corrects limit
-			$('#units_slider').slider({tooltip: 'disabled'});
+			sliders.push($('#units_slider').slider({tooltip: 'disabled'}));
 			$('#units_slider').on('slide',function(slideEvt){
 				unitsMin = slideEvt.value[0];
 				unitsMax = slideEvt.value[1]
@@ -2430,20 +3092,45 @@
 				}
 			});
 			$('#units_slider').on('slideStop',function(slideEvt){
-				setTimeout(function(){
-					datatable.api().ajax.reload();
-				},10);
+				changedSearchParameter();
 			});
 		}
 		initSliders();
     	
         $(window).resize(function(){
+        	/*if(typeof(markers)!='undefined'&&$('#building_slideup_wrapper').html()!=''){
+				markers.blockIdleEvent = true;
+				google.maps.event.trigger(map, "resize");
+			}*/
+        	setMapSize();
+			
+			//snapClose();
+			
         });
+        function setMapSize(){
+        	//if(typeof(markers)!='undefined'){
+			//	markers.blockIdleEvent = true;
+			//	google.maps.event.trigger(map, "resize");
+			//	markers.blockIdleEvent = false;
+			//}
+			if($('body').width()>979){
+				$('#map_pane_wrapper').css('width',$('.main-content').width()+'px');
+    		}else{
+    			$('#map_pane_wrapper').css('width','');
+    		}
+    		
+    		if($('#map_pane_wrapper').height()!=50){
+				$('#map_pane_wrapper').css('height',$(window).height()-$('.navbar-fixed-top').height()+'px');
+			}
+    		
+			var mappaneheight = $(window).height()-$('.navbar-fixed-top').height();
+			$('#map_pane').height(mappaneheight);
+			var mapheightval = $(window).height()-$('#building_slideup_wrapper').height()-$('.navbar-fixed-top').height()-50;
+			$('#map_wrapper').height(mapheightval);
+			
+        }
         
-        $('#buildings tbody').on('click', 'tr', function () {
-        	$(this).siblings().removeClass('selected');
-        	$(this).removeClass('selected').addClass('selected');
-	    });
+
 	    
 	    
         $("#start_time_gen" ).datetimepicker({
@@ -2462,9 +3149,7 @@
 					,0
 					,0));
 			}
-			setTimeout(function(){
-				datatable.api().ajax.reload();
-			},10);
+			changedSearchParameter();
 		});
 		$('.bootstrap-datetimepicker-widget:not([picker_name])').attr('picker_name','start_time_gen');
 
@@ -2484,9 +3169,7 @@
 					,59
 					,59));
 			}
-			setTimeout(function(){
-				datatable.api().ajax.reload();
-			},10);
+			changedSearchParameter();
 		});
 		$('.bootstrap-datetimepicker-widget:not([picker_name])').attr('picker_name','end_time_gen');
 		
@@ -2506,9 +3189,7 @@
 					,0
 					,0));
 			}
-			setTimeout(function(){
-				datatable.api().ajax.reload();
-			},10);
+			changedSearchParameter();
 		});
 		$('.bootstrap-datetimepicker-widget:not([picker_name])').attr('picker_name','start_time_gen');
 		
@@ -2529,9 +3210,7 @@
 						,59
 						,59));
 				}
-				setTimeout(function(){
-				datatable.api().ajax.reload();
-			},10);
+				changedSearchParameter();
 		});
 		$('.bootstrap-datetimepicker-widget:not([picker_name])').attr('picker_name','end_mortgage_due_date_gen');
 		
@@ -2858,7 +3537,7 @@
 			                	building.fetch({id:response.building_id});  
 			                }
 	                	}
-		                datatable.api().ajax.reload(function(){},false);
+		                datatable.api().ajax.reload(function(){},false); //saving building
 	                },100);
                         
 	                setTimeout(function(){
@@ -2983,12 +3662,16 @@
 	        		var bedroom1Units = isNaN(parseInt($('#bedroom1_units').val()))?0:parseInt($('#bedroom1_units').val());
 	        		var bedroom2Units = isNaN(parseInt($('#bedroom2_units').val()))?0:parseInt($('#bedroom2_units').val());
 	        		var bedroom3Units = isNaN(parseInt($('#bedroom3_units').val()))?0:parseInt($('#bedroom3_units').val());
+	        		var totalUnits = isNaN(parseInt($('#unit_quantity').val()))?0:parseInt($('#unit_quantity').val());
 	        		
 	        		var unitPrice = 0;
-	        		if(!isNaN(parseFloat(building.get('last_sale_price')))&&(bachelorUnits+bedroom1Units+bedroom2Units+bedroom3Units)!=0){
-	        			unitPrice =    ((parseFloat(building.get('last_sale_price')))/(bachelorUnits+bedroom1Units+bedroom2Units+bedroom3Units)).toFixed(2);
-	        		
+	        		//if(!isNaN(parseFloat(building.get('last_sale_price')))&&(bachelorUnits+bedroom1Units+bedroom2Units+bedroom3Units)!=0){
+	        		//	unitPrice =    ((parseFloat(building.get('last_sale_price')))/(bachelorUnits+bedroom1Units+bedroom2Units+bedroom3Units)).toFixed(2);
+	        		//}
+	        		if(!isNaN(parseFloat(building.get('last_sale_price')))&&(totalUnits)!=0){
+	        			unitPrice =    ((parseFloat(building.get('last_sale_price')))/(totalUnits)).toFixed(2);
 	        		}
+	        		
 	        		$('#unit_price_calculated_radio_label').html('$'+(isNaN(parseFloat(unitPrice))?'0.00':parseFloat(unitPrice).toFixed(2)));
 	        		building.set('unit_price',parseFloat(unitPrice));
 	        		this.unitQuantityChange();

@@ -46,6 +46,31 @@ module.exports = {
 	 
       });
       
+  },
+  fixUnitPrice:function(req,res){
+      
+      sails.controllers.database.credQuery('UPDATE cur_buildings SET unit_price_manual_mode = 1',function(err,result){
+	  if(err) 
+		return console.log('couldnt UPDATE cur_buildings:'+err);
+	  
+	  
+	  sails.controllers.database.credQuery('SELECT * FROM cur_buildings WHERE ((unit_price = 0 OR unit_price IS NULL)AND(unit_quantity != 0 AND unit_quantity IS NOT NULL)AND(last_sale_price != 0 AND last_sale_price IS NOT NULL))',function(err,response){
+	      if(err) 
+			return console.log('couldnt SELECT cur_buildings:'+err);
+	      
+	      for(var i=0;i<response.length;i++){
+		  var unitprice = Math.floor(parseInt(response[i].last_sale_price)/response[i].unit_quantity).toFixed(2);
+		  var id = response[i].id;
+		  sails.controllers.database.credQuery('UPDATE cur_buildings SET unit_price_manual_mode = 0, unit_price = '+unitprice+' WHERE id = '+id,function(err,response){
+		      if(err) 
+				return console.log('couldnt UPDATE cur_buildings:'+err);  
+		  });
+	      }
+	      
+	  });
+	  
+      });
+      
   }
 
   

@@ -493,14 +493,23 @@
 
     });
     function fixheight(){
-        $('.main-content').css('height',$(window).height()-$('.navbar').height()+'px');
         if($('body').width()>979){
+        	$('.main-content').css('height',$(window).height()-$('.navbar').height()- <%=req.url=='/buildings'?50:0%>+'px');
+        	
         	$('.isn-content-footer').width($('.main-content').width()-20);
 		}else{
+			$('.main-content').css('height',$(window).height()-52+'px');
         	$('.isn-content-footer').width('');
 		}
     }
 
+	function commaSeparateNumber(val){
+		while (/(\d+)(\d{3})/.test(val.toString())){
+			val = val.toString().replace(/(\d+)(\d{3})/, '$1'+','+'$2');
+		}
+		return val;
+	}
+  
     function dateFromISO(s) {
         s = s.split(/\D/);
         return new Date(Date.UTC(s[0], --s[1]||'', s[2]||'', s[3]||'', s[4]||'', s[5]||'', s[6]||''));
@@ -648,7 +657,7 @@
 
      <!-- The MAIN DIV -- BODY SECTION -->
       <!-- This is where the actual pages themselves get loaded in -->
-    <div class="main-content">
+    <div class="main-content <%=req.url=='/buildings'?'map-padding':''%>">
    		<%- body %>
     </div> <!-- /container -->
 

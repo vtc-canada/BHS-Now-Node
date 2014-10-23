@@ -59,12 +59,24 @@ body{
     -webkit-font-smoothing:antialiased;
 }
 
+tr .map-link:hover{
+	color:black;
+}
 
+tr.selected .map-link:hover{
+	color:black;
+}
 
 .main-content {
     position: relative;
     padding-left: 200px;
 }
+
+.main-content.map-hidden > .row-fluid,.main-content.map-hidden > .isn-content-footer{
+	display:none !important;	
+}
+
+
 
 @media (max-width: 979px){
     .main-content {
@@ -305,6 +317,11 @@ input.segment-form-radio{
 	width: auto;
 }
 
+#view_history{
+	color:#025299;
+	cursor:pointer;
+}
+
 .building-overlay-block-details:last-child{
 	margin-right:45px;
 }
@@ -312,13 +329,14 @@ input.segment-form-radio{
     padding: 4px;
     min-height: 110px !important;
     margin-bottom: 5px;
-    width: 235px !important;
+    min-width: 235px !important;
     margin-left: 0px !important;
     border-left: 1px solid #c3c3c3;
     padding-left: 10px;
     margin-right: 10px;
     float: none !important;
     display: inline-block !important;
+    width:auto !important;
 }
 
 .building-overlay-block-details .block-value{
@@ -331,15 +349,45 @@ input.segment-form-radio{
 	/*font-weight:600;
 	color:#828282;*/
     margin-bottom: 5px;
-    width: 235px !important;
+    min-width: 235px !important;
     margin-left: 0px !important;
-  padding-left: 10px;  border-left: 1px solid #c3c3c3;  margin-right: 10px;  display: inline-block !important;  float: none;  white-space: nowrap;}
+  padding-left: 10px;  
+  border-left: 1px solid #c3c3c3;  
+  margin-right: 10px;  
+  display: inline-block !important;  
+  float: none;  
+  white-space: nowrap;
+    width:auto !important;
+  
+  }
+
 
 .building-overlay-block-address .block-value{
 	font-weight:600;
 	color:black;
 }
 
+.slider-disabled .slider-selection{
+    background: #eeeeee;
+
+}
+
+.slider-disabled .slider-handle{
+    background: #B3C6CF;
+
+}
+
+
+
+
+.buildings-search-filters{
+	float:left;
+	margin-left:0px !important;
+}
+.buildings-search-filters-toggle{
+	margin-left:20px;
+	font-weight:normal;
+}
 
 .building-details-padder{
 	padding:5px;
@@ -804,6 +852,15 @@ div.language-flag.chile{
     line-height: 30px;
     min-width: 160px;
 }
+#map_pane_wrapper{
+	position:relative;
+	overflow: hidden;
+}
+#map_pane{
+	position:absolute;
+	width:100%;
+	bottom:0px;
+}
 
 #changepasswordModal input.change-input{
     float: left;
@@ -949,6 +1006,12 @@ div.language-flag.chile{
 	
 }
 
+.filter-button{
+	font-size: 13px;
+	line-height: 19px;
+	width:114px;
+}
+
 .isn-margin-footer-wrapper{
     padding-bottom: 0px;
 	
@@ -989,6 +1052,13 @@ cursor: default;
         /* padding-top: 41px; 60px to make the container go all the way to the bottom of the topbar */
     }
 
+	#map_pane_wrapper{
+		position:fixed;
+		top:42px;
+		
+	
+		z-index: 100;
+}
 
     .isn-content-footer{
     	position:fixed;	
@@ -1019,6 +1089,9 @@ cursor: default;
     .main-content{
         overflow-y: auto;
         top: 42px;
+    }
+    .main-content.map-padding{
+    	margin-top:50px;
     }
 
     body{
