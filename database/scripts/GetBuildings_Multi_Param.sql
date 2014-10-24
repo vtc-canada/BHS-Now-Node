@@ -1,6 +1,8 @@
-USE cred;
-DROP PROCEDURE if EXISTS `GetBuildings` ;
+USE `cred`;
+DROP procedure IF EXISTS `GetBuildings`;
+
 DELIMITER $$
+USE `cred`$$
 CREATE PROCEDURE `GetBuildings`(IN ownerSearchTerms VARCHAR(128), IN addressSearchTerms VARCHAR(128),IN mortgageCompanySearchTerms VARCHAR(64),
 		IN sellerSearchTerms VARCHAR(128), IN agentSearchTerms VARCHAR(128), IN ownerCompanySearchTerms VARCHAR(128), IN sellerCompanySearchTerms VARCHAR(128), IN agentCompanySearchTerms VARCHAR(128),
 		IN unitQuantityMin int, IN unitQuantityMax int, IN unitPriceMin INT, IN unitPriceMax INT, 
@@ -13,7 +15,6 @@ CREATE PROCEDURE `GetBuildings`(IN ownerSearchTerms VARCHAR(128), IN addressSear
 		IN heatAgeMin INT, IN heatAgeMax INT,
 		IN boilerAgeMin INT, IN boilerAgeMax INT,		
 		IN lastBoilerInstalledYearMin INT, IN lastBoilerInstalledYearMax INT,
-		IN assessedValueMin INT, IN assessedValueMax INT,
 		IN buildingIncomeMin INT, IN buildingIncomeMax INT,	
 		IN lastSalesPriceMin INT, IN lastSalesPriceMax INT,
 		IN numOfBachelorMin INT, IN numOfBachelorMax INT, IN numOf1BedroomMin INT, IN numOf1BedroomMax INT, IN numOf2BedroomMin INT, IN numOf2BedroomMax INT, 
@@ -25,7 +26,7 @@ CREATE PROCEDURE `GetBuildings`(IN ownerSearchTerms VARCHAR(128), IN addressSear
 		IN mortgageDueDateRangeStart datetime, IN mortgageDueDateRangeEnd datetime,
 		IN numOfSalesMin INT, numOfSalesMax INT,
 		IN buildingTypes VARCHAR(64), IN heatSystemTypes VARCHAR(64), IN numOfParkingMin INT, IN numOfParkingMax INT,
-		IN offsetIndex int, IN recordCount INT, IN orderBy VARCHAR (255), OUT id int, OUT totalCount int)
+		IN offsetIndex int, IN recordCount INT, IN orderBy VARCHAR (255), OUT id int, OUT totalCount int) 
 BEGIN
 SELECT 
 	 SQL_CALC_FOUND_ROWS GROUP_CONCAT(DISTINCT owner_contact.name SEPARATOR ', ') as 'owner'
@@ -97,7 +98,7 @@ FROM cur_buildings
 				FROM cur_sales_history_contact_mapping 
 				GROUP BY cur_buildings_id) AS sales_count ON (sales_count.cur_buildings_id = cur_buildings.id)
 WHERE
-	(addressSearchTerms IS NULL OR MATCH(street_name,postal_code,city,province) AGAINST (addressSearchTerms IN BOOLEAN MODE))
+	(addressSearchTerms IS NULL OR MATCH(street_name,postal_code,city,province,street_number_begin) AGAINST (addressSearchTerms IN BOOLEAN MODE))
 	AND (ownerSearchTerms IS NULL OR MATCH (owner_contact.name, owner_contact.email) AGAINST (ownerSearchTerms IN BOOLEAN MODE))
 	AND (sellerSearchTerms IS NULL OR MATCH (seller_contact.name, seller_contact.email) AGAINST (sellerSearchTerms IN BOOLEAN MODE))
 	AND (agentSearchTerms IS NULL OR MATCH (agent_contact.name, agent_contact.email) AGAINST (agentSearchTerms IN BOOLEAN MODE))
@@ -125,8 +126,6 @@ WHERE
 	AND (CASE WHEN heatAgeMin IS NOT NULL THEN (cur_buildings.heat_system_age >= heatAgeMin) ELSE 1 END)
 	AND (CASE WHEN boilerAgeMax IS NOT NULL THEN (cur_buildings.boiler_installed_year <= boilerAgeMax) ELSE 1 END)
 	AND (CASE WHEN boilerAgeMin IS NOT NULL THEN (cur_buildings.boiler_installed_year >= boilerAgeMin) ELSE 1 END)
-	AND (CASE WHEN assessedValueMax IS NOT NULL THEN (cur_buildings.assessed_value <= assessedValueMax) ELSE 1 END)
-	AND (CASE WHEN assessedValueMin IS NOT NULL THEN (cur_buildings.assessed_value >= assessedValueMin) ELSE 1 END)
 	AND (CASE WHEN numOf1BedroomMax IS NOT NULL THEN (cur_buildings.bedroom1_units <= numOf1BedroomMax) ELSE 1 END)
 	AND (CASE WHEN numOf1BedroomMin IS NOT NULL THEN (cur_buildings.bedroom1_units >= numOf1BedroomMin) ELSE 1 END)
 	AND (CASE WHEN numOf2BedroomMax IS NOT NULL THEN (cur_buildings.bedroom2_units <= numOf2BedroomMax) ELSE 1 END)
@@ -187,7 +186,8 @@ ORDER BY
 	CASE WHEN orderBy='longitude_asc' THEN longitude END ASC,
 	CASE WHEN orderBy='longitude_desc' THEN longitude END DESC,
 	CASE WHEN orderBy='latitude_asc' THEN latitude END ASC,
-	CASE WHEN orderBy='latitude_desc' THEN latitude END DESC
+	CASE WHEN orderBy='latitude_desc' THEN latitude END DESC,
+	CASE WHEN orderBy= null THEN street_number_begin END ASC
 LIMIT recordCount OFFSET offsetIndex;
 
 SET id = FOUND_ROWS();
@@ -199,7 +199,6 @@ WHERE
 	(cur_buildings.is_deleted = 0) ;
 
 END$$
+
 DELIMITER ;
-
-
 

@@ -5,7 +5,7 @@ DELIMITER $$
 CREATE PROCEDURE `UpdateSalesRecord`(IN recordID INT,IN salePrice DECIMAL(13,2),IN saleDate DATETIME, IN heatSystemAge INT, IN windowsInstalledYear INT, 
 		IN elevatorInstalledYear INT,IN elevatorUpgradeYear INT, IN has_elevator BOOLEAN
 		,IN boilerInstalledYear INT, IN cableInternetProvider VARCHAR(45)
-		,IN assessedValue FLOAT 
+		,IN assessedValue VARCHAR(1024) 
 		,IN heatSystemType VARCHAR(45),IN unitQuantity INT
 		,IN unitPrice INT, IN unit_price_manual_mode BOOLEAN, IN building_income DECIMAL(13,2), IN building_income_manual_mode BOOLEAN
 		,IN bachelor_units INT, IN bedroom1_units INT, IN bedroom2_units INT, IN bedroom3_units INT

@@ -645,12 +645,52 @@ module.exports = {
     },
     getajax : function(req, res) {
 	sails.controllers.buildings.querybuildings(req,res,function(result){
-	    res.json({
-		draw : req.query.draw,
-		recordsTotal : result[1][totalCount],
-		recordsFiltered : result[1][filteredCount],
-		data : result[0]
-	    });
+	    
+	    if(typeof(req.query.includeBuilding)!='undefined'){
+		sails.controllers.database.credSproc('getBuildingsById',[req.query.includeBuilding],function(err,append){
+		    if (err){       
+	        	return console.log(err);  
+		    }
+		    var foundBuilding = false;
+		    for(var i=0;i<result[0].length;i++){
+			if(result[0][i].building_id == append[0][0].building_id){
+			    foundBuilding = true;
+			    break;
+			}
+		    }
+		    var blocksize = 10;
+		    if(!foundBuilding){
+			result[0].unshift(append[0][0]);
+			blocksize++;
+		    }
+		    for(var i=0;i<result[0].length;i++){
+			if(i>=blocksize){
+			    break;
+			}
+			result[0][i].showrow = true;
+		    }
+		    res.json({
+			draw : req.query.draw,
+			recordsTotal : result[1][totalCount],
+			recordsFiltered : result[1][filteredCount],
+			data : result[0]
+		    });
+		    
+		});
+	    }else{
+		for(var i=0;i<result[0].length;i++){
+			if(i>=10){
+			    break;
+			}
+			result[0][i].showrow = true;
+		    }
+		    res.json({
+			draw : req.query.draw,
+			recordsTotal : result[1][totalCount],
+			recordsFiltered : result[1][filteredCount],
+			data : result[0]
+		    });
+	    }
 	});
 
     },
@@ -715,8 +755,6 @@ module.exports = {
 		req.query.boiler_upgrade_min == ''?null:req.query.boiler_upgrade_min,		
 		req.query.boiler_upgrade_max == ''?null:req.query.boiler_upgrade_max,	
 			
-		req.query.assessed_value_min == ''?null:req.query.assessed_value_min,		
-		req.query.assessed_value_max == ''?null:req.query.assessed_value_max,
 			
 		req.query.building_income_min == ''?null:req.query.building_income_min,	
 		req.query.building_income_max == ''?null:req.query.building_income_max,	

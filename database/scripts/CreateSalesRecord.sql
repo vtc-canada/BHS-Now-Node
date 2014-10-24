@@ -3,7 +3,7 @@ DROP PROCEDURE if EXISTS `CreateSalesRecord` ;
 
 DELIMITER $$
 CREATE PROCEDURE `CreateSalesRecord`(IN salePrice DECIMAL(13,2),IN saleDate DATETIME, IN heatSystemAge INT,  IN windowsInstalledYear INT, 
-		IN elevatorInstalledYear INT, IN elevatorUpgradeYear INT, IN has_elevator BOOLEAN, IN boilerInstalledYear INT, IN cableInternetProvider VARCHAR(45), IN assessedValue FLOAT, 
+		IN elevatorInstalledYear INT, IN elevatorUpgradeYear INT, IN has_elevator BOOLEAN, IN boilerInstalledYear INT, IN cableInternetProvider VARCHAR(45), IN assessedValue VARCHAR(1024), 
 		IN heatSystemType VARCHAR(45),IN unitQuantity INT, IN unitPrice INT, IN unit_price_manual_mode BOOLEAN, IN building_income DECIMAL(13,2), IN building_income_manual_mode BOOLEAN
 , IN bachelorPrice FLOAT, IN bedroom1Price FLOAT, IN bedroom2Price FLOAT, IN bedroom3Price FLOAT, IN bachelorUnits INT, IN bedroom1Units INT
 		,IN bedroom2Units INT, IN bedroom3Units INT, IN propertyMgmtCompany VARCHAR(45), IN prev_property_mgmt_company VARCHAR(45)
