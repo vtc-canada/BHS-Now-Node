@@ -90,7 +90,9 @@ module.exports = {
 			}else{
 			    i++;
 				if(i<coords.length){
-				    loopCoords(i);
+				    setTimeout(function(){
+					loopCoords(i);
+				    },0);
 				}else{
 				    console.log('done '+countupdated);
 				    return res.json('done '+countupdated);
