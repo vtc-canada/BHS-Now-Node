@@ -93,6 +93,22 @@ module.exports.views = {
 		'Jam Rate' : 'Jam Rate',
 		'ATR Read Rate' : 'ATR Read Rate',
 
+		//Reports
+		'Reports' : 'Reports',
+		'Reports Criteria' : 'Reports Criteria',
+		'Report Type' : 'Report Type',
+		'Start Time' : 'Start Time',
+		'End Time' : 'End Time',
+		'Styling' : 'Styling',
+		'Run Report' : 'Run Report',
+		'Report Header' : 'Report',
+		'PrintError' : 'Error: Unable to print. No printer was selected',
+		'Error' : 'Error',
+		'DateOrderError' : 'End Time parameter must be greater than Start Time parameter',
+		'1 Hour':'1 Hour',
+		'30 Minutes':'30 Minutes',
+		'15 Minutes':'15 Minutes',
+
 		'pages' : {
 		    '/' : 'test',
 		    '/dashboard' : 'Dashboard',

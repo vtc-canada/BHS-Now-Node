@@ -33,6 +33,10 @@ module.exports.policies = {
   },
   'auth':{
       '*':true
+  },
+  'reports':{
+      '*':'RoutePolicy',
+      'view':true
   }
 
   /***************************************************************************

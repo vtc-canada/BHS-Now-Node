@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<%
+    var translate = {
+        'en' : {
+            'noresults':'No results have been found.'
+        },
+        'es' : {
+            'noresults':'No results have been found.[translate noresults.ejs]'
+        }
+    }
+%>
+
+<meta charset="utf-8">
+<meta content="width=300, initial-scale=1" name="viewport">
+<meta name="description" content="">
+<title><%= translate[locale]['DefaultTitle'] %></title>
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/favicon.ico">
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="/img/favicon.ico">
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="/img/favicon.ico">
+<link rel="apple-touch-icon-precomposed" href="/img/favicon.png">
+<link rel="shortcut icon" href="/img/favicon.ico">
+<link rel="icon" href="/img/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+
+
+               <!--
+<script type="text/javascript" src="/jsfirst/jquery.js"></script>
+<script type="text/javascript" src="/mixins/socket.io.js"></script>
+<script type="text/javascript" src="/mixins/sails.io.js"></script>
+<script type="text/javascript" src="/js/bootstrap-combobox.js"></script>
+<script type="text/javascript" src="/js/bootstrap.js"></script>
+<script type="text/javascript" src="/js/jquery-ui-1.10.3.custom.min.js"></script>
+<script type="text/javascript" src="/js/jquery.ui.chatbox.js"></script>
+<script type="text/javascript" src="/js/jquery.ui.chatboxManager.js"></script>       -->
+
+
+</head>
+<body>
+<div class="wrapper">
+    <!--<div class="google-header-bar  centered">
+        <div class="header content clearfix">
+            <img alt="iSystemsNow" class="logo" src="/img/iSystemsNow-Logo-RGB-Black.png">
+        </div>
+    </div>-->
+    <div class="main content clearfix">
+        <div class="banner">
+            <h5 style="margin-left:10px;">
+                <%= translate[locale][noresults] %>
+            </h5>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>
+

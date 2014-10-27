@@ -62,7 +62,7 @@ module.exports.views = {
 	    enabled:true,
 	    url:'/search'
 	},
-	i18n:true,
+	i18nEnabled:true,
 	navpages : {
 	    '/dashboard':{
 		enabled:true,
@@ -86,6 +86,9 @@ module.exports.views = {
 		    }
 		}
 	    }
+	},
+	i18n:function(req,word){
+	    return this.translate[req.session.user.locale][word];
 	},
 	templateHelper:{
 	    hasChildPage:function(navpage,url){

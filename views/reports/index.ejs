@@ -1,41 +1,5 @@
-<%
-    var translate = {
-        'en' : {
-            'Reports':'Reports',
-            'Reports Criteria':'Reports Criteria',
-            'Report Type':'Report Type',
-            'Start Time':'Start Time',
-            'End Time':'End Time',
-            'Styling':'Styling',
-            'Run Report':'Run Report',
-            'Report Header':'Report',
-            'PrintError':'Error: Unable to print. No printer was selected',
-            'Error':'Error',
-            'DateOrderError':'End Time parameter must be greater than Start Time parameter'
-        },
-        'es' : {
-            'Reports':'Informes',
-            'Reports Criteria':'Informes Criterios',
-            'Report Type':'Tipo de Informe',
-            'Start Time':'Hora de Inicio',
-            'End Time':'Hora de Finalización',
-            'Styling':'Estilismo',
-            'Run Report':'Ejecutar Informe',
-            'Report Header':'Informe',
-            'PrintError':'Error: Unable to print. No printer was selected',
-            'Error':'Error',
-            'DateOrderError':'End Time parameter must be greater than Start Time parameter'
-        }
-    }
-%>
-<script>
-    var reportsets={};
 
-    /// Hardcoded Report Types.
-    // Serverside knows how to handle and what to expect based on the reports ID
-    // Adding a report here will make all the clientside work, following the parameter types conventions
-    // Serverside must be implemented for new reports
-    var reports = <%- JSON.stringify(reports[req.url]) %>;
+<script>
 
 
 </script>
@@ -123,24 +87,55 @@
 </div>
 
 <script>
+
+    
+    
+    var reportsets={};
+	reportsets['eqp_ids']= <%- typeof(eqp_ids)=='undefined'?'[]':JSON.stringify(eqp_ids) %>;
+    reportsets['intervals'] = [{id:3600,name:'<%=i18n(req,'1 Hour')%>'},{id:1800,name:'<%=i18n(req,'30 Minutes')%>'},{id:900,name:'<%=i18n(req,'15 Minutes')%>'}];
+    /// Hardcoded Report Types.
+    // Serverside knows how to handle and what to expect based on the reports ID
+    // Adding a report here will make all the clientside work, following the parameter types conventions
+    // Serverside must be implemented for new reports
+    var reports = <%- JSON.stringify(reports[req.url]) %>;
+    var global_config = <% if(typeof(global_config)=='undefined'){ %>{}<% }else{ %><%- JSON.stringify(global_config) %><% } %>;
+    function getConfig(description,field){
+    	var resultset = $.grep(global_config,function(e){ return e.description==description;});
+    	if(resultset.length==0){
+    		return '';
+    	}
+    	else{
+    		return resultset[0][field];
+		}
+    }
 	var maxRecords = 1000;
     var printers;       // stores printers list
     var filename;       // stores filename of generated report
-    var operational_day_start_time; // config  operational_day_start_time for setting Start Time: parameter
-    var system_name;   // Airport name
-    var fault_types;   //  for parameters of type 'fault'
+    var operational_day_start_time = getConfig('operational_day_start_time','time_val');
+    
+    
+    //$.grep(global_config,function(e){ return e.description=='operational_day_start_time';})
+    
+    
+    typeof(global_config.operational_day_start_time)!='undefined'?global_config.operational_day_start_time:''; // config  operational_day_start_time for setting Start Time: parameter
+    var system_name = typeof(global_config.system_name)!='undefined'?global_config.system_name:'System Name';   // Airport name
+    var fault_types = <%=(typeof(fault_types)=='undefined')?'[]':''%><%-JSON.stringify(fault_types)%>;   //  for parameters of type 'fault'
+    
+    
+    
     $(document).ready(function(){
 
         // Starts up by loading in all the configuration and object variables we'll need
         // Once completed, it builds the parameters for the selected report type.
         // by the time it completes 3 socket round trips, this report type field will have been populated
-
-        socket.get('/main/get_fault_types',{},function(res){
+		
+		
+        /*socket.get('/main/get_fault_types',{},function(res){
             if(res.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
                 location.reload(); // Will boot back to login screen
             }
             fault_types = res;
-            socket.request('/reports/get_equipment',{},function(res){
+            socket.get('/reports/get_equipment',{},function(res){
                 if(res.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
                     location.reload(); // Will boot back to login screen
                 }
@@ -157,10 +152,10 @@
                             system_name = res[i].string_val;
                         }
                     }
-                    rebuildParams();
+                    
                 });
             });
-        });
+        });*/
 
 
         /// Activates serverside printing.
@@ -174,7 +169,7 @@
             $('#printcog').css('display','inline-block');
 
             //printers
-            socket.request("/reports/printreport" , {printer:getPrinterById(parseInt($('#printerselect').val())),filename:filename},function(response){
+            socket.get("/reports/printreport" , {printer:getPrinterById(parseInt($('#printerselect').val())),filename:filename},function(response){
                 if(response.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
                     location.reload(); // Will boot back to login screen
                 }
@@ -226,7 +221,7 @@
             $.each(report.parameters,function(key,param){
                 report.parameters[key].value = $('#'+key).val();
             });
-            socket.request("/reports/promptprint" , {report:report},function(response){
+            socket.get("/reports/promptprint" , {report:report},function(response){
                 if(response.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
                     location.reload(); // Will boot back to login screen
                 }
@@ -260,7 +255,7 @@
             $.each(report.parameters,function(key,param){
                 report.parameters[key].value = $('#'+key).val();
             });
-            socket.request("/reports/promptsave" , {report:report},function(response){
+            socket.get("/reports/promptsave" , {report:report},function(response){
                 if(response.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
                     location.reload(); // Will boot back to login screen
                 }
@@ -367,6 +362,7 @@
         for(var i=0; i< reports.length; i++){
             $('#reporttype').append('<option value="'+reports[i].id+'">'+reports[i].name.locale_label['<%=req.session.user.locale%>']+'</option>');
         }
+		rebuildParams();
     });
 
 
@@ -501,7 +497,7 @@
 	            	if(typeof(param.url)!='undefined'){
 			            $dependant.empty();
 			            $dependant.trigger('change');
-		            	socket.request(param.url,{id:$self.val()},function(dependant_data_set){
+		            	socket.get(param.url,{id:$self.val()},function(dependant_data_set){
 		                    if(dependant_data_set.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
 		                        location.reload(); // Will boot back to login screen
 		                    }

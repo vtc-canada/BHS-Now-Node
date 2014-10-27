@@ -105,7 +105,7 @@
             </a>
           <div class="nav-collapse collapse nav-collapse-topbar">
             <ul class="nav pull-right" id="top_right_desktop">
-<% if(i18n){ %> 
+<% if(i18nEnabled){ %> 
               <li id="liLocation">
                   <% if(req.session.user.locale=='en'){ %>
                     <a class="top-message-a language-a" style="position:relative;"><div class="language-flag english"></div><div class="top-flag-span top-messages-span">English</div></a>
@@ -294,9 +294,34 @@
 	    	}
 	        return date.getFullYear()+'-'+padLeft((date.getMonth()+1).toString(),2)+'-'+ padLeft(date.getDate(),2) + ' ' + padLeft(date.getHours(),2)+':'+padLeft(date.getMinutes(),2)+':'+padLeft(date.getSeconds(),2);
 	    }
+	    function dateFromlocalISO(s) {
+	        s = s.split(/\D/);
+	        var datet= new Date(Date.UTC(s[0], --s[1]||'', s[2]||'', s[3]||'', s[4]||'', s[5]||'', s[6]||''));
+	        return new Date(datet.getTime() + datet.getTimezoneOffset()*60000);
+	    }
 	    function to_operational_day_start_time(date,timestring){
 	        return date.getFullYear()+'-'+padLeft((date.getMonth()+1).toString(),2)+'-'+ padLeft(date.getDate(),2) + ' ' + timestring;
 	    }
+	    function secondsToStringRoundDaysHours(seconds) {
+			var numdaysstring = '';
+		  	var numdays = Math.floor(seconds / 86400);
+		  	if(numdays>0)
+		  	{
+		  		numdaysstring = numdays+' days ';
+		  	}
+		  	var numhours = Math.floor((seconds % 86400) / 3600);
+		 	 return numdaysstring + numhours+' hours';
+		}
+		function secondsToString(seconds) {
+		
+		  var numdays = Math.floor(seconds / 86400);
+		  var numhours = Math.floor((seconds % 86400) / 3600);
+		  var numminutes = Math.floor(((seconds % 86400) % 3600) / 60);
+		  var numseconds = ((seconds % 86400) % 3600) % 60;
+		
+		  return padLeft(numdays, 2) + ":" + padLeft(numhours, 2) + ":"
+		      + padLeft(numminutes, 2) + ":" + padLeft(numseconds, 2);
+		}
 	    
 	    $(document).ready(function(){
 	    	fixheight();
