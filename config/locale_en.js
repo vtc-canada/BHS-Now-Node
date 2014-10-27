@@ -115,7 +115,8 @@ module.exports.views = {
 		    '/systemconfig' : 'System Config',
 		    '/admin/users' : 'Users',
 		    '/admin/securitygroups' : 'Security Groups',
-		    '/reports' : 'Reports'
+		    '/reports' : 'Reports',
+		    '/search' : 'Bag Search'
 		}
 	    }
 	}

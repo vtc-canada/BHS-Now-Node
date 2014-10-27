@@ -119,7 +119,8 @@
     
     typeof(global_config.operational_day_start_time)!='undefined'?global_config.operational_day_start_time:''; // config  operational_day_start_time for setting Start Time: parameter
     var system_name = typeof(global_config.system_name)!='undefined'?global_config.system_name:'System Name';   // Airport name
-    var fault_types = <%=(typeof(fault_types)=='undefined')?'[]':''%><%-JSON.stringify(fault_types)%>;   //  for parameters of type 'fault'
+    var fault_types = <% if(typeof(fault_types)=='undefined'){ %>[]<% }else{ %><%- JSON.stringify(fault_types) %><% } %>;//  for parameters of type 'fault'
+    
     
     
     
@@ -270,93 +271,11 @@
 
 
 
-         // This run report button handler prepares the report object, and requests serverside for the HTML generated from the report.
-         //  It clears and reassembles the parameter values for the report.
-         // based on the type of parameter, it assembles the structure for the report parameters.
-         // At the top of this file, the report structure is visible in the current reports as examples
-        // when serverside responds with the HTML, it is thrown in the reports DIV. The Save and Print buttons are then enabled
-         $('#runreport').click(function(){
-             $('.alert').remove();
-             var report = getReportById(parseInt($('#reporttype').val()));
-             $.each(report.parameters,function(key,param){
-                 // param.value=$('#'+report.id).val();
-                 if(report.parameters[key].type=='checkboxes'){
-                     $.each(report.parameters[key].checkboxes,function(checkboxkey,checkboxparam){
-                         if($('#'+checkboxkey).is(':checked')){
-                             report.parameters[key].checkboxes[checkboxkey].value = 1;
-                         }else{
-                             report.parameters[key].checkboxes[checkboxkey].value = 0;
-                         }
-                     });
-                 }else{
-                 	 if(typeof($('#'+key).parent().data('datetimepicker'))!='undefined'){//key=='end_time'||key == 'start_time'){
-                 	 	report.parameters[key].value = $('#'+key).parent().data('datetimepicker').getLocalDate().toISOString();
-                 	 		//report.parameters[key].value = dateFromlocalISO($('#'+key).val()).toISOString();
-                 	 }else{
-                     	report.parameters[key].value = $('#'+key).val();
-                     }
-                     delete report.parameters[key].text;
-                     if($('#'+key+' option[value='+parseInt($('#'+key).val())+']').length>0){
-                         report.parameters[key].text = $('#'+key+' option[value='+$('#'+key).val()+']').text();
-                     }
-                 }
+         
+		$('#runreport').click(function(){
+			runReport();
+		});
 
-             });
-
-             if(typeof(report.parameters)!='undefined'&&typeof(report.parameters.start_time)!='undefined'&&typeof(report.parameters.end_time)!='undefined'&&report.parameters.start_time.value>report.parameters.end_time.value){
-                 $('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
-                         '<button type="button" class="close" data-dismiss="alert">×</button>'+
-                         '<strong><%= translate[req.session.user.locale]['Error']%>:&nbsp</strong><%= translate[req.session.user.locale]['DateOrderError']%></div>');
-                 return;
-             }
-             
-             if(report.id==3){  //Limits on Interval Report
-             	var period = (new Date(report.parameters.end_time.value)) - (new Date(report.parameters.start_time.value)); //milliseconds
-             	var numPeriods = Math.floor((period/1000)/parseInt($('#interval').val()))+1; 
-             	var totalRecordsPerChart = ($('#eqp_id').val()==''?$('#eqp_id option').size():1)*numPeriods;
-             	
-             	if(totalRecordsPerChart>maxRecords){
-             		var message = 'This report would have returned more than '+maxRecords+' rows.  You might want to constrain the time range to '+secondsToStringRoundDaysHours(parseInt(period*(maxRecords/totalRecordsPerChart)/1000))+'.';
-              		$('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
-		                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
-		                        ''+message+'</div>');
-	                	$('.main-content')[0].scrollTop=0;
-                	return;
-             	}
-             	
-             	
-             }
-             
-             
-             // We're a GO at this point for running the report.
-             $('#promptprint').css('display','block');
-             $('#savemodalbtn').css('display','block');
-
-
-             $('#runreportcog').css('display','inline-block');
-             $('#reportcogspace').css('display','inline-block');
-
-
-             $('#report-header-name').html(report.name.locale_label['<%=req.session.user.locale%>']);
-
-             report.system_name = system_name; // saves the system name
-             report.timezoneoffset = new Date().getTimezoneOffset();
-
-             $('#iframediv').css('visibility','hidden');
-             $.post('/reports/view', {report:report,css:$('#styling').val()}, function(report){
-                //alert('report');
-                 $('#iframediv').empty();
-                 $('#iframediv').html(report);
-                 $('#iframediv .stripcss').remove();
-                 $('#promptprint').css('display','block');
-                 $('#runreportcog').css('display','none');
-                 $('#reportcogspace').css('display','none');
-                 setTimeout(function(){
-
-                     $('#iframediv').css('visibility','visible');
-                 },100);
-             });
-         });
 
         // This fills the reporttype dropdown the first and only time.
         for(var i=0; i< reports.length; i++){
@@ -438,7 +357,11 @@
                     htmlappend += '<div><input class="input-gen-checkbox" checked="checked" style="display:inline;" parent="'+key+'" type="checkbox" id="'+checkboxkey+'"><label style="display:inline;" for="'+checkboxkey+'">&nbsp'+checkboxparam.locale_label['<%=req.session.user.locale%>']+'</label></div>'
                 });
                 htmlappend += '</div>';
-            }
+            }else if(param.type=='text'){
+	            htmlappend += '<div class="input-append span8 report-control-right-control">';
+	            htmlappend += '<input value="'+((typeof(param.post_value)!='undefined')?'<%=typeof(search_field)!='undefined'?search_field:''%>':'')+'" class="input-gen-checkbox" style="display:inline;" type="text" id="'+key+'">'
+	            htmlappend += '</div>';
+	        }
             htmlappend +='</div>';
             $('.prependparams').before(htmlappend);
         });
@@ -521,7 +444,100 @@
 
             
         });
+        // If the page was loaded with the search field value populated through from the search box on all pages- automatically trigger running the report
+	    if($('#search_field').val()!=''){
+	       runReport();
+	    }
     }
+    
+    // This run report button handler prepares the report object, and requests serverside for the HTML generated from the report.
+         //  It clears and reassembles the parameter values for the report.
+         // based on the type of parameter, it assembles the structure for the report parameters.
+         // At the top of this file, the report structure is visible in the current reports as examples
+        // when serverside responds with the HTML, it is thrown in the reports DIV. The Save and Print buttons are then enabled
+         
+         function runReport(){
+             $('.alert').remove();
+             var report = getReportById(parseInt($('#reporttype').val()));
+             $.each(report.parameters,function(key,param){
+                 // param.value=$('#'+report.id).val();
+                 if(report.parameters[key].type=='checkboxes'){
+                     $.each(report.parameters[key].checkboxes,function(checkboxkey,checkboxparam){
+                         if($('#'+checkboxkey).is(':checked')){
+                             report.parameters[key].checkboxes[checkboxkey].value = 1;
+                         }else{
+                             report.parameters[key].checkboxes[checkboxkey].value = 0;
+                         }
+                     });
+                 }else{
+                 	 if(typeof($('#'+key).parent().data('datetimepicker'))!='undefined'){
+                 	 	report.parameters[key].value = $('#'+key).parent().data('datetimepicker').getLocalDate().toISOString();
+                 	 		//report.parameters[key].value = dateFromlocalISO($('#'+key).val()).toISOString();
+                 	 }else{
+                     	report.parameters[key].value = $('#'+key).val();
+                     }
+                     delete report.parameters[key].text;
+                     if($('#'+key+' option[value='+parseInt($('#'+key).val())+']').length>0){
+                         report.parameters[key].text = $('#'+key+' option[value='+$('#'+key).val()+']').text();
+                     }
+                 }
+
+             });
+
+             if(typeof(report.parameters)!='undefined'&&typeof(report.parameters.start_time)!='undefined'&&typeof(report.parameters.end_time)!='undefined'&&report.parameters.start_time.value>report.parameters.end_time.value){
+                 $('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
+                         '<button type="button" class="close" data-dismiss="alert">×</button>'+
+                         '<strong><%= translate[req.session.user.locale]['Error']%>:&nbsp</strong><%= translate[req.session.user.locale]['DateOrderError']%></div>');
+                 return;
+             }
+             
+             if(report.id==3){  //Limits on Interval Report
+             	var period = (new Date(report.parameters.end_time.value)) - (new Date(report.parameters.start_time.value)); //milliseconds
+             	var numPeriods = Math.floor((period/1000)/parseInt($('#interval').val()))+1; 
+             	var totalRecordsPerChart = ($('#eqp_id').val()==''?$('#eqp_id option').size():1)*numPeriods;
+             	
+             	if(totalRecordsPerChart>maxRecords){
+             		var message = 'This report would have returned more than '+maxRecords+' rows.  You might want to constrain the time range to '+secondsToStringRoundDaysHours(parseInt(period*(maxRecords/totalRecordsPerChart)/1000))+'.';
+              		$('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
+		                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+		                        ''+message+'</div>');
+	                	$('.main-content')[0].scrollTop=0;
+                	return;
+             	}
+             	
+             	
+             }
+             
+             
+             // We're a GO at this point for running the report.
+             $('#promptprint').css('display','block');
+             $('#savemodalbtn').css('display','block');
+
+
+             $('#runreportcog').css('display','inline-block');
+             $('#reportcogspace').css('display','inline-block');
+
+
+             $('#report-header-name').html(report.name.locale_label['<%=req.session.user.locale%>']);
+
+             report.system_name = system_name; // saves the system name
+             report.timezoneoffset = new Date().getTimezoneOffset();
+
+             $('#iframediv').css('visibility','hidden');
+             $.post('/reports/view', {report:report,css:$('#styling').val()}, function(report){
+                //alert('report');
+                 $('#iframediv').empty();
+                 $('#iframediv').html(report);
+                 $('#iframediv .stripcss').remove();
+                 $('#promptprint').css('display','block');
+                 $('#runreportcog').css('display','none');
+                 $('#reportcogspace').css('display','none');
+                 setTimeout(function(){
+
+                     $('#iframediv').css('visibility','visible');
+                 },100);
+             });
+         }
 
     // binds changes to the report type to rebuild the parameters
     $('#reporttype').change(function(){

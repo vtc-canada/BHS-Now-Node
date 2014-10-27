@@ -72,6 +72,10 @@ module.exports.views = {
 		enabled:true,
 		icon:'icon-copy'
 	    },
+	    '/search':{
+		enabled:true,
+		icon:'icon-suitcase'
+	    },
 	    '/systemconfig':{
 		enabled:true,
 		icon:'icon-cogs',

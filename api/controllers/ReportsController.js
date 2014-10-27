@@ -1,9 +1,41 @@
-/**
- * ReportsController
- * 
- * @description :: Server-side logic for managing reports
- * @help :: See http://links.sailsjs.org/docs/controllers
- */
+/*---------------------
+	:: Reports 
+	-> controller
+
+	This controller has several responsibilities
+
+	Create: - loads the reports page
+
+	Utility functions -getdevicesbyeqpid,   get_equipment
+
+
+	View generation function:  view
+	- figures out the locale based on where it was requested from
+    - calls   BuildReportData  function
+    - generates view (HTML)  via generate.ejs
+
+	BuildReportData function -  uses report object and report ID - to make the stored proceedure calls
+	it returns a structured object that is the report data.
+
+
+    Promptprint / Promptsave:
+
+    They take the report data,
+    spin up Phantom.js- generate the pdf file, by using phantom passing in the report data as URL GET parameters
+    to the View Generation page.
+    promptsave creates the CSV seperately via the BuildReportData function again and responds with both PDF and CSV URLS of the created files.
+    promptprint responds with the pdf filename and printers list
+
+
+
+    Printreport:
+    Calls on Acrobat reader to print the report- it uses the command line- and passes in the file name and printer name.
+
+
+     There are a couple utility functions at the bottom of this controller, like toISOLocaleString- that make some time string manipulations
+
+
+---------------------*/
 
 module.exports = {
     index : function(req, res) {
