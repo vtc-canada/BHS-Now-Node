@@ -249,7 +249,7 @@ module.exports.views = {
 		    },
 		    'search_field' : {
 			type : 'text',
-			post_value : '<%= search_field %>',
+			post_value : '',
 			locale_label : {
 			    en : 'IATA / Security ID',
 			    es : 'IATA / Security ID'
