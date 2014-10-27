@@ -1,1 +1,792 @@
-Dashboard
+<div class="row-fluid page-banner">
+    <div class="banner-div"><i class="icon-dashboard icon-1x banner-icon-top"></i><div class="banner-div-text"><%= translate[req.session.user.locale]['Dashboard'] %></div></div>
+</div>
+
+        <!-- Throws in Error messages if they were passed in from the controller -->
+<% if(typeof(errormessage)!='undefined'){ %>
+<div class="alert alert-error" style="border-radius:0px;">
+    <button type="button" class="close" data-dismiss="alert">×</button>
+    <strong><%= translate[req.session.user.locale]['FormError'] %>:</strong>
+    <%= translate[req.session.user.locale][errormessage] %><% if(typeof(errorurl)!='undefined'){ %> <%= errorurl %><% } %>
+</div>
+<% } %>
+
+
+<!-- There next templates are the pieces of the BHS Overview drawing -->
+<!-- In order, they represent the columns across the diagram -->
+<script type="text/template" id="ticket-sparkline">
+    <div class="spark-span-wrapper">
+        <div class="spark-tc-label">{{= name }}</div>
+        <span class="tc-sparklines"></span>
+        <div class="spark-tc-total">{{ var total =0; for(var i=0;i<values.length;i++){ total+=values[i]; } }}{{= total}}</div>
+    </div>
+</script>
+<script type="text/template" id="ticket-joinline">
+    <div class="spark-join-wrapper {{= position }}">
+        <div class="tc-join-block {{= position }}">
+        </div>
+        <div class="middle-join-line"></div>
+    </div>
+</script>
+
+<script type="text/template" id="edssplitlines-template">
+    <div class="eds-split-wrapper {{= position }}">
+        <div class="eds-split-lines-throughput-label">{{= throughput }}</div>
+        <div class="eds-split-block {{= position }}">
+        </div>
+        <div class="middle-eds-split-line"></div>
+    </div>
+</script>
+<script type="text/template" id="edsuptime-template">
+    <div class="eds-uptime-wrapper">
+        <div class="eds-edsuptime-label">{{= uptime }}%</div>
+        <div class="eds-edsuptime-block {{= thresholdclass }}"> {{= name }}
+        </div>
+    </div>
+</script>
+
+<script type="text/template" id="edsjoinlines-template">
+    <div class="eds-join-wrapper {{= position }}">
+        <div class="eds-join-lines-throughput-label">{{= failsaferate }}%</div>
+        <div class="eds-join-block {{= position }}">
+        </div>
+        <div class="middle-eds-join-line"></div>
+    </div>
+</script>
+
+<script type="text/template" id="makeuplines-template">
+    <div class="makeup-lines-wrapper {{= position }}">
+        <div class="makeup-lines-throughput-label">{{= throughput }}</div>
+        <div class="makeup-block {{= position }}">
+        </div>
+        <div class="middle-makeup-line"></div>
+    </div>
+</script>
+
+<script type="text/template" id="makeups-template">
+    <div class="makeups-wrapper">
+        <div class="makeups-block {{= activeclass }}"> {{= name }}
+        </div>
+    </div>
+</script>
+
+
+<!-- This template creates the System Health sparkline sections -->
+
+<script type="text/template" id="healthlines-template">
+    <div class="healthlines-wrapper">
+        <div class="health-sparklabel">{{=name}}</div>
+        <span class="health-sparklines"></span>
+    </div>
+</script>
+
+<div class="row-fluid" style="margin-top:19px;">
+    <div class="span7 offset1 page-controls-wrapper">
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%= translate[req.session.user.locale]['Key Performance Indicators'] %></span></div>
+        <div class="row-fluid key-indicaters-frame" id="iframediv">
+            <div class="row-fluid">
+                <div class="row-fluid sort-destination-plan-titles key-performance-div">
+                    <div class="row-fluid alarm-header">
+                        <div class="span3 gauge">
+                            <div id="trackingrategage" class="trackingrategage"></div>
+                        </div>
+                        <div class="span3 gauge">
+                            <div id="faultrategage" class="faultrategage"></div>
+                        </div>
+                        <div class="span3 gauge">
+                            <div id="atrrategage" class="atrrategage"></div>
+                        </div>
+                        <div class="span3 smallgauge">
+                            <div id="smalltrackingrategage" class="smalltrackingrategage"></div>
+                        </div>
+                        <div class="span3 smallgauge">
+                            <div id="smallfaultrategage" class="smallfaultrategage"></div>
+                        </div>
+                        <div class="span3 smallgauge">
+                            <div id="smallatrrategage" class="smallatrrategage"></div>
+                        </div>
+                        <div class="span3 gauge rightstatsgauge">
+                            <div id="timeinsystemlabel" class="row-fluid">
+                                  <%= translate[req.session.user.locale]['Time In System'] %>
+                            </div>
+                            <div id="timeinsystem" class="row-fluid">
+
+                            </div>
+                            <div id="bagratelabel" class="row-fluid">
+                                <%= translate[req.session.user.locale]['System Throughput'] %>
+                            </div>
+                            <div id="bagrate" class="row-fluid">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="span3 page-controls-wrapper">
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%= translate[req.session.user.locale]['System Health'] %></span></div>
+        <div class="row-fluid health-div" id="iframediv">
+            <div class="row-fluid">
+                <div class="row-fluid sort-destination-plan-titles system-health-block">
+                    <div id="system-health" class="row-fluid system-health">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row-fluid" style="margin-top:19px;">
+    <div class="span10 offset1 page-controls-wrapper">
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%= translate[req.session.user.locale]['BHS Overview'] %></span></div>
+        <div class="row-fluid" id="iframediv">
+            <div class="row-fluid">
+                <div class="row-fluid BHS-overview-wrapper">
+                    <div class="row-fluid BHS-Overview-header">
+                        <div style="width:11%;margin-left:0px; " class="span3 titlerow BHS-diagram-titlerow">
+                            <%= translate[req.session.user.locale]['Throughput (bph)'] %>
+                        </div>
+                        <div style="width:10%;margin-left:18%; " class="span1 offset1 BHS-diagram-titlerow">
+                            <%= translate[req.session.user.locale]['Throughput (bph)'] %>
+                        </div>
+                        <div style="width:15%;margin-left:0px; " class="span1 BHS-diagram-titlerow">
+                            <%= translate[req.session.user.locale]['Uptime'] %>
+                        </div>
+                        <div style="width:10%;margin-left:0px; " class="span1 BHS-diagram-titlerow">
+                            <%= translate[req.session.user.locale]['Failsafe Rate'] %>
+                        </div>
+                        <div style="width:10%;margin-left:0px; " class="span2 BHS-diagram-titlerow">
+                            <%= translate[req.session.user.locale]['Tracking Rate'] %>
+                        </div>
+                        <div style="width:11%;margin-left:0px; " class="span1 BHS-diagram-titlerow">
+                            <%= translate[req.session.user.locale]['Throughput (bph)'] %>
+                        </div>
+                        <div style="width:15%;margin-left:0px; " class="span1 BHS-diagram-titlerow">
+                            <%= translate[req.session.user.locale]['State'] %>
+                        </div>
+                    </div>
+                </div>
+                <div class="row-fluid" >
+                    <div id="bhsdiv" class="row-fluid BHS-Overview-body">
+                        <div id="ticketcountersparklines" class="ticket-counter-sparklines">
+
+                        </div>
+                        <div id="ticketcounterjoinlines" class="ticket-counter-joinlines">
+
+                        </div>
+                        <div id="ticketjoinstraight" class="ticketjoinstraight">
+
+                        </div>
+
+                        <div id="edssplitlines" class="edssplitlines">
+
+                        </div>
+                        <div id="edsuptime" class="edsuptime">
+
+                        </div>
+                        <div id="edsjoinlines" class="edsjoinlines">
+
+                        </div>
+
+                        <div id="trackingstraight" class="trackingstraight">
+                              <div class="tracking-value"></div>
+                        </div>
+                        <div id="makeuplines" class="makeuplines">
+
+                        </div>
+                        <div id="makeups" class="makeups">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row-fluid" style="margin-top:19px;">
+    <div class="span7 offset1 page-controls-wrapper">
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%= translate[req.session.user.locale]['Alarms'] %></span></div>
+        <div class="row-fluid" id="iframediv">
+            <div class="row-fluid">
+                <div  class="row-fluid sort-destination-plan-titles" style="margin-bottom:0px;">
+                    <div class="row-fluid alarm-header">
+                        <div class="span3 titlerow">
+                            <%= translate[req.session.user.locale]['Time'] %>
+                        </div>
+                        <div class="span2">
+                            <%= translate[req.session.user.locale]['Equipment'] %>
+                        </div>
+                        <div class="span2">
+                            <%= translate[req.session.user.locale]['Device'] %>
+                        </div>
+                        <div class="span5">
+                            <%= translate[req.session.user.locale]['Alarm Type'] %>
+                        </div>
+                    </div>
+                </div>
+                <div class="row-fluid" id="alarmsdiv">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="span3 page-controls-wrapper">
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%= translate[req.session.user.locale]['Daily Reminders'] %></span></div>
+        <div class="row-fluid" id="iframediv">
+            <div class="row-fluid">
+                <div class="row-fluid sort-destination-plan-titles">
+                    <div class="row-fluid alarm-header">
+                        <div style="font-weight: 500;" class="span12 titlerow">
+                            <%= translate[req.session.user.locale]['Predictive Mainenance Tasks'] %>
+                        </div>
+
+                    </div>
+                    <div class="row-fluid alarm-header">
+                        <div style="text-align:center;" class="span6 titlerow">
+                            <%= translate[req.session.user.locale]['DEVICE'] %>
+                        </div>
+                        <div  style="text-align:center;"  class="span6 titlerow">
+                            <%= translate[req.session.user.locale]['REASON'] %>
+                        </div>
+                    </div>
+                    <div style="font-weight: 400;height: 22px !important;
+overflow: hidden;" class="row-fluid alarm-header">
+                        <div style="text-align:center;" class="span6 titlerow">
+                            <i class="icon-caret-right"></i>&nbspCheck TC1-01
+                        </div>
+                        <div  style="text-align:center;"  class="span6 titlerow">
+                            PM Runtime Checkout
+                        </div>
+                    </div>
+                    <div style="font-weight: 400;height: 22px !important;
+overflow: hidden;" class="row-fluid alarm-header">
+                        <div style="text-align:center;" class="span6 titlerow">
+                            <i class="icon-caret-right"></i>&nbspCheck TC1-02
+                        </div>
+                        <div  style="text-align:center;"  class="span6 titlerow">
+                            PM Runtime Checkout
+                        </div>
+                    </div>
+                    <div style="font-weight: 400;height: 22px !important;
+overflow: hidden;" class="row-fluid alarm-header">
+                        <div style="text-align:center;" class="span6 titlerow">
+                            <i class="icon-caret-right"></i>&nbspCheck CS1-01
+                        </div>
+                        <div  style="text-align:center;"  class="span6 titlerow">
+                            PM Runtime Checkout
+                        </div>
+                    </div>
+                </div>
+                <div class="row-fluid" id="alarmsdiv">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- This script template creates a row in the Alarms section -->
+
+<script type="text/template" id="alarm-template">
+
+    {{ var backgroundcolor; var bordercolor; var color; if(severity<10){ backgroundcolor = 'rgb(255,255,255)'; color= 'rgb(0,0,0)'; bordercolor = 'rgb(192,192,192)';}else if(severity<20){ backgroundcolor = 'rgb(255,255,0)'; color= 'rgb(0,0,0)'; bordercolor = 'rgb240,240,0)';}else if(severity<30){ backgroundcolor = 'rgb(120,64,0)'; color= 'rgb(255,255,255)'; bordercolor = 'rgb(128,0,0)';}else if(severity<40){ backgroundcolor = 'rgb(0,0,255)'; color= 'rgb(255,255,255)'; bordercolor = 'rgb(0,0,128)';}else if(severity<50){ backgroundcolor = 'rgb(240,0,0)'; color= 'rgb(0,0,0)'; bordercolor = 'rgb(192,0,0)';}else if(severity<60){ backgroundcolor = 'rgb(255,128,0)'; color= 'rgb(0,0,0)'; bordercolor = 'rgb(255,104,0)';}else if(severity<70){ backgroundcolor = 'rgb(0,255,0)'; color= 'rgb(0,0,0)'; bordercolor = 'rgb(0,128,0)';} }}
+    <div class="row-fluid section-config-wrapper" tag_ID="{{= tag_ID}}" style="background-color:{{=backgroundcolor}}; color:{{=color}}; border-color:{{=bordercolor}};">
+        <div class="span3">
+            <label class="mobile-label"><%= translate[req.session.user.locale]['Date']%>:</label>
+            <label class="mobile-element">{{= toLocaleDateTimeString(timestamp) }}
+            </label>
+        </div>
+        <div class="span2">
+            <label class="mobile-label"><%= translate[req.session.user.locale]['Equipment']%>:</label>
+            <label class="mobile-element">{{= equipment }}
+            </label>
+        </div>
+        <div class="span2">
+            <label class="mobile-label"><%= translate[req.session.user.locale]['Device']%>:</label>
+            <label class="mobile-element">{{= device }}
+            </label>
+        </div>
+        <div class="span5">
+            <label class="mobile-label"><%= translate[req.session.user.locale]['Alarm Type']%>:</label>
+            <label class="mobile-element">{{= text }}
+            </label>
+        </div>
+    </div>
+</script>
+
+<script>
+
+
+    var alarms;
+    $(document).ready(function(){
+
+        //////////////////////////////////////////////////
+        //////// alarms          ///////////////
+        //////////////////////////////////////////////////
+
+        // Subscribes to the alarms room to be broadcasted to for updates
+        socket.get("/dashboard/joinAlarms",{},function(result){
+
+        });
+        // subscribes to the dashboard overview room for updates
+        socket.get('/dashboard/joinDashboardBHSOverview',{},function(result){
+
+        });
+
+
+        //////////////////////
+        // BHSOverviewModel //
+        //////////////////////
+        // Collection to get the tracking data and to create the BHSOverview Diagram
+
+        var BHSOverviewModel = Backbone.Model.extend({
+        });
+
+        var SailsBHSOverviewCollection = Backbone.Collection.extend({
+            sailsCollection: "",
+            socket: null,
+            sync: function(method, model, options){
+                if(typeof this.sailsCollection === "string" && this.sailsCollection !== "") {
+                    this.socket = socket;
+
+                    this.socket.get(this.sailsCollection, options, _.bind(function(bhsoverview){
+                        this.set(bhsoverview);
+                        bhsView.render();
+                    }, this));
+
+                    this.socket.on("DashboardBHSOverview", _.bind(function(bhsoverview){
+
+                        this.set(bhsoverview);
+                        bhsView.render();
+                    }, this));
+
+                }
+            }
+        });
+        var BHSOverviewCollection = SailsBHSOverviewCollection.extend({
+            sailsCollection: '/dashboard/getBHSOverview',
+            model: BHSOverviewModel
+        });
+
+        // Creates the collection
+        bhsstats = new BHSOverviewCollection();
+
+
+        //////////////////////
+        // AlarmsModel      //
+        //////////////////////
+        // Collection to get the alarms
+
+        var AlarmsModel = Backbone.Model.extend({
+            urlRoot: ''    //not used really
+        });
+
+        var SailsAlarmsCollection = Backbone.Collection.extend({
+            sailsCollection: "",
+            socket: null,
+            sync: function(method, model, options){
+                if(typeof this.sailsCollection === "string" && this.sailsCollection !== "") {
+                    this.socket = socket;
+
+                    this.socket.get(this.sailsCollection, options, _.bind(function(alarms){
+                        this.set(alarms);
+                        alarmView.render();
+                    }, this));
+
+                    this.socket.on("alarms", _.bind(function(alarms){
+                        this.set(alarms);
+                        alarmView.render();
+                    }, this));
+
+                }
+            }
+        });
+
+        var AlarmsCollection = SailsAlarmsCollection.extend({
+            sailsCollection: '/dashboard/getAlarms',
+            model: AlarmsModel
+        });
+
+        alarms = new AlarmsCollection();
+
+        alarms.fetch();    // Gets the alarms
+        bhsstats.fetch();  // gets the bhs Stuff
+
+        var AlarmsView = Backbone.View.extend({
+            el: '#alarmsdiv',
+            initialize: function () {
+            },
+            template: _.template($('#alarm-template').html()),
+            render: function () {
+                this.$el.html("");
+                var tcollection = this.collection.sortBy(function(message){
+                    return message.get("severity");
+                });
+                for(var i=0; i<tcollection.length; i++)
+                {
+                    this.$el.append(this.template(tcollection[i].toJSON()));
+                }
+            }
+        });
+
+        var alarmView = new AlarmsView({collection: alarms});
+
+
+        // this BHSOverView has a number of templates that build up the Overview Diagram
+        // the render function is always called manually
+        var BHSOverView = Backbone.View.extend({
+            tcel:'#ticketcountersparklines',
+            tcjl:'#ticketcounterjoinlines',
+            edssplitlines:'#edssplitlines',
+            edsuptime:'#edsuptime',
+            edsjoinlines:'#edsjoinlines',
+            makeuplines:'#makeuplines',
+            makeups:'#makeups',
+            systemhealth:'#system-health',
+            initialize:function(){
+
+            },
+            tctemplate: _.template($('#ticket-sparkline').html()),
+            tcjltemplate: _.template($('#ticket-joinline').html()),
+            edssplitlinestemplate:_.template($('#edssplitlines-template').html()),
+            edsuptimetemplate:_.template($('#edsuptime-template').html()),
+            edsjoinlinestemplate: _.template($('#edsjoinlines-template').html()),
+            makeuplinestemplate: _.template($('#makeuplines-template').html()),
+            makeupstemplate: _.template($('#makeups-template').html()),
+            systemhealthtemplate:   _.template($('#healthlines-template').html()),
+            render:function(){
+
+                // Clears out old html templates
+                $(this.tcjl).html("");
+                $(this.edssplitlines).html('');
+                $(this.edsuptime).html('');
+                $(this.edsjoinlines).html('');
+                $(this.makeuplines).html('');
+                $(this.makeups).html('');
+
+
+                var bhsModel = bhsstats.models[0].toJSON();
+
+                $('#timeinsystem').html(bhsModel.timeinsystem);
+                $('#bagrate').html(bhsModel.bagrate+'<span style="font-size:16px;">&nbspbph</span>');//+'<span class="bphspan">bags/min</span>');
+
+                redrawGages();
+                $(this.systemhealth).empty();
+                for(var i=0; i<bhsModel.healthlines.length; i++)
+                {
+                    $(this.systemhealth).append(this.systemhealthtemplate(bhsModel.healthlines[i]));//{'values':bhsModel.ticketcounters[i].values}));
+                    $('.health-sparklines:last').sparkline(bhsModel.healthlines[i].values,{
+                        width:'66',
+                        barWidth:'10',
+                        height:15,
+                        type: 'line',
+                        lineColor: '#013D00',
+                        fillColor: '#037E00'});
+                }
+
+
+                var maxlength =  bhsModel.ticketcounters.length;
+                if(bhsModel.edsmachines.length>maxlength){
+                    maxlength=  bhsModel.edsmachines.length;
+                }if(bhsModel.makeupunits.length>maxlength){
+                    maxlength=  bhsModel.makeupunits.length;
+                }
+
+                // First TC sparks section
+                drawTcThroughput();
+                if(bhsModel.ticketcounters.length<maxlength){
+                    $('#ticketcountersparklines').css('margin-top',(maxlength-bhsModel.ticketcounters.length)*30);
+                } else{
+                    $('#ticketcountersparklines').css('margin-top','0px');
+                }
+
+
+                // Join lines
+                for(var i=0; i<bhsModel.ticketcounters.length; i++)
+                {
+                    var position='single';
+                    if(i==0&&bhsModel.ticketcounters.length>1){
+                        position = 'start';
+                    }
+                    else if(i>0&&i<bhsModel.ticketcounters.length-1){
+                        position = 'middle';
+                    }else if(bhsModel.ticketcounters.length>1&&i==bhsModel.ticketcounters.length-1){
+                        position = 'end';
+                    }
+                    $(this.tcjl).append(this.tcjltemplate({position:position}));//{'values':bhsModel.ticketcounters[i].values}));
+                }
+                if(bhsModel.ticketcounters.length<maxlength){
+                    $('#ticketcounterjoinlines').css('margin-top',(maxlength-bhsModel.ticketcounters.length)*30);
+                } else{
+                    $('#ticketcounterjoinlines').css('margin-top','0px');
+                }
+
+                // single line
+                $('#ticketjoinstraight').height(maxlength*30).addClass('active');
+
+                //split to eds lines
+                for(var i=0; i<bhsModel.edsmachines.length; i++)
+                {
+                    var position='single';
+                    if(i==0&&bhsModel.edsmachines.length>1){
+                        position = 'start';
+                    }
+                    else if(i>0&&i<bhsModel.edsmachines.length-1){
+                        position = 'middle';
+                    }else if(bhsModel.edsmachines.length>1&&i==bhsModel.edsmachines.length-1){
+                        position = 'end';
+                    }
+                    $(this.edssplitlines).append(this.edssplitlinestemplate({position:position,throughput:bhsModel.edsmachines[i].throughput}));//{'values':bhsModel.ticketcounters[i].values}));
+                }
+                if(bhsModel.edsmachines.length<maxlength){
+                    $('#edssplitlines').css('margin-top',(maxlength-bhsModel.edsmachines.length)*30);
+                } else{
+                    $('#edssplitlines').css('margin-top','0px');
+                }
+
+                //show EDS machines
+                for(var i=0; i<bhsModel.edsmachines.length; i++)
+                {
+                    var thresholdclass='okay';
+                    if(bhsModel.edsmachines[i].uptime<bhsModel.edsmachines[i].uptimethreshold){
+                        thresholdclass = 'below';
+                    }
+                    $(this.edsuptime).append(this.edsuptimetemplate({name:bhsModel.edsmachines[i].name,uptime:bhsModel.edsmachines[i].uptime,thresholdclass:thresholdclass}));//{'values':bhsModel.ticketcounters[i].values}));
+                }
+                if(bhsModel.edsmachines.length<maxlength){
+                    $('#edsuptime').css('margin-top',(maxlength-bhsModel.edsmachines.length)*30);
+                } else{
+                    $('#edsuptime').css('margin-top','0px');
+                }
+
+                //join eds lines
+                for(var i=0; i<bhsModel.edsmachines.length; i++)
+                {
+                    var position='single';
+                    if(i==0&&bhsModel.edsmachines.length>1){
+                        position = 'start';
+                    }
+                    else if(i>0&&i<bhsModel.edsmachines.length-1){
+                        position = 'middle';
+                    }else if(bhsModel.edsmachines.length>1&&i==bhsModel.edsmachines.length-1){
+                        position = 'end';
+                    }
+                    $(this.edsjoinlines).append(this.edsjoinlinestemplate({position:position,failsaferate:bhsModel.edsmachines[i].failsaferate}));//{'values':bhsModel.ticketcounters[i].values}));
+                }
+                if(bhsModel.edsmachines.length<maxlength){
+                    $('#edsjoinlines').css('margin-top',(maxlength-bhsModel.edsmachines.length)*30);
+                } else{
+                    $('#edsjoinlines').css('margin-top','0px');
+                }
+
+                // single line
+                $('#trackingstraight').height(maxlength*30).addClass('active');
+                $('#trackingstraight .tracking-value').html(bhsModel.trackingrate+'%');
+
+                //split makeup lines
+                for(var i=0; i<bhsModel.makeupunits.length; i++)
+                {
+                    var position='single';
+                    if(i==0&&bhsModel.makeupunits.length>1){
+                        position = 'start';
+                    }
+                    else if(i>0&&i<bhsModel.makeupunits.length-1){
+                        position = 'middle';
+                    }else if(bhsModel.makeupunits.length>1&&i==bhsModel.makeupunits.length-1){
+                        position = 'end';
+                    }
+                    $(this.makeuplines).append(this.makeuplinestemplate({position:position,throughput:bhsModel.makeupunits[i].throughput}));//{'values':bhsModel.ticketcounters[i].values}));
+                }
+                if(bhsModel.makeupunits.length<maxlength){
+                    $('#makeuplines').css('margin-top',(maxlength-bhsModel.makeupunits.length)*30);
+                } else{
+                    $('#makeuplines').css('margin-top','0px');
+                }
+
+
+                //show makeups
+                for(var i=0; i<bhsModel.makeupunits.length; i++)
+                {
+                    var activeclass='inactive';
+                    if(bhsModel.makeupunits[i].active){
+                        activeclass = 'active';
+                    }
+                    $(this.makeups).append(this.makeupstemplate({name:bhsModel.makeupunits[i].name,activeclass:activeclass}));
+                }
+                if(bhsModel.makeupunits.length<maxlength){
+                    $('#makeups').css('margin-top',(maxlength-bhsModel.makeupunits.length)*30);
+                } else{
+                    $('#makeups').css('margin-top','0px');
+                }
+
+
+
+               $('.main-content').css('min-height',$('.main-content').css('height'));
+
+            }
+        });
+
+        var bhsView = new BHSOverView({collection:bhsstats});
+        //bhsView.render();
+
+        $(window).resize(function(){
+            //redrawGages();
+            drawTcThroughput();
+            $('.main-content').css('min-height','');
+            $('#bhsdiv').css('min-height','');
+        });
+
+        // Draws the throughput sparklines
+        function drawTcThroughput(){
+            $('#bhsdiv').css('min-height',$('#bhsdiv').height());
+            $('#ticketcountersparklines').empty();
+            if(bhsstats.models[0]==null){
+                return;
+            }
+            var bhsModel = bhsstats.models[0].toJSON();
+            for(var i=0; i<bhsModel.ticketcounters.length; i++)
+            {
+                $(bhsView.tcel).append(bhsView.tctemplate(bhsModel.ticketcounters[i]));//{'values':bhsModel.ticketcounters[i].values}));
+                $('.tc-sparklines:last').sparkline(bhsModel.ticketcounters[i].values,{
+                    width:'66',
+                    barWidth:($('.spark-span-wrapper:last').width())/15,
+                    colorMap :{'0:80':'red','81:1000':'green'},
+                    height:30,
+                    chartRangeMin:0,
+                    type: 'bar'});
+
+            }
+        }
+
+        function redrawGages(){
+            var bhsModel = bhsstats.models[0].toJSON();
+            //$('#trackingrategage').empty();
+            //$('#faultrategage').empty();
+            //$('#atrrategage').empty();
+            ///$('#smalltrackingrategage').empty();
+            //$('#smallfaultrategage').empty();
+            //$('#smallatrrategage').empty();
+
+            if(typeof(this.vartrackinggagelarge) == 'undefined'){
+                this.vartrackinggagelarge = new JustGage({
+                    id: "trackingrategage",
+                    value: bhsModel.trackingrate,
+                    min: 95,
+                    max: 100,
+                    levelColors: [
+                        "#a9d70b",
+                        "#008000",
+                        "#008000",
+                        "#008000"
+                    ],
+                    title: "<%= translate[req.session.user.locale]['Tracking Rate'] %>"
+                });
+            }else{
+                this.vartrackinggagelarge.refresh(bhsModel.trackingrate,null);
+            }
+
+
+            if(typeof(this.varfaultgagelarge) == 'undefined'){
+                this.varfaultgagelarge = new JustGage({
+                id: "faultrategage",
+                value: bhsModel.faultrate,
+                min: 0,
+                max: 5,
+                levelColors: [
+                    "#008000",
+                    "#008000",
+                    "#008000",
+                    "#008000"
+                ],
+                title: "<%= translate[req.session.user.locale]['Jam Rate'] %>"
+                });
+            }else{
+                this.varfaultgagelarge.refresh(bhsModel.faultrate,null);
+            }
+
+            if(typeof(this.varatrgagelarge) == 'undefined'){
+                this.varatrgagelarge = new JustGage({
+                id: "atrrategage",
+                value: bhsModel.atrrate,
+                min: 75,
+                max: 100,
+                levelColors: [
+                    "#FFFF00",
+                    "#FFFF00",
+                    "#FFFF00",
+                    "#FFFF00"
+                ],
+                title: "<%= translate[req.session.user.locale]['ATR Read Rate'] %>"
+                });
+            }else{
+                this.varatrgagelarge.refresh(bhsModel.atrrate,null);
+            }
+
+            if(typeof(this.vartrackinggagesmall) == 'undefined'){
+                this.vartrackinggagesmall = new JustGage({
+                id: "smalltrackingrategage",
+                value: bhsModel.trackingrate,
+                min: 95,
+                max: 100,
+                levelColors: [
+                    "#a9d70b",
+                    "#008000",
+                    "#008000",
+                    "#008000"
+                ],
+                title: "<%= translate[req.session.user.locale]['Tracking Rate'] %>"
+                });
+            }else{
+                this.vartrackinggagesmall.refresh(bhsModel.trackingrate,null);
+            }
+
+            if(typeof(this.varfaultgagesmall) == 'undefined'){
+                this.varfaultgagesmall = new JustGage({
+                id: "smallfaultrategage",
+                value: bhsModel.faultrate,
+                min: 0,
+                max: 5,
+                levelColors: [
+                    "#008000",
+                    "#008000",
+                    "#008000",
+                    "#008000"
+                ],
+                title: "<%= translate[req.session.user.locale]['Jam Rate'] %>"
+
+                });
+            }else{
+                this.varfaultgagesmall.refresh(bhsModel.faultrate,null);
+            }
+
+            if(typeof(this.varatrgagesmall) == 'undefined'){
+                this.varatrgagesmall = new JustGage({
+                id: "smallatrrategage",
+                value: bhsModel.atrrate,
+                min: 75,
+                max: 100,
+                levelColors: [
+                    "#FFFF00",
+                    "#FFFF00",
+                    "#FFFF00",
+                    "#FFFF00"
+                ],
+                title: "<%= translate[req.session.user.locale]['ATR Read Rate'] %>"
+                });
+            }else{
+                this.varatrgagesmall.refresh(bhsModel.atrrate,null);
+            }
+
+            $('text tspan').attr('dy',3.5);
+            $('div.gauge text[fill=#999999] tspan').css('font-family','OpenSans').css('fill','#666666').css('font-size','16px').attr('dy',3.5);
+            $('div.smallgauge text[fill=#999999] tspan').css('font-family','OpenSans').css('fill','#666666').css('font-size','14px').attr('dy',3.5);
+        }
+    });
+</script>
