@@ -7,6 +7,13 @@
 
 module.exports = {
     index : function(req, res) {
+	if (req.session&&req.session.user) {
+            res.writeHead(302,{
+        	'Location':'/dashboard'
+            });
+            res.end();
+            return;
+        }
 	res.view('auth/loginpage', {
 	    layout : false
 	});
