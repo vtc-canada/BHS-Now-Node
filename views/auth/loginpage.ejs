@@ -89,7 +89,6 @@ input[type=url] {
     border-radius: 1px;
     font-size: 15px;
     color: #404040;
-    line-height: 30px;
 }
 input[type=email]:hover,
 input[type=number]:hover,
@@ -763,7 +762,8 @@ input[type=url].form-error {
 <script>
 
     $(document).ready(function(){
-       $('#loginName').focus();
+    
+       	$('#loginName').focus();
     	var socket =  io.connect();
     	
     	function login(){
@@ -792,6 +792,16 @@ input[type=url].form-error {
 	            login();
 	        }
 	    });
+	    $('#loginName').keydown(function(event){
+	    	if(event.keyCode == 13 && !event.shiftKey){
+	            if($('#loginPassword').val()==''){
+	            	$('#loginPassword').focus();
+	            }else{
+	            	login();
+	            }
+	        }
+	    });
+	    
 	    $("#loginButton").click(function(e){
 	         login();
 	    });
