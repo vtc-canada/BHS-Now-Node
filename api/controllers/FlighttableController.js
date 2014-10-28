@@ -1,8 +1,8 @@
 /**
  * FlighttableController
- *
+ * 
  * @description :: Server-side logic for managing flighttables
- * @help        :: See http://links.sailsjs.org/docs/controllers
+ * @help :: See http://links.sailsjs.org/docs/controllers
  */
 
 module.exports = {
@@ -104,14 +104,15 @@ module.exports = {
 
 		} else if (typeof (flighttable[curFlight].departure_time) == 'object') { // corrects
 		    // datetime
-		    // for   SHIFTING HERE!!
+		    // for SHIFTING HERE!!
 		    // MySql
-		    /* flighttable[curFlight].departure_time = new Date(
-		         flighttable[curFlight].departure_time
-		             .setMinutes(flighttable[curFlight].departure_time
-		                 .getMinutes()
-		                 + flighttable[curFlight].departure_time
-		                     .getTimezoneOffset()));*/
+		    /*
+		     * flighttable[curFlight].departure_time = new Date(
+		     * flighttable[curFlight].departure_time
+		     * .setMinutes(flighttable[curFlight].departure_time
+		     * .getMinutes() + flighttable[curFlight].departure_time
+		     * .getTimezoneOffset()));
+		     */
 		}
 	    }
 	    res.json(flighttable);
@@ -122,7 +123,8 @@ module.exports = {
 	var schedDate = req.param("date");
 	var flightPlans = req.param("flight_plans");
 
-	// first it figures out if the flights being saved are in the 3-day window,
+	// first it figures out if the flights being saved are in the 3-day
+	// window,
 	// in order to know whether to update the ONLINE tables
 	var todayDate = new Date();
 	var tomorrowDate = new Date(todayDate.getTime() + 24 * 60 * 60 * 1000);
@@ -136,143 +138,191 @@ module.exports = {
 	if (todayDate == schedDate || tomorrowDate == schedDate || yesterdayDate == schedDate) {
 	    in3DayWindow = true;
 	}
-
-	for (var curFlightPlan = 0; curFlightPlan < flightPlans.length; curFlightPlan++) {
-
-	    // First iterate through and delete all the flights that are flagged for
-	    // deletion
-	    if (flightPlans[curFlightPlan].deleted) {
-		Database.dataSproc("BHS_FLIGHTS_DeleteCurOfflineSortPlanByFlightAndDate", [ flightPlans[curFlightPlan].flight_number,
-			schedDate ], function(err, result) {
-		    if (err) {
-			console.log("Failure with flight tables!!" + err.toString());
-			return;
-		    }
-		});
-
-		if (in3DayWindow) {
-		    Database.dataSproc("BHS_FLIGHTS_DeleteCurFlightOpenTimesByFlightAndDate", [ flightPlans[curFlightPlan].flight_number,
-			    schedDate ], function(err, result) {
-			if (err) {
-			    console.log("Failure with flight tables!!" + err.toString());
-			    return;
-			}
-		    });
-		    Database.dataSproc("BHS_FLIGHTS_DeleteCurFlightSortPlanByFlightAndDate", [ flightPlans[curFlightPlan].flight_number,
-			    schedDate ], function(err, result) {
-			if (err) {
-			    console.log("Failure with flight tables!!" + err.toString());
-			    return;
-			}
-		    });
-		}
-		res.json('success');
+	
+	
+	async.parallel({
+	                deleteFlights : function(callback){
+	                    async.each(flightPlans,function(flightPlan,callback){
+	                	if (flightPlan.deleted) {
+	                	    Database.dataSproc("BHS_FLIGHTS_DeleteCurOfflineSortPlanByFlightAndDate", [ flightPlan.flight_number, schedDate ], function(err, result) {
+	                		if (err) {
+	                		    console.log("Failure with flight tables!!" + err.toString());
+	                		    return callback(err);
+	                		}
+	                		if (in3DayWindow) {
+	                		    async.parallel({
+	                		        deleteFlightOpenTimes : function(callback){
+	                		            Database.dataSproc("BHS_FLIGHTS_DeleteCurFlightOpenTimesByFlightAndDate", [ flightPlan.flight_number,schedDate ], function(err, result) {
+	                		            	if (err) {
+	                		                	console.log("Failure with flight tables!!" + err.toString());
+	                		                	return callback(err);
+	                		                }
+	                		            	callback(null);
+	                		            });	                		            
+	                		        },
+	                		        deleteFlightSortPlan : function(callback){
+	                		            Database.dataSproc("BHS_FLIGHTS_DeleteCurFlightSortPlanByFlightAndDate", [ flightPlan.flight_number,schedDate ], function(err, result) {
+	                		            	if (err) {
+	                		                	console.log("Failure with flight tables!!" + err.toString());
+	                		                	return callback(err);
+	                		                }
+	                		            	callback(null);
+	                		            });	 
+	                		        }},
+	                		    function(err,result){
+	                			if(err){
+        	            				return callback(err);
+        	            			}
+        	            			callback(null);
+        	            		    });
+        	            		}else{
+        	            		    callback(null);
+        	            		}
+	                	    });
+        	            	}else{// not deleted;
+        	            	    callback(null);
+        	            	}
+	                    },function(err){
+	                	if(err){
+	                	    callback(err);
+	                	}
+	                	callback(null);
+	                    });
+	                }, // END OF DELETE FLIGHTS
+	                
+	                
+	                
+	                newFlights : function(callback){
+	                    async.each(flightPlans,function(flightPlan,callback){
+	                	if (!flightPlan.deleted && flightPlan.id.toString().substring(0, 4) == 'new_') {    // New
+																    // Flights
+	                	    Database.dataSproc("BHS_FLIGHTS_InsertCurOfflineSortPlan", [ flightPlan.airline,
+	                	                                                                 flightPlan.flight_number, flightPlan.departure_date, flightPlan.virtual_early_dest,
+	                	                                                                 flightPlan.virtual_on_time_dest, flightPlan.virtual_late_dest,
+	                	                                                                 flightPlan.virtual_locked_out_dest, flightPlan.departure_time,
+	                	                                                                 flightPlan.on_time_open_offset, flightPlan.late_open_offset,
+	                	                                                                 flightPlan.locked_out_open_offset ], function(err, result) {
+	                		if (err) {
+	                		    console.log("Failure with flight tables!!" + err.toString());
+	                		    return callback(err);
+	                		}
+	                		if (in3DayWindow) {
+	                		    async.parallel({
+	                		        insertCurFlightSortPlan : function(callback){
+	                		            Database.dataSproc("BHS_FLIGHTS_InsertCurFlightSortPlan", [ flightPlan.airline,
+	                		                                                                        flightPlan.flight_number, flightPlan.departure_date,
+	                		                                                                        flightPlan.virtual_early_dest, flightPlan.virtual_on_time_dest,
+	                		                                                                        flightPlan.virtual_late_dest, flightPlan.virtual_locked_out_dest ], function(err, result) {
+	                		            	if (err) {
+	                		                	console.log("Failure with flight tables!!" + err.toString());
+	                		                	return callback(err);
+	                		                }
+	                		            	callback(null);
+	                		            });	                		            
+	                		        },
+	                		        insertCurFlightOpenTimes : function(callback){
+	                		            Database.dataSproc("BHS_FLIGHTS_InsertCurFlightOpenTimes", [ flightPlan.flight_number,
+	                		                                                                         flightPlan.departure_date, flightPlan.departure_time,
+	                		                                                                         flightPlan.on_time_open_offset, flightPlan.late_open_offset,
+	                		                                                                         flightPlan.locked_out_open_offset ], function(err, result) {
+	                		            	if (err) {
+	                		                	console.log("Failure with flight tables!!" + err.toString());
+	                		                	return callback(err);
+	                		                }
+	                		            	callback(null);
+	                		            });	 
+	                		        }},
+	                		    function(err,result){
+	                			if(err){
+        	            				return callback(err);
+        	            			}
+        	            			callback(null);
+        	            		    });
+        	            		}else{
+        	            		    callback(null);
+        	            		}
+	                	    });
+        	            	}else{// not deleted;
+        	            	    callback(null);
+        	            	}
+	                    },function(err){
+	                	if(err){
+	                	    callback(err);
+	                	}
+	                	callback(null);
+	                    });
+	                }, // END OF NEW FLIGHTS
+	
+	
+	                updateFlights : function(callback){
+	                    async.each(flightPlans,function(flightPlan,callback){
+	                	if (!flightPlan.deleted && flightPlan.id.toString().substring(0, 4) != 'new_') {    // Update
+																    // Flights
+	                	    Database.dataSproc("BHS_FLIGHTS_UpdateCurOfflineSortPlan", [ flightPlan.departure_time,
+	                	                                                                 flightPlan.on_time_open_offset, flightPlan.late_open_offset,
+	                	                                                                 flightPlan.locked_out_open_offset, flightPlan.virtual_early_dest,
+	                	                                                                 flightPlan.virtual_on_time_dest, flightPlan.virtual_late_dest,
+	                	                                                                 flightPlan.virtual_locked_out_dest, flightPlan.id ], function(err, result) {
+	                		if (err) {
+	                		    console.log("Failure with flight tables!!" + err.toString());
+	                		    return callback(err);
+	                		}
+	                		if (in3DayWindow) {
+	                		    async.parallel({
+	                		        updateCurFlightSortPlan : function(callback){
+	                		            Database.dataSproc("BHS_FLIGHTS_UpdateCurFlightSortPlan", [ flightPlan.virtual_early_dest,
+	                		                                                                        flightPlan.virtual_on_time_dest, flightPlan.virtual_late_dest,
+	                		                                                                        flightPlan.virtual_locked_out_dest, flightPlan.flight_number, schedDate ],
+	                		                                        				function(err, result) {
+	                		            	if (err) {
+	                		                	console.log("Failure with flight tables!!" + err.toString());
+	                		                	return callback(err);
+	                		                }
+	                		            	callback(null);
+	                		            });	                		            
+	                		        },
+	                		        updateCurFlightOpenTimes : function(callback){
+	                		            Database.dataSproc("BHS_FLIGHTS_UpdateCurFlightOpenTimes", [ flightPlan.departure_time,
+	                		                                                                         flightPlan.on_time_open_offset, flightPlan.late_open_offset,
+	                		                                                                         flightPlan.locked_out_open_offset, flightPlan.flight_number, schedDate ],
+	                		                                         				function(err, result) {
+	                		            	if (err) {
+	                		                	console.log("Failure with flight tables!!" + err.toString());
+	                		                	return callback(err);
+	                		                }
+	                		            	callback(null);
+	                		            });	 
+	                		        }},
+	                		    function(err,result){
+	                			if(err){
+        	            				return callback(err);
+        	            			}
+        	            			callback(null);
+        	            		    });
+        	            		}else{
+        	            		    callback(null);
+        	            		}
+	                	    });
+        	            	}else{// not deleted;
+        	            	    callback(null);
+        	            	}
+	                    },function(err){
+	                	if(err){
+	                	    callback(err);
+	                	}
+	                	callback(null);
+	                    });
+	                } // END OF UPDATE FLIGHTS
+	
+	
+	
+	},
+	function(err){
+	    if(err){
+        	return res.json({error:'Error:'+err},500);
 	    }
-	}
-
-	for (var curFlightPlan = 0; curFlightPlan < flightPlans.length; curFlightPlan++) {
-
-	    // if NOT deleted
-	    if (!flightPlans[curFlightPlan].deleted) {
-		if (flightPlans[curFlightPlan].id.toString().substring(0, 4) == 'new_') { // if new entry        
-		    //var flight_dep_date = toUTCDateTimeString(new Date());
-		    Database.dataSproc("BHS_FLIGHTS_InsertCurOfflineSortPlan", [ flightPlans[curFlightPlan].airline,
-			    flightPlans[curFlightPlan].flight_number, flightPlans[curFlightPlan].departure_date, flightPlans[curFlightPlan].virtual_early_dest,
-			    flightPlans[curFlightPlan].virtual_on_time_dest, flightPlans[curFlightPlan].virtual_late_dest,
-			    flightPlans[curFlightPlan].virtual_locked_out_dest, flightPlans[curFlightPlan].departure_time,
-			    flightPlans[curFlightPlan].on_time_open_offset, flightPlans[curFlightPlan].late_open_offset,
-			    flightPlans[curFlightPlan].locked_out_open_offset ], function(err, result) {
-			if (err) {
-			    console.log("Failure with flight tables!!" + err.toString());
-			    return;
-			}
-		    });
-
-		    if (in3DayWindow) {
-			Database.dataSproc("BHS_FLIGHTS_InsertCurFlightSortPlan", [ flightPlans[curFlightPlan].airline,
-				flightPlans[curFlightPlan].flight_number, flightPlans[curFlightPlan].departure_date,
-				flightPlans[curFlightPlan].virtual_early_dest, flightPlans[curFlightPlan].virtual_on_time_dest,
-				flightPlans[curFlightPlan].virtual_late_dest, flightPlans[curFlightPlan].virtual_locked_out_dest ], function(err, result) {
-			    if (err) {
-				console.log("Failure with flight tables!!" + err.toString());
-				return;
-			    }
-
-			});
-			Database.dataSproc("BHS_FLIGHTS_InsertCurFlightOpenTimes", [ flightPlans[curFlightPlan].flight_number,
-				flightPlans[curFlightPlan].departure_date, flightPlans[curFlightPlan].departure_time,
-				flightPlans[curFlightPlan].on_time_open_offset, flightPlans[curFlightPlan].late_open_offset,
-				flightPlans[curFlightPlan].locked_out_open_offset ], function(err, result) {
-			    if (err) {
-				console.log("Failure with flight tables!!" + err.toString());
-				return;
-			    }
-			});
-		    }
-		    res.json('success');
-
-		} else { // An UPDATE to a current flight
-		    //var flight_dep_date = toUTCDateTimeString(new Date(flightPlans[curFlightPlan].departure_time));
-
-		    /*new Date(new Date(
-		      flightPlans[curFlightPlan].departure_time).getTime());
-		    flight_dep_date = new Date(flight_dep_date.setMinutes(flight_dep_date
-		      .getMinutes()
-		      - flight_dep_date.getTimezoneOffset())).toISOString();
-		     */
-		    Database.dataSproc("BHS_FLIGHTS_UpdateCurOfflineSortPlan", [ flightPlans[curFlightPlan].departure_time,
-			    flightPlans[curFlightPlan].on_time_open_offset, flightPlans[curFlightPlan].late_open_offset,
-			    flightPlans[curFlightPlan].locked_out_open_offset, flightPlans[curFlightPlan].virtual_early_dest,
-			    flightPlans[curFlightPlan].virtual_on_time_dest, flightPlans[curFlightPlan].virtual_late_dest,
-			    flightPlans[curFlightPlan].virtual_locked_out_dest, flightPlans[curFlightPlan].id ], function(err, result) {
-			if (err) {
-			    console.log("Failure with flight tables!!" + err.toString());
-			    return;
-			}
-		    });
-
-		    if (in3DayWindow) {
-			Database.dataSproc("BHS_FLIGHTS_UpdateCurFlightSortPlan", [ flightPlans[curFlightPlan].virtual_early_dest,
-				flightPlans[curFlightPlan].virtual_on_time_dest, flightPlans[curFlightPlan].virtual_late_dest,
-				flightPlans[curFlightPlan].virtual_locked_out_dest, flightPlans[curFlightPlan].flight_number, schedDate ],
-				function(err, result) {
-				    // sails.adapters[sails.config.adapters[sails.config.adapters['default']].module].query("users","UPDATE
-				    // cur_flight_sort_plan SET virtual_early_dest =
-				    // "+flightPlans[i].virtual_early_dest+",
-				    // virtual_on_time_dest =
-				    // "+flightPlans[i].virtual_on_time_dest+", virtual_late_dest
-				    // = "+flightPlans[i].virtual_late_dest+",
-				    // virtual_locked_out_dest =
-				    // "+flightPlans[i].virtual_locked_out_dest+" WHERE
-				    // flight_number = "+ flightPlans[i].flight_number + " AND
-				    // departure_date = '" + scheddate+"'", function(err,result){
-				    if (err) {
-					console.log("Failure with flight tables!!" + err.toString());
-					return;
-				    }
-				});
-			Database.dataSproc("BHS_FLIGHTS_UpdateCurFlightOpenTimes", [ flightPlans[curFlightPlan].departure_time,
-				flightPlans[curFlightPlan].on_time_open_offset, flightPlans[curFlightPlan].late_open_offset,
-				flightPlans[curFlightPlan].locked_out_open_offset, flightPlans[curFlightPlan].flight_number, schedDate ],
-				function(err, result) {
-				    // sails.adapters[sails.config.adapters[sails.config.adapters['default']].module].query("users","UPDATE
-				    // cur_flight_open_times SET departure_time = v_time ,
-				    // on_time_open_offset =
-				    // "+flightPlans[i].on_time_open_offset+", late_open_offset =
-				    // "+flightPlans[i].late_open_offset+", locked_out_open_offset
-				    // = "+flightPlans[i].locked_out_open_offset+" WHERE
-				    // flight_number = "+ flightPlans[i].flight_number + " AND
-				    // departure_date = '" + scheddate+"'", function(err,result){
-				    if (err) {
-					console.log("Failure with flight tables!!" + err.toString());
-					return;
-				    }
-				});
-		    }
-		    res.json('success');
-		}
-	    }
-	}
+    	    res.json({success:true});
+	});
     }
 };
 

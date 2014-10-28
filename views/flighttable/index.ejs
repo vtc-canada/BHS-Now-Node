@@ -80,9 +80,7 @@ var translate = {
 </script>
 
 
-<div class="row-fluid page-banner">
-        <div class="banner-div"><i class="icon-calendar icon-1x banner-icon-top"></i><div class="banner-div-text"><%= translate[req.session.user.locale]['Flight Table'] %></div></div>
-</div>
+
 
         <!-- Displays messages passed in from controller -->
 <% if(typeof(postmessage)!='undefined'){ %>
@@ -275,7 +273,9 @@ var translate = {
 
 
     $(document).ready(function(){
-
+    	socket.on('connect',initialize);
+    });
+	function initialize(){
         // clears passed in success popups with delay
         setTimeout(function(){
             setTimeout(function(){
@@ -388,11 +388,13 @@ var translate = {
                             location.reload(); // Will boot back to login screen
                             return;
                         }
-                        if(data.failure != undefined){  // USER not privileged to make chnages
+                        /*if(data.failure != undefined){  // USER not privileged to make chnages
                             post_to_url('/flighttable/'+ $('#datepicker input').val(),{'message':'Unprivileged'}); // Will boot back to login screen
                             return;
+                        }*/
+                        if(data.success){
+                        	bannerAlert('success','<%=i18n(req,'FormSuccess')%>','<%=i18n(req,'All changes saved.')%>');
                         }
-                        post_to_url('/flighttable/'+ $('#datepicker input').val(),{'message':'All changes saved.'});
                     });
                 });
 				setChangesPending();
@@ -1016,7 +1018,7 @@ var translate = {
 	    }
 	        
 	        
-    });
+    }
 
     /// utility function
     function getPropertybyId(array,prop,id){
