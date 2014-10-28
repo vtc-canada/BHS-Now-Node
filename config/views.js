@@ -63,6 +63,7 @@ module.exports.views = {
 	    url:'/search'
 	},
 	i18nEnabled:true,
+	alertDuration:300,
 	navpages : {
 	    '/dashboard':{
 		enabled:true,
@@ -75,6 +76,10 @@ module.exports.views = {
 	    '/search':{
 		enabled:true,
 		icon:'icon-suitcase'
+	    },
+	    '/flighttable':{
+		enabled:true,
+		icon:'icon-calendar'
 	    },
 	    '/systemconfig':{
 		enabled:true,

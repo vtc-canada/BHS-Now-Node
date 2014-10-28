@@ -116,7 +116,8 @@ module.exports.views = {
 		    '/admin/users' : 'Users',
 		    '/admin/securitygroups' : 'Security Groups',
 		    '/reports' : 'Reports',
-		    '/search' : 'Bag Search'
+		    '/search' : 'Bag Search',
+		    '/flighttable':'Flight Table'
 		}
 	    }
 	}

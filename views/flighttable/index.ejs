@@ -1,0 +1,1094 @@
+<%
+var translate = {
+    'en' : {
+        'Flight Table':'Flight Table',
+        'Schedule Parameters':'Schedule Parameters',
+        'Schedule Date':'Schedule Date',
+        'Flight Schedule':'Flight Schedule',
+        'Create':'Create',
+        'Save':'Save',
+        'Set':'Set',
+        'Delete':'Delete',
+        'Filter By':'Filter by',
+        'Create Flight':'Create Flight',
+        'Departure Time':'Departure Time',
+        'Airline':'Airline',
+        'Flight Number':'Flight Number',
+        'On Time Offset':'Open Offset',
+        'Late Offset':'Late Offset',
+        'Closed Offset':'Closed Offset',
+        'Virtual Early Dest':'Virtual Early Dest',
+        'Virtual On Time Dest':'Virtual On Time Dest',
+        'Virtual Late Dest':'Virtual Late Dest',
+        'Virtual Locked Out Dest':'Virtual Locked Out Dest',
+        'Flight':'Flight',
+        'Success':'Success',
+        'Failure':'Failure',
+        'All changes saved.':'All changes saved.',
+        'Unprivileged': 'You do not have the required privileges to make changes to the Flight Table.',
+        'Error':'Error',
+        'Invalid Flight Number':'Invalid Flight Number'
+    },
+    'es' : {
+        'Flight Table':'Cuadro de Vuelo',
+        'Schedule Parameters':'Programe los Parámetros',
+        'Schedule Date':'Fecha Horario',
+        'Flight Schedule':'Horario de Vuelos',
+        'Create':'Crear',
+        'Save':'Guardar',
+        'Set':'Establecer',
+        'Delete':'Borrar',
+        'Filter By':'Filtrar por',
+        'Create Flight':'Crear Vuelo',
+        'Departure Time':'Hora de Salida',
+        'Airline':'Aerolínea',
+        'Flight Number':'Número de Vuelo',
+        'On Time Offset':'Open Offset',
+        'Late Offset':'Late Offset',
+        'Closed Offset':'Cerrado Offset',
+        'Virtual Early Dest':'Destino Early Virtual',
+        'Virtual On Time Dest':'Virtual On Time Dest',
+        'Virtual Late Dest':'Virtual Late Dest',
+        'Virtual Locked Out Dest':'Virtual Locked Out Dest',
+        'Flight':'Vuelo',
+        'Success':'Éxito',
+        'Failure':'Failure',
+        'All changes saved.':'Todos los cambios guardados.',
+        'Unprivileged': 'You do not have the required privileges to make changes to the Flight Table.',
+        'Error':'Error',
+        'Invalid Flight Number':'Invalid Flight Number'
+    }
+}
+%>
+
+<script type="text/javascript">
+    var translate = {
+        'en' : {
+            'Error':'Error',
+            'Invalid Flight Number':'Invalid Flight Number',
+            'Late Offset must be less than Open Offset':'Late Offset must be less than Open Offset',
+            'Closed Offset must be less than Late Offset':'Closed Offset must be less than Late Offset'
+        },
+        'es' : {
+            'Error':'Error',
+            'Invalid Flight Number':'Invalid Flight Number' ,
+            'Late Offset must be less than Open Offset':'Late Offset must be less than Open Offset',
+            'Closed Offset must be less than Late Offset':'Closed Offset must be less than Late Offset'
+        }
+    }
+
+</script>
+
+
+<div class="row-fluid page-banner">
+        <div class="banner-div"><i class="icon-calendar icon-1x banner-icon-top"></i><div class="banner-div-text"><%= translate[req.session.user.locale]['Flight Table'] %></div></div>
+</div>
+
+        <!-- Displays messages passed in from controller -->
+<% if(typeof(postmessage)!='undefined'){ %>
+<div class="alert <% if(postmessage=='Unprivileged'){ %>alert-error<% }else{ %>alert-success fade in<% } %>" style="border-radius:0px;">
+    <button type="button" class="close" data-dismiss="alert">×</button>
+    <strong><% if(postmessage=='Unprivileged'){ %><%= translate[req.session.user.locale]['Failure'] %><% }else{ %><%= translate[req.session.user.locale]['Success'] %><% } %>:</strong>
+    <%= translate[req.session.user.locale][postmessage] %>
+</div>
+<% } %>
+
+<!-- Configuration section -->
+<div class="row-fluid">
+    <div class="row-fluid">
+        <div class="top-page-title span5 offset1"><%= translate[req.session.user.locale]['Schedule Parameters'] %>:</div>
+    </div>
+    <div class="row">
+        <div class="span2 offset2">
+            <div class="row">
+                <label id="timepickerlabel" style="color: #717171;" for="timepickerlabel"><%= translate[req.session.user.locale]['Schedule Date']%>:</label>
+            </div>
+        </div>
+        <div class="span3 input-datepicker-smallpad">
+            <div id="datepicker" class="input-append span6">
+                <input data-format="yyyy-MM-dd" type="text" value="">
+                <span class="add-on">
+                    <i data-time-icon="icon-time" data-date-icon="icon-calendar"> </i>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gantt table section -->
+<div class="row-fluid" style="margin-top:20px;">
+    <div class="span10 offset1 page-controls-wrapper">
+        <div class="row-fluid" id="reportheader"><span id="report-header-date" style="padding-left:10px;"><%= translate[req.session.user.locale]['Select Date']%></span>
+            <div class="span4 pull-right">
+                <div class="row-fluid">
+                    <button id="save_flights" class="btn-create-flight-gantt btn btn-primary" disabled="disabled"><%= translate[req.session.user.locale]['Save']%></button>
+                    <button id="add_flight" class="btn-add-flight-gantt btn btn-primary" data-placement="bottom" data-content="Loading.." title="" data-original-title="<%= translate[req.session.user.locale]['Create Flight']%>"><%= translate[req.session.user.locale]['Create']%></button>
+					<div style="margin-right: 10px; color: rgb(153, 0, 0); font-weight: 400; display: none;" class="pull-right save_pull" id="changes_pending">Changes Pending. &nbsp;</div>
+                </div>
+            </div>
+        </div>
+        <div class="row-fluid" id="iframediv" >
+            <div class="row-fluid">
+                <div class="span3 search-gant-wrapper">
+                    <input type="text"  placeholder="<%= translate[req.session.user.locale]['Filter By']%>..." id="searchgantt" />
+                </div>
+            </div>
+
+            <div class="gantt-outer-wrapper">
+                <div id="ganttwrapper" class="row-fluid">
+                    <div id="gantttimescale" class="span12">
+
+                        <div class="clockblock"><div class="timeblock">22:00</div></div>
+                        <div class="clockblock"><div class="timeblock">23:00</div></div>
+                        <div class="clockblock"><div class="timeblock">00:00</div></div>
+                        <div class="clockblock"><div class="timeblock">01:00</div></div>
+                        <div class="clockblock"><div class="timeblock">02:00</div></div>
+                        <div class="clockblock"><div class="timeblock">03:00</div></div>
+                        <div class="clockblock"><div class="timeblock">04:00</div></div>
+                        <div class="clockblock"><div class="timeblock">05:00</div></div>
+                        <div class="clockblock"><div class="timeblock">06:00</div></div>
+                        <div class="clockblock"><div class="timeblock">07:00</div></div>
+                        <div class="clockblock"><div class="timeblock">08:00</div></div>
+                        <div class="clockblock"><div class="timeblock">09:00</div></div>
+                        <div class="clockblock"><div class="timeblock">10:00</div></div>
+                        <div class="clockblock"><div class="timeblock">11:00</div></div>
+                        <div class="clockblock"><div class="timeblock">12:00</div></div>
+                        <div class="clockblock"><div class="timeblock">13:00</div></div>
+                        <div class="clockblock"><div class="timeblock">14:00</div></div>
+                        <div class="clockblock"><div class="timeblock">15:00</div> </div>
+                        <div class="clockblock"><div class="timeblock">16:00</div></div>
+                        <div class="clockblock"><div class="timeblock">17:00</div></div>
+                        <div class="clockblock"><div class="timeblock">18:00</div></div>
+                        <div class="clockblock"><div class="timeblock">19:00</div></div>
+                        <div class="clockblock"><div class="timeblock">20:00</div></div>
+                        <div class="clockblock"><div class="timeblock">21:00</div></div>
+                        <div class="clockblock"><div class="timeblock">22:00</div></div>
+                        <div class="clockblock"><div class="timeblock">23:00</div></div>
+                        <div class="clockblock"><div class="timeblock">00:00</div></div>
+                        <div class="clockblock"><div class="timeblock">01:00</div></div>
+                        <div class="clockblock"><div class="timeblock">02:00</div></div>
+                        <div class="clockblock"><div class="timeblock">03:00</div></div>
+                    </div>
+
+                    <div id="ganttrows" class="row-fluid">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br/>
+
+
+<!-- This is the template for each gantt row -->
+<script type="text/template" id="ganttrows-template">
+    {{ if (deleted){ return; } }}
+    <div class="span12 ganttrow">
+        {{ var selectedDate = $('#datepicker').data('datetimepicker').getLocalDate(); selectedDate.setHours(0,0,0,0);    var yesterday  = new Date(selectedDate); yesterday.setDate(selectedDate.getDate()-1); var yesterday9pm = new Date(yesterday).setHours(21); var tomorrow = new Date(selectedDate); tomorrow.setDate(selectedDate.getDate()+1); var tomorrow3am = new Date(tomorrow).setHours(3); var departuredatetime = dateFromISO(departure_time); var on_time_open_date = new Date(departuredatetime);on_time_open_date.setMinutes(departuredatetime.getMinutes() + on_time_open_offset);           var late_open_date = new Date(departuredatetime); late_open_date.setMinutes(departuredatetime.getMinutes() + late_open_offset);          var locked_out_open_date = new Date(departuredatetime);         locked_out_open_date.setMinutes(departuredatetime.getMinutes() + locked_out_open_offset);      }}
+        {{ tatemp = dateFromISO(departure_time) }}
+        {{ tatemp.toString() }}
+        {{ departuredatetime }}
+        <div class="clockblock"><div class="gantblock" style="border-top:none;"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+        <div class="clockblock"><div class="gantblock"></div></div>
+
+        {{ var lefttemp = 100*(on_time_open_date.getTime() - yesterday9pm)/(tomorrow3am- yesterday9pm); }}
+        {{ var widthtemp = 100*(locked_out_open_date.getTime() - on_time_open_date.getTime())/(tomorrow3am- yesterday9pm); }}
+        {{ var prewidthtemp = widthtemp; }}
+        {{ var greenwidthtemp = 100*(late_open_date.getTime() - on_time_open_date.getTime())/(locked_out_open_date.getTime() - on_time_open_date.getTime()); }}
+        {{ var yellowwidthtemp = 100*(locked_out_open_date.getTime() - late_open_date.getTime())/(locked_out_open_date.getTime() - on_time_open_date.getTime()); }}
+        {{ if(lefttemp < 0){ widthtemp = widthtemp + lefttemp; yellowwidthtemp=yellowwidthtemp*prewidthtemp/widthtemp; greenwidthtemp = 100-yellowwidthtemp; lefttemp =0;   } }}
+        {{ if(lefttemp + widthtemp > 100){ widthtemp = 100-lefttemp; greenwidthtemp=greenwidthtemp*prewidthtemp/widthtemp; yellowwidthtemp = 100-greenwidthtemp; } }}
+
+        <a class="progress ganntbar" savevalue="{{= departure_time }}" sort_plan_id="{{= id }}" data-placement="bottom" data-content="Loading.." title="" data-original-title="<%= translate[req.session.user.locale]['Flight']%> {{= getPropertybyId(ref_airline_code,'IATA_2_digit_ID',airline)+' '+flight_number }}" style="top:7px; left:{{= lefttemp }}%; width:{{= widthtemp }}%; {{ if(lefttemp==0){ }} border-radius:0px 4px 4px 0px; {{ }else if(lefttemp+prewidthtemp>100){ }} border-radius:4px 0px 0px 4px; {{ } }}">
+            <div class="bar bar-right progress-bar-warning" style="width:{{= yellowwidthtemp }}%;"></div>
+            <div class="bar progress-bar-success gantt-flightname-div" style="width:{{= greenwidthtemp }}%;">{{= getPropertybyId(ref_airline_code,'IATA_2_digit_ID',airline)+' '+flight_number }}</div>
+
+        </a>
+    </div>
+</script>
+
+<script>
+
+    // the serverside passes in virtualmappings and airline as hard-coded strings to set the local javascript variables
+    // This passes the javascript variable from serverside to clientside.
+    // These variables are needed quickly, so it speeds up the page loading by doing it this way instead of
+    // making equivalent ajax calls seperately after page load.
+    var virtualmappings = <%- JSON.stringify(virtualmappings) %>;
+    var ref_airline_code = <%- JSON.stringify(airlines) %>;
+    var gantt;       // This is the collection of rows/flights
+
+    // This function updates the current time indicator line
+    function doDate(){
+        $('.current-time-line').remove();
+        $('.current-time-block').remove();
+        var selectedDate = $('#datepicker').data('datetimepicker').getLocalDate();
+        selectedDate.setHours(0,0,0,0);
+        var yesterday  = new Date(selectedDate);
+        yesterday.setDate(selectedDate.getDate()-1);
+        var yesterday9pm = new Date(yesterday).setHours(21);
+        var tomorrow = new Date(selectedDate);
+        tomorrow.setDate(selectedDate.getDate()+1);
+        var tomorrow3am = new Date(tomorrow).setHours(3);
+
+        var today_date = new Date();
+        if(selectedDate.getFullYear() == today_date.getFullYear()&&selectedDate.getMonth() == today_date.getMonth()&&selectedDate.getDate() == today_date.getDate()){
+            var heit = $('#ganttwrapper').height();
+            $('#ganttwrapper').append('<div class="current-time-line" style=" height:'+ heit+'px; left:'+ 100*(today_date.getTime() - yesterday9pm)/(tomorrow3am- yesterday9pm)+'%;"></div>');
+            $('#ganttwrapper').append('<div class="current-time-block" style="width:40px; left:' + (100*(today_date.getTime() - yesterday9pm)/(tomorrow3am- yesterday9pm))+'%;"><div class="time-spot">'+padleft(today_date.getHours(),2)+':'+padleft(today_date.getMinutes(),2)+'</div><div class="icon-spot"><i class="icon-circle-arrow-down"></i></div></div>');
+        }
+    }
+
+    // utility function
+    function padleft(num, len) {
+        return (Array(len).join("0") + num).slice(-len);
+    }
+
+
+    $(document).ready(function(){
+
+        // clears passed in success popups with delay
+        setTimeout(function(){
+            setTimeout(function(){
+                $('.alert-success').remove();
+            },500);
+            $('.alert-success').removeClass('in');
+        },<%=alertDuration%>);
+
+
+        // binds 'Create' (flight) button to the popover, and calls do_popover main utility function
+        // do_popover is responsible for many things, including rebuilding the popover.
+        $('#add_flight').popover('hide').click(function(e) {
+            e.preventDefault();
+            do_popover(null,true); // passing in 'null' for event, and 'true' for create
+        });
+
+        //////////////////////////////////////////////////
+        //////// GANTT ///////////////////////////////////
+        //////////////////////////////////////////////////
+        // The gantt collection is created.
+        // then ganttView.render() is called to make the graph
+        // when the request for the collection is made, date parameter is passed in
+        var GanttModel = Backbone.Model.extend({
+            urlRoot: ''
+        });
+
+        var SailsGanttCollection = Backbone.Collection.extend({
+            sailsCollection: "",
+            socket: null,
+            sync: function(method, model, options){
+                options.date = $('#datepicker input').val();
+                if(typeof this.sailsCollection === "string" && this.sailsCollection !== "") {
+                    this.socket = socket;
+
+                    this.socket.request(this.sailsCollection, options, _.bind(function(flighttables){
+                        if(flighttables.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
+                            location.reload(); // Will boot back to login screen
+                        }
+                        this.set(flighttables);
+                        ganttView.render();
+                    }, this));
+                }
+            }
+        });
+
+        var GanttCollection = SailsGanttCollection.extend({
+            sailsCollection: '/flighttable/findByCarouselandDate',
+            model: GanttModel
+        });
+
+        // creates the collection, it's 'fetch'ed' later
+        gantt = new GanttCollection();
+
+        // this view object builds the graph on the page
+        // clicking on the flights is binded to the do_popover() function, passing in
+        // the flight bar object, and false indicating it's not 'create'ing a new flight
+        // the render function binds the popover
+        // and rebinds the 'save flights' event.
+        var GantView = Backbone.View.extend({
+            el: '#ganttrows',
+            initialize: function () {
+            },
+            events:{
+                'click a.progress.ganntbar':'gantClick'
+            },
+            gantClick:function(event){
+                do_popover(event,false);
+            },
+            template: _.template($('#ganttrows-template').html()),
+            render: function () {
+                this.$el.html("");
+                var tcollection = this.collection.sortBy(function(message){
+                    return message.get("departure_time");
+                });
+                for(var i=0; i<tcollection.length; i++)
+                {
+                    var passsearch = true;
+                    // skip out ones that do not satisfy search terms
+                    var terms = $('#searchgantt').val().split(' ');
+
+                    for(var j=0;j<terms.length;j++){
+                        if(terms[j]==""){
+                            continue;
+                        }
+                        if((getPropertybyId(ref_airline_code,'IATA_2_digit_ID',tcollection[i].get('airline')).toString()+tcollection[i].get('flight_number').toString()).toLowerCase().indexOf(terms[j].toString().toLowerCase())==-1
+                                &&("mu"+tcollection[i].get('virtual_early_dest').toString()).indexOf(terms[j].toString().toLowerCase())==-1
+                                &&("mu"+tcollection[i].get('virtual_late_dest').toString()).indexOf(terms[j].toString().toLowerCase())==-1
+                                &&("mu"+tcollection[i].get('virtual_locked_out_dest').toString()).indexOf(terms[j].toString().toLowerCase())==-1
+                                &&("mu"+tcollection[i].get('virtual_on_time_dest').toString()).indexOf(terms[j].toString().toLowerCase())==-1
+                                ){
+                            passsearch = false;
+                        }
+                    }
+                    if(passsearch){
+                        this.$el.append(this.template(tcollection[i].toJSON()));
+                    }
+                }
+                $('#ganttrows .ganttrow:last-child').addClass('lastchild');
+                $('a.progress.ganntbar').popover('hide').click(function(e) {
+                    e.preventDefault();
+                });
+                $('#save_flights').css('display','block');
+                $('#add_flight').css('display','block');
+                $('#save_flights').unbind();
+                $('#save_flights').click(function(){
+                    var params = {flight_plans:gantt.toJSON(),date:$('#datepicker input').val()};
+
+                    socket.request("/flighttable/saveFlightsByCarouselandDate", params,function(data){
+                        if(data.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
+                            location.reload(); // Will boot back to login screen
+                            return;
+                        }
+                        if(data.failure != undefined){  // USER not privileged to make chnages
+                            post_to_url('/flighttable/'+ $('#datepicker input').val(),{'message':'Unprivileged'}); // Will boot back to login screen
+                            return;
+                        }
+                        post_to_url('/flighttable/'+ $('#datepicker input').val(),{'message':'All changes saved.'});
+                    });
+                });
+				setChangesPending();
+                doDate();
+            }
+        });
+         // the view is created here, but the gantt collection is still empty.
+        var ganttView = new GantView({collection: gantt});
+
+
+        // this utility function just does ajax POST requests
+        function post_to_url(path, params, method) {
+            method = method || "post"; // Set method to post by default if not specified.
+
+            // The rest of this code assumes you are not using a library.
+            // It can be made less wordy if you use one.
+            var form = document.createElement("form");
+            form.setAttribute("method", method);
+            form.setAttribute("action", path);
+
+            for(var key in params) {
+                if(params.hasOwnProperty(key)) {
+                    var hiddenField = document.createElement("input");
+                    hiddenField.setAttribute("type", "hidden");
+                    hiddenField.setAttribute("name", key);
+                    hiddenField.setAttribute("value", params[key]);
+
+                    form.appendChild(hiddenField);
+                }
+            }
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        ///       DO_POPOVER - RUNS EVERY TIME A CREATE or EDIT Flight POPUP happens            ///
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        // takes in event - the click event tying the flight that was clicked on
+        // the boolean create, whether it's a new flight or not
+        function do_popover(event,create){
+            if(!this.new_models_count){
+                this.new_models_count=1;
+                this.createpopupon =0;
+            }
+
+            // the sort_plan_id is recovered from the click
+            // sets local variable this.createpopupopen - to remember if the last popup was from 'create'
+            var sort_plan_id;
+            if(create){
+                this.new_models_count ++;
+                sort_plan_id =  'new_'+this.new_models_count;
+                this.createpopupon = 1;
+            } else
+            {
+                var sort_plan_id;
+                if($(event.currentTarget).attr('sort_plan_id').substring(0,4)=='new_'){
+                    sort_plan_id = $(event.currentTarget).attr('sort_plan_id');
+                }
+                else
+                {
+                    sort_plan_id  = parseInt($(event.currentTarget).attr('sort_plan_id'));
+                }
+                this.createpopupon = 0;
+            }
+
+            //clearing other popups
+            $('.ganntbar[sort_plan_id!='+sort_plan_id+']').popover('hide');
+            $('#myaccount').popover('hide');
+            if(!this.createpopupon){ //clicking normal
+                $('#add_flight').popover('hide');
+                $('.popover').not('[sort_plan_id]').attr('sort_plan_id',sort_plan_id);
+
+            }
+            else{//clicked the create
+                $('#add_flight').next('.popover').attr('sort_plan_id',sort_plan_id);
+            }
+
+
+            //clears timepickers
+            $('.bootstrap-datetimepicker-widget[sort_plan_id='+sort_plan_id+']').remove();
+
+            //clears timeout on datetimepicker patch-work
+            clearTimeout(this.delaytimeout);
+
+
+            //  thegantt is the one gantt model from the collection that was clicked on
+            // or null if it's a create.
+            var thegantt;
+
+            if(create){
+            }
+            else{
+                thegantt = gantt.where({id:sort_plan_id})[0];
+            }
+
+            // getting values for offset times
+            var sort_open_val = create?'-240':thegantt.get('on_time_open_offset');
+            var sort_late_val = create?'-60':thegantt.get('late_open_offset');
+            var sort_locked_out_val =create?'-15':thegantt.get('locked_out_open_offset');
+
+
+
+            ////////////////////////////////////////////////
+            //// THIS SECTION builds the POPUP HTML ////////
+            ////////////////////////////////////////////////
+
+
+            var desthtml="";
+            var deletehtml = "";
+            var flight_number_text="";
+            var airlinehtml = ""
+            var flight_number_html = '';
+            if(create){
+
+                airlinehtml =   '<select class="span6" id="airline_'+sort_plan_id+'">';
+                for(var kl=0; kl < ref_airline_code.length;kl++){
+                    airlinehtml+=  '<option value="'+ ref_airline_code[kl].id +'">'+ ref_airline_code[kl].carrier +'</option>';
+                }
+                airlinehtml+= '</select>';
+
+                var airline_2_code = ref_airline_code[0].IATA_2_digit_ID;
+
+                flight_number_html =
+                        '<div class="row-fluid">' +
+                            '<div class="span12">' +
+                                '<label class="span6 popoverlabel"><%= translate[req.session.user.locale]['Flight Number'] %>:</label><input class="span6"type="text"  id="flight_number_'+sort_plan_id+'"  >'+  //max="99999" min="0"
+                            '</div>'+
+                        '</div>';
+
+
+                /// virtual_early_dest_
+                desthtml+=  '<div class="row-fluid">' +
+                                '<div class="span12">' +
+                                    '<label class="span6 popoverlabel" for="virtual_early_dest_'+sort_plan_id+'"><%= translate[req.session.user.locale]['Virtual Early Dest']%>:</label>'+
+                                    '<select class="span6" id="virtual_early_dest_'+sort_plan_id+'">';
+
+
+                for(var kl=0; kl < virtualmappings.length;kl++){
+                    desthtml+=          '<option value="'+ virtualmappings[kl].id +'">'+ virtualmappings[kl].virt_destination +'</option>';
+                }
+                desthtml+=          '</select>'+
+                                '</div>'+
+                            '</div>';
+
+                /// virtual_on_time_dest_
+                desthtml+=  '<div class="row-fluid">' +
+                                '<div class="span12">' +
+                                    '<label class="span6 popoverlabel" for="virtual_on_time_dest_'+sort_plan_id+'"><%= translate[req.session.user.locale]['Virtual On Time Dest']%>:</label>'+
+                                    '<select class="span6" id="virtual_on_time_dest_'+sort_plan_id+'" >';
+
+
+                for(var kl=0; kl < virtualmappings.length;kl++){
+                    desthtml+=          '<option value="'+ virtualmappings[kl].id +'">'+ virtualmappings[kl].virt_destination +'</option>';
+                }
+                desthtml+=          '</select>'+
+                                '</div>'+
+                            '</div>';
+
+                //virtual_late_dest_
+                desthtml+=  '<div class="row-fluid">' +
+                                '<div class="span12">' +
+                                    '<label class="span6 popoverlabel" for="virtual_late_dest_'+sort_plan_id+'"><%= translate[req.session.user.locale]['Virtual Late Dest']%>:</label>'+
+                                    '<select class="span6" id="virtual_late_dest_'+sort_plan_id+'">';
+
+
+                for(var kl=0; kl < virtualmappings.length;kl++){
+                    desthtml+=          '<option value="'+ virtualmappings[kl].id +'">'+ virtualmappings[kl].virt_destination +'</option>';
+                }
+                desthtml+=          '</select>'+
+                                '</div>'+
+                            '</div>';
+
+                // virtual_locked_out_dest_
+                desthtml+=  '<div class="row-fluid">' +
+                                '<div class="span12">' +
+                                    '<label class="span6 popoverlabel" for="virtual_locked_out_dest_'+sort_plan_id+'"><%= translate[req.session.user.locale]['Virtual Locked Out Dest']%>:</label>'+
+                                    '<select class="span6" id="virtual_locked_out_dest_'+sort_plan_id+'">';
+
+
+                for(var kl=0; kl < virtualmappings.length;kl++){
+                    desthtml+=          '<option value="'+ virtualmappings[kl].id +'">'+ virtualmappings[kl].virt_destination +'</option>';
+                }
+                desthtml+=          '</select>'+
+                                '</div>'+
+                            '</div>';
+
+
+
+            }
+            else
+            {
+                flight_number_text = thegantt.get('flight_number');
+
+                airlinehtml =   '<div class="span6 static-virt-dest" style="line-height:30px;" id="airline_'+sort_plan_id+'">'+
+                                getPropertybyId(ref_airline_code,'carrier',thegantt.get('airline') )+
+                                '</div>';
+
+                var airline_2_code = getPropertybyId(ref_airline_code,'IATA_2_digit_ID',thegantt.get('airline'))+' '+flight_number_text;
+
+                flight_number_html =
+                '<div class="row-fluid">' +
+                    '<div class="span12">' +
+                        '<label class="span6 popoverlabel" for="flight_number_'+sort_plan_id+'"><%= translate[req.session.user.locale]['Flight Number']%>:</label><div style="line-height:30px;"  class="span6">'+airline_2_code+'</div>'+
+                    '</div>'+
+                '</div>';
+
+                /// virtual_early_dest_
+                desthtml+=  '<div class="row-fluid">' +
+                        '<div class="span12">' +
+                        '<label class="span6 popoverlabel" for="virtual_early_dest_'+sort_plan_id+'"><%= translate[req.session.user.locale]['Virtual Early Dest']%>:</label>'+
+                        '<select class="span6" id="virtual_early_dest_'+sort_plan_id+'">';
+
+
+                for(var kl=0; kl < virtualmappings.length;kl++){
+                    var selectedhtml = '';
+                    if(virtualmappings[kl].id==thegantt.get('virtual_early_dest'))
+                    {
+                        selectedhtml = selected="selected";
+                    }
+                    desthtml+=          '<option value="'+ virtualmappings[kl].id +'" '+selectedhtml+' >'+ virtualmappings[kl].virt_destination + '</option>';
+                }
+                desthtml+=          '</select>'+
+                        '</div>'+
+                        '</div>';
+
+                /// virtual_on_time_dest_
+                desthtml+=  '<div class="row-fluid">' +
+                        '<div class="span12">' +
+                        '<label class="span6 popoverlabel" for="virtual_on_time_dest_'+sort_plan_id+'"><%= translate[req.session.user.locale]['Virtual On Time Dest']%>:</label>'+
+                        '<select class="span6" id="virtual_on_time_dest_'+sort_plan_id+'" >';
+
+
+                for(var kl=0; kl < virtualmappings.length;kl++){
+                    var selectedhtml = '';
+                    if(virtualmappings[kl].id==thegantt.get('virtual_on_time_dest'))
+                    {
+                        selectedhtml = selected="selected";
+                    }
+                    desthtml+=          '<option value="'+ virtualmappings[kl].id +'"  '+selectedhtml+'>'+ virtualmappings[kl].virt_destination +'</option>';
+                }
+                desthtml+=          '</select>'+
+                        '</div>'+
+                        '</div>';
+
+                //virtual_late_dest_
+                desthtml+=  '<div class="row-fluid">' +
+                        '<div class="span12">' +
+                        '<label class="span6 popoverlabel" for="virtual_late_dest_'+sort_plan_id+'"><%= translate[req.session.user.locale]['Virtual Late Dest']%>:</label>'+
+                        '<select class="span6" id="virtual_late_dest_'+sort_plan_id+'">';
+
+
+                for(var kl=0; kl < virtualmappings.length;kl++){
+                    var selectedhtml = '';
+                    if(virtualmappings[kl].id==thegantt.get('virtual_late_dest'))
+                    {
+                        selectedhtml = selected="selected";
+                    }
+                    desthtml+=          '<option value="'+ virtualmappings[kl].id +'"  '+selectedhtml+'>'+ virtualmappings[kl].virt_destination +'</option>';
+                }
+                desthtml+=          '</select>'+
+                        '</div>'+
+                        '</div>';
+
+                // virtual_locked_out_dest_
+                desthtml+=  '<div class="row-fluid">' +
+                        '<div class="span12">' +
+                        '<label class="span6 popoverlabel" for="virtual_locked_out_dest_'+sort_plan_id+'"><%= translate[req.session.user.locale]['Virtual Locked Out Dest']%>:</label>'+
+                        '<select class="span6" id="virtual_locked_out_dest_'+sort_plan_id+'">';
+
+
+                for(var kl=0; kl < virtualmappings.length;kl++){
+                    var selectedhtml = '';
+                    if(virtualmappings[kl].id==thegantt.get('virtual_locked_out_dest'))
+                    {
+                        selectedhtml = selected="selected";
+                    }
+                    desthtml+=          '<option value="'+ virtualmappings[kl].id +'"  '+selectedhtml+'>'+ virtualmappings[kl].virt_destination +'</option>';
+                }
+                desthtml+=          '</select>'+
+                        '</div>'+
+                        '</div>';
+
+
+                deletehtml ='<button class="pull-right btn btn-danger set_flight del_flight" sort_plan_id="'+sort_plan_id+'" id="del_flight_'+sort_plan_id+'"><%= translate[req.session.user.locale]['Delete']%></button>' ;
+            }
+
+            $('.popover[sort_plan_id='+sort_plan_id+'] .popover-content').html(
+                '<div class="row-fluid">' +
+                    '<div class="span12">' +
+                        '<label class="span6 popoverlabel" for="departure_time_'+sort_plan_id+'"><%= translate[req.session.user.locale]['Departure Time']%>:</label>' +
+                        '<div id="datetimepicker_'+sort_plan_id+'" class="input-append span6">'+
+                            '<input id="departure_time_'+sort_plan_id+'" data-format="MM/dd/yyyy HH:mm:ss PP" type="text" value=""></input>'+
+                            '<span class="add-on">'+
+                            '<i data-time-icon="icon-time" data-date-icon="icon-calendar">'+
+                                '</i>'+
+                            '</span>'+
+                        '</div>' +
+                    '</div>'+
+                '</div>'+
+                '<div class="row-fluid">' +
+                    '<div class="span12">' +
+                        '<label class="span6 popoverlabel"  for="airline_'+sort_plan_id+'"><%= translate[req.session.user.locale]['Airline']%>:</label>'+  airlinehtml+
+                    '</div>'+
+                '</div>'+
+                flight_number_html+
+                '<div class="row-fluid">' +
+                    '<div class="span12">' +
+                        '<label class="span6 popoverlabel" for="sort_open_'+sort_plan_id+'"><%= translate[req.session.user.locale]['On Time Offset']%>:</label><input class="span6" id="sort_open_'+sort_plan_id+'" type="number" min="-480" max="480" step="15" value="'+-parseInt(sort_open_val)+'">'+
+                    '</div>'+
+                '</div>'+
+                '<div class="row-fluid">' +
+                    '<div class="span12">' +
+                        '<label class="span6 popoverlabel" for="sort_late_'+sort_plan_id+'"><%= translate[req.session.user.locale]['Late Offset']%>:</label><input class="span6" id="sort_late_'+sort_plan_id+'"  type="number" min="-480" max="480" step="15" value="'+-parseInt(sort_late_val)+'">'+
+                    '</div>'+
+                '</div>'+
+                '<div class="row-fluid">' +
+                    '<div class="span12">' +
+                        '<label class="span6 popoverlabel" for="sort_locked_out_'+sort_plan_id+'"><%= translate[req.session.user.locale]['Closed Offset']%>:</label><input class="span6" id="sort_locked_out_'+sort_plan_id+'"   type="number" min="-480" max="480" step="15" value="'+-parseInt(sort_locked_out_val)+'">'+
+                    '</div>'+
+                '</div>' +
+                desthtml+
+                '<div class="row-fluid bottom-buttons-popover" >' +
+
+
+                        '<button class="pull-right btn btn-primary set_flight" sort_plan_id="'+sort_plan_id+'" id="save_flight_'+sort_plan_id+'"><%= translate[req.session.user.locale]['Set']%></button>'+
+                        deletehtml+
+                '</div>'
+            );
+
+            // This adds on the 'x'  at the top right and then binds it to close the popover
+            if($('div.popover[sort_plan_id='+sort_plan_id+'] h3.popover-title a.popover-close').length==0)
+            {
+                $('div.popover[sort_plan_id='+sort_plan_id+'] h3.popover-title').append('<a class="pull-right close popover-close" sort_plan_id="'+sort_plan_id+'">&times;</a>');
+            }
+            if(create){
+                $('a.popover-close[sort_plan_id='+sort_plan_id+']').click(function(e){
+                    e.preventDefault();
+                    $('#add_flight').popover('hide');
+                });
+            }
+            else{
+                 $('a.popover-close[sort_plan_id='+sort_plan_id+']').click(function(e){
+                    e.preventDefault();
+                    $('.ganntbar[sort_plan_id='+$(this).attr('sort_plan_id')+']').popover('hide');
+                });
+            }
+
+            // Places Popup Window Correctly on the screen.
+            resizegantt();      // scales all the numbers and moves the popup around if it's sliding off the screen
+
+
+            // Now attaching datetimepickers to the popover
+            // first building the time variables
+            var selectedDate = $('#datepicker').data('datetimepicker').getLocalDate();
+            selectedDate.setHours(0,0,0,0);
+            var yesterday  = new Date(selectedDate);
+            yesterday.setDate(selectedDate.getDate()-1);
+            var yesterday9pm = new Date(yesterday).setHours(21);
+            var tomorrow = new Date(selectedDate);
+            tomorrow.setDate(selectedDate.getDate()+1);
+            var tomorrow3am = new Date(tomorrow).setHours(3);
+
+            //attach the datetimepicker
+            if($('#datetimepicker_'+sort_plan_id).length>0){
+                $('#datetimepicker_'+sort_plan_id).datetimepicker({
+                    language: 'en',
+                    format: 'yyyy-MM-dd hh:mm',
+                    pick12HourFormat: false,
+                    pickSeconds: false,
+                    startDate:new Date(yesterday),
+                    endDate:new Date(tomorrow)
+                }).data('datetimepicker').setLocalDate(create?$('#datepicker').data('datetimepicker').getLocalDate():dateFromISO(thegantt.get('departure_time')));
+
+            }
+
+            // this patchwork interacts with the popover, switching it from date mode, to time mode
+            // it has to hide and jiggle the styling to make it not hideous
+            $('#datetimepicker_' + sort_plan_id + ' span.add-on').trigger('click');
+            $('.bootstrap-datetimepicker-widget:not([sort_plan_id])').attr('sort_plan_id',sort_plan_id);
+            $('.bootstrap-datetimepicker-widget[sort_plan_id='+sort_plan_id+'] ul li.picker-switch a').trigger('click');
+            $('.bootstrap-datetimepicker-widget[sort_plan_id='+sort_plan_id+']').css('visibility','hidden');
+            $('a[data-action=incrementHours]').css('display','none');
+            $('a[data-action=decrementHours]').css('display','none');
+            $('a[data-action=incrementMinutes]').css('display','none');
+            $('a[data-action=decrementMinutes]').css('display','none');
+
+            // After half of the datetimepicker jiggling is done,
+            // we have to wait for some animations
+            //  we then re-enable the datetimepicker
+            // also, we bind functions to opening the datetimepicker,
+            // which bump them into position, if they are off the screen.
+            // this 'delaytimeout' is CLEARED and this callback is stopped,
+            // if a new flight is clicked.
+            this.delaytimeout = setTimeout(function(){
+                if($('#datetimepicker_'+sort_plan_id).length>0){
+                    $('#datetimepicker_'+sort_plan_id).data('datetimepicker').hide();
+                }
+                if($('div.popover[sort_plan_id='+sort_plan_id+']').length>0&&$('#datetimepicker_'+sort_plan_id).length>0){
+                    $('.bootstrap-datetimepicker-widget[sort_plan_id='+sort_plan_id+']').css('visibility','visible');
+                    $('a[data-action=incrementHours]').css('display','block');
+                    $('a[data-action=decrementHours]').css('display','block');
+                    $('a[data-action=incrementMinutes]').css('display','block');
+                    $('a[data-action=decrementMinutes]').css('display','block');
+                }
+
+                $('#datetimepicker_'+sort_plan_id+' span').click(function(){
+                    if($('.bootstrap-datetimepicker-widget[sort_plan_id='+sort_plan_id+']').css('right')=='auto'){
+                        if($('.bootstrap-datetimepicker-widget[sort_plan_id='+sort_plan_id+']').position().left+$('.bootstrap-datetimepicker-widget[sort_plan_id='+sort_plan_id+']').width() > $(window).width()){
+                            $('.bootstrap-datetimepicker-widget[sort_plan_id='+sort_plan_id+']').css('left',$(window).width()-$('.bootstrap-datetimepicker-widget[sort_plan_id='+sort_plan_id+']').width()+'px');
+                            $('.bootstrap-datetimepicker-widget[sort_plan_id='+sort_plan_id+']').addClass('hide-before');
+                        }
+                    }else{
+                        if($('.bootstrap-datetimepicker-widget[sort_plan_id='+sort_plan_id+']').position().left<0){//+$('.bootstrap-datetimepicker-widget').width() > $(window).width()){
+                            $('.bootstrap-datetimepicker-widget[sort_plan_id='+sort_plan_id+']').css('left','0px');
+                            $('.bootstrap-datetimepicker-widget[sort_plan_id='+sort_plan_id+']').addClass('hide-before');
+                        }
+                    }
+                });
+            },1200);
+
+            $('.bootstrap-datetimepicker-widget[sort_plan_id='+sort_plan_id+'] > div > div.close-datetime').click(function(){
+                $('#datetimepicker_'+sort_plan_id).data('datetimepicker').hide();
+            });
+
+            // we bind delete flight button
+            // this stores the model as 'deleted' and re-renders the gantt chart
+            $('#del_flight_'+sort_plan_id).click(function(event){
+                var sort_plan_i = $(event.currentTarget).attr('sort_plan_id');
+                if($(event.currentTarget).attr('sort_plan_id').toString().substring(0,4)!='new_'){
+                    sort_plan_i = parseInt(sort_plan_i);
+                }
+                if(gantt.where({id:sort_plan_i}).length>0)
+                {
+                    // if it's being created, just DELETE IT!!
+                    if($(event.currentTarget).attr('sort_plan_id').toString().substring(0,4)=='new_'){
+                        gantt.remove(gantt.get(sort_plan_i));
+                        ganttView.render();
+                    }
+                    else
+                    {
+                        gantt.get(sort_plan_i).set('deleted',1);
+                        ganttView.render();
+                    }
+                }
+            });
+
+
+            // Save flight.
+            // this saves the individual flight (either edit or create)
+            // it does some error checking
+
+            $('#save_flight_'+sort_plan_id).click(function(){
+
+                //determines/builds the sort_plan_id identifying the flight (new or an edit)
+                var sort_plan_id;
+                if($(this).attr('sort_plan_id').substring(0,4)=='new_'){
+                    sort_plan_id = $(this).attr('sort_plan_id');
+                }
+                else
+                {
+                    sort_plan_id  = parseInt($(this).attr('sort_plan_id'));
+                }
+
+                //clears older errors on the popover
+                $('#flight_number_'+sort_plan_id).css('border','');
+                $('.popover[sort_plan_id='+sort_plan_id+'] > div.alert').remove();
+
+                // Error validation.
+                if($('#flight_number_'+sort_plan_id).val()==''||$('#flight_number_'+sort_plan_id).val()=='0'){
+
+                    $('.popover[sort_plan_id='+sort_plan_id+'] > h3.popover-title').after('<div class="alert alert-error fade in" style="margin-bottom: 0px; border-radius: 0px; padding: 4px 33px 4px 14px; font-weight: 400;">'+
+                            '<button type="button" class="close" style="top:5px;" data-dismiss="alert">×</button>'+
+                            '<strong>'+translate['<%= req.session.user.locale %>']['Error']+':&nbsp</strong>'+translate['<%= req.session.user.locale %>']['Invalid Flight Number']+'</div>');
+                    $('#flight_number_'+sort_plan_id).focus();
+                    $('#flight_number_'+sort_plan_id).css('border','1px solid #A50000');
+                    return;
+                }
+
+                if(parseInt($('#sort_late_'+sort_plan_id).val())>parseInt($('#sort_open_'+sort_plan_id).val())){
+                    $('.popover[sort_plan_id='+sort_plan_id+'] > h3.popover-title').after('<div class="alert alert-error fade in" style="margin-bottom: 0px; border-radius: 0px; padding: 4px 33px 4px 14px; font-weight: 400;">'+
+                            '<button type="button" class="close" style="top:5px;" data-dismiss="alert">×</button>'+
+                            '<strong>'+translate['<%= req.session.user.locale %>']['Error']+':&nbsp</strong>'+translate['<%= req.session.user.locale %>']['Late Offset must be less than Open Offset']+'</div>');
+                    return;
+                }
+                if(parseInt($('#sort_locked_out_'+sort_plan_id).val())>parseInt($('#sort_late_'+sort_plan_id).val())){
+                    $('.popover[sort_plan_id='+sort_plan_id+'] > h3.popover-title').after('<div class="alert alert-error fade in" style="margin-bottom: 0px; border-radius: 0px; padding: 4px 33px 4px 14px; font-weight: 400;">'+
+                            '<button type="button" class="close" style="top:5px;" data-dismiss="alert">×</button>'+
+                            '<strong>'+translate['<%= req.session.user.locale %>']['Error']+':&nbsp</strong>'+translate['<%= req.session.user.locale %>']['Closed Offset must be less than Late Offset']+'</div>');
+                    return;
+                }
+
+                // makes sure we're not adding a flight when there's already one with the same flight number
+                var checkotherflightnumbers = gantt.where({deleted:0,flight_number:parseInt($('#flight_number_'+sort_plan_id).val())});
+
+                for(var ilk = 0; ilk < checkotherflightnumbers.length; ilk++){
+                    if(checkotherflightnumbers[ilk].get('flight_number') == parseInt($('#flight_number_'+sort_plan_id).val())&&checkotherflightnumbers[ilk].get('id')!=sort_plan_id){
+                        $('#flight_number_'+sort_plan_id).focus();
+                        return;
+                    }
+                }
+
+                // We either Add a new flight to the gantt collection,
+                // or we update an existing one.
+                if(gantt.where({id:sort_plan_id}).length==0)
+                {
+                    gantt.add({
+                        id :  sort_plan_id,
+                        departure_date:$('#datepicker input').val(), //$('#datepicker').data('datetimepicker').getLocalDate(),
+                        departure_time:$('#datetimepicker_'+sort_plan_id).data('datetimepicker').getLocalDate(),
+                        on_time_open_offset:-parseInt($('#sort_open_'+sort_plan_id).val()),
+                        late_open_offset:-parseInt($('#sort_late_'+sort_plan_id).val()),
+                        locked_out_open_offset:-parseInt($('#sort_locked_out_'+sort_plan_id).val()),
+                        deleted:0,
+                        airline:$('#airline_'+sort_plan_id).val(),
+                        flight_number:$('#flight_number_'+sort_plan_id).val(),
+                        virtual_early_dest:$('#virtual_early_dest_'+sort_plan_id).val(),
+                        virtual_on_time_dest:$('#virtual_on_time_dest_'+sort_plan_id).val(),
+                        virtual_late_dest:$('#virtual_late_dest_'+sort_plan_id).val(),
+                        virtual_locked_out_dest:$('#virtual_locked_out_dest_'+sort_plan_id).val()
+                    });
+                    $('#add_flight').popover('hide');
+                }
+                else
+                {
+                    var thegantt = gantt.where({id:sort_plan_id})[0];
+                    thegantt.set({departure_time:$('#datetimepicker_'+sort_plan_id).data('datetimepicker').getLocalDate()});
+                    thegantt.set({on_time_open_offset:-parseInt($('#sort_open_'+sort_plan_id).val())});
+                    thegantt.set({late_open_offset:-parseInt($('#sort_late_'+sort_plan_id).val())});
+                    thegantt.set({locked_out_open_offset:-parseInt($('#sort_locked_out_'+sort_plan_id).val())});
+                    thegantt.set({virtual_early_dest:parseInt($('#virtual_early_dest_'+sort_plan_id).val())});
+                    thegantt.set({virtual_on_time_dest:parseInt($('#virtual_on_time_dest_'+sort_plan_id).val())});
+                    thegantt.set({virtual_late_dest:parseInt($('#virtual_late_dest_'+sort_plan_id).val())});
+                    thegantt.set({virtual_locked_out_dest:parseInt($('#virtual_locked_out_dest_'+sort_plan_id).val())});
+                    thegantt.set({modified:true});
+                }
+
+                // we re-render the gantt chart. So we can see the new or updated model take effect.
+                ganttView.render();
+            });
+        }
+
+        // binds changes to the search field to re-render the flight table
+        $('#searchgantt').keyup(function(){
+            ganttView.render();
+        });
+
+
+
+        // set the timepicker to the passed in date, if we're passing in a date via the URL
+        <% if((url_date)!="") { %>
+            $('#datepicker input').val('<%= url_date%>');
+        <% } %>
+
+
+        // binds datetimepicker to the main schedule date input
+        // when this date is changed, we fetch the new flights from serverside
+        // this triggers render().
+        $("#datepicker" ).datetimepicker({
+            language: 'en',
+            format: 'yyyy-MM-dd',
+            pickTime: false,
+            pick12HourFormat: false
+        }).on('changeDate',function(e){
+            gantt.fetch();
+            $('#report-header-date').html($('#datepicker').data('datetimepicker').getLocalDate().toDateString()+ ' <%= translate[req.session.user.locale]['Flight Schedule']%>');
+        });
+
+        // We do patchwork to make sure the datepicker is within the screen bounds
+        $('#datepicker span').click(function(){
+            if($('.bootstrap-datetimepicker-widget[sort_plan_id=select_date]').css('right')=='auto'){
+                if($('.bootstrap-datetimepicker-widget[sort_plan_id=select_date]').position().left+$('.bootstrap-datetimepicker-widget[sort_plan_id=select_date]').width() > $(window).width()){
+                    $('.bootstrap-datetimepicker-widget[sort_plan_id=select_date]').css('left',$(window).width()-$('.bootstrap-datetimepicker-widget[sort_plan_id=select_date]').width()+'px');
+                    $('.bootstrap-datetimepicker-widget[sort_plan_id=select_date]').addClass('hide-before');
+                }
+            }else{
+                if($('.bootstrap-datetimepicker-widget[sort_plan_id=select_date]').position().left<0){//+$('.bootstrap-datetimepicker-widget').width() > $(window).width()){
+                    $('.bootstrap-datetimepicker-widget[sort_plan_id=select_date]').css('left','0px');
+                    $('.bootstrap-datetimepicker-widget[sort_plan_id=select_date]').addClass('hide-before');
+                }
+            }
+        });
+
+
+        // Fixing the local date in the datetimepicker at the top
+        <% if((url_date)!="") { %>
+        <% }else{ %>
+            $("#datepicker").data('datetimepicker').setLocalDate(new Date());
+        <% } %>
+
+        // now that the datetimepicker is correct, we finally fetch the flights for the first time.
+        gantt.fetch();
+
+        // Sets the gantt chart area title
+        $('#report-header-date').html($('#datepicker').data('datetimepicker').getLocalDate().toDateString()+ ' <%= translate[req.session.user.locale]['Flight Schedule']%>');
+        $('.bootstrap-datetimepicker-widget:not([sort_plan_id])').attr('sort_plan_id','select_date');
+        $('.bootstrap-datetimepicker-widget[sort_plan_id=select_date] > div > div.close-datetime').click(function(){
+            $('#datepicker').data('datetimepicker').hide();
+        });
+
+        // We correct the font sizing and positioning for the first time
+        resizegantt();
+        setTimeLine();  //initate 60 second timeout for updating the current time line
+        
+        
+        function setChangesPending(){
+	        var change = false;
+	        $.each(gantt.models,function(key,model){
+	            if(((typeof(model.get('id'))=='string')&&model.get('id').indexOf('new')!=-1)||(typeof(model.get('deleted'))!='undefined'&&model.get('deleted')==1)||typeof(model.get('modified'))!='undefined'){
+	               change= true;
+	               return;
+	            }
+	        });
+	        if(change){
+	            $('#changes_pending').css('display','block');
+	            $('#save_flights').removeAttr('disabled');
+	        }
+	        else{
+	            $('#changes_pending').css('display','none');
+	            $('#save_flights').attr('disabled','disabled');
+	        }
+	    }
+	        
+	        
+    });
+
+    /// utility function
+    function getPropertybyId(array,prop,id){
+        for(var i=0;i<array.length;i++){
+            if(array[i].id == id){
+                return array[i][prop];
+            }
+        }
+    }
+
+    function setTimeLine(){
+        doDate();
+        setTimeout(function(){
+            setTimeLine();
+        },60000);
+    }
+
+    $(window).resize(function(){resizegantt()});
+
+    // this resizegantt function corrects the header sizing, font size/weight
+    // it also corrects positioning of the popvers and datetimepickers
+    resizegantt = function (){
+        var elsize=0;
+        var fsize = 0;
+        $('.timeblock').each(function(){
+            if(elsize ==0)
+            {
+                elsize= 1.786*$(this).parent().width()-8+'px'
+            }
+            if(fsize ==0){
+                fsize = 0.15*$(this).parent().width()+7.65+'px';
+            }
+            $(this).css('line-height',elsize);
+            $(this).css('font-size',fsize);
+
+        });
+
+        $('div.popover[sort_plan_id!=myaccount]').each(function($sortplan){
+            var sort_plan_id = $(this).attr('sort_plan_id');
+            if ($('a.ganntbar[sort_plan_id='+sort_plan_id+']').length>0){
+                $('div.popover[sort_plan_id='+sort_plan_id+']').offset({left:$('a.ganntbar[sort_plan_id='+sort_plan_id+']').offset().left - ($('div.popover[sort_plan_id='+sort_plan_id+']').width()/2),top:$('a.ganntbar[sort_plan_id='+sort_plan_id+']').offset().top+30});
+                while($('div.popover[sort_plan_id='+sort_plan_id+']').offset().left < 0){
+                    $('div.popover[sort_plan_id='+sort_plan_id+']').offset({left:$('div.popover[sort_plan_id='+sort_plan_id+']').offset().left+20});
+                }
+                while($('div.popover[sort_plan_id='+sort_plan_id+']').width()+$('div.popover[sort_plan_id='+sort_plan_id+']').offset().left > $(window).width()){
+                    $('div.popover[sort_plan_id='+sort_plan_id+']').offset({left:$('div.popover[sort_plan_id='+sort_plan_id+']').offset().left-20});
+                }
+                $('div.popover[sort_plan_id='+sort_plan_id+'] div.arrow').css('left',$('a.ganntbar[sort_plan_id='+sort_plan_id+']').offset().left-$('div.popover[sort_plan_id='+sort_plan_id+']').offset().left+5+'px');
+                if(parseInt($('div.popover[sort_plan_id='+sort_plan_id+'] div.arrow').css('left'))<12){
+                    $('div.popover[sort_plan_id='+sort_plan_id+'] div.arrow').css('left','12px');
+                }
+            }
+            else{    // we're redrawing the CREATE Flight Button Popover
+
+                $('div.popover[sort_plan_id='+sort_plan_id+']').offset({left:$('#add_flight').offset().left - ($('div.popover[sort_plan_id='+sort_plan_id+']').width()/2),top:$('#add_flight').offset().top+39});
+                while($('div.popover[sort_plan_id='+sort_plan_id+']').offset().left < 0){
+                    $('div.popover[sort_plan_id='+sort_plan_id+']').offset({left:$('div.popover[sort_plan_id='+sort_plan_id+']').offset().left+20});
+                }
+                while($('div.popover[sort_plan_id='+sort_plan_id+']').width()+$('div.popover[sort_plan_id='+sort_plan_id+']').offset().left > $(window).width()){
+                    $('div.popover[sort_plan_id='+sort_plan_id+']').offset({left:$('div.popover[sort_plan_id='+sort_plan_id+']').offset().left-20});
+                }
+                $('div.popover[sort_plan_id='+sort_plan_id+'] div.arrow').css('left',$('#add_flight').offset().left-$('div.popover[sort_plan_id='+sort_plan_id+']').offset().left+5+'px');
+                if(parseInt($('div.popover[sort_plan_id='+sort_plan_id+'] div.arrow').css('left'))<12){
+                    $('div.popover[sort_plan_id='+sort_plan_id+'] div.arrow').css('left','12px');
+                }
+            }
+        });
+
+    }
+
+
+
+
+
+</script>
