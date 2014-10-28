@@ -11,7 +11,9 @@ module.exports = function(req,res,next) {
             }else if(policy[0]&&policy[0].length==1&&typeof(policy[0][0].create)!='undefined'&&policy[0][0].create!=null){
                 req.session.user.policy[path] = policy[0][0];
                 if(!req.session.user.active||(policy[0][0].create== 0&&policy[0][0].read == 0&&policy[0][0].update== 0&&policy[0][0].delete== 0)){
-                    res.json(403,{error:'Invalid Access!@'+req.session.user.id+':'+path});
+                    req.flash('errormessage','Invalid Access');
+                    req.flash('errordebug','UserId:'+req.session.user.id+' @Path:'+path);
+                    res.json(403,{error:'Invalid Access! UserId:'+req.session.user.id+' @Path:'+path});
                     return;
                 }
                 next();

@@ -65,6 +65,9 @@ module.exports.views = {
 		'Invalid Security Group Name' : 'Invalid Security Group Name',
 		'Security Group Saved' : 'Security Group Saved',
 		'Security Group Deleted' : 'Security Group Deleted',
+		
+		// General Security Translations
+		'Invalid Access':'Invalid Access',
 
 		// Dashboard
 
@@ -93,6 +96,10 @@ module.exports.views = {
 		'Jam Rate' : 'Jam Rate',
 		'ATR Read Rate' : 'ATR Read Rate',
 
+		// Flights
+		'All changes saved.':'All changes saved.',
+		
+		
 		//Reports
 		'Reports' : 'Reports',
 		'Reports Criteria' : 'Reports Criteria',

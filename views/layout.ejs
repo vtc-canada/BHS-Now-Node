@@ -802,6 +802,17 @@
 			  		<% break; %>
 	  			<% } %>
   			<% } %>
+			  	
+			  	
+		<% var errormessage = i18n(req,req.flash('errormessage').toString())%>
+		<% var errordebug = req.flash('errordebug').toString() %>
+		<% if(typeof(errormessage)!='undefined'){ %>
+		<script>
+			bannerAlert('error','<%=i18n(req,'Error')%>','<%=errormessage%> <%=typeof(errordebug)!='undefined'?errordebug:''%> <% if(typeof(errorurl)!='undefined'){ %> <%= req.url %><% } %>');
+		</script>
+		<% } %>
+		
+		
 			  				 				
   				
     	

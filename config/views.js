@@ -67,18 +67,22 @@ module.exports.views = {
 	navpages : {
 	    '/dashboard':{
 		enabled:true,
+		banner:true,
 		icon:'icon-dashboard'
 	    },
 	    '/reports':{
 		enabled:true,
+		banner:true,
 		icon:'icon-copy'
 	    },
 	    '/search':{
 		enabled:true,
+		banner:true,
 		icon:'icon-suitcase'
 	    },
 	    '/flighttable':{
 		enabled:true,
+		banner:true,
 		icon:'icon-calendar'
 	    },
 	    '/systemconfig':{
@@ -87,10 +91,12 @@ module.exports.views = {
 		children:{
 		    '/admin/users':{
 			enabled:true,
+			banner:true,
 			icon:'icon-group'
 		    },
 		    '/admin/securitygroups':{
 			enabled:true,
+			banner:true,
 			icon:'icon-lock'
 		    }
 		}
