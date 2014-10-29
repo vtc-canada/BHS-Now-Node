@@ -1,0 +1,368 @@
+<style type="text/css">
+      html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0px;
+      }
+      body {
+        background-color: transparent;
+        -webkit-transform: perspective(1400px) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+        -webkit-transform-style: preserve-3d;
+      }
+      .gwd-canvas-cchy {
+        position: absolute;
+        -webkit-transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+        -webkit-transform-style: preserve-3d;
+        width: 1263px;
+        height: 2px;
+        left: 0px;
+        top: 388px;
+      }
+      .gwd-canvas-conveyor {
+        position: absolute;
+        width: 100px;
+        height: 40px;
+        -webkit-transform-style: preserve-3d;
+		border: 1px solid black;
+		border-radius: 4px;
+      }
+      .eds-machine{
+		border: 2px solid black;
+		border-radius: 4px;
+      }
+      .gwd-canvas-SS1-03 {
+        left: 102px;
+        top: 107px;
+      }
+      .gwd-canvas-SS1-14 {
+        left: 1355.3333333333333px;
+        top: 107px;
+      }
+      .gwd-canvas-SS1-04 {
+        left: 201.5px;
+        top: 107px;
+      }
+      .gwd-canvas-SS1-05 {
+        left: 301.5px;
+        top: 107px;
+      }
+      .gwd-canvas-SS1-13 {
+        left: 1255px;
+        top: 106.5px;
+      }
+      .gwd-canvas-SS1-12 {
+        left: 1155px;
+        top: 107px;
+      }
+      .gwd-canvas-SS1-06 {
+        left: 402px;
+        top: 107px;
+      }
+      .gwd-canvas-SS1-07 {
+        left: 502px;
+        top: 107px;
+      }
+      .gwd-canvas-SS1-11 {
+        left: 1055px;
+        top: 107px;
+      }
+      .gwd-canvas-SS1-10 {
+        left: 955px;
+        top: 107px;
+      }
+      .gwd-canvas-SS1-09 {
+        left: 702px;
+        top: 107px;
+      }
+      .gwd-canvas-SS1-08 {
+        left: 601.5px;
+        top: 107px;
+      }
+      .gwd-canvas-EDS-SS1 {
+		position: absolute;
+		left: 803px;
+		top: 81px;
+		width: 149px;
+		height: 94px;
+      }
+      .gwd-canvas-EDS-SS2 {
+        position: absolute;
+		left: 803px;
+        top: 281px;
+		width: 149px;
+        height: 94px;
+      }
+      .gwd-div-text-general {
+        position: absolute;
+        width: 30px;
+        height: 34.6666666667px;
+        font-family:'Arial, sans-serif';
+        text-align: left;
+      }
+      .conveyor-text {
+        font-size: 28px;
+        font-family:'Arial, sans-serif';
+		line-height: 37px;
+      }
+      .gwd-div-SS1-14-text {
+        left: 1389.3333333333321px;
+        top: 110px;
+      }
+      .gwd-div-SS1-13-text {
+        left: 1290.6666666666665px;
+        top: 110px;
+      }
+      .gwd-div-SS1-12-text {
+        left: 1191.4999999999986px;
+        top: 110px;
+      }
+      .gwd-div-SS1-11-text {
+        left: 1091.333333333333px;
+        top: 110px;
+      }
+      .gwd-div-SS1-10-text {
+        left: 987.6666666666666px;
+        top: 110px;
+      }
+      .gwd-div-SS1-09-text {
+        left: 738.6666666666665px;
+        top: 110px;
+      }
+      .gwd-div-SS1-08-text {
+        left: 637.1666666666667px;
+        top: 110px;
+      }
+      .gwd-div-SS1-07-text {
+        left: 536.6666666666667px;
+        top: 110px;
+      }
+      .gwd-div-SS1-06-text {
+        left: 440px;
+        top: 110px;
+      }
+      .gwd-div-SS1-05-text {
+        left: 336px;
+        top: 110px;
+      }
+      .gwd-div-SS1-04-text {
+        left: 236.66666666666674px;
+        top: 110px;
+      }
+      .gwd-div-SS1-03-text {
+        left: 135.66666666666674px;
+        top: 110px;
+      }
+      .gwd-div-SS2-14-text {
+        left: 1389.3333333333321px;
+        top: 310px;
+      }
+      .gwd-div-SS2-13-text {
+        left: 1290.6666666666665px;
+        top: 310px;
+      }
+      .gwd-div-SS2-12-text {
+        left: 1191.4999999999986px;
+        top: 310px;
+      }
+      .gwd-div-SS2-11-text {
+        left: 1091.333333333333px;
+        top: 310px;
+      }
+      .gwd-div-SS2-10-text {
+        left: 987.6666666666666px;
+        top: 310px;
+      }
+      .gwd-div-SS2-09-text {
+        left: 738.6666666666665px;
+        top: 310px;
+      }
+      .gwd-div-SS2-08-text {
+        left: 637.1666666666667px;
+        top: 310px;
+      }
+      .gwd-div-SS2-07-text {
+        left: 536.6666666666667px;
+        top: 310px;
+      }
+      .gwd-div-SS2-06-text {
+        left: 440px;
+        top: 310px;
+      }
+      .gwd-div-SS2-05-text {
+        left: 336px;
+        top: 310px;
+      }
+      .gwd-div-SS2-04-text {
+        left: 236.66666666666674px;
+        top: 310px;
+      }
+      .gwd-div-SS2-03-text {
+        left: 136.66666666666674px;
+        top: 310px;
+      }
+      .gwd-div-EDS-SS1-text {
+        width: 120px;
+        left: 825.3333333333334px;
+        top: 110.66666666666666px;
+      }
+      .gwd-div-EDS-SS2-text {
+        width: 120px;
+        left: 825.3333333333334px;
+        top: 310.6666666666667px;
+      }
+      .gwd-canvas-SS2-03 {
+        left: 102px;
+        top: 307px;
+      }
+      .gwd-canvas-SS2-04 {
+        left: 202px;
+        top: 307px;
+      }
+      .gwd-canvas-SS2-05 {
+        left: 302px;
+        top: 307px;
+      }
+      .gwd-canvas-SS2-06 {
+        left: 402px;
+        top: 307px;
+      }
+      .gwd-canvas-SS2-07 {
+        left: 502px;
+        top: 307px;
+      }
+      .gwd-canvas-SS2-08 {
+        left: 602px;
+        top: 307px;
+      }
+      .gwd-canvas-SS2-09 {
+        left: 702px;
+        top: 307px;
+      }
+      .gwd-canvas-SS2-10 {
+        left: 954.6666666666667px;
+        top: 307px;
+      }
+      .gwd-canvas-SS2-11 {
+        left: 1054.6666666666667px;
+        top: 307px;
+      }
+      .gwd-canvas-SS2-12 {
+        left: 1154.6666666666667px;
+        top: 307px;
+      }
+      .gwd-canvas-SS2-13 {
+        left: 1254.6666666666667px;
+        top: 307px;
+      }
+      .gwd-canvas-SS2-14 {
+        left: 1354.6666666666667px;
+        top: 307px; 
+      }
+    </style>
+    
+  <!--  <div class="row-fluid" style="margin-top:19px;">
+    <div class="span10 offset1 page-controls-wrapper">
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;">BHS Overview</span></div>
+        <div class="row-fluid" id="iframediv">
+            <div class="row-fluid">-->
+<div class="row-fluid tc-lines-wrapper-div">            
+    <div class="tc-lines-wrapper"> 
+	    <div id="SS1-03" tagname="G_SS1_03_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS1-03"></div>
+	    <div id="SS1-04" tagname="G_SS1_04_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS1-04"></div>
+	    <div id="SS1-05" tagname="G_SS1_05_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS1-05" ></div>
+	    <div id="SS1-06" tagname="G_SS1_06_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS1-06" ></div>
+	    <div id="SS1-07" tagname="G_SS1_07_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS1-07" ></div>
+	    <div id="SS1-08" tagname="G_SS1_08_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS1-08" ></div>
+	    <div id="SS1-09" tagname="G_SS1_09_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS1-09" ></div>
+	    <div id="SS1-10" tagname="G_SS1_10_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS1-10" ></div>
+	    <div id="SS1-11" tagname="G_SS1_11_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS1-11" ></div>
+	    <div id="SS1-12" tagname="G_SS1_12_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS1-12" ></div>
+	    <div id="SS1-13" tagname="G_SS1_13_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS1-13" ></div>
+	    <div id="SS1-14" tagname="G_SS1_14_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS1-14" ></div>
+	    <div id="EDS-SS1" class="gwd-canvas-EDS-SS1 eds-machine" ></div>
+	    <div id="SS1-03-text" class="conveyor-text gwd-div-text-general gwd-div-SS1-03-text">03</div>
+	    <div id="SS1-04-text" class="conveyor-text gwd-div-text-general gwd-div-SS1-04-text">04</div>
+	    <div id="SS1-05-text" class="conveyor-text gwd-div-text-general gwd-div-SS1-05-text">05</div>
+	    <div id="SS1-06-text" class="conveyor-text gwd-div-text-general gwd-div-SS1-06-text">06</div>
+	    <div id="SS1-07-text" class="conveyor-text gwd-div-text-general gwd-div-SS1-07-text">07</div>
+	    <div id="SS1-08-text" class="conveyor-text gwd-div-text-general gwd-div-SS1-08-text">08</div>
+	    <div id="SS1-09-text" class="conveyor-text gwd-div-text-general gwd-div-SS1-09-text">09</div>
+	    <div id="EDS-SS1-text" class="conveyor-text gwd-div-text-general gwd-div-EDS-SS1-text">EDS-SS1</div>
+	    <div id="SS1-10-text" class="conveyor-text gwd-div-text-general gwd-div-SS1-10-text">10</div>
+	    <div id="SS1-11-text" class="conveyor-text gwd-div-text-general gwd-div-SS1-11-text">11</div>
+	    <div id="SS1-12-text" class="conveyor-text gwd-div-text-general gwd-div-SS1-12-text">12</div>
+	    <div id="SS1-13-text" class="conveyor-text gwd-div-text-general gwd-div-SS1-13-text">13</div>
+	    <div id="SS1-14-text" class="conveyor-text gwd-div-text-general gwd-div-SS1-14-text">14</div>
+	    <div id="SS2-03" tagname="G_SS2_03_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS2-03"></div>
+	    <div id="SS2-04" tagname="G_SS2_04_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS2-04" ></div>
+	    <div id="SS2-05" tagname="G_SS2_05_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS2-05" ></div>
+	    <div id="SS2-06" tagname="G_SS2_06_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS2-06" ></div>
+	    <div id="SS2-07" tagname="G_SS2_07_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS2-07" ></div>
+	    <div id="SS2-08" tagname="G_SS2_08_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS2-08" ></div>
+	    <div id="SS2-09" tagname="G_SS2_09_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS2-09" ></div>
+	    <div id="SS2-10" tagname="G_SS2_10_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS2-10" ></div>
+	    <div id="SS2-11" tagname="G_SS2_11_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS2-11" ></div>
+	    <div id="SS2-12" tagname="G_SS2_12_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS2-12" ></div>
+	    <div id="SS2-13" tagname="G_SS2_13_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS2-13" ></div>
+	    <div id="SS2-14" tagname="G_SS2_14_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS2-14" ></div>
+	    <div id="EDS-SS2" class="gwd-canvas-EDS-SS2 eds-machine"></div>
+	    <div id="SS2-03-text" class="conveyor-text gwd-div-text-general gwd-div-SS2-03-text">03</div>
+	    <div id="SS2-04-text" class="conveyor-text gwd-div-text-general gwd-div-SS2-04-text">04</div>
+	    <div id="SS2-05-text" class="conveyor-text gwd-div-text-general gwd-div-SS2-05-text">05</div>
+	    <div id="SS2-06-text" class="conveyor-text gwd-div-text-general gwd-div-SS2-06-text">06</div>
+	    <div id="SS2-07-text" class="conveyor-text gwd-div-text-general gwd-div-SS2-07-text">07</div>
+	    <div id="SS2-08-text" class="conveyor-text gwd-div-text-general gwd-div-SS2-08-text">08</div>
+	    <div id="SS2-09-text" class="conveyor-text gwd-div-text-general gwd-div-SS2-09-text">09</div>
+	    <div id="EDS-SS2-text" class="conveyor-text gwd-div-text-general gwd-div-EDS-SS2-text">EDS-SS2</div>
+	    <div id="SS2-10-text" class="conveyor-text gwd-div-text-general gwd-div-SS2-10-text">10</div>
+	    <div id="SS2-11-text" class="conveyor-text gwd-div-text-general gwd-div-SS2-11-text">11</div>
+	    <div id="SS2-12-text" class="conveyor-text gwd-div-text-general gwd-div-SS2-12-text">12</div>
+	    <div id="SS2-13-text" class="conveyor-text gwd-div-text-general gwd-div-SS2-13-text">13</div>
+	    <div id="SS2-14-text" class="conveyor-text gwd-div-text-general gwd-div-SS2-14-text">14</div>
+    </div>
+</div>            
+            
+<!--            </div>
+        </div>
+    </div>
+</div>
+    -->
+    
+    
+    
+    <script>
+    $(function(){
+    	//alert('ready');
+    	
+    	socket.get('/overview/joinroom');
+    	socket.on('overview',function(message){
+    		$('div[tagname]').unbind();
+    		
+    		$.each(message,function(key,message){
+    			setBackground($('div[tagname='+message.tag_name+']'),'#'+message.color_code);
+    			if(message.is_flashing==1){
+	    			setTimeout(function(){
+	    				setBackground($('div[tagname='+message.tag_name+']'),'#'+message.flash_color_code);
+	    			},500);
+    			}
+    			
+    			/*if(message.value=='on'){
+    				setBackground($('#'+message.id),'#ff4400');
+    			}else if(message.value=='off'){
+    				setBackground($('#'+message.id),'#22ee11');
+    			
+    			}*/
+    		});
+    	});
+    	
+    	
+    	
+    	function setBackground($element,color){
+    		$element.css('background-color',color);
+    	
+    	}
+    });
+    
+    
+    </script>
+    

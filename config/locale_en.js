@@ -69,6 +69,9 @@ module.exports.views = {
 		// General Security Translations
 		'Invalid Access':'Invalid Access',
 
+		// Engineering
+		
+		
 		// Dashboard
 
 		'You do not have sufficient privileges to access' : 'You do not have sufficient privileges to access',
@@ -96,6 +99,8 @@ module.exports.views = {
 		'Jam Rate' : 'Jam Rate',
 		'ATR Read Rate' : 'ATR Read Rate',
 
+		//Overview
+		
 		// Flights
 		'All changes saved.':'All changes saved.',
 	        'Flight Table':'Flight Table',
@@ -174,7 +179,9 @@ module.exports.views = {
 		    '/search' : 'Bag Search',
 		    '/flighttable':'Flight Table',
 		    '/airlineconfiguration':'Airline Configuration',
-		    '/virtual2physical':'Virtual to Physical Mapping'
+		    '/virtual2physical':'Virtual to Physical Mapping',
+		    '/engineering':'Engineering',
+		    '/overview':'Overview'
 		}
 	    }
 	}
