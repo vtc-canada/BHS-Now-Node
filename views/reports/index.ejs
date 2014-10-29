@@ -437,7 +437,7 @@
             
         });
         // If the page was loaded with the search field value populated through from the search box on all pages- automatically trigger running the report
-	    if($('#search_field').val()!=''){
+	    if($('#search_field').length>0&&$('#search_field').val()!=''){
 	       runReport();
 	    }
     }
