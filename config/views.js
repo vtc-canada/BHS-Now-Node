@@ -68,22 +68,38 @@ module.exports.views = {
 	    '/dashboard':{
 		enabled:true,
 		banner:true,
-		icon:'icon-dashboard'
+		icon:'icon-dashboard',
+		footer:true
+	    },
+	    '/messages':{
+		enabled:false,
+		banner:true,
+		icon:'icon-envelope-alt',
+		footer:false
+	    },
+	    '/overview':{
+		enabled:true,
+		banner:false,
+		icon:'icon-sitemap',
+		footer:true
 	    },
 	    '/reports':{
 		enabled:true,
 		banner:true,
-		icon:'icon-copy'
+		icon:'icon-copy',
+		footer:true
 	    },
 	    '/search':{
 		enabled:true,
 		banner:true,
-		icon:'icon-suitcase'
+		icon:'icon-suitcase',
+		footer:true
 	    },
 	    '/flighttable':{
 		enabled:true,
 		banner:true,
-		icon:'icon-calendar'
+		icon:'icon-calendar',
+		footer:true
 	    },
 	    '/systemconfig':{
 		enabled:true,
@@ -92,22 +108,32 @@ module.exports.views = {
 		    '/admin/users':{
 			enabled:true,
 			banner:true,
-			icon:'icon-group'
+			icon:'icon-group',
+			footer:true
 		    },
 		    '/airlineconfiguration':{
 			enabled:true,
 			banner:true,
-			icon:'icon-plane'
+			icon:'icon-plane',
+			footer:true
 		    },
 		    '/virtual2physical':{
 			enabled:true,
 			banner:false,
-			icon:'icon-sitemap'
+			icon:'icon-sitemap',
+			footer:true
+		    },
+		    '/engineering':{
+			enabled:true,
+			banner:true,
+			icon:'icon-wrench',
+			footer:true
 		    },
 		    '/admin/securitygroups':{
 			enabled:true,
 			banner:true,
-			icon:'icon-lock'
+			icon:'icon-lock',
+			footer:true
 		    }
 		}
 	    }

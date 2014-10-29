@@ -233,7 +233,7 @@
 		    interpolate : /\{\{\=(.+?)\}\}/g,
 		    evaluate: /\{\{(.+?)\}\}/g
 		};
-		
+		var users;
 		var fulluserIDselected=0;
 		var socket = io.connect();
 		socket.on("connect",function(){
@@ -272,7 +272,7 @@
 	        fixheight();
 	    });
 	    function fixheight(){
-	        $('.main-content').css('height',$(window).height()-$('.navbar').height()+'px');
+	        $('.main-content').css('height',$(window).height()-$('.navbar').height()-($('.isn-content-footer').length>0?30:0)+'px');
 	    }
 	    // Clicking the Locale Flag, triggers a page refresh. Just rotates the locale according to serverside
         $('.language-a').click(function(event){
@@ -290,7 +290,7 @@
 	    }
 	    function toLocaleDateTimeString(date){
 	    	if(typeof(date)=='string'){
-	    		date = new Date(date);
+	    		date = dateFromISO(date);
 	    	}
 	        return date.getFullYear()+'-'+padLeft((date.getMonth()+1).toString(),2)+'-'+ padLeft(date.getDate(),2) + ' ' + padLeft(date.getHours(),2)+':'+padLeft(date.getMinutes(),2)+':'+padLeft(date.getSeconds(),2);
 	    }
@@ -330,6 +330,29 @@
 		  return padLeft(numdays, 2) + ":" + padLeft(numhours, 2) + ":"
 		      + padLeft(numminutes, 2) + ":" + padLeft(numseconds, 2);
 		}
+		if ( !Date.prototype.toISOString ) {
+	        ( function() {
+	
+	            function pad(number) {
+	                var r = String(number);
+	                if ( r.length === 1 ) {
+	                    r = '0' + r;
+	                }
+	                return r;
+	            }
+	
+	            Date.prototype.toISOString = function() {
+	                return this.getUTCFullYear()
+	                        + '-' + pad( this.getUTCMonth() + 1 )
+	                        + '-' + pad( this.getUTCDate() )
+	                        + 'T' + pad( this.getUTCHours() )
+	                        + ':' + pad( this.getUTCMinutes() )
+	                        + ':' + pad( this.getUTCSeconds() )
+	                        + '.' + String( (this.getUTCMilliseconds()/1000).toFixed(3) ).slice( 2, 5 )
+	                        + 'Z';
+	            };
+	        }() );
+	    }
 	    
 	    $(document).ready(function(){
 	    	fixheight();
@@ -539,7 +562,11 @@
                     	}
                         this.set(users);
 	                	usersView = new UsersView({collection: this});
-	                	
+	                	<% if(req.url=='/messages') { %>
+	                		if(typeof(fillautocompletebox)!='undefined'){
+                              	fillautocompletebox();     // This utility function exists on the comminications page. It builds the combo dropdown for sending a new message
+                              }
+                        <% } %>
 	                	
 	                	this.socket.on('onlinestatus', _.bind(function(users){
 	                		this.set(users);
@@ -818,7 +845,50 @@
 
        <!-- <div class="main-content-padder"></div>-->
    		<%- body %>
+   		<div class="footer-padder"></div>
     </div> <!-- /container -->
+    
+		    
+		<% for(var navpage in navpages){  %>
+  				<% if(req.url==navpage){ %>
+  				
+	  				<% if(navpages[navpage].footer){ %>
+    <div class="isn-content-footer">
+		<div class="isn-margin-footer-wrapper">
+			<hr class="isn-footer-hr">
+			<div class="isn-footer-image">Powered By <img alt="iSystemsNow" class="logo isn-logo" src="/img/iSystemsNow-footer.png">'s Now Management Studio.</div>
+		</div>
+	</div> 	  				
+	  				<% } %>
+				
+  					<% break; %>
+  				<% } %>
+ 	            <% if(typeof(navpages[navpage].children)!='undefined'&&templateHelper.hasChildPage(navpages[navpage],req.url)){ %>
+	                <% for(var childpage in navpages[navpage].children){  %>
+				  		
+				  		
+				  		<% if(req.url==childpage){ %>
+				  			<% if(navpages[navpage].children[childpage].footer){ %>
+    <div class="isn-content-footer">
+		<div class="isn-margin-footer-wrapper">
+			<hr class="isn-footer-hr">
+			<div class="isn-footer-image">Powered By <img alt="iSystemsNow" class="logo isn-logo" src="/img/iSystemsNow-footer.png">'s Now Management Studio.</div>
+		</div>
+	</div>				<% } %> 	
+				  			<% break; %>
+				  		<% } %>
+			  		<% } %>
+			  		<% break; %>
+	  			<% } %>
+  			<% } %>    
+    
+    
+    
+
+
+
+
+
 		<% var errormessage = i18n(req,req.flash('errormessage').toString())%>
 		<% var errordebug = req.flash('errordebug').toString() %>
 		<% if(typeof(errormessage)!='undefined'){ %>
