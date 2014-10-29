@@ -99,6 +99,11 @@ module.exports.views = {
 			banner:true,
 			icon:'icon-plane'
 		    },
+		    '/virtual2physical':{
+			enabled:true,
+			banner:false,
+			icon:'icon-sitemap'
+		    },
 		    '/admin/securitygroups':{
 			enabled:true,
 			banner:true,

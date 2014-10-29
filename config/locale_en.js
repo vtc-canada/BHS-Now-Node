@@ -140,6 +140,12 @@ module.exports.views = {
 	        'Sort Mode':'Sort Mode',
 	        'Airline Configurations have been successfully saved.':'Airline Configurations have been successfully saved.',
 	        
+	        // Virtual 2 Physical
+	        'Virtual 2 Physical':'Virtual to Physical Mapping',
+                'Mapping':'Destination Mapping',
+                'Virtual Destination':'Virtual Destination',
+                'Physical Destination':'Physical Destination',
+                'Virtual to Physical settings have been successfully saved.':'Virtual to Physical settings have been successfully saved.',
 		
 		//Reports
 		'Reports' : 'Reports',
@@ -167,7 +173,8 @@ module.exports.views = {
 		    '/reports' : 'Reports',
 		    '/search' : 'Bag Search',
 		    '/flighttable':'Flight Table',
-		    '/airlineconfiguration':'Airline Configuration'
+		    '/airlineconfiguration':'Airline Configuration',
+		    '/virtual2physical':'Virtual to Physical Mapping'
 		}
 	    }
 	}

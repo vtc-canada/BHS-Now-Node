@@ -1,0 +1,181 @@
+<div class="row-fluid page-banner">
+    <div class="banner-div"><i class="icon-sitemap icon-1x banner-icon-top"></i><div class="banner-div-text"><%= i18n(req,'Virtual 2 Physical') %></div></div>
+</div>
+
+<div class="row-fluid" style="margin-top:20px;">
+    <div class="span10 offset1 page-controls-wrapper">
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%= i18n(req,'Mapping') %></span>
+            <div class="btn btn-primary pull-right save_pull" style="margin-right:10px;font-weight: 400;" id="save_virt_2_phys"><%= i18n(req,'Save') %></div>
+        </div>
+        <div class="row-fluid" id="iframediv">
+            <div class="row-fluid">
+                <div class="row-fluid sort-destination-plan-titles virtual-to-physical-table-headers">
+                    <div class="row-fluid">
+                        <div class="span5 offset1 titlerow">
+                            <%= i18n(req,'Virtual Destination') %>
+                        </div>
+                        <div class="span6">
+                            <%= i18n(req,'Physical Destination') %>
+                        </div>
+                    </div>
+                </div>
+                <div class="row-fluid" id="virtual2physicals">
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/template" id="virt-2-phys-template">
+    <div class="row-fluid section-config-wrapper">
+        <div class="span5 offset1">
+            <label class="mobile-label"><%= i18n(req,'Virtual Destination') %>:</label>
+            <label style="cursor:default;" class="mobile-element">{{ var found_dest_text; for(var i=0; i< ref_virt_destinations.length; i++){  if(id == ref_virt_destinations[i].id){ found_dest_text = ref_virt_destinations[i].destination; } } }}{{= found_dest_text }}
+            </label>
+        </div>
+        <div class="span6">
+            <label class="mobile-label">Physical Destination:</label>
+            <select class="virt_select mobile-element" id="select_{{= id }}" virt_id="{{= id }}" >
+                {{ for(var i=0; i< ref_sort_destinations.length; i++){ }}
+                <option {{ if(phys_ID == ref_sort_destinations[i].id){ }}selected="selected"{{ } }}    value="{{= ref_sort_destinations[i].id }}">{{= ref_sort_destinations[i].destination }}</option>
+                {{ } }}
+            </select>
+        </div>
+    </div>
+</script>
+
+
+
+<script>
+
+    var ref_sort_destinations = new Array();
+    var ref_virt_destinations = new Array();
+    var virtual2physicals;       // collection storing all the location mappings
+    $(document).ready(function(){
+    	socket.on('connect',initialize);
+    });
+    
+	function initialize(){
+        // first thing is to collect the reference tables that will be needed
+        //once the reference objects are loaded in,
+        // we fetch the virtual2physicals collection
+        // that in turn triggers the render
+        socket.get("/virtual2physical/getRef_sort_destinations",{},function(ref_defs){
+            if(ref_defs.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
+                location.reload(); // Will boot back to login screen
+            }
+            for(var i=0; i<ref_defs.length;i++){
+
+                ref_sort_destinations.push({'id':ref_defs[i].id, 'destination':ref_defs[i].destination});
+            }
+            socket.get("/virtual2physical/getRef_virtual_destinations",{},function(ref_virt_defs){
+                if(ref_virt_defs.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
+                    location.reload(); // Will boot back to login screen
+                }
+                for(var i=0; i<ref_virt_defs.length;i++){
+
+                    ref_virt_destinations.push({'id':ref_virt_defs[i].id, 'destination':ref_virt_defs[i].destination});
+                }
+                virtual2physicals.fetch();
+            });
+        });
+
+
+
+        //////////////////////////////////////////////////
+        //////// virtual2physical          ///////////////
+        //////////////////////////////////////////////////
+
+
+        var Virtual2PhysicalModel = Backbone.Model.extend({
+            urlRoot: '/virtual2physical'
+        });
+
+        // once the collection is fetched the view is rendered.
+        var SailsVirtual2PhysicalCollection = Backbone.Collection.extend({
+            sailsCollection: "",
+            socket: null,
+            sync: function(method, model, options){
+                if(typeof this.sailsCollection === "string" && this.sailsCollection !== "") {
+                    this.socket = socket;
+
+                    this.socket.get(this.sailsCollection, options, _.bind(function(v2pz){
+                        if(v2pz.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
+                            location.reload(); // Will boot back to login screen
+                        }
+                        this.set(v2pz);
+                        virtual2PhysicalView.render();
+                    }, this));
+                }
+            }
+        });
+
+        var Virtual2PhysicalCollection = SailsVirtual2PhysicalCollection.extend({
+            sailsCollection: '/virtual2physical/getV2P',
+            model: Virtual2PhysicalModel
+        });
+
+        virtual2physicals = new Virtual2PhysicalCollection();
+
+
+        // view, render is called manually, only once initially
+        var Virtual2PhysicalView = Backbone.View.extend({
+            el: '#virtual2physicals',
+            initialize: function () {
+            },events:{
+                'click select.virt_select' : 'v2pchanged'
+            },
+            v2pchanged:function(event){
+                var virt_id = $(event.currentTarget).attr('virt_id');
+                virtual2physicals.get(virt_id).set('phys_ID',$(event.currentTarget).val());
+            },
+            template: _.template($('#virt-2-phys-template').html()),
+            render: function () {
+                this.$el.html("");
+                var tcollection = this.collection.sortBy(function(message){
+                    return message.get("id");
+                });
+                for(var i=0; i<tcollection.length; i++)
+                {
+                    this.$el.append(this.template(tcollection[i].toJSON()));
+                }
+                $('#virtual2physicals > div.section-config-wrapper:even').addClass('odd');
+                $('#virtual2physicals > div.section-config-wrapper:odd').addClass('even');
+            }
+        });
+
+        var virtual2PhysicalView = new Virtual2PhysicalView({collection: virtual2physicals});
+
+
+        /// Saves the virtual to physical mapping
+        // assembles the virtual2physicals collection into the parameters
+        // makes the serverside call
+        // displays appropriate error/success messages
+        $('#save_virt_2_phys').click(function(){
+
+            $('.alert').remove();
+
+            var params = {'v2ps':virtual2physicals.toJSON()};
+
+            socket.get("/virtual2physical/saveV2P", params,function(data){
+                if(typeof(data.error)!='undefined'){
+                    location.reload(); // Will boot back to login screen
+                    return;
+                }
+                if(typeof(data.failure)!='undefined'){
+                    $('.page-banner').after('<div class="alert alert-error fade in" style="border-radius:0px;">'+
+                            '<button type="button" class="close" data-dismiss="alert">×</button>'+
+                            '<strong><%= i18n(req,'Error') %>:&nbsp</strong>'+translate['<%= locale %>'][data.failure]+'</div>');
+                    return;
+                }
+
+                if(typeof(data.success)!='undefined'){
+                 	bannerAlert('success','<%=i18n(req,'FormSuccess')%>',data.success);
+                }
+            });
+        });
+    }
+
+</script>
