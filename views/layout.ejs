@@ -68,7 +68,7 @@
       <!-- This Modal Dialog is displayed when the user goes to change his password from the myaccount dropdown -->
       <div id="changepasswordModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
           <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">Ã—</button>
               <h3 id="myModalLabelChange"><%= translate[req.session.user.locale]['Change Password']  %></h3>
           </div>
           <div class="modal-body">
@@ -111,7 +111,7 @@
                     <a class="top-message-a language-a" style="position:relative;"><div class="language-flag english"></div><div class="top-flag-span top-messages-span">English</div></a>
                   <% } %>
                   <% if(req.session.user.locale=='es'){ %>
-                    <a class="top-message-a language-a" style="position:relative;"><div class="language-flag chile"></div><div class="top-flag-span top-messages-span">Español</div></a>
+                    <a class="top-message-a language-a" style="position:relative;"><div class="language-flag chile"></div><div class="top-flag-span top-messages-span">EspaÃ±ol</div></a>
                   <% } %>
               </li>
 <% } %> 
@@ -299,6 +299,14 @@
 	        var datet= new Date(Date.UTC(s[0], --s[1]||'', s[2]||'', s[3]||'', s[4]||'', s[5]||'', s[6]||''));
 	        return new Date(datet.getTime() + datet.getTimezoneOffset()*60000);
 	    }
+	    function dateFromISO(s) {
+	    	if(typeof(s)=='string'){
+		        s = s.split(/\D/);
+		        return new Date(Date.UTC(s[0], --s[1]||'', s[2]||'', s[3]||'', s[4]||'', s[5]||'', s[6]||''));
+	        }else if(typeof(s)=='object'){
+	        	return s;
+	        }
+	    }
 	    function to_operational_day_start_time(date,timestring){
 	        return date.getFullYear()+'-'+padLeft((date.getMonth()+1).toString(),2)+'-'+ padLeft(date.getDate(),2) + ' ' + timestring;
 	    }
@@ -416,12 +424,12 @@
             $('#changepasswordModal div.alert-error').remove();
             if($('#mynewpassword').val()!=$('#confirmmypassword').val()){
                 $('#changepasswordModal div.modal-header').after(
-                        '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong><%= translate[locale]['FormError'] %>:&nbsp;</strong><%= translate[locale]['Password fields do not match.'] %></div>');//' .error-message').html('Password fields do not match.');
+                        '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">Ã—</button><strong><%= translate[locale]['FormError'] %>:&nbsp;</strong><%= translate[locale]['Password fields do not match.'] %></div>');//' .error-message').html('Password fields do not match.');
 
             }else if($('#mynewpassword').val()==''){
 
                 $('#changepasswordModal div.modal-header').after(
-                        '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong><%= translate[locale]['FormError'] %>:&nbsp;</strong><%= translate[locale]['Password must be at least 1 character long.'] %></div>');
+                        '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">Ã—</button><strong><%= translate[locale]['FormError'] %>:&nbsp;</strong><%= translate[locale]['Password must be at least 1 character long.'] %></div>');
 
             }else{
                 socket.get('/auth/checkandchangemypassword',{currentpassword:$('#mycurrentpassword').val(),newpassword:$('#mynewpassword').val()},function(data){
@@ -431,12 +439,12 @@
                     }
                     if(typeof(data.failure)!='undefined'){
                         $('#changepasswordModal div.modal-header').after(
-                                '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong><%= translate[locale]['FormError'] %>:&nbsp;</strong><%= translate[locale]['Current password was incorrect.'] %></div>');
+                                '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">Ã—</button><strong><%= translate[locale]['FormError'] %>:&nbsp;</strong><%= translate[locale]['Current password was incorrect.'] %></div>');
                         return;
                     }
                     if(typeof(data.success)!='undefined'){
 	                    $('#changepasswordModal div.modal-header').after(
-	                            '<div class="alert alert-success fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong><%= translate[locale]['FormSuccess'] %>:&nbsp;</strong><%= translate[locale]['Password has been successfully changed.'] %></div>');
+	                            '<div class="alert alert-success fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">Ã—</button><strong><%= translate[locale]['FormSuccess'] %>:&nbsp;</strong><%= translate[locale]['Password has been successfully changed.'] %></div>');
 	                    setTimeout(function(){
 	                        $('#changepasswordModal .alert-success').remove();
 	                        $('.alert-success').removeClass('in');
@@ -547,8 +555,10 @@
 			sailsCollection: 'users/getUsersAndStatus',
 			model: UsersModel
 		});
-        users = new UsersCollection();
-        users.fetch();
+		$(document).ready(function(){
+	        users = new UsersCollection();
+	        users.fetch();
+        });
         // create the collection, which in turn once the users are received the first time, creates the usersView
 
 
@@ -768,10 +778,54 @@
       <!-- The MAIN DIV -- BODY SECTION -->
       <!-- This is where the actual pages themselves get loaded in -->
     <div class="main-content">
+    	
+    		<% for(var navpage in navpages){  %>
+  				<% if(req.url==navpage){ %>
+  				
+	  				<% if(navpages[navpage].banner){ %>
+ 	    <div class="row-fluid page-banner">
+	        <div class="banner-div"><i class="<%=navpages[navpage].icon%> icon-1x banner-icon-top"></i><div class="banner-div-text"><%= translate[req.session.user.locale]['pages'][req.url] %></div></div>
+		</div> 	  				
+	  				<% } %>
+				
+  					<% break; %>
+  				<% } %>
+ 	            <% if(typeof(navpages[navpage].children)!='undefined'&&templateHelper.hasChildPage(navpages[navpage],req.url)){ %>
+	                <% for(var childpage in navpages[navpage].children){  %>
+				  		
+				  		
+				  		<% if(req.url==childpage){ %>
+				  			<% if(navpages[navpage].children[childpage].banner){ %>
+	    <div class="row-fluid page-banner">
+	        <div class="banner-div"><i class="<%=navpages[navpage].children[childpage].icon%> icon-1x banner-icon-top"></i><div class="banner-div-text"><%= translate[req.session.user.locale]['pages'][req.url] %></div></div>
+		</div>				<% } %> 	
+				  			<% break; %>
+				  		<% } %>
+			  		<% } %>
+			  		<% break; %>
+	  			<% } %>
+  			<% } %>
+			  	
+			  	
+		
+		
+		
+			  				 				
+  				
+    	
+    	
+
+
        <!-- <div class="main-content-padder"></div>-->
    		<%- body %>
     </div> <!-- /container -->
-
+		<% var errormessage = i18n(req,req.flash('errormessage').toString())%>
+		<% var errordebug = req.flash('errordebug').toString() %>
+		<% if(typeof(errormessage)!='undefined'){ %>
+		<script>
+			bannerAlert('error','<%=i18n(req,'Error')%>','<%=errormessage%> <%=typeof(errordebug)!='undefined'?errordebug:''%> <% if(typeof(errorurl)!='undefined'){ %> <%= req.url %><% } %>');
+		</script>
+		<% } %>
 
   </body>
 </html>

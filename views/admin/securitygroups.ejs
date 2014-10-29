@@ -160,7 +160,7 @@ $(function(){
 				resources[key].create = 1;
 				resources[key].read = 1;
 				resources[key].update = 1;
-				resources[key].delete = 1;
+				resources[key]['delete'] = 1;
 				
 			}
 			securitygroup.set({id:'new','name':null,'resources':resources});
@@ -269,9 +269,11 @@ $(function(){
         		setChangesPending();
         	});*/
         	for(var group in this.model.get('resources')){
-        		var jsonResource = this.model.get('resources')[group];
-        		jsonResource.destroy = jsonResource.delete;
-        		$(this.groupselement).append(this.grouptemplate(jsonResource));
+        		if(!isNaN(parseInt(group))){
+	        		var jsonResource = this.model.get('resources')[group];
+	        		jsonResource['destroy'] = jsonResource['delete'];
+	        		$(this.groupselement).append(this.grouptemplate(jsonResource));
+        		}
         	}
         	
     		$('.edit-user-security-template input[key]').click(function(){
