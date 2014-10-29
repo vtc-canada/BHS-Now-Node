@@ -555,8 +555,10 @@
 			sailsCollection: 'users/getUsersAndStatus',
 			model: UsersModel
 		});
-        users = new UsersCollection();
-        users.fetch();
+		$(document).ready(function(){
+	        users = new UsersCollection();
+	        users.fetch();
+        });
         // create the collection, which in turn once the users are received the first time, creates the usersView
 
 
@@ -778,24 +780,25 @@
     <div class="main-content">
     	
     		<% for(var navpage in navpages){  %>
-  				<% if(!navpages[navpage].enabled){ %>
-  					<% continue; %>
-  				<% } %>
   				<% if(req.url==navpage){ %>
+  				
+	  				<% if(navpages[navpage].banner){ %>
  	    <div class="row-fluid page-banner">
 	        <div class="banner-div"><i class="<%=navpages[navpage].icon%> icon-1x banner-icon-top"></i><div class="banner-div-text"><%= translate[req.session.user.locale]['pages'][req.url] %></div></div>
-		</div> 				
+		</div> 	  				
+	  				<% } %>
+				
   					<% break; %>
   				<% } %>
  	            <% if(typeof(navpages[navpage].children)!='undefined'&&templateHelper.hasChildPage(navpages[navpage],req.url)){ %>
 	                <% for(var childpage in navpages[navpage].children){  %>
-				  		<% if(!navpages[navpage].children[childpage].enabled){ %>
-				  			<% continue; %>
-				  		<% } %>
+				  		
+				  		
 				  		<% if(req.url==childpage){ %>
+				  			<% if(navpages[navpage].children[childpage].banner){ %>
 	    <div class="row-fluid page-banner">
 	        <div class="banner-div"><i class="<%=navpages[navpage].children[childpage].icon%> icon-1x banner-icon-top"></i><div class="banner-div-text"><%= translate[req.session.user.locale]['pages'][req.url] %></div></div>
-		</div>				  	
+		</div>				<% } %> 	
 				  			<% break; %>
 				  		<% } %>
 			  		<% } %>
@@ -804,13 +807,7 @@
   			<% } %>
 			  	
 			  	
-		<% var errormessage = i18n(req,req.flash('errormessage').toString())%>
-		<% var errordebug = req.flash('errordebug').toString() %>
-		<% if(typeof(errormessage)!='undefined'){ %>
-		<script>
-			bannerAlert('error','<%=i18n(req,'Error')%>','<%=errormessage%> <%=typeof(errordebug)!='undefined'?errordebug:''%> <% if(typeof(errorurl)!='undefined'){ %> <%= req.url %><% } %>');
-		</script>
-		<% } %>
+		
 		
 		
 			  				 				
@@ -822,7 +819,13 @@
        <!-- <div class="main-content-padder"></div>-->
    		<%- body %>
     </div> <!-- /container -->
-
+		<% var errormessage = i18n(req,req.flash('errormessage').toString())%>
+		<% var errordebug = req.flash('errordebug').toString() %>
+		<% if(typeof(errormessage)!='undefined'){ %>
+		<script>
+			bannerAlert('error','<%=i18n(req,'Error')%>','<%=errormessage%> <%=typeof(errordebug)!='undefined'?errordebug:''%> <% if(typeof(errorurl)!='undefined'){ %> <%= req.url %><% } %>');
+		</script>
+		<% } %>
 
   </body>
 </html>
