@@ -94,6 +94,11 @@ module.exports.views = {
 			banner:true,
 			icon:'icon-group'
 		    },
+		    '/airlineconfiguration':{
+			enabled:true,
+			banner:true,
+			icon:'icon-plane'
+		    },
 		    '/admin/securitygroups':{
 			enabled:true,
 			banner:true,

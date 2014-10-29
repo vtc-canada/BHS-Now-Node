@@ -98,7 +98,48 @@ module.exports.views = {
 
 		// Flights
 		'All changes saved.':'All changes saved.',
-		
+	        'Flight Table':'Flight Table',
+	        'Schedule Parameters':'Schedule Parameters',
+	        'Schedule Date':'Schedule Date',
+	        'Flight Schedule':'Flight Schedule',
+	        'Create':'Create',
+	        'Save':'Save',
+	        'Set':'Set',
+	        'Delete':'Delete',
+	        'Filter By':'Filter by',
+	        'Create Flight':'Create Flight',
+	        'Departure Time':'Departure Time',
+	        'Airline':'Airline',
+	        'Flight Number':'Flight Number',
+	        'On Time Offset':'Open Offset',
+	        'Late Offset':'Late Offset',
+	        'Closed Offset':'Closed Offset',
+	        'Virtual Early Dest':'Virtual Early Dest',
+	        'Virtual On Time Dest':'Virtual On Time Dest',
+	        'Virtual Late Dest':'Virtual Late Dest',
+	        'Virtual Locked Out Dest':'Virtual Locked Out Dest',
+	        'Flight':'Flight',
+	        'Success':'Success',
+	        'Failure':'Failure',
+	        'All changes saved.':'All changes saved.',
+	        'Unprivileged': 'You do not have the required privileges to make changes to the Flight Table.',
+	        'Error':'Error',
+	        'Invalid Flight Number':'Invalid Flight Number',
+	        'Another flight with the same Flight Number already exists.':'Another flight with the same Flight Number already exists.',
+	        
+	        //Airline Configuraiton
+	        'Airline Configuration':'Airline Configuration',
+	        'Success':'Success',
+	        'Error':'Error',
+	        'Airlines':'Airlines',
+	        'Airline':'Airline',
+	        'Carrier Destination':'Carrier Destination',
+	        'Sort By Carrier':'Sort By Carrier',
+	        'Sort By Flight':'Sort By Flight',
+	        'Save':'Save',
+	        'Sort Mode':'Sort Mode',
+	        'Airline Configurations have been successfully saved.':'Airline Configurations have been successfully saved.',
+	        
 		
 		//Reports
 		'Reports' : 'Reports',
@@ -124,7 +165,8 @@ module.exports.views = {
 		    '/admin/securitygroups' : 'Security Groups',
 		    '/reports' : 'Reports',
 		    '/search' : 'Bag Search',
-		    '/flighttable':'Flight Table'
+		    '/flighttable':'Flight Table',
+		    '/airlineconfiguration':'Airline Configuration'
 		}
 	    }
 	}

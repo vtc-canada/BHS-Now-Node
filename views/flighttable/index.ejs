@@ -1,65 +1,4 @@
-<%
-var translate = {
-    'en' : {
-        'Flight Table':'Flight Table',
-        'Schedule Parameters':'Schedule Parameters',
-        'Schedule Date':'Schedule Date',
-        'Flight Schedule':'Flight Schedule',
-        'Create':'Create',
-        'Save':'Save',
-        'Set':'Set',
-        'Delete':'Delete',
-        'Filter By':'Filter by',
-        'Create Flight':'Create Flight',
-        'Departure Time':'Departure Time',
-        'Airline':'Airline',
-        'Flight Number':'Flight Number',
-        'On Time Offset':'Open Offset',
-        'Late Offset':'Late Offset',
-        'Closed Offset':'Closed Offset',
-        'Virtual Early Dest':'Virtual Early Dest',
-        'Virtual On Time Dest':'Virtual On Time Dest',
-        'Virtual Late Dest':'Virtual Late Dest',
-        'Virtual Locked Out Dest':'Virtual Locked Out Dest',
-        'Flight':'Flight',
-        'Success':'Success',
-        'Failure':'Failure',
-        'All changes saved.':'All changes saved.',
-        'Unprivileged': 'You do not have the required privileges to make changes to the Flight Table.',
-        'Error':'Error',
-        'Invalid Flight Number':'Invalid Flight Number'
-    },
-    'es' : {
-        'Flight Table':'Cuadro de Vuelo',
-        'Schedule Parameters':'Programe los Parámetros',
-        'Schedule Date':'Fecha Horario',
-        'Flight Schedule':'Horario de Vuelos',
-        'Create':'Crear',
-        'Save':'Guardar',
-        'Set':'Establecer',
-        'Delete':'Borrar',
-        'Filter By':'Filtrar por',
-        'Create Flight':'Crear Vuelo',
-        'Departure Time':'Hora de Salida',
-        'Airline':'Aerolínea',
-        'Flight Number':'Número de Vuelo',
-        'On Time Offset':'Open Offset',
-        'Late Offset':'Late Offset',
-        'Closed Offset':'Cerrado Offset',
-        'Virtual Early Dest':'Destino Early Virtual',
-        'Virtual On Time Dest':'Virtual On Time Dest',
-        'Virtual Late Dest':'Virtual Late Dest',
-        'Virtual Locked Out Dest':'Virtual Locked Out Dest',
-        'Flight':'Vuelo',
-        'Success':'Éxito',
-        'Failure':'Failure',
-        'All changes saved.':'Todos los cambios guardados.',
-        'Unprivileged': 'You do not have the required privileges to make changes to the Flight Table.',
-        'Error':'Error',
-        'Invalid Flight Number':'Invalid Flight Number'
-    }
-}
-%>
+
 
 <script type="text/javascript">
     var translate = {
@@ -314,7 +253,8 @@ var translate = {
                         if(flighttables.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
                             location.reload(); // Will boot back to login screen
                         }
-                        this.set(flighttables);
+                        this.reset(flighttables);
+                        //this.set(flighttables);
                         ganttView.render();
                     }, this));
                 }
@@ -393,6 +333,7 @@ var translate = {
                             return;
                         }*/
                         if(data.success){
+                        	gantt.fetch();
                         	bannerAlert('success','<%=i18n(req,'FormSuccess')%>','<%=i18n(req,'All changes saved.')%>');
                         }
                     });
@@ -864,7 +805,6 @@ var translate = {
 
                 // Error validation.
                 if($('#flight_number_'+sort_plan_id).val()==''||$('#flight_number_'+sort_plan_id).val()=='0'){
-
                     $('.popover[sort_plan_id='+sort_plan_id+'] > h3.popover-title').after('<div class="alert alert-error fade in" style="margin-bottom: 0px; border-radius: 0px; padding: 4px 33px 4px 14px; font-weight: 400;">'+
                             '<button type="button" class="close" style="top:5px;" data-dismiss="alert">×</button>'+
                             '<strong>'+translate['<%= req.session.user.locale %>']['Error']+':&nbsp</strong>'+translate['<%= req.session.user.locale %>']['Invalid Flight Number']+'</div>');
@@ -891,7 +831,11 @@ var translate = {
 
                 for(var ilk = 0; ilk < checkotherflightnumbers.length; ilk++){
                     if(checkotherflightnumbers[ilk].get('flight_number') == parseInt($('#flight_number_'+sort_plan_id).val())&&checkotherflightnumbers[ilk].get('id')!=sort_plan_id){
+                        $('.popover[sort_plan_id='+sort_plan_id+'] > h3.popover-title').after('<div class="alert alert-error fade in" style="margin-bottom: 0px; border-radius: 0px; padding: 4px 33px 4px 14px; font-weight: 400;">'+
+                            '<button type="button" class="close" style="top:5px;" data-dismiss="alert">×</button>'+
+                            '<strong>'+translate['<%= req.session.user.locale %>']['Error']+':&nbsp</strong>'+'<%=i18n(req,'Another flight with the same Flight Number already exists.')%>'+'</div>');
                         $('#flight_number_'+sort_plan_id).focus();
+                    	$('#flight_number_'+sort_plan_id).css('border','1px solid #A50000');
                         return;
                     }
                 }
@@ -1015,9 +959,7 @@ var translate = {
 	            $('#changes_pending').css('display','none');
 	            $('#save_flights').attr('disabled','disabled');
 	        }
-	    }
-	        
-	        
+	    } 
     }
 
     /// utility function
