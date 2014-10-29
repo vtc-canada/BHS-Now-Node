@@ -160,6 +160,7 @@ module.exports.views = {
 		'pages' : {
 		    '/' : 'test',
 		    '/dashboard' : 'Dashboard',
+		    '/messages' : 'Messaging',
 		    '/systemconfig' : 'System Config',
 		    '/admin/users' : 'Users',
 		    '/admin/securitygroups' : 'Security Groups',
