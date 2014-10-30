@@ -35,15 +35,24 @@ module.exports = {
     // Iterates and updates each of the carriers.
     saveCfg_Carrier_Defs : function(req, res) {
 	var cfgCarrierVals = req.param("cfg_carrier_vals");
-	for (var curCarrierVal = 0; curCarrierVal < cfgCarrierVals.length; curCarrierVal++) {
-	    Database.dataSproc("BHS_DEFAULT_CARRIER_DESTINATION_SaveCfgCarrierDefs", [ cfgCarrierVals[curCarrierVal].default_destination,
-		    cfgCarrierVals[curCarrierVal].carrier_sort_active, cfgCarrierVals[curCarrierVal].flight_sort_active, cfgCarrierVals[curCarrierVal].id ],
-		    function(req2, res2) {
 
-		    });
-	}
-	res.json({
-	    success : sails.config.views.locals.i18n(req,'Airline Configurations have been successfully saved.')
+	async.each(cfgCarrierVals, function(curCarrierVal, callback) {
+	    Database.dataSproc("BHS_DEFAULT_CARRIER_DESTINATION_SaveCfgCarrierDefs", [ cfgCarrierVals.default_destination, cfgCarrierVals.carrier_sort_active,
+		    cfgCarrierVals.flight_sort_active, cfgCarrierVals.id ], function(err, response) {
+		if (err) {
+		    callback(err);
+		}
+		callback(null,response);
+	    });
+	}, function(err, response) {
+	    if (err) {
+		return res.json({
+		    error : 'Database Error'
+		});
+	    }
+	    res.json({
+		success : sails.config.views.locals.i18n(req, 'Airline Configurations have been successfully saved.')
+	    });
 	});
     }
 };

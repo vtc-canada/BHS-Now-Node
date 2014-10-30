@@ -71,7 +71,7 @@
     function initialize(){
 
            ///once it sets up the sort_destinations, it fetches the collection
-        socket.request("/airlineconfiguration/getRef_sort_destinations",{},function(ref_defs){
+        socket.get("/airlineconfiguration/getRef_sort_destinations",{},function(ref_defs){
             if(ref_defs.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
                 location.reload(); // Will boot back to login screen
             }
@@ -103,7 +103,7 @@
                 if(typeof this.sailsCollection === "string" && this.sailsCollection !== "") {
                     this.socket = socket;
 
-                    this.socket.request("/" + this.sailsCollection, where, _.bind(function(ddestinations){
+                    this.socket.get("/" + this.sailsCollection, where, _.bind(function(ddestinations){
                         if(ddestinations.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
                             location.reload(); // Will boot back to login screen
                         }
@@ -172,15 +172,9 @@
             $('.alert').remove();
             var params = {'cfg_carrier_vals':defaultdestinations.toJSON()};
 
-            socket.request("/airlineconfiguration/saveCfg_Carrier_Defs", params,function(data){
+            socket.get("/airlineconfiguration/saveCfg_Carrier_Defs", params,function(data){
                 if(typeof(data.error)!='undefined'){
                     location.reload(); // Will boot back to login screen
-                    return;
-                }
-                if(typeof(data.failure)!='undefined'){
-                    $('.page-banner').after('<div class="alert alert-error fade in" style="border-radius:0px;">'+
-                            '<button type="button" class="close" data-dismiss="alert">×</button>'+
-                            '<strong><%=i18n(req,'FormError') %>:&nbsp</strong>'+translate['<%= locale %>'][data.failure]+'</div>');
                     return;
                 }
                  if(typeof(data.success)!='undefined'){

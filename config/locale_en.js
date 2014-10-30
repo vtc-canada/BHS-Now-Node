@@ -144,6 +144,9 @@ module.exports.views = {
 	        'Save':'Save',
 	        'Sort Mode':'Sort Mode',
 	        'Airline Configurations have been successfully saved.':'Airline Configurations have been successfully saved.',
+	        'Invalid Flight Number':'Invalid Flight Number',
+	        'Late Offset must be less than Open Offset':'Late Offset must be less than Open Offset',
+	        'Closed Offset must be less than Late Offset':'Closed Offset must be less than Late Offset',
 	        
 	        // Virtual 2 Physical
 	        'Virtual 2 Physical':'Virtual to Physical Mapping',

@@ -164,13 +164,6 @@
                     location.reload(); // Will boot back to login screen
                     return;
                 }
-                if(typeof(data.failure)!='undefined'){
-                    $('.page-banner').after('<div class="alert alert-error fade in" style="border-radius:0px;">'+
-                            '<button type="button" class="close" data-dismiss="alert">×</button>'+
-                            '<strong><%= i18n(req,'Error') %>:&nbsp</strong>'+translate['<%= locale %>'][data.failure]+'</div>');
-                    return;
-                }
-
                 if(typeof(data.success)!='undefined'){
                  	bannerAlert('success','<%=i18n(req,'FormSuccess')%>',data.success);
                 }
