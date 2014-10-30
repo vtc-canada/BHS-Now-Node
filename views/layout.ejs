@@ -68,18 +68,18 @@
       <!-- This Modal Dialog is displayed when the user goes to change his password from the myaccount dropdown -->
       <div id="changepasswordModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
           <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">Ã—</button>
-              <h3 id="myModalLabelChange"><%= i18n(req,'Change Password']  %></h3>
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+              <h3 id="myModalLabelChange"><%= i18n(req,'Change Password') %></h3>
           </div>
           <div class="modal-body">
-              <div class="row-fluid"><p><%= i18n(req,'Enter a new password for']  %> <b><%=req.session.user.username%></b>.</p></div>
-              <div class="row-fluid"><label class="change-label" for="mycurrentpassword"><%= i18n(req,'Current Password']  %>:</label><input class="change-input" id="mycurrentpassword" type="password"></div>
-              <div class="row-fluid"><label class="change-label" for="mynewpassword"><%= i18n(req,'New Password']  %>:</label><input class="change-input" id="mynewpassword" type="password"></div>
-              <div class="row-fluid"><label class="change-label" for="confirmmypassword"><%= i18n(req,'Confirm Password']  %>:</label><input class="change-input"  id="confirmmypassword" type="password"> </div>
+              <div class="row-fluid"><p><%= i18n(req,'Enter a new password for') %> <b><%=req.session.user.username%></b>.</p></div>
+              <div class="row-fluid"><label class="change-label" for="mycurrentpassword"><%= i18n(req,'Current Password') %>:</label><input class="change-input" id="mycurrentpassword" type="password"></div>
+              <div class="row-fluid"><label class="change-label" for="mynewpassword"><%= i18n(req,'New Password') %>:</label><input class="change-input" id="mynewpassword" type="password"></div>
+              <div class="row-fluid"><label class="change-label" for="confirmmypassword"><%= i18n(req,'Confirm Password') %>:</label><input class="change-input"  id="confirmmypassword" type="password"> </div>
           </div>
           <div class="modal-footer">
-              <button class="btn" data-dismiss="modal" id="confirmmypasswordchangecancel" aria-hidden="true"><%= i18n(req,'FormCancel']  %></button>
-              <button class="btn btn-primary" id="confirmmypasswordchange"><%= i18n(req,'FormSet']  %></button>
+              <button class="btn" data-dismiss="modal" id="confirmmypasswordchangecancel" aria-hidden="true"><%= i18n(req,'FormCancel') %></button>
+              <button class="btn btn-primary" id="confirmmypasswordchange"><%= i18n(req,'FormSet') %></button>
           </div>
       </div>
       
@@ -134,7 +134,7 @@
                       </li>
                       <li class="">
                           <a href="/auth/logout">
-                              <i class="icon-signout"></i> <%= i18n(req,'Sign Out']  %>
+                              <i class="icon-signout"></i> <%= i18n(req,'Sign Out') %>
                           </a>
                       </li>
                   </ul>
