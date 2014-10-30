@@ -1,8 +1,8 @@
 
 <div class="row-fluid" style="margin-top:19px; margin-bottom:25px;">
     <div class="span10 offset1 page-controls-wrapper">
-        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%=translate[req.session.user.locale]['Users']%></span>
-             <% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="create_new"><%=translate[req.session.user.locale]['Create New User']%></div><% } %>
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%=i18n(req,'Users')%></span>
+             <% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="create_new"><%=i18n(req,'Create New User')%></div><% } %>
         </div>
         <div class="row-fluid key-indicaters-frame" id="iframediv">
             <div class="row-fluid">
@@ -64,11 +64,11 @@
 				<div class="edit-user-security-template only-desktop" >
 					<div class="row-fluid " style="position:relative; cursor:default;"">
 						<div class="row-fluid form-segment-wrapper">
-							<div class="span7 segment-label"><%=translate[req.session.user.locale]['SecurityResource']%></div>
-							<div class="span1 segment-value"><%=translate[req.session.user.locale]['LevelCreate']%></div>
-							<div class="span1 segment-value"><%=translate[req.session.user.locale]['LevelRead']%></div>
-							<div class="span1 segment-value"><%=translate[req.session.user.locale]['LevelUpdate']%></div>
-							<div class="span1 segment-value"><%=translate[req.session.user.locale]['LevelDelete']%></div>
+							<div class="span7 segment-label"><%=i18n(req,'SecurityResource')%></div>
+							<div class="span1 segment-value"><%=i18n(req,'LevelCreate')%></div>
+							<div class="span1 segment-value"><%=i18n(req,'LevelRead')%></div>
+							<div class="span1 segment-value"><%=i18n(req,'LevelUpdate')%></div>
+							<div class="span1 segment-value"><%=i18n(req,'LevelDelete')%></div>
 						</div>
 					</div>
 				</div>
@@ -98,10 +98,10 @@
 		<div class="row-fluid " style="position:relative; cursor:default;"">
 			<div class="row-fluid form-segment-wrapper">
 				<div class="span7 segment-label">{{=name}}:</div>
-				<div class="span1 segment-value"><input type="checkbox" key="create" {{if(create){ }}checked="checked"{{ } }}><span class="only-mobile mobile-security-access-label"><%=translate[req.session.user.locale]['LevelCreate']%></span></div>
-				<div class="span1 segment-value"><input type="checkbox" key="read" {{if(read){ }}checked="checked"{{ } }}><span class="only-mobile mobile-security-access-label"><%=translate[req.session.user.locale]['LevelRead']%></span></div>
-				<div class="span1 segment-value"><input type="checkbox" key="update" {{if(update){ }}checked="checked"{{ } }}><span class="only-mobile mobile-security-access-label"><%=translate[req.session.user.locale]['LevelUpdate']%></span></div>
-				<div class="span1 segment-value"><input type="checkbox" key="delete" {{if(destroy){ }}checked="checked"{{ } }}><span class="only-mobile mobile-security-access-label"><%=translate[req.session.user.locale]['LevelDelete']%></span></div>
+				<div class="span1 segment-value"><input type="checkbox" key="create" {{if(create){ }}checked="checked"{{ } }}><span class="only-mobile mobile-security-access-label"><%=i18n(req,'LevelCreate')%></span></div>
+				<div class="span1 segment-value"><input type="checkbox" key="read" {{if(read){ }}checked="checked"{{ } }}><span class="only-mobile mobile-security-access-label"><%=i18n(req,'LevelRead')%></span></div>
+				<div class="span1 segment-value"><input type="checkbox" key="update" {{if(update){ }}checked="checked"{{ } }}><span class="only-mobile mobile-security-access-label"><%=i18n(req,'LevelUpdate')%></span></div>
+				<div class="span1 segment-value"><input type="checkbox" key="delete" {{if(destroy){ }}checked="checked"{{ } }}><span class="only-mobile mobile-security-access-label"><%=i18n(req,'LevelDelete')%></span></div>
 			</div>
 		</div>
 	</div>
@@ -174,7 +174,7 @@ $(function(){
 		socket.get('/securitygroups/delete',{id:securitygroup.get('id')},function(response){
 			if(response.success){
 				datatable.api().ajax.reload(function(){},false);
-				bannerAlert('success','<%=translate[req.session.user.locale]['FormSuccess']%>','<%=translate[req.session.user.locale]['Security Group Deleted']%>');
+				bannerAlert('success','<%=i18n(req,'FormSuccess')%>','<%=i18n(req,'Security Group Deleted')%>');
 				securitygroup.clear();
 				$('.edit-item-section').css('display','none');
 		 		$('#datatable tbody tr').removeClass('selected');
@@ -186,7 +186,7 @@ $(function(){
 	$('#save_item').click(function(){
 		clearBanners();
 		if(securitygroup.get('name')==null||securitygroup.get('name')==''){
-			bannerAlert('error','<%=translate[req.session.user.locale]['FormError']%>','<%=translate[req.session.user.locale]['Invalid Security Group Name']%>');
+			bannerAlert('error','<%=i18n(req,'FormError')%>','<%=i18n(req,'Invalid Security Group Name')%>');
 			return;
 		}
 		if(securitygroup.get('id')=='new'){
@@ -195,7 +195,7 @@ $(function(){
 		}
 		socket.get('/securitygroups/savesecuritygroupandresources',{securitygroup:securitygroup},function(response){
 			if(response.success){
-				bannerAlert('success','<%=translate[req.session.user.locale]['FormSuccess']%>','<%=translate[req.session.user.locale]['Security Group Saved']%>');
+				bannerAlert('success','<%=i18n(req,'FormSuccess')%>','<%=i18n(req,'Security Group Saved')%>');
 				if(securitygroup.get('id')=='new'){
 					datatable.api().ajax.reload();
 				}else{
@@ -216,7 +216,7 @@ $(function(){
         sync:function(method,model,options){
             if(typeof this.urlRoot === "string" && this.urlRoot !== "") {
                 this.socket = io.socket;
-                this.socket.request(this.urlRoot, options, _.bind(function(securitygroup){
+                this.socket.get(this.urlRoot, options, _.bind(function(securitygroup){
                     if(securitygroup.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
                         location.reload(); // Will boot back to login screen
                     }
@@ -285,9 +285,9 @@ $(function(){
         		
         		
         	if(securitygroup.get('id')=='new'){
-				$('#edit-section-title').html('<%=translate[req.session.user.locale]['Create Security Group']%>');
+				$('#edit-section-title').html('<%=i18n(req,'Create Security Group')%>');
         	}else{
-        		$('#edit-section-title').html('<%=translate[req.session.user.locale]['Edit']%>&nbsp'+securitygroup.get('name'));
+        		$('#edit-section-title').html('<%=i18n(req,'Edit')%>&nbsp'+securitygroup.get('name'));
         	}
         	setChangesPending();
         }

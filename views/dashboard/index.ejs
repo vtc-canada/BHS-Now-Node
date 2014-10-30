@@ -1,14 +1,4 @@
 
-        <!-- Throws in Error messages if they were passed in from the controller -->
-<% if(typeof(errormessage)!='undefined'){ %>
-<div class="alert alert-error" style="border-radius:0px;">
-    <button type="button" class="close" data-dismiss="alert">×</button>
-    <strong><%= translate[req.session.user.locale]['FormError'] %>:</strong>
-    <%= translate[req.session.user.locale][errormessage] %><% if(typeof(errorurl)!='undefined'){ %> <%= errorurl %><% } %>
-</div>
-<% } %>
-
-
 <!-- There next templates are the pieces of the BHS Overview drawing -->
 <!-- In order, they represent the columns across the diagram -->
 <script type="text/template" id="ticket-sparkline">
@@ -79,7 +69,7 @@
 
 <div class="row-fluid" style="margin-top:19px;">
     <div class="span7 offset1 page-controls-wrapper">
-        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%= translate[req.session.user.locale]['Key Performance Indicators'] %></span></div>
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%= i18n(req,'Key Performance Indicators') %></span></div>
         <div class="row-fluid key-indicaters-frame" id="iframediv">
             <div class="row-fluid">
                 <div class="row-fluid sort-destination-plan-titles key-performance-div">
@@ -104,13 +94,13 @@
                         </div>
                         <div class="span3 gauge rightstatsgauge">
                             <div id="timeinsystemlabel" class="row-fluid">
-                                  <%= translate[req.session.user.locale]['Time In System'] %>
+                                  <%= i18n(req,'Time In System') %>
                             </div>
                             <div id="timeinsystem" class="row-fluid">
 
                             </div>
                             <div id="bagratelabel" class="row-fluid">
-                                <%= translate[req.session.user.locale]['System Throughput'] %>
+                                <%= i18n(req,'System Throughput') %>
                             </div>
                             <div id="bagrate" class="row-fluid">
 
@@ -122,7 +112,7 @@
         </div>
     </div>
     <div class="span3 page-controls-wrapper">
-        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%= translate[req.session.user.locale]['System Health'] %></span></div>
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%= i18n(req,'System Health') %></span></div>
         <div class="row-fluid health-div" id="iframediv">
             <div class="row-fluid">
                 <div class="row-fluid sort-destination-plan-titles system-health-block">
@@ -138,31 +128,31 @@
 
 <div class="row-fluid" style="margin-top:19px;">
     <div class="span10 offset1 page-controls-wrapper">
-        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%= translate[req.session.user.locale]['BHS Overview'] %></span></div>
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%= i18n(req,'BHS Overview') %></span></div>
         <div class="row-fluid" id="iframediv">
             <div class="row-fluid">
                 <div class="row-fluid BHS-overview-wrapper">
                     <div class="row-fluid BHS-Overview-header">
                         <div style="width:11%;margin-left:0px; " class="span3 titlerow BHS-diagram-titlerow">
-                            <%= translate[req.session.user.locale]['Throughput (bph)'] %>
+                            <%= i18n(req,'Throughput (bph)') %>
                         </div>
                         <div style="width:10%;margin-left:18%; " class="span1 offset1 BHS-diagram-titlerow">
-                            <%= translate[req.session.user.locale]['Throughput (bph)'] %>
+                            <%= i18n(req,'Throughput (bph)') %>
                         </div>
                         <div style="width:15%;margin-left:0px; " class="span1 BHS-diagram-titlerow">
-                            <%= translate[req.session.user.locale]['Uptime'] %>
+                            <%= i18n(req,'Uptime') %>
                         </div>
                         <div style="width:10%;margin-left:0px; " class="span1 BHS-diagram-titlerow">
-                            <%= translate[req.session.user.locale]['Failsafe Rate'] %>
+                            <%= i18n(req,'Failsafe Rate') %>
                         </div>
                         <div style="width:10%;margin-left:0px; " class="span2 BHS-diagram-titlerow">
-                            <%= translate[req.session.user.locale]['Tracking Rate'] %>
+                            <%= i18n(req,'Tracking Rate') %>
                         </div>
                         <div style="width:11%;margin-left:0px; " class="span1 BHS-diagram-titlerow">
-                            <%= translate[req.session.user.locale]['Throughput (bph)'] %>
+                            <%= i18n(req,'Throughput (bph)') %>
                         </div>
                         <div style="width:15%;margin-left:0px; " class="span1 BHS-diagram-titlerow">
-                            <%= translate[req.session.user.locale]['State'] %>
+                            <%= i18n(req,'State') %>
                         </div>
                     </div>
                 </div>
@@ -207,22 +197,22 @@
 
 <div class="row-fluid" style="margin-top:19px;">
     <div class="span7 offset1 page-controls-wrapper">
-        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%= translate[req.session.user.locale]['Alarms'] %></span></div>
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%= i18n(req,'Alarms') %></span></div>
         <div class="row-fluid" id="iframediv">
             <div class="row-fluid">
                 <div  class="row-fluid sort-destination-plan-titles" style="margin-bottom:0px;">
                     <div class="row-fluid alarm-header">
                         <div class="span3 titlerow">
-                            <%= translate[req.session.user.locale]['Time'] %>
+                            <%= i18n(req,'Time') %>
                         </div>
                         <div class="span2">
-                            <%= translate[req.session.user.locale]['Equipment'] %>
+                            <%= i18n(req,'Equipment') %>
                         </div>
                         <div class="span2">
-                            <%= translate[req.session.user.locale]['Device'] %>
+                            <%= i18n(req,'Device') %>
                         </div>
                         <div class="span5">
-                            <%= translate[req.session.user.locale]['Alarm Type'] %>
+                            <%= i18n(req,'Alarm Type') %>
                         </div>
                     </div>
                 </div>
@@ -234,22 +224,22 @@
     </div>
 
     <div class="span3 page-controls-wrapper">
-        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%= translate[req.session.user.locale]['Daily Reminders'] %></span></div>
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%= i18n(req,'Daily Reminders') %></span></div>
         <div class="row-fluid" id="iframediv">
             <div class="row-fluid">
                 <div class="row-fluid sort-destination-plan-titles">
                     <div class="row-fluid alarm-header">
                         <div style="font-weight: 500;" class="span12 titlerow">
-                            <%= translate[req.session.user.locale]['Predictive Mainenance Tasks'] %>
+                            <%= i18n(req,'Predictive Mainenance Tasks') %>
                         </div>
 
                     </div>
                     <div class="row-fluid alarm-header">
                         <div style="text-align:center;" class="span6 titlerow">
-                            <%= translate[req.session.user.locale]['DEVICE'] %>
+                            <%= i18n(req,'DEVICE') %>
                         </div>
                         <div  style="text-align:center;"  class="span6 titlerow">
-                            <%= translate[req.session.user.locale]['REASON'] %>
+                            <%= i18n(req,'REASON') %>
                         </div>
                     </div>
                     <div style="font-weight: 400;height: 22px !important;
@@ -296,22 +286,22 @@ overflow: hidden;" class="row-fluid alarm-header">
     {{ var backgroundcolor; var bordercolor; var color; if(severity<10){ backgroundcolor = 'rgb(255,255,255)'; color= 'rgb(0,0,0)'; bordercolor = 'rgb(192,192,192)';}else if(severity<20){ backgroundcolor = 'rgb(255,255,0)'; color= 'rgb(0,0,0)'; bordercolor = 'rgb240,240,0)';}else if(severity<30){ backgroundcolor = 'rgb(120,64,0)'; color= 'rgb(255,255,255)'; bordercolor = 'rgb(128,0,0)';}else if(severity<40){ backgroundcolor = 'rgb(0,0,255)'; color= 'rgb(255,255,255)'; bordercolor = 'rgb(0,0,128)';}else if(severity<50){ backgroundcolor = 'rgb(240,0,0)'; color= 'rgb(0,0,0)'; bordercolor = 'rgb(192,0,0)';}else if(severity<60){ backgroundcolor = 'rgb(255,128,0)'; color= 'rgb(0,0,0)'; bordercolor = 'rgb(255,104,0)';}else if(severity<70){ backgroundcolor = 'rgb(0,255,0)'; color= 'rgb(0,0,0)'; bordercolor = 'rgb(0,128,0)';} }}
     <div class="row-fluid section-config-wrapper" tag_ID="{{= tag_ID}}" style="background-color:{{=backgroundcolor}}; color:{{=color}}; border-color:{{=bordercolor}};">
         <div class="span3">
-            <label class="mobile-label"><%= translate[req.session.user.locale]['Date']%>:</label>
+            <label class="mobile-label"><%= i18n(req,'Date') %>:</label>
             <label class="mobile-element">{{= toLocaleDateTimeString(timestamp) }}
             </label>
         </div>
         <div class="span2">
-            <label class="mobile-label"><%= translate[req.session.user.locale]['Equipment']%>:</label>
+            <label class="mobile-label"><%= i18n(req,'Equipment') %>:</label>
             <label class="mobile-element">{{= equipment }}
             </label>
         </div>
         <div class="span2">
-            <label class="mobile-label"><%= translate[req.session.user.locale]['Device']%>:</label>
+            <label class="mobile-label"><%= i18n(req,'Device') %>:</label>
             <label class="mobile-element">{{= device }}
             </label>
         </div>
         <div class="span5">
-            <label class="mobile-label"><%= translate[req.session.user.locale]['Alarm Type']%>:</label>
+            <label class="mobile-label"><%= i18n(req,'Alarm Type') %>:</label>
             <label class="mobile-element">{{= text }}
             </label>
         </div>
@@ -686,7 +676,7 @@ overflow: hidden;" class="row-fluid alarm-header">
                         "#008000",
                         "#008000"
                     ],
-                    title: "<%= translate[req.session.user.locale]['Tracking Rate'] %>"
+                    title: "<%= i18n(req,'Tracking Rate') %>"
                 });
             }else{
                 this.vartrackinggagelarge.refresh(bhsModel.trackingrate,null);
@@ -705,7 +695,7 @@ overflow: hidden;" class="row-fluid alarm-header">
                     "#008000",
                     "#008000"
                 ],
-                title: "<%= translate[req.session.user.locale]['Jam Rate'] %>"
+                title: "<%= i18n(req,'Jam Rate') %>"
                 });
             }else{
                 this.varfaultgagelarge.refresh(bhsModel.faultrate,null);
@@ -723,7 +713,7 @@ overflow: hidden;" class="row-fluid alarm-header">
                     "#FFFF00",
                     "#FFFF00"
                 ],
-                title: "<%= translate[req.session.user.locale]['ATR Read Rate'] %>"
+                title: "<%= i18n(req,'ATR Read Rate') %>"
                 });
             }else{
                 this.varatrgagelarge.refresh(bhsModel.atrrate,null);
@@ -741,7 +731,7 @@ overflow: hidden;" class="row-fluid alarm-header">
                     "#008000",
                     "#008000"
                 ],
-                title: "<%= translate[req.session.user.locale]['Tracking Rate'] %>"
+                title: "<%= i18n(req,'Tracking Rate') %>"
                 });
             }else{
                 this.vartrackinggagesmall.refresh(bhsModel.trackingrate,null);
@@ -759,7 +749,7 @@ overflow: hidden;" class="row-fluid alarm-header">
                     "#008000",
                     "#008000"
                 ],
-                title: "<%= translate[req.session.user.locale]['Jam Rate'] %>"
+                title: "<%= i18n(req,'Jam Rate') %>"
 
                 });
             }else{
@@ -778,7 +768,7 @@ overflow: hidden;" class="row-fluid alarm-header">
                     "#FFFF00",
                     "#FFFF00"
                 ],
-                title: "<%= translate[req.session.user.locale]['ATR Read Rate'] %>"
+                title: "<%= i18n(req,'ATR Read Rate') %>"
                 });
             }else{
                 this.varatrgagesmall.refresh(bhsModel.atrrate,null);
