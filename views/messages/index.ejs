@@ -7,10 +7,10 @@
     <div class="span4 messages-left">
         <div class="row-fluid">
             <div class="span11 offset1">
-                <div class="messageslistheader"><%= translate[req.session.user.locale]['Inbox'] %></div>
+                <div class="messageslistheader"><%= i18n(req,'Inbox') %></div>
 
                 <div id="messagesListWrapper" >
-                    <div id="newMessageButton" ><%= translate[req.session.user.locale]['Message User'] %> <i class="icon-plus"></i></div>
+                    <div id="newMessageButton" ><%= i18n(req,'Message User') %> <i class="icon-plus"></i></div>
                     <div id="messageslistsection">
 
                     </div>
@@ -390,7 +390,7 @@
                                  }
                                  if(msgs.length==0){
                                      $('#messagesFullWrapper').unbind();
-                                     mFullView.$el.prepend('<div class="no-more-messages" style="margin-top: -10px;margin-left: 9px;font-size: 12px; color: #999;font-style: italic; margin-bottom: 4px;"><%= translate[req.session.user.locale]['End of messages'] %></div>');
+                                     mFullView.$el.prepend('<div class="no-more-messages" style="margin-top: -10px;margin-left: 9px;font-size: 12px; color: #999;font-style: italic; margin-bottom: 4px;"><%= i18n(req,'End of messages') %></div>');
                                      return;
                                  }
                                  var scrollsaveid = $('#messagesFullWrapper li:first-child').attr('message_id');
