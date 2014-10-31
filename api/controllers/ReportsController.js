@@ -89,6 +89,7 @@ module.exports = {
     promptsave : function(req, res) {
 	var report = req.param('report');
 	var phantom = require('node-phantom');
+	var fs = require("fs");
 
 	var orientation = 'portrait';
 	var footnotes_pass = [];
@@ -103,101 +104,109 @@ module.exports = {
 		    width : 1024,
 		    height : 480
 		});
-		page.set('paperSize', {
-		    format : 'A4',
-		    orientation : orientation,
-		    header : {
-
-			height : "1cm",
-			contents : ''// function(pageNum, numPages) { return pageNum + "/"
-		    // + numPages; }'
-		    },
-		    footer : {
-			height : "30mm", // 30mm
-			contents : 'test content pass',
-			footnotes : footnotes_pass
-		    }
-		}, function() {
-		    var start = new Date().getTime();
-		    report.locale = req.session.user.locale;
-		    page.open('http://localhost:1337/reports/view?report_parameters=' + encodeURIComponent(JSON.stringify(report)), function() {
-			var timestampstring = new Date().getTime();
-
-			var filename = '.tmp\\public\\data\\report_' + timestampstring + '.pdf';
-			var filenamecsv = '.tmp\\public\\data\\report_' + timestampstring + '.csv';
-			var url = '/data/report_' + timestampstring + '.pdf'; // sails.config.siteurl+
-			var urlcsv = '/data/report_' + timestampstring + '.csv'; // sails.config.siteurl+
-
-			page.render(filename, function() {
-			    var end = new Date().getTime();
-			    console.log('Page Rendered in ' + (end - start).toString() + 'ms.');
-			    ph.exit();
-
-			    buildReportData(report, true, function(data) {
-				if (typeof (data) == 'undefined' || data == null) {
-				    res.json({
-					failure : 'Unable to Generate Report'
-				    });
-				}
-				// BUILDING CSV STRING
-				var outputstring = '';
-
-				// BUILDING HEADER PARAMETERS
-				var i = 0;
-				if (typeof (data.header) != 'undefined') {
-				    for (var i = 0; i < data.header.line.length; i++) {
-					outputstring += "param," + data.header.line[i] + "\r\n";
-				    }
-				}
-				for (i; i < 10; i++) {
-				    outputstring += "\r\n";
-				}
-
-				if (report.id == 4) { // BAG SEARCH!!
-				    if (typeof (data[0]) != 'undefined' && typeof (data[0].data != 'undefined')) {
-					for (var i = 0; i < data[0].data.length; i++) {
-					    outputstring += data[0].data[i].IATA_tag + "," + data[0].data[i].security_ID + "," + data[0].data[i].active + ","
-						    + data[0].data[i].security_status + "," + data[0].data[i].EDS_Machine + ","
-						    + data[0].data[i].level_1_status + "," + data[0].data[i].level_2_status + ","
-						    + data[0].data[i].level_3_status + "," + data[0].data[i].ATR_name + "," + data[0].data[i].sort_destination
-						    + "," + data[0].data[i].diverter_name + "," + data[0].data[i].lastmodified + "\r\n";
-					}
-				    }
-				} else {
-				    for (var i = 0; i < data.length; i++) {
-					for (var j = 0; j < data[i].data.length; j++) {
-					    for (var k = 0; k < data[i].data[j].length; k++) {
-						if (k > 0) {
-						    outputstring += ",";
-						}
-						outputstring += data[i].data[j][k].val;
-
-					    }
-					    outputstring += "\r\n"; // New line for end of row
-					}
-					outputstring += "\r\n"; // extra New line for end of data
-					// set
-				    }
-
-				}
-
-				var fs = require('fs');
-				fs.writeFile(filenamecsv, outputstring, function(err) {
-				    if (err) {
-					console.log(err);
-				    } else {
-					// console.log("The file was saved!");
-					res.json({
-					    pdfurl : url,
-					    csvurl : urlcsv
-					});
-				    }
-				});
-			    });
-			});
-
-		    });
-		})
+		var path = sails.config.appPath +'\\assets\\img\\reports\\footer\\' + report.footer.logo;
+		fs.readFile(path, function(err, original_data){
+		    var base64Image = original_data.toString('base64');
+		    //var decodedImage = new Buffer(base64Image, 'base64');
+		    	page.set('paperSize', {
+        		    format : 'A4',
+        		    orientation : orientation,
+        		    header : {
+        
+        			height : "1cm",
+        			contents : ''// function(pageNum, numPages) { return pageNum + "/"
+        		    // + numPages; }'
+        		    },
+        		    footer : {
+        			height : "30mm", // 30mm
+        			contents : 'test content pass',
+        			footnotes : footnotes_pass,
+        			logo:'data:image/png;base64,'+base64Image,
+        			bot_left:toClientDateTimeString(new Date(), report.timezoneoffset)    
+        		    }
+        		}, function() {
+        		    var start = new Date().getTime();
+        		    report.locale = req.session.user.locale;
+        		    page.open('http://localhost:1337/reports/view?report_parameters=' + encodeURIComponent(JSON.stringify(report)), function() {
+        			var timestampstring = new Date().getTime();
+        
+        			var filename = '.tmp\\public\\data\\report_' + timestampstring + '.pdf';
+        			var filenamecsv = '.tmp\\public\\data\\report_' + timestampstring + '.csv';
+        			var url = '/data/report_' + timestampstring + '.pdf'; // sails.config.siteurl+
+        			var urlcsv = '/data/report_' + timestampstring + '.csv'; // sails.config.siteurl+
+        
+        			page.render(filename, function() {
+        			    var end = new Date().getTime();
+        			    console.log('Page Rendered in ' + (end - start).toString() + 'ms.');
+        			    ph.exit();
+        
+        			    buildReportData(report, true, function(data) {
+        				if (typeof (data) == 'undefined' || data == null) {
+        				    res.json({
+        					failure : 'Unable to Generate Report'
+        				    });
+        				}
+        				// BUILDING CSV STRING
+        				var outputstring = '';
+        
+        				// BUILDING HEADER PARAMETERS
+        				var i = 0;
+        				if (typeof (data.header) != 'undefined') {
+        				    for (var i = 0; i < data.header.line.length; i++) {
+        					outputstring += "param," + data.header.line[i] + "\r\n";
+        				    }
+        				}
+        				for (i; i < 10; i++) {
+        				    outputstring += "\r\n";
+        				}
+        
+        				if (report.id == 4) { // BAG SEARCH!!
+        				    if (typeof (data[0]) != 'undefined' && typeof (data[0].data != 'undefined')) {
+        					for (var i = 0; i < data[0].data.length; i++) {
+        					    outputstring += data[0].data[i].IATA_tag + "," + data[0].data[i].security_ID + "," + data[0].data[i].active + ","
+        						    + data[0].data[i].security_status + "," + data[0].data[i].EDS_Machine + ","
+        						    + data[0].data[i].level_1_status + "," + data[0].data[i].level_2_status + ","
+        						    + data[0].data[i].level_3_status + "," + data[0].data[i].ATR_name + "," + data[0].data[i].sort_destination
+        						    + "," + data[0].data[i].diverter_name + "," + data[0].data[i].lastmodified + "\r\n";
+        					}
+        				    }
+        				} else {
+        				    for (var i = 0; i < data.length; i++) {
+        					for (var j = 0; j < data[i].data.length; j++) {
+        					    for (var k = 0; k < data[i].data[j].length; k++) {
+        						if (k > 0) {
+        						    outputstring += ",";
+        						}
+        						outputstring += data[i].data[j][k].val;
+        
+        					    }
+        					    outputstring += "\r\n"; // New line for end of row
+        					}
+        					outputstring += "\r\n"; // extra New line for end of data
+        					// set
+        				    }
+        
+        				}
+        
+        				var fs = require('fs');
+        				fs.writeFile(filenamecsv, outputstring, function(err) {
+        				    if (err) {
+        					console.log(err);
+        				    } else {
+        					// console.log("The file was saved!");
+        					res.json({
+        					    pdfurl : url,
+        					    csvurl : urlcsv
+        					});
+        				    }
+        				});
+        			    });
+        			});
+        
+        		    });
+        		});
+        	    });
+		
 	    })
 	});
     },
@@ -426,11 +435,12 @@ function buildReportData(report, phantom_bool, cb) {
     var end_datetime = new Date(report.parameters.end_time.value);
     var end_label = report.parameters.end_time.locale_label[report.locale];
     var system_name = report.system_name;
-
+    
+    var header = new Object();
+    header.url =  '/img/reports/title/' + report.title.logo;
+    
     if (report.id == 1) { // / TYPE Alarm History Report
 
-	var header = new Object();
-	header.url = '/img/iSystemsNow-Logo-RGB-Black.png';
 	var line = [];
 	line.push(system_name);
 	line.push(report.name.locale_label[report.locale]);
@@ -472,8 +482,6 @@ function buildReportData(report, phantom_bool, cb) {
 
 	var deviceWhere = '';
 
-	var header = new Object();
-	header.url = '/img/iSystemsNow-Logo-RGB-Black.png';
 	var line = [];
 	line.push(system_name);
 	line.push(report.name.locale_label[report.locale]);
@@ -527,8 +535,6 @@ function buildReportData(report, phantom_bool, cb) {
 
 	var deviceWhere = '';
 
-	var header = new Object();
-	header.url = '/img/iSystemsNow-Logo-RGB-Black.png';
 	var line = [];
 	line.push(system_name);
 	line.push(report.name.locale_label[report.locale]);
@@ -586,8 +592,6 @@ function buildReportData(report, phantom_bool, cb) {
 
 	var deviceWhere = '';
 
-	var header = new Object();
-	header.url = '/img/iSystemsNow-Logo-RGB-Black.png';
 	var line = [];
 	line.push(system_name);
 	line.push(report.name.locale_label[report.locale]);
