@@ -9,6 +9,12 @@ module.exports.views = {
 			es : 'Informe del historial de alarmas'
 		    }
 		},
+		title:{
+		    logo:'iSystemsNow-Logo-RGB-Black.png'
+		},
+		footer:{
+		    logo:'default.png'
+		},
 		parameters : {
 		    'start_time' : {
 			type : 'datetime',
@@ -60,6 +66,12 @@ module.exports.views = {
 			en : 'Equipment Summary Report',
 			es : 'Informe resumido Equipo'
 		    }
+		},
+		title:{
+		    logo:'iSystemsNow-Logo-RGB-Black.png'
+		},
+		footer:{
+		    logo:'default.png'
 		},
 		parameters : {
 		    'start_time' : {
@@ -139,6 +151,12 @@ module.exports.views = {
 			en : 'Equipment Interval Report',
 			es : 'Informe resumido Equipo'
 		    }
+		},
+		title:{
+		    logo:'iSystemsNow-Logo-RGB-Black.png'
+		},
+		footer:{
+		    logo:'default.png'
 		},
 		parameters : {
 		    'start_time' : {
@@ -231,6 +249,12 @@ module.exports.views = {
 			en : 'Bag Search',
 			es : 'Informe del historial de Bags'
 		    }
+		},
+		title:{
+		    logo:'iSystemsNow-Logo-RGB-Black.png'
+		},
+		footer:{
+		    logo:'default.png'
 		},
 		parameters : {
 		    'start_time' : {
