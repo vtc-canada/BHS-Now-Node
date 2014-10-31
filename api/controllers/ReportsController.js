@@ -104,7 +104,7 @@ module.exports = {
 		    width : 1024,
 		    height : 480
 		});
-		var path = sails.config.appPath +'\\assets\\img\\reports\\footer\\' + report.footer.logo;
+		var path = sails.config.appPath +'\\assets\\reports\\footer\\' + report.footer.logo;
 		fs.readFile(path, function(err, original_data){
 		    var base64Image = original_data.toString('base64');
 		    //var decodedImage = new Buffer(base64Image, 'base64');
@@ -437,7 +437,7 @@ function buildReportData(report, phantom_bool, cb) {
     var system_name = report.system_name;
     
     var header = new Object();
-    header.url =  '/img/reports/title/' + report.title.logo;
+    header.url =  '/reports/title/' + report.title.logo;
     
     if (report.id == 1) { // / TYPE Alarm History Report
 
