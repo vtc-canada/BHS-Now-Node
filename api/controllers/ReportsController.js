@@ -257,7 +257,7 @@ module.exports = {
 			// res.json({filename:filename});
 
 			// do printer stuff -
-			sails.controllers.database.localSproc("sp_bhs_util_get_printers", [], function(err, printers) {
+			Database.dataSproc("BHS_UTIL_GetPrinters", [], function(err, printers) {
 			    res.json({
 				printers : printers[0],
 				filename : filename

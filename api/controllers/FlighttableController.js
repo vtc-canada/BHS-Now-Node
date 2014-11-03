@@ -34,7 +34,7 @@ module.exports = {
 
     },
 
-    // Loads the flight page when passing in a specific date. The date is passed
+    // Loads the flight page when passing in a specific date. The date is passed  
     // in as an argument to the template.
     getbydate : function(req, res) {
 	sails.adapters[sails.config.adapters[sails.config.adapters['default']].module]

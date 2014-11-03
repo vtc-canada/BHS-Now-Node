@@ -1,0 +1,7 @@
+DROP PROCEDURE if EXISTS `BHS_REPORTS_GetEquipment` ;
+
+CREATE PROCEDURE `BHS_REPORTS_GetEquipment`()
+BEGIN
+	SELECT * 
+	FROM cfg_eqp_id;
+END
