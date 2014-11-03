@@ -1,28 +1,35 @@
 module.exports = function(req,res,next) {
     function authorizeResourcePolicy(){
 	var path = req.route.path;
-	Database.localSproc("AuthorizeResourcePolicy", [ req.session.user.id, path], function(err,policy) {
+	Database.localSproc("getUserPolicies", [ req.session.user.id], function(err,policies) {
             if(err){
                 return failResponse();
-            //}else if(!policy[0]||typeof(policy[0][0])=='undefined'){ // We're
+            }
+            // }else if(!policy[0]||typeof(policy[0][0])=='undefined'){ // We're
     								    // MISSING a
     								    // policy!!
-                //return autoGenRoute();
-            }else if(policy[0]&&policy[0].length==1&&typeof(policy[0][0].create)!='undefined'&&policy[0][0].create!=null){
-                req.session.user.policy[path] = policy[0][0];
-                if(!req.session.user.active||(policy[0][0].create== 0&&policy[0][0].read == 0&&policy[0][0].update== 0&&policy[0][0].delete== 0)){
-                    req.flash('errormessage','Invalid Access');
-                    req.flash('errordebug','UserId:'+req.session.user.id+' @Path:'+path);
-                    res.json(403,{error:'Invalid Access! UserId:'+req.session.user.id+' @Path:'+path});
-                    return;
-                }
+                // return autoGenRoute();
+            if(policies[0]){
+        	policies = policies[0];
+            	delete req.session.user.policy;
+            	req.session.user.policy = {};
+            	for(var i =0;i<policies.length;i++){
+            	    req.session.user.policy[policies[i].name]=policies[i];
+            	}
+            	if(req.session.user.policy[path].create==0&&req.session.user.policy[path].read==0&&req.session.user.policy[path].update==0&&req.session.user.policy[path].delete==0){
+            	    req.flash('errormessage','Invalid Access');
+                        req.flash('errordebug','UserId:'+req.session.user.id+' @Path:'+path);
+                        res.json(403,{error:'Invalid Access! UserId:'+req.session.user.id+' @Path:'+path});
+                        return;
+            	}
                 next();
             }else{
         	console.log('Policy Missing!@'+req.session.user.id+':'+path);
-        	if(sails.config.environment=='development'){//}&&req.session.user.username==sails.config.autogenerate.user.username){
-            		return autoGenRoute();
-        	}
-        	failResponse();//res.json(500,{error:'Policy Missing!@'+req.session.user.id+':'+path});
+            	if(sails.config.environment=='development'){// }&&req.session.user.username==sails.config.autogenerate.user.username){
+                		return autoGenRoute();
+            	}
+            	failResponse();// res.json(500,{error:'Policy
+    				// Missing!@'+req.session.user.id+':'+path});
             }
 	});
     }
@@ -53,15 +60,15 @@ module.exports = function(req,res,next) {
              catch(err){
         	 console.log('Error sending fail Response.'+err);
                  res.json({error:'Invalid Access!@'},403);
-//                 res.json({
-//                     error : "Session not found"
-//                 }, 403);
+// res.json({
+// error : "Session not found"
+// }, 403);
              }
              
-             //res.view('auth/loginpage', {
-             //    layout : false,
-             //    errormessage : ''
-             //});
+             // res.view('auth/loginpage', {
+             // layout : false,
+             // errormessage : ''
+             // });
          }
     }
     
@@ -71,7 +78,9 @@ module.exports = function(req,res,next) {
                 console.log("Database Error."+err);
 		return failResponse();
 	    }
-	    if(!(user[0]&&user[0][0]&&user[0][0].active==1)){ // if cant find user or user inactive.
+	    if(!(user[0]&&user[0][0]&&user[0][0].active==1)){ // if cant find
+								// user or user
+								// inactive.
 		return failResponse();
 	    }
 	    authorizeResourcePolicy();
