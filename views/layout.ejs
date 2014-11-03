@@ -155,7 +155,7 @@
 	  <!-- Main nav -->
 	  <ul class="nav nav-collapse collapse nav-collapse-primary">
   			<% for(var navpage in navpages){  %>
-  				<% if(!navpages[navpage].enabled||!resourceAccess(req,navpage,{create:0,read:1,update:0,delete:0})){ %>
+  				<% if(!navpages[navpage].enabled||(typeof(navpages[navpage].children)=='undefined'&&!resourceAccess(req,navpage,{create:0,read:1,update:0,delete:0}))){ %>
   					<% continue; %>
   				<% } %>
   				<li class="<% if(typeof(navpages[navpage].children)!='undefined'){ %>dark-nav<% } %> <% if((req.url==navpage)||templateHelper.hasChildPage(navpages[navpage],req.url)){ %>active<% } %>">
