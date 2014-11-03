@@ -7,13 +7,20 @@ module.exports = function(req,res,next) {
             //}else if(!policy[0]||typeof(policy[0][0])=='undefined'){ // We're
     								    // MISSING a
     								    // policy!!
-                //return autoGenRoute();
-            }else if(policy[0]&&policy[0].length==1&&typeof(policy[0][0].create)!='undefined'&&policy[0][0].create!=null){
-                req.session.user.policy[path] = policy[0][0];
-                if(!req.session.user.active||(policy[0][0].create== 0&&policy[0][0].read == 0&&policy[0][0].update== 0&&policy[0][0].delete== 0)){
-                    res.json(403,{error:'Invalid Access!@'+req.session.user.id+':'+path});
-                    return;
-                }
+                // return autoGenRoute();
+            if(policies[0]){
+        	policies = policies[0];
+            	delete req.session.user.policy;
+            	req.session.user.policy = {};
+            	for(var i =0;i<policies.length;i++){
+            	    req.session.user.policy[policies[i].name]=policies[i];
+            	}
+            	if(req.session.user.policy[path].create==0&&req.session.user.policy[path].read==0&&req.session.user.policy[path].update==0&&req.session.user.policy[path].delete==0){
+            	    req.flash('errormessage','Invalid Access');
+                        req.flash('errordebug','UserId:'+req.session.user.id+' @Path:'+path);
+                        res.json(403,{error:'Invalid Access! UserId:'+req.session.user.id+' @Path:'+path});
+                        return;
+            	}
                 next();
             }else{
         	console.log('Policy Missing!@'+req.session.user.id+':'+path);
