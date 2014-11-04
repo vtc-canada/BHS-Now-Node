@@ -12,7 +12,13 @@ module.exports = {
 		error : "Log in"
 	    });
 	}
-	res.view();
+	Database.dataSproc('BHS_UTIL_GetRefStatusDef',[],function(err,result){
+	    if(err){
+		console.log('err'+err);
+		return res.json({error:'Error:'+err},500);
+	    }
+	    res.view({alarm_legend:result[0]});
+	});
     },
     joinroom : function(req, res) {
 	req.socket.join('overview');
