@@ -118,13 +118,13 @@
     	var alarm_legend_row = _.template($('#alarm_legend_row').html());
     	
     	
-    	overview.append(conveyor_turn({tagname:'tagname', rotation:0, left:40.0, top:0}));
-    	overview.append(conveyor_turn({tagname:'tagname', rotation:90, left:40.0, top:78}));
-    	overview.append(conveyor_straight({tagname:'tagname',length:8, rotation:0, left:0, top:0}));
-    	overview.append(conveyor_straight({tagname:'tagname',length:2.2, rotation:90, left:43.1, top:25}));
+    	overview.append(conveyor_turn({tagname:'G_OB1_07_STATUS', rotation:0, left:40.0, top:0}));
+    	overview.append(conveyor_turn({tagname:'G_OB1_02_STATUS', rotation:90, left:40.0, top:78}));
+    	overview.append(conveyor_straight({tagname:'G_OB1_08_STATUS',length:8, rotation:0, left:0, top:0}));
+    	overview.append(conveyor_straight({tagname:'G_OB1_06_STATUS',length:2.2, rotation:90, left:43.1, top:25}));
     	overview.append(conveyor_straight({tagname:'tagname',length:2.2, rotation:90, left:43.1, top:44.2}));
-    	overview.append(conveyor_straight({tagname:'tagname',length:2.2, rotation:90, left:43.1, top:63.4}));
-    	overview.append(conveyor_straight({tagname:'tagname',length:8, rotation:0, left:0, top:88.4}));
+    	overview.append(conveyor_straight({tagname:'G_OB1_03_STATUS',length:2.2, rotation:90, left:43.1, top:63.4}));
+    	overview.append(conveyor_straight({tagname:'G_OB1_01_STATUS',length:8, rotation:0, left:0, top:88.4}));
     	
     	for(var i=0;i<alarm_legend.length;i++){
     		$('#alarm_legend').append(alarm_legend_row(alarm_legend[i]));

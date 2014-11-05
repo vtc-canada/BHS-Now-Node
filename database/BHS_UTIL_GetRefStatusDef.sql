@@ -1,7 +1,6 @@
 DROP procedure IF EXISTS `BHS_UTIL_GetRefStatusDef`;
 
 DELIMITER $$
-USE `bhs_scada`$$
 CREATE PROCEDURE `BHS_UTIL_GetRefStatusDef` ()
 BEGIN
 	SELECT ref_status_def.id
