@@ -16,13 +16,22 @@ module.exports = function(req,res,next) {
             	for(var i =0;i<policies.length;i++){
             	    req.session.user.policy[policies[i].name]=policies[i];
             	}
-            	if(req.session.user.policy[path].create==0&&req.session.user.policy[path].read==0&&req.session.user.policy[path].update==0&&req.session.user.policy[path].delete==0){
-            	    req.flash('errormessage','Invalid Access');
-                        req.flash('errordebug','UserId:'+req.session.user.id+' @Path:'+path);
-                        res.json(403,{error:'Invalid Access! UserId:'+req.session.user.id+' @Path:'+path});
-                        return;
+            	if(typeof(req.session.user.policy[path])=='undefined'){ // Didn't find the specific policy.
+                	console.log('Policy Missing!@'+req.session.user.id+':'+path);
+                	if(sails.config.environment=='development'){// }&&req.session.user.username==sails.config.autogenerate.user.username){
+                    		return autoGenRoute();
+                	}
+                	failResponse();// res.json(500,{error:'Policy
+        				// Missing!@'+req.session.user.id+':'+path});          	    
+            	}else{
+                	if(req.session.user.policy[path].create==0&&req.session.user.policy[path].read==0&&req.session.user.policy[path].update==0&&req.session.user.policy[path].delete==0){
+                	    req.flash('errormessage','Invalid Access');
+                            req.flash('errordebug','UserId:'+req.session.user.id+' @Path:'+path);
+                            res.json(403,{error:'Invalid Access! UserId:'+req.session.user.id+' @Path:'+path});
+                            return;
+                	}
+                    next();  
             	}
-                next();
             }else{
         	console.log('Policy Missing!@'+req.session.user.id+':'+path);
             	if(sails.config.environment=='development'){// }&&req.session.user.username==sails.config.autogenerate.user.username){
