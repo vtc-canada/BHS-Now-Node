@@ -24,7 +24,7 @@ function doInterval(){
     
     onlineservicecounter++;
     if(users == null||onlineservicecounter>Math.floor(fetchUsersInterval/monitorRate)){
-	Database.localSproc('getUsers',[],function(err,tempusers){
+	Database.localSproc('NMS_BASE_GetUsers',[],function(err,tempusers){
 	    if(err){
 		return console.log('error:'+err);
 	    }	
