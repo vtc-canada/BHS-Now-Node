@@ -67,7 +67,10 @@ module.exports = {
 		    if (err)
 			return console.log(err.toString());
 
-		    var bagrate = response[0][0].system_throughput;
+		    var bagrate = 0;
+		    if(response[0].length==1){
+			bagrate = response[0][0].system_throughput;
+		    }
 		    Database.dataSproc('BHS_UTIL_GetTimeInSystem', [], function(err, response) {
 			if (err)
 			    return console.log(err.toString());
