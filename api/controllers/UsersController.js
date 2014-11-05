@@ -7,7 +7,7 @@
 
 module.exports = {
     findAll : function(req, res) {
-	Database.localSproc('getUsers', [], function(err, users) {
+	Database.localSproc('NMS_BASE_GetUsers', [], function(err, users) {
 	    if (err) {
 		console.log('getUsers Error: ' + err);
 		return res.json(err);
@@ -18,7 +18,7 @@ module.exports = {
 	});
     },
     getUsersAndStatus:function(req,res){
-	Database.localSproc('getUsers', [], function(err, users) {
+	Database.localSproc('NMS_BASE_GetUsers', [], function(err, users) {
 	    if (err) {
 		console.log('getUsers Error: ' + err);
 		return res.json(err);
@@ -38,7 +38,7 @@ module.exports = {
 	});
     },
     datatables : function(req, res) {
-	Database.localSproc('getUsers', [], function(err, users) {
+	Database.localSproc('NMS_BASE_GetUsers', [], function(err, users) {
 	    if (err) {
 		console.log('getUsers Error: ' + err);
 		return res.json(err);
@@ -51,7 +51,7 @@ module.exports = {
 	});
     },
     delete:function(req,res){
-	Database.localSproc('deleteUser',[req.body.id],function(err,resposne){
+	Database.localSproc('NMS_BASE_DeleteUser',[req.body.id],function(err,resposne){
 	   if(err){
 	       console.log('Error Deleting User:'+err);
 	       return res.json({error:'Error Deleting User:'+err},500);
@@ -63,12 +63,12 @@ module.exports = {
 	if (isNaN(parseInt(req.body.id))) {
 	    return null;
 	}
-	Database.localSproc('getUser', [ parseInt(req.body.id) ], function(err, user) {
+	Database.localSproc('NMS_BASE_GetUser', [ parseInt(req.body.id) ], function(err, user) {
 	    if (err) {
 		return res.json(err);
 	    }
 	    user[0][0].password = null; // hides the password
-	    Database.localSproc('getUserSecurityGroups', [ parseInt(req.body.id) ], function(err, groups) {
+	    Database.localSproc('NMS_BASE_GetUserSecurityGroups', [ parseInt(req.body.id) ], function(err, groups) {
 		if (err) {
 		    return res.json(err);
 		}
@@ -89,7 +89,7 @@ module.exports = {
 		var hasher = require("password-hash");
 		user.password = hasher.generate(user.password);
 		var paramCreateId = '@out' + Math.floor((Math.random() * 1000000) + 1);
-		Database.localSproc('createUser',[user.username, user.password, user.email, user.active, user.active==1?0:user.loginattempts, user.locale, paramCreateId],function(err,responseuser){
+		Database.localSproc('NMS_BASE_CreateUser',[user.username, user.password, user.email, user.active, user.active==1?0:user.loginattempts, user.locale, paramCreateId],function(err,responseuser){
         	    if(err){
         		return callback(err);
         	    }
@@ -108,7 +108,7 @@ module.exports = {
 		    var hasher = require("password-hash");
 		    user.password = hasher.generate(user.password);
 		}
-        	Database.localSproc('updateUser',[user.id, user.password, user.email, user.active, user.active==1?0:user.loginattempts, user.locale],function(err,responseuser){
+        	Database.localSproc('NMS_BASE_UpdateUser',[user.id, user.password, user.email, user.active, user.active==1?0:user.loginattempts, user.locale],function(err,responseuser){
         	    if(err){
         		return callback(err);
         	    }
@@ -126,7 +126,7 @@ module.exports = {
 	    for(group in user.groups){
 		keys.push(group);
 	    }
-	    Database.localSproc('deleteUserSecurityGroupMappings',[user.id],function(err,result){
+	    Database.localSproc('NMS_BASE_DeleteUserSecurityGroupMappings',[user.id],function(err,result){
 		if(err){
 		    console.log('Error Clearing Security Group Mappings'+err);
 		    return res.json({error:'Error Clearing Security Group Mappings'+err},500);
@@ -136,7 +136,7 @@ module.exports = {
 		    if(securityGroupObj.member!=1){
 			return callback(null);
 		    }
-		    Database.localSproc('createUserSecurityGroupMapping',[user.id,securityGroupObj.id],function(err,newmapping){
+		    Database.localSproc('NMS_BASE_CreateUserSecurityGroupMapping',[user.id,securityGroupObj.id],function(err,newmapping){
 			if(err){
 			    return callback(err);
 			}
