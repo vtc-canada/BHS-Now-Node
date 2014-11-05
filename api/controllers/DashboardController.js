@@ -80,7 +80,9 @@ module.exports = {
 			Database.dataSproc('BHS_UTIL_GetThroughput', [], function(err, throughput) {
 			    if (err)
 				return console.log(err.toString());
-
+			    if(throughput[0].length<1){
+				return console.log('No throughput found');
+			    }
 			    Database.dataSproc('BHS_UTIL_GetTotalSortedBags', [], function(err, sortedbags) {
 				if (err)
 				    return console.log(err.toString());
