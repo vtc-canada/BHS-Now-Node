@@ -48,6 +48,14 @@ module.exports.connections = {
 	database : 'bhs_scada',
 	timezone : 'utc'
     },
+    nowManagementBaseMysqlProduction : {
+	adapter : 'sails-mysql',
+	host : '10.1.1.60',
+	user : 'root',
+	password : 'Glasgow931',
+	database : 'bhs_scada_mhk',
+	timezone : 'utc'
+    },
 
     /**
      * Equipment Control Manager TCP Connection parameters.
