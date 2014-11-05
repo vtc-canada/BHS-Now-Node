@@ -127,7 +127,7 @@ module.exports = {
         		}, function() {
         		    var start = new Date().getTime();
         		    report.locale = req.session.user.locale;
-        		    page.open('http://localhost:1337/reports/view?report_parameters=' + encodeURIComponent(JSON.stringify(report)), function() {
+        		    page.open(sails.getBaseurl()+'/reports/view?report_parameters=' + encodeURIComponent(JSON.stringify(report)), function() {
         			var timestampstring = new Date().getTime();
         
         			var filename = '.tmp\\public\\data\\report_' + timestampstring + '.pdf';
@@ -248,7 +248,7 @@ module.exports = {
 		}, function() {
 		    var start = new Date().getTime();
 		    report.locale = req.session.user.locale;
-		    page.open('http://localhost:1337/reports/view?report_parameters=' + encodeURIComponent(JSON.stringify(report)), function() {
+		    page.open(sails.getBaseurl()+'/reports/view?report_parameters=' + encodeURIComponent(JSON.stringify(report)), function() {
 			var filename = 'public\\reports\\report_' + new Date().getTime() + '.pdf';
 			page.render(filename);
 			var end = new Date().getTime();
