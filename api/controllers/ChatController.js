@@ -19,7 +19,7 @@ module.exports = {
 	}
     },
     getunreadmessages : function(req, res) {
-	Database.localSproc('getUnreadUserMessages', [ req.session.user.id ], function(err, unreadmessages) {
+	Database.localSproc('NMS_BASE_GetUnreadUserMessages', [ req.session.user.id ], function(err, unreadmessages) {
 	    if (err) {
 		console.log('Error getUnreadUserMessages :' + err.toString());
 		return res.send(500, {
@@ -30,7 +30,7 @@ module.exports = {
 	});
     },
     seenmessage:function(req,res){
-	Database.localSproc('updateSeenUserMessages',[req.session.user.id,req.param('fromUserId')],function(err,seen){
+	Database.localSproc('NMS_BASE_UpdateSeenUserMessages',[req.session.user.id,req.param('fromUserId')],function(err,seen){
 	    if (err) {
 		console.log('Error getUnreadUserMessages :' + err.toString());
 		return res.send(500, {
@@ -54,7 +54,7 @@ module.exports = {
     sendmessage : function(req, res) {
 	if (typeof (req.param('toUserId')) != 'undefined') {
 	    var outMessageId = '@out' + Math.floor((Math.random() * 1000000) + 1);
-	    Database.localSproc('createMessage', [ req.session.user.id, req.param('toUserId'), req.param('message'), null, 0, outMessageId ], function(err,
+	    Database.localSproc('NMS_BASE_CreateMessage', [ req.session.user.id, req.param('toUserId'), req.param('message'), null, 0, outMessageId ], function(err,
 		    newmessage) {
 		if (err) {
 		    console.log('Error createMessage :' + err.toString());
@@ -62,7 +62,7 @@ module.exports = {
 			error : "DB Error:" + err.toString()
 		    });
 		}
-		Database.localSproc('getMessage', [ newmessage[1][outMessageId] ], function(err, messages) {
+		Database.localSproc('NMS_BASE_GetMessage', [ newmessage[1][outMessageId] ], function(err, messages) {
 		    if (err) {
 			console.log('Error createMessage :' + err.toString());
 			return res.send(500, {
@@ -87,7 +87,7 @@ module.exports = {
     },
     // loads older messages before a certain message ID
     loadpreviousmessagesPriorId : function(req, res) {
-	Database.localSproc('getMessagesPriorId', [ req.param('priorID'), req.param('boxId'), req.session.user.id ], function(err, messages) {
+	Database.localSproc('NMS_BASE_GetMessagesPriorId', [ req.param('priorID'), req.param('boxId'), req.session.user.id ], function(err, messages) {
 	    if (err) {
 		console.log('Error getting Prior messages:' + err);
 		return res.send(500, {
