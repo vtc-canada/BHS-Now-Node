@@ -1,7 +1,7 @@
 module.exports = function(req,res,next) {
     function authorizeResourcePolicy(){
 	var path = req.route.path;
-	Database.localSproc("getUserPolicies", [ req.session.user.id], function(err,policies) {
+	Database.localSproc("NMS_BASE_GetUserPolicies", [ req.session.user.id], function(err,policies) {
             if(err){
                 return failResponse();
             }
@@ -73,7 +73,7 @@ module.exports = function(req,res,next) {
     }
     
     if (req.session.user) {
-	Database.localSproc('getUser',[req.session.user.id],function(err,user){
+	Database.localSproc('NMS_BASE_GetUser',[req.session.user.id],function(err,user){
 	    if(err){
                 console.log("Database Error."+err);
 		return failResponse();
