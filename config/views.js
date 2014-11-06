@@ -66,7 +66,7 @@ module.exports.views = {
 	alertDuration:300,
 	navpages : {
 	    '/dashboard':{
-		enabled:true,
+		enabled:false,
 		banner:true,
 		icon:'icon-dashboard',
 		footer:true
