@@ -241,7 +241,77 @@ module.exports.views = {
 			}
 		    }
 		}
-	    } ],
+	    },
+	    {
+		id : 5,
+		name : {
+		    locale_label : {
+			en : 'Throughput Report',
+			es : 'Throughput Report'
+		    }
+		},
+		title:{
+		    logo:'iSystemsNow-Logo-RGB-Black.png'
+		},
+		footer:{
+		    logo:'default.png'
+		},
+		parameters : {
+		    'start_time' : {
+			type : 'datetime',
+			locale_label : {
+			    en : 'Start Time',
+			    es : 'Hora de Inicio'
+			}
+		    },
+		    'end_time' : {
+			type : 'datetime',
+			locale_label : {
+			    en : 'End Time',
+			    es : 'Hora de Finalización'
+			}
+		    },
+		    'interval' : {
+			type : 'select',
+			source : 'intervals',
+			locale_label : {
+			    en : 'Interval',
+			    es : 'Interval'
+			}
+		    }
+		}
+	    },
+	    {
+		id : 6,
+		name : {
+		    locale_label : {
+			en : 'Executive Summary Report',
+			es : 'Executive Summary Report'
+		    }
+		},
+		title:{
+		    logo:'iSystemsNow-Logo-RGB-Black.png'
+		},
+		footer:{
+		    logo:'default.png'
+		},
+		parameters : {
+		    'start_time' : {
+			type : 'datetime',
+			locale_label : {
+			    en : 'Start Time',
+			    es : 'Hora de Inicio'
+			}
+		    },
+		    'end_time' : {
+			type : 'datetime',
+			locale_label : {
+			    en : 'End Time',
+			    es : 'Hora de Finalización'
+			}
+		    }
+		}
+	    }],
 	    '/search' : [ {
 		id : 4,
 		name : {
