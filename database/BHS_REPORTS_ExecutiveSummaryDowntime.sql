@@ -18,7 +18,7 @@ BEGIN
 				THEN IF (timeoff>timeon, TIME_TO_SEC(TIMEDIFF(timeoff,timeon)), 
 				TIME_TO_SEC(TIMEDIFF(UTC_TIMESTAMP(),timeon)))END))
 			) 
-			/ TIME_TO_SEC(TIMEDIFF(NOW(),startTime))) * 100 AS 'system_availablity'  #Time elapsed in Day minus system_downtime divided by Time in Day
+			/ TIME_TO_SEC(TIMEDIFF(NOW(),startTime))) * 100 AS 'system_availability'  #Time elapsed in Day minus system_downtime divided by Time in Day
 	FROM cur_alarm_history
 	INNER JOIN cfg_tag_id ON (cfg_tag_id.id = cur_alarm_history.tag_ID
 				AND cur_alarm_history.timeon > startTime);
