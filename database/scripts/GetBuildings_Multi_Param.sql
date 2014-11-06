@@ -41,6 +41,7 @@ SELECT
 	,cur_address.postal_code
 	,cur_address.city
 	,cur_address.province
+	,cur_address.maporder
 	,cur_buildings.id as 'building_id'
 	,cur_buildings.unit_quantity as 'units'
 	,cur_buildings.property_mgmt_company 
@@ -164,7 +165,8 @@ WHERE
 GROUP BY 
 	cur_address.id
 ORDER BY
-
+	CASE WHEN orderBy='maporder_asc' THEN IF(cur_address.maporder IS NULL,1,0)  END ASC,
+	CASE WHEN orderBy='maporder_asc' THEN cur_address.maporder END ASC,
 	CASE WHEN orderBy='property_mgmt_company_asc' THEN property_mgmt_company END ASC,
 	CASE WHEN orderBy='property_mgmt_company_desc' THEN property_mgmt_company END DESC,
 	CASE WHEN orderBy='owner_asc' THEN owner_contact.name END ASC,

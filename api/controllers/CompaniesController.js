@@ -234,7 +234,7 @@ module.exports = {
 			    lng = responseGeocode[0].longitude;
 			}
         		    var outaddressId = '@out' + Math.floor((Math.random() * 1000000) + 1);
-        		    sails.controllers.database.credSproc('CreateAddress',[company.street_number_begin ,company.street_number_end,company.street_name,company.postal_code,company.city,2,company.province,lat, lng,outaddressId],function(err,resAddress){
+        		    sails.controllers.database.credSproc('CreateAddress',[company.street_number_begin ,company.street_number_end,company.street_name,company.postal_code,company.city,2,company.province,lat, lng,null,outaddressId],function(err,resAddress){
         		        if(err)
           			    return res.json({error:'Database Error:'+err},500);
         		        

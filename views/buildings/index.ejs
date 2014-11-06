@@ -590,7 +590,7 @@
 				                <th>Address<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
 				                <th>Units<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
 				                <th>Owner<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
-				                <th>Property Management Company<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+				                <th>Owner Company<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
 				                <th>Sale Date<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
 				            </tr>
 				        </thead>
@@ -1124,7 +1124,7 @@
 		
 		<div class="row-fluid">
 			<div class="span5 segment-label">Total Units:</div>
-			<div class="span7"><input type="text" min="0" max="999999" id="unit_quantity" value="{{=unit_quantity}}"></div>
+			<div class="span7"><input type="text" min="0" max="999999" class="unit-price-dependant" id="unit_quantity" value="{{=unit_quantity}}"></div>
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">Building Income:</div>
@@ -1619,6 +1619,8 @@
 			if($('#map_pane_wrapper').height()==50){
 				$('#map_pane_wrapper').animate({
 					height:$(window).height()-$('.navbar-fixed-top').height()+'px'
+					
+					
 				},300,function(){
 					$('#search_toggler').attr('scrollstate','bottom');
 					$('.main-content').addClass('map-hidden');
@@ -1743,7 +1745,7 @@
 				    position: new google.maps.LatLng(self.building.latitude,self.building.longitude),
 				    map: map,
 				    icon:this.redImage,
-				    title:(typeof(self.building.street_number_begin)!='undefined'?self.building.street_number_begin:'')+(typeof(self.building.street_number_end)!='undefined'?'-'+self.building.street_number_end:'')+(typeof(self.building.street_name)!='undefined'?' '+self.building.street_name:'')
+				    title:(typeof(self.building.maporder)!='undefined'?('maporder:'+self.building.maporder):'')+((typeof(self.building.street_number_begin)!='undefined'&&self.building.street_number_begin!=null)?self.building.street_number_begin:'')+((typeof(self.building.street_number_end)!='undefined'&&self.building.street_number_end!=null)?'-'+self.building.street_number_end:'')+(typeof(self.building.street_name)!='undefined'?' '+self.building.street_name:'')
 				});
 				google.maps.event.addListener(self.googleMarker,'click',function(){
 					self.toggle(true);
@@ -2224,7 +2226,7 @@
 				        }
 				        ,{"mData":"units"}
 				        ,{"mData":"owner"}
-				        ,{"mData":"property_mgmt_company"}
+				        ,{"mData":"owner_company"}
 				        ,{"mData":function(data,b){
 				        	if(data.sale_date==null)
 				        		return '';
@@ -3621,8 +3623,8 @@
 	            "keyup .building-segment-wrapper input" : "inputChange",
 	            "change .building-segment-wrapper input" : "inputChange",
 	            "change .building-segment-wrapper select" : "inputChange",
-	            "keyup .unit-price-dependant" : "unitPriceChange",
 	            "keyup .total-units-dependant": "roomUnitsChange",
+	            "keyup .unit-price-dependant" : "unitPriceChange",
 	            "keyup #unit_quantity":"unitQuantityChange",
 	            "keyup #building_income":"updateCapRate",
 	            "keyup #last_sale_price":"updateCapRate"

@@ -25,7 +25,15 @@ module.exports = {
    * (specific to DatautilityController)
    */
   _config: {},
-  
+  fixNotesDates:function(req,res){
+      sails.controllers.database.credQuery("UPDATE cur_notes SET timestamp = '2014-10-01 00:00:00' WHERE timestamp = '2014-01-01 00:00:00'",function(err,result){
+	  if(err){
+	      res.json(err);
+	  }else{
+	      res.json(result);
+	  }
+      })
+  },
   fixLastSalePrice:function(req,res){
       sails.controllers.database.credQuery('SELECT * FROM cur_buildings WHERE last_sale_price IS NOT NULL',function(err,buildings){
 	 if(err) 

@@ -312,6 +312,7 @@ module.exports = {
 			                        				,  building.province 
 			                        				, lat
 			                        				, lng
+			                        				,0
 			                        				,tempAddressId],
 			                        				function(err, responseAddress) {
 			    if(err)
@@ -708,7 +709,14 @@ module.exports = {
 	var orderstring = null;
 	if(typeof(req.query.order)!='undefined'){
     	    	if(req.query.order[0].column==0){  //ID column
-        	    orderstring = 'street_number_begin'+'_'+req.query.order[0].dir;
+    	    	    //console.log(req.query.boundsLatitudeMin);
+        	    	//if(req.query.boundsLatitudeMin!=null&&req.query.boundsLatitudeMin!=''){
+        		    orderstring = 'maporder_asc';
+        		//}else{
+        		//    orderstring = 'street_number_begin'+'_'+req.query.order[0].dir;    
+        		//}
+    	    	    //console.log('column0');
+        	    
         	}else if(req.query.order[0].column==1){  //Address column
         	    orderstring = 'street_number_begin'+'_'+req.query.order[0].dir;
         	}else if(req.query.order[0].column==5){
@@ -717,6 +725,7 @@ module.exports = {
         	    orderstring = req.query.columns[req.query.order[0].column].data+'_'+req.query.order[0].dir;
         	}
 	}
+	
 	totalCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
 	sails.controllers.database.credSproc('GetBuildings', [ owner_search, address_search, mortgage_search,

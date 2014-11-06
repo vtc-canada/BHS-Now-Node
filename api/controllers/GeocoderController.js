@@ -37,9 +37,13 @@ module.exports = {
 	res.json('running');
 	var geolib = require('geolib');
 	var countupdated;
-	async
-		.eachSeries(
-			[ 10000, 7500, 5000, 3500, 2500, 2000, 1500, 1000, 750, 500, 350, 250, 200, 150, 125, 100, 75, 50, 35, 25, 20, 15, 10, 5 ],
+	var series = ['first',10000];
+	var recentsize = 30;
+	for(var i=1;i<11;i++){
+	    series.push(series[i]/2.32);
+	}
+	async.eachSeries(
+			series,
 			function(closest, callback) {
 			    var ordered = null;
 			    var coords = null;
@@ -48,7 +52,7 @@ module.exports = {
 
 			    sails.controllers.database
 				    .credQuery(
-					    'SELECT cur_address.id, latitude, longitude, maporder FROM cur_buildings INNER JOIN cur_address ON cur_address.id = cur_buildings.cur_address_id WHERE latitude IS NOT NULL AND maporder IS NOT NULL',
+					    'SELECT cur_address.id, latitude, longitude, maporder FROM cur_buildings INNER JOIN cur_address ON cur_address.id = cur_buildings.cur_address_id WHERE latitude IS NOT NULL AND maporder IS NOT NULL ORDER BY ID DESC',
 					    function(err, paramOrdered) {
 						if (err)
 						    return res.json({
@@ -62,7 +66,7 @@ module.exports = {
 						}
 						sails.controllers.database
 							.credQuery(
-								'SELECT cur_address.id, latitude, longitude, maporder FROM cur_buildings INNER JOIN cur_address ON cur_address.id = cur_buildings.cur_address_id WHERE latitude IS NOT NULL AND maporder IS NULL',
+								'SELECT cur_address.id, latitude, longitude, maporder FROM cur_buildings INNER JOIN cur_address ON cur_address.id = cur_buildings.cur_address_id WHERE latitude IS NOT NULL AND maporder IS NULL ORDER BY ID DESC',
 								function(err, paramCoords) {
 								    if (err)
 									return res.json({
@@ -75,17 +79,22 @@ module.exports = {
 									    console.log(i);
 									}
 									var clearopen =	true;
-									for(var j=0;j<ordered.length;j++){
-									//   if((Math.abs(coords[i].latitude-ordered[j].latitude)<closest)&&(Math.abs(coords[i].longitude-ordered[j].longitude)<closest)){
-									//	clearopen =false;
-									//	break;
-									//    }
-									    //var dis = ;
-									    if(geolib.getDistance(coords[i],ordered[j])<closest){
-										clearopen = false;
-										break;
-									    }
+									if(closest!='first'){
+									    for(var j=0;j<ordered.length;j++){
+										//   if((Math.abs(coords[i].latitude-ordered[j].latitude)<closest)&&(Math.abs(coords[i].longitude-ordered[j].longitude)<closest)){
+										//	clearopen =false;
+										//	break;
+										//    }
+										    //var dis = ;
+										if(geolib.getDistance(coords[i],ordered[j])<closest){
+										    clearopen = false;
+										    break;
+										}
+									    }    
+									}else if(i<recentsize){
+									    clearopen = true;
 									}
+									
 									//var nearest = geolib.findNearest(coords[i], ordered);
 									
 									if (clearopen){//typeof(nearest)=='undefined'||nearest.distance > closest) { // if
@@ -126,7 +135,7 @@ module.exports = {
 								    }
 								    if (coords.length > 0) {
 									loopCoords(0);
-								    } else {
+								    }else{
 									console.log('no coords');
 									//return res.json('done ' + countupdated);
 									return callback(null);
@@ -137,7 +146,7 @@ module.exports = {
 					    });
 			});
 	function updateOrder(id, order, cb) {
-	    sails.controllers.database.credQuery('UPDATE cur_address SET maporder = ' + order + ' WHERE id = ' + id, function(err, response) {
+	    sails.controllers.database.credQuery('UPDATE cur_address SET maporder = ' + order + ',updatedAt = updatedAt WHERE id = ' + id, function(err, response) {
 		if (err) {
 		    console.log('err' + err);
 		    cb(err);
