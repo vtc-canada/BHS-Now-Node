@@ -696,6 +696,8 @@ module.exports = {
 
     },
     querybuildings:function(req,res,cb){
+	var full_contact_search = sails.controllers.utilities.prepfulltext(req.query.full_contact_search);
+	var full_address_search = sails.controllers.utilities.prepfulltext(req.query.full_address_search);
 	var address_search = sails.controllers.utilities.prepfulltext(req.query.address_search);
 	var owner_search = sails.controllers.utilities.prepfulltext(req.query.owner_search);
 	var owner_company_search = sails.controllers.utilities.prepfulltext(req.query.owner_company_search);
@@ -728,7 +730,7 @@ module.exports = {
 	
 	totalCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
-	sails.controllers.database.credSproc('GetBuildings', [ owner_search, address_search, mortgage_search,
+	sails.controllers.database.credSproc('GetBuildings', [ full_contact_search,full_address_search, owner_search, address_search, mortgage_search,
 	        seller_search, agent_search, owner_company_search, seller_company_search, agent_company_search,                     
 		(req.query.unitQuantityMin == ''||req.query.unitQuantityMin==null) ? null : parseInt(req.query.unitQuantityMin),
 		(req.query.unitQuantityMax == ''||req.query.unitQuantityMax==null) ? null : parseInt(req.query.unitQuantityMax),
