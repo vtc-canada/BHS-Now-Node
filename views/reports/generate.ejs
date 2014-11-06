@@ -116,7 +116,7 @@ function toClientDateTimeString(date){
         <!-- Iterate the rows -->
 
 
-        <table style="width:100%" <% if(data[i].data.searchenabled){ %>sDOM="ft"<% }else{%>sDOM="t"<% } %>>
+        <table style="width:100%" <% if(typeof(data[i].data.sorting)!='undefined'&&data[i].data.sorting==false){ %>sorting="false"<% }else{%>sorting="true"<% } %>  <% if(data[i].data.searchenabled){ %>sDOM="ft"<% }else{%>sDOM="t"<% } %>>
 
         <% var j = 0 ; %>
 
@@ -134,7 +134,14 @@ function toClientDateTimeString(date){
                     <% } %>
                 </tr>
 
-            <% } j++;%>
+            <% }else{ %>
+            	<tr class="row-fluid report-data-row <% if(data[i].data[j][0].bordertop){ %> report-data-last-row<% } %>">
+                <% var visiblecolumns = 0; for (var k=0;k<data[i].data[j].length;k++){ if(typeof(data[i].data[0][k].hidden)=='undefined'||!data[i].data[0][k].hidden){ visiblecolumns++; }} %>
+            	<% for (var k=0;k<data[i].data[j].length;k++){ %>
+                        <th <%if(typeof(data[i].data[j][k].width)=='undefined'){ %>width="<%= 100/visiblecolumns %>%" <% }else{ %>width="<%= data[i].data[j][k].width %>%"<% } %>  ></th>
+                <% } %>
+                </tr>
+            <% } j++; %>
             </thead>
         <% } %>
 
@@ -266,9 +273,12 @@ function toClientDateTimeString(date){
 
         $('div.report-data-wrapper table').each(function(){
             //return;
+            
+            
             var ttable = $(this).dataTable({
                 bAutoWidth:false,
                 bPaginate: $(this).hasClass('paginate'),
+                bSort: $(this).attr('sorting')=='true',
                 sDom:$(this).attr('sDom')
             });
 
