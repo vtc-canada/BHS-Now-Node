@@ -239,6 +239,7 @@
         for(var i=0; i< reports.length; i++){
             $('#reporttype').append('<option value="'+reports[i].id+'">'+reports[i].name.locale_label['<%=req.session.user.locale%>']+'</option>');
         }
+        
 		rebuildParams();
     });
 
@@ -322,6 +323,7 @@
 	        }
             htmlappend +='</div>';
             $('.prependparams').before(htmlappend);
+            $('.paramrows select').combobox();
         });
 
 
@@ -388,7 +390,7 @@
 		                        htmlappend += '<option value="'+dependant_data_set[i].id+'" >'+dependant_data_set[i].name+'</option>'
 		                    }
 		                    $dependant.append(htmlappend);
-		
+		                    $dependant.data('combobox').refresh();
 		                });
 	            	}else{// if(typeof(param.source)!='undefined'){
 		            	if(typeof(param.disabled)=='undefined'){
@@ -498,6 +500,7 @@
          }
 
     // binds changes to the report type to rebuild the parameters
+    
     $('#reporttype').change(function(){
         rebuildParams();
     });

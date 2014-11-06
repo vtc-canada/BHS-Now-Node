@@ -437,6 +437,10 @@ table.selectable tr{
 }
 
 
+.combobox-container input {
+	width:180px;	
+}
+
 
 
 @media (min-width: 980px){
@@ -493,6 +497,10 @@ table.selectable tr{
 }
 .footer-padder{
 	display:none;
+}
+
+.dropdown-menu.typeahead{
+	min-width:218px;
 }
 
 @media (max-width: 979px){
