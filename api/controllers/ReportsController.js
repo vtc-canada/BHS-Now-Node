@@ -206,7 +206,6 @@ module.exports = {
         		    });
         		});
         	    });
-		
 	    })
 	});
     },
@@ -249,8 +248,8 @@ module.exports = {
 		    var start = new Date().getTime();
 		    report.locale = req.session.user.locale;
 		    page.open(sails.getBaseurl()+'/reports/view?report_parameters=' + encodeURIComponent(JSON.stringify(report)), function() {
-			var filename = 'public\\reports\\report_' + new Date().getTime() + '.pdf';
-			page.render(filename);
+			var filename = 'report_' + new Date().getTime() + '.pdf';
+			page.render('public\\reports\\'+filename);
 			var end = new Date().getTime();
 			console.log('Page Rendered in ' + (end - start).toString() + 'ms.');
 			ph.exit();
@@ -284,7 +283,7 @@ module.exports = {
 
 	var exec = require('child_process').exec, child;
 
-	child = exec('AcroRd32.exe /h /t "C:\\sails\\start\\' + filename + '" "' + printername + '" "' + drivername + '" "' + portname + '"', function(error,
+	child = exec('AcroRd32.exe /h /t "'+sails.config.appPath+'\\\\public\\\\reports\\\\' + filename + '" "' + printername + '" "' + drivername + '" "' + portname + '"', function(error,
 		stdout, stderr) {
 	    console.log('stdout: ' + stdout);
 	    console.log('stderr: ' + stderr);
@@ -480,8 +479,7 @@ function buildReportData(report, phantom_bool, cb) {
 
     else if (report.id == 2) { //Equipment Summary
 
-	var deviceWhere = '';
-
+	
 	var line = [];
 	line.push(system_name);
 	line.push(report.name.locale_label[report.locale]);
@@ -533,8 +531,7 @@ function buildReportData(report, phantom_bool, cb) {
 		});
     } else if (report.id == 3) { // Equipment Interval
 
-	var deviceWhere = '';
-
+	
 	var line = [];
 	line.push(system_name);
 	line.push(report.name.locale_label[report.locale]);
@@ -590,8 +587,7 @@ function buildReportData(report, phantom_bool, cb) {
 		});
     } else if (report.id == 4) { // Bag Search
 
-	var deviceWhere = '';
-
+	
 	var line = [];
 	line.push(system_name);
 	line.push(report.name.locale_label[report.locale]);
@@ -652,6 +648,326 @@ function buildReportData(report, phantom_bool, cb) {
 
 	});
 
+    }else if(report.id == 5) { // Throughput Interval Report
+
+	
+	var line = [];
+	line.push(system_name);
+	line.push(report.name.locale_label[report.locale]);
+	line.push(start_label + ': ' + toClientDateTimeString(start_datetime, report.timezoneoffset));
+	line.push(end_label + ': ' + toClientDateTimeString(end_datetime, report.timezoneoffset));
+
+	var interval = 900;
+	if (typeof (report.parameters.interval) != 'undefined') {
+	    interval = report.parameters.interval.value;
+	}
+	header.line = line;
+
+	//if (phantom_bool) {
+	    data.header = header;
+	//}
+	data.css = "isystemsnowreports.css";
+	data.landscape = false;
+	var outThroughput = '@out' + Math.floor((Math.random() * 1000000) + 1);
+	Database.dataSproc("BHS_REPORTS_ThroughputIntervalReport", [ start_datetime.toISOString(), end_datetime.toISOString(), interval, outThroughput ], function(err, throughputs) {
+	    if (err) {
+		cb(data);
+		return;
+	    }
+	    
+	    var jsonData = JSON.parse(throughputs[1][outThroughput]);
+	    throughputs = throughputs[0];
+	    if (throughputs.length < 1) {
+		cb(data);
+		return;
+	    }
+	    var section = new Object();
+	    section.startrow = true;
+	    section.endrow = true;
+
+	    section.data = new Array();
+	    section.data.topborder = true;
+	    section.data.bottomborder = true;
+	    section.data.spantype = 'row-fluid';
+	    section.data.toprowtableheader = true;
+	    section.data.searchenabled = false;
+	    section.data.bagsearch = false;
+	    section.data.sorting = false;
+	    
+	    section.data[0] = new Array();
+	    
+	    // Makes Headings
+	    for (var i = 0; i < jsonData.columns.length; i++) {
+		section.data[0][i] = new Object();
+		section.data[0][i].val = jsonData.columns[i].locale[report.locale];
+		section.data[0][i].bold = true;
+		section.data[0][i].bordertop = false;
+		section.data[0][i].width = jsonData.columns[i].width;
+		section.data[0][i].lastrow = jsonData.columns[i].lastrow;
+		section.data[0][i].hidden = jsonData.columns[i].hidden;
+	    }
+		// Fills Data
+	    data[data.length] = addSectionData(section, throughputs, report.timezoneoffset, jsonData);
+
+	    cb(data);
+
+	});
+
+    }else if(report.id == 6) { // Executive Summary Report
+	
+	var line = [];
+	line.push(system_name);
+	line.push(report.name.locale_label[report.locale]);
+	line.push(start_label + ': ' + toClientDateTimeString(start_datetime, report.timezoneoffset));
+	line.push(end_label + ': ' + toClientDateTimeString(end_datetime, report.timezoneoffset));
+	header.line = line;
+	
+	//if (phantom_bool) {
+	    data.header = header;
+	//}
+	data.css = "isystemsnowreports.css";
+	data.landscape = false;
+	
+	async.series([
+	function(callback){
+	    var outThroughput = '@out' + Math.floor((Math.random() * 1000000) + 1);
+	    Database.dataSproc("BHS_REPORTS_ExecutiveSummaryThroughput", [start_datetime.toISOString(), end_datetime.toISOString(), outThroughput],function(err,resultThroughputs){
+		    if (err) {
+			callback(err);
+			return;
+		    }
+		    var jsonData = JSON.parse(resultThroughputs[1][outThroughput]);
+		    resultThroughputs = resultThroughputs[0];
+		    
+		    if (resultThroughputs.length > 0) {
+			
+			var section = new Object();
+			section.startrow = true;
+			section.endrow = true;
+
+			section.groupheading = new Array();
+			section.groupheading.spantype = 'row-fluid';
+
+			section.groupheading[0] = new Array();
+			section.groupheading[0][0] = new Object();
+			section.groupheading[0][0].val = 'Total Counts';
+			section.groupheading[0][0].bold = true;
+
+			section.data = new Array();
+			section.data.topborder = true;
+			section.data.bottomborder = true;
+			section.data.spantype = 'span6';
+			section.data.toprowtableheader = true;
+			section.data.searchenabled = false;
+			section.data.sorting = false;
+
+			section.data[0] = new Array();
+
+			// Makes Headings
+			for (var i = 0; i < jsonData.columns.length; i++) {
+			    section.data[0][i] = new Object();
+			    section.data[0][i].val = jsonData.columns[i].locale[report.locale];
+			    section.data[0][i].bold = true;
+			    section.data[0][i].bordertop = false;
+			    section.data[0][i].width = jsonData.columns[i].width;
+			    section.data[0][i].lastrow = jsonData.columns[i].lastrow;
+			    section.data[0][i].hidden = jsonData.columns[i].hidden;
+			}
+			// Fills Data
+			data[data.length] = addSectionData(section, resultThroughputs, report.timezoneoffset, jsonData);
+		    }
+		    callback(null);
+		}); 
+	},
+	function(callback){
+	    var outFaults = '@out' + Math.floor((Math.random() * 1000000) + 1);
+	    Database.dataSproc("BHS_REPORTS_ExecutiveSummaryFaults", [start_datetime.toISOString(), end_datetime.toISOString(), outFaults],function(err,resultFaults){
+		    if (err) {
+			callback(err);
+			return;
+		    }
+		    resultFaults = resultFaults[0];
+
+		    if (resultFaults.length > 0) {
+			
+			var section = new Object();
+			section.startrow = true;
+			section.endrow = false;
+
+			section.groupheading = new Array();
+			section.groupheading.spantype = 'row-fluid';
+
+			section.groupheading[0] = new Array();
+			section.groupheading[0][0] = new Object();
+			section.groupheading[0][0].val = 'Result Faults';
+			section.groupheading[0][0].bold = true;
+
+			section.data = new Array();
+			section.data.topborder = true;
+			section.data.bottomborder = true;
+			section.data.spantype = 'span5';
+			section.data.toprowtableheader = false;
+			section.data.searchenabled = false;
+			section.data.sorting = false;
+
+			section.data[0] = new Array();
+			section.data[0][0] = new Object();
+			section.data[0][0].val = '';
+			section.data[0][0].width='75'
+			section.data[0][1] = new Object();
+			section.data[0][1].val = '';
+			section.data[0][1].width='25'
+			
+			// Fills Data
+			section.data[1] = new Array();
+			section.data[1][0] = new Object();
+			section.data[1][0].val = 'Jams';
+			section.data[1][0].bold = false;
+			section.data[1][0].bordertop = false;
+			section.data[1][1] = new Object();
+			section.data[1][1].val = resultFaults[0]['jams'];
+			section.data[1][1].bold = false;
+			section.data[1][1].bordertop = false;
+
+			section.data[2] = new Array();
+			section.data[2][0] = new Object();
+			section.data[2][0].val = 'E-Stop';
+			section.data[2][0].bold = false;
+			section.data[2][0].bordertop = false;
+			section.data[2][1] = new Object();
+			section.data[2][1].val = resultFaults[0]['e_stop'];
+			section.data[2][1].bold = false;
+			section.data[2][1].bordertop = false;
+
+			section.data[3] = new Array();
+			section.data[3][0] = new Object();
+			section.data[3][0].val = 'Motor Faults';
+			section.data[3][0].bold = false;
+			section.data[3][0].bordertop = false;
+			section.data[3][1] = new Object();
+			section.data[3][1].val = resultFaults[0]['motor_faults'];
+			section.data[3][1].bold = false;
+			section.data[3][1].bordertop = false;
+			
+			section.data[4] = new Array();
+			section.data[4][0] = new Object();
+			section.data[4][0].val = 'Motor Disconnect';
+			section.data[4][0].bold = false;
+			section.data[4][0].bordertop = false;
+			section.data[4][1] = new Object();
+			section.data[4][1].val = resultFaults[0]['motor_disconnect'];
+			section.data[4][1].bold = false;
+			section.data[4][1].bordertop = false;
+			
+			
+			data[data.length] = section;
+		    }
+		    callback(null);
+		}); 
+	},
+	function(callback){
+	    var outFaults = '@out' + Math.floor((Math.random() * 1000000) + 1);
+	    Database.dataSproc("BHS_REPORTS_ExecutiveSummaryDowntime", [start_datetime.toISOString(), end_datetime.toISOString(), outFaults],function(err,resultFaults){
+		    if (err) {
+			callback(err);
+			return;
+		    }
+		    resultFaults = resultFaults[0];
+
+		    if (resultFaults.length > 0) {
+			
+			var section = new Object();
+			section.startrow = false;
+			section.endrow = true;
+
+
+			section.data = new Array();
+			section.data.topborder = true;
+			section.data.bottomborder = true;
+			section.data.spantype = 'span5 offset1';
+			section.data.toprowtableheader = false;
+			section.data.searchenabled = false;
+			section.data.sorting = false;
+
+			section.data[0] = new Array();
+			section.data[0][0] = new Object();
+			section.data[0][0].val = '';
+			section.data[0][0].width='75'
+			section.data[0][1] = new Object();
+			section.data[0][1].val = '';
+			section.data[0][1].width='25'
+			
+			// Fills Data
+			section.data[1] = new Array();
+			section.data[1][0] = new Object();
+			section.data[1][0].val = 'Jams Downtime';
+			section.data[1][0].bold = false;
+			section.data[1][0].bordertop = false;
+			section.data[1][1] = new Object();
+			section.data[1][1].val = secondsToString(parseInt(resultFaults[0]['jams_downtime']));
+			section.data[1][1].bold = false;
+			section.data[1][1].bordertop = false;
+
+			section.data[2] = new Array();
+			section.data[2][0] = new Object();
+			section.data[2][0].val = 'E-Stop Downtime';
+			section.data[2][0].bold = false;
+			section.data[2][0].bordertop = false;
+			section.data[2][1] = new Object();
+			section.data[2][1].val = secondsToString(parseInt(resultFaults[0]['estop_downtime']));
+			section.data[2][1].bold = false;
+			section.data[2][1].bordertop = false;
+
+			section.data[3] = new Array();
+			section.data[3][0] = new Object();
+			section.data[3][0].val = 'Motor Faults Downtime';
+			section.data[3][0].bold = false;
+			section.data[3][0].bordertop = false;
+			section.data[3][1] = new Object();
+			section.data[3][1].val = secondsToString(parseInt(resultFaults[0]['motor_faults_downtime']));
+			section.data[3][1].bold = false;
+			section.data[3][1].bordertop = false;
+			
+			section.data[4] = new Array();
+			section.data[4][0] = new Object();
+			section.data[4][0].val = 'Motor Disconnect Downtime';
+			section.data[4][0].bold = false;
+			section.data[4][0].bordertop = false;
+			section.data[4][1] = new Object();
+			section.data[4][1].val = secondsToString(parseInt(resultFaults[0]['motor_disconnect_downtime']));
+			section.data[4][1].bold = false;
+			section.data[4][1].bordertop = false;
+
+			section.data[5] = new Array();
+			section.data[5][0] = new Object();
+			section.data[5][0].val = 'System Downtime';
+			section.data[5][0].bold = false;
+			section.data[5][0].bordertop = false;
+			section.data[5][1] = new Object();
+			section.data[5][1].val = secondsToString(parseInt(resultFaults[0]['system_downtime']));
+			section.data[5][1].bold = false;
+			section.data[5][1].bordertop = false;
+			
+			section.data[6] = new Array();
+			section.data[6][0] = new Object();
+			section.data[6][0].val = 'System Availabilitiy';
+			section.data[6][0].bold = false;
+			section.data[6][0].bordertop = false;
+			section.data[6][1] = new Object();
+			section.data[6][1].val = parseFloat(resultFaults[0]['system_availability']).toFixed(2)+'%';
+			section.data[6][1].bold = false;
+			section.data[6][1].bordertop = false;
+			
+			data[data.length] = section;
+		    }
+		    callback(null);
+		}); 
+	}],	
+	function(err,results){
+	    cb(data);
+	});
+	
+	
     }
 }
 
