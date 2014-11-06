@@ -21,7 +21,7 @@ module.exports = {
     *  ORM database mapping.  Used for generating user base tables
     ***************************************************/
    models: {
-       connection: 'nowManagementBaseMysql',
+       connection: 'nowManagementBaseMysqlProduction',
        migrate: 'alter' //safe //alter
    },
    
@@ -29,8 +29,8 @@ module.exports = {
     *  Database Controller connections mapping
     ***************************************************/
    connections:{
-       'base_default' : 'nowManagementBaseMysql',
-       'data_default' : 'nowManagementDataMysql'
+       'base_default' : 'nowManagementBaseMysqlProduction',
+       'data_default' : 'nowManagementBaseMysqlProduction'
    },
    
 
