@@ -10,7 +10,7 @@ module.exports = {
 	res.view();
     },
     findDistinct : function(req, res) {
-	Database.localSproc('getDistinctMessages',[req.session.user.id],function(err,data) {
+	Database.localSproc('NMS_BASE_GetDistinctMessages',[req.session.user.id],function(err,data) {
 	    if (err) {
 		console.log('Error getDistinctMessages :' + err.toString());
 		return res.send(500, {
@@ -25,7 +25,7 @@ module.exports = {
 	});
     },
     findUserMessages:function(req,res){
-	Database.localSproc('getMessagesByUserId',[req.session.user.id,req.param('otherUserId')],function(err,messages){
+	Database.localSproc('NMS_BASE_GetMessagesByUserId',[req.session.user.id,req.param('otherUserId')],function(err,messages){
 	    if (err) {
 		console.log('Error getMessagesByUserId :' + err.toString());
 		return res.send(500, {

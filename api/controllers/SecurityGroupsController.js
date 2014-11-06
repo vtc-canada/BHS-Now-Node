@@ -7,7 +7,7 @@
 
 module.exports = {
     findAll : function(req, res) {
-	Database.localSproc('getSecurityGroups', [], function(err, securitygroups) {
+	Database.localSproc('NMS_BASE_GetSecurityGroups', [], function(err, securitygroups) {
 	    if (err) {
 		console.log('getSecurityGroups Error: ' + err);
 		return res.json(err);
@@ -21,7 +21,7 @@ module.exports = {
 
     },
     delete:function(req,res){
-	Database.localSproc('deleteSecurityGroup',[req.body.id],function(err,resposne){
+	Database.localSproc('NMS_BASE_DeleteSecurityGroup',[req.body.id],function(err,resposne){
 	    if(err){
 		console.log('Error Deleting User:'+err);
 		return res.json({error:'Error Deleting User:'+err},500);
@@ -30,12 +30,12 @@ module.exports = {
 	});
     },
     getsecuritygroupandresources : function(req, res) {
-	Database.localSproc('getSecurityGroup', [ req.body.id ], function(err, securitygroup) {
+	Database.localSproc('NMS_BASE_GetSecurityGroup', [ req.body.id ], function(err, securitygroup) {
 	    if (err) {
 		console.log('getSecurityGroup Error: ' + err);
 		return res.json(err);
 	    }
-	    Database.localSproc('getSecurityGroupResources', [req.body.id], function(err, securitygroupresources) {
+	    Database.localSproc('NMS_BASE_GetSecurityGroupResources', [req.body.id], function(err, securitygroupresources) {
 		if (err) {
 		    console.log('getSecurityGroupResources Error: ' + err);
 		    return res.json(err);
@@ -55,7 +55,7 @@ module.exports = {
 		    return callback(null);// skip out otherwise
 		}
 		var paramCreateId = '@out' + Math.floor((Math.random() * 1000000) + 1);
-		Database.localSproc('createSecurityGroup',[securitygroup.name,paramCreateId],function(err,responsesecuritygroup){
+		Database.localSproc('NMS_BASE_CreateSecurityGroup',[securitygroup.name,paramCreateId],function(err,responsesecuritygroup){
         	    if(err){
         		return callback(err);
         	    }
@@ -69,7 +69,7 @@ module.exports = {
 		    delete securitygroup.newid;
 		    return callback(null);// skip out otherwise
 		}
-        	Database.localSproc('updateSecurityGroup',[securitygroup.id, securitygroup.name],function(err,responsesecuritygroup){
+        	Database.localSproc('NMS_BASE_UpdateSecurityGroup',[securitygroup.id, securitygroup.name],function(err,responsesecuritygroup){
         	    if(err){
         		return callback(err);
         	    }
@@ -82,7 +82,7 @@ module.exports = {
 		console.log('Error Saving Security Group'+err);
 		return res.json({error:'Error Saving Security Group:'+err},500);
 	    }
-	    Database.localSproc('getResources',[],function(err,dbresources){
+	    Database.localSproc('NMS_BASE_GetResources',[],function(err,dbresources){
 		    if(err){
 			console.log('getResources Error'+err);
 			return res.json({error:'getResources Error:'+err},500);
@@ -102,14 +102,14 @@ module.exports = {
 			}
 		    }
 		    
-		    Database.localSproc('deleteResourceSecurityGroupMappings',[securitygroup.id],function(err,result){
+		    Database.localSproc('NMS_BASE_DeleteResourceSecurityGroupMappings',[securitygroup.id],function(err,result){
 			if(err){
 			    console.log('Error Clearing Resource Security Group Mappings'+err);
 			    return res.json({error:'Error Clearing Resource Security Group Mappings'+err},500);
 			}
 			async.eachSeries(keys,function(key,callback){
 			    var resourceObj = securitygroup.resources[key];
-			    Database.localSproc('createResourceSecurityGroupMapping',[resourceObj.id,securitygroup.id,resourceObj.create,resourceObj.read,resourceObj.update,resourceObj.delete],function(err,newmapping){
+			    Database.localSproc('NMS_BASE_CreateResourceSecurityGroupMapping',[resourceObj.id,securitygroup.id,resourceObj.create,resourceObj.read,resourceObj.update,resourceObj.delete],function(err,newmapping){
 				if(err){
 				    return callback(err);
 				}

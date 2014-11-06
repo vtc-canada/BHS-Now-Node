@@ -1,264 +1,51 @@
-<style type="text/css">
-      html, body {
-        width: 100%;
-        height: 100%;
-        margin: 0px;
-      }
-      body {
-        background-color: transparent;
-        -webkit-transform: perspective(1400px) matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-        -webkit-transform-style: preserve-3d;
-      }
-      .gwd-canvas-cchy {
-        position: absolute;
-        -webkit-transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-        -webkit-transform-style: preserve-3d;
-        width: 1263px;
-        height: 2px;
-        left: 0px;
-        top: 388px;
-      }
-      .gwd-canvas-conveyor {
-        position: absolute;
-        width: 100px;
-        height: 40px;
-        -webkit-transform-style: preserve-3d;
-		border: 1px solid black;
-		border-radius: 4px;
-      }
-      .eds-machine{
-		border: 2px solid black;
-		border-radius: 4px;
-      }
-      .gwd-canvas-SS1-03 {
-        left: 102px;
-        top: 107px;
-      }
-      .gwd-canvas-SS1-14 {
-        left: 1355.3333333333333px;
-        top: 107px;
-      }
-      .gwd-canvas-SS1-04 {
-        left: 201.5px;
-        top: 107px;
-      }
-      .gwd-canvas-SS1-05 {
-        left: 301.5px;
-        top: 107px;
-      }
-      .gwd-canvas-SS1-13 {
-        left: 1255px;
-        top: 106.5px;
-      }
-      .gwd-canvas-SS1-12 {
-        left: 1155px;
-        top: 107px;
-      }
-      .gwd-canvas-SS1-06 {
-        left: 402px;
-        top: 107px;
-      }
-      .gwd-canvas-SS1-07 {
-        left: 502px;
-        top: 107px;
-      }
-      .gwd-canvas-SS1-11 {
-        left: 1055px;
-        top: 107px;
-      }
-      .gwd-canvas-SS1-10 {
-        left: 955px;
-        top: 107px;
-      }
-      .gwd-canvas-SS1-09 {
-        left: 702px;
-        top: 107px;
-      }
-      .gwd-canvas-SS1-08 {
-        left: 601.5px;
-        top: 107px;
-      }
-      .gwd-canvas-EDS-SS1 {
-		position: absolute;
-		left: 803px;
-		top: 81px;
-		width: 149px;
-		height: 94px;
-      }
-      .gwd-canvas-EDS-SS2 {
-        position: absolute;
-		left: 803px;
-        top: 281px;
-		width: 149px;
-        height: 94px;
-      }
-      .gwd-div-text-general {
-        position: absolute;
-        width: 30px;
-        height: 34.6666666667px;
-        font-family:'Arial, sans-serif';
-        text-align: left;
-      }
-      .conveyor-text {
-        font-size: 28px;
-        font-family:'Arial, sans-serif';
-		line-height: 37px;
-      }
-      .gwd-div-SS1-14-text {
-        left: 1389.3333333333321px;
-        top: 110px;
-      }
-      .gwd-div-SS1-13-text {
-        left: 1290.6666666666665px;
-        top: 110px;
-      }
-      .gwd-div-SS1-12-text {
-        left: 1191.4999999999986px;
-        top: 110px;
-      }
-      .gwd-div-SS1-11-text {
-        left: 1091.333333333333px;
-        top: 110px;
-      }
-      .gwd-div-SS1-10-text {
-        left: 987.6666666666666px;
-        top: 110px;
-      }
-      .gwd-div-SS1-09-text {
-        left: 738.6666666666665px;
-        top: 110px;
-      }
-      .gwd-div-SS1-08-text {
-        left: 637.1666666666667px;
-        top: 110px;
-      }
-      .gwd-div-SS1-07-text {
-        left: 536.6666666666667px;
-        top: 110px;
-      }
-      .gwd-div-SS1-06-text {
-        left: 440px;
-        top: 110px;
-      }
-      .gwd-div-SS1-05-text {
-        left: 336px;
-        top: 110px;
-      }
-      .gwd-div-SS1-04-text {
-        left: 236.66666666666674px;
-        top: 110px;
-      }
-      .gwd-div-SS1-03-text {
-        left: 135.66666666666674px;
-        top: 110px;
-      }
-      .gwd-div-SS2-14-text {
-        left: 1389.3333333333321px;
-        top: 310px;
-      }
-      .gwd-div-SS2-13-text {
-        left: 1290.6666666666665px;
-        top: 310px;
-      }
-      .gwd-div-SS2-12-text {
-        left: 1191.4999999999986px;
-        top: 310px;
-      }
-      .gwd-div-SS2-11-text {
-        left: 1091.333333333333px;
-        top: 310px;
-      }
-      .gwd-div-SS2-10-text {
-        left: 987.6666666666666px;
-        top: 310px;
-      }
-      .gwd-div-SS2-09-text {
-        left: 738.6666666666665px;
-        top: 310px;
-      }
-      .gwd-div-SS2-08-text {
-        left: 637.1666666666667px;
-        top: 310px;
-      }
-      .gwd-div-SS2-07-text {
-        left: 536.6666666666667px;
-        top: 310px;
-      }
-      .gwd-div-SS2-06-text {
-        left: 440px;
-        top: 310px;
-      }
-      .gwd-div-SS2-05-text {
-        left: 336px;
-        top: 310px;
-      }
-      .gwd-div-SS2-04-text {
-        left: 236.66666666666674px;
-        top: 310px;
-      }
-      .gwd-div-SS2-03-text {
-        left: 136.66666666666674px;
-        top: 310px;
-      }
-      .gwd-div-EDS-SS1-text {
-        width: 120px;
-        left: 825.3333333333334px;
-        top: 110.66666666666666px;
-      }
-      .gwd-div-EDS-SS2-text {
-        width: 120px;
-        left: 825.3333333333334px;
-        top: 310.6666666666667px;
-      }
-      .gwd-canvas-SS2-03 {
-        left: 102px;
-        top: 307px;
-      }
-      .gwd-canvas-SS2-04 {
-        left: 202px;
-        top: 307px;
-      }
-      .gwd-canvas-SS2-05 {
-        left: 302px;
-        top: 307px;
-      }
-      .gwd-canvas-SS2-06 {
-        left: 402px;
-        top: 307px;
-      }
-      .gwd-canvas-SS2-07 {
-        left: 502px;
-        top: 307px;
-      }
-      .gwd-canvas-SS2-08 {
-        left: 602px;
-        top: 307px;
-      }
-      .gwd-canvas-SS2-09 {
-        left: 702px;
-        top: 307px;
-      }
-      .gwd-canvas-SS2-10 {
-        left: 954.6666666666667px;
-        top: 307px;
-      }
-      .gwd-canvas-SS2-11 {
-        left: 1054.6666666666667px;
-        top: 307px;
-      }
-      .gwd-canvas-SS2-12 {
-        left: 1154.6666666666667px;
-        top: 307px;
-      }
-      .gwd-canvas-SS2-13 {
-        left: 1254.6666666666667px;
-        top: 307px;
-      }
-      .gwd-canvas-SS2-14 {
-        left: 1354.6666666666667px;
-        top: 307px; 
-      }
-    </style>
+<script type="text/template" id="conveyor_straight">
+	<div class="hmi-element {{if(!msieversion()||msieversion()>8){ }}borders{{ }else{ }}ie-element-border{{ } }}" tagname="{{=tagname}}" top="{{=top+offsetTop}}" left="{{=left+offsetLeft}}" rotation="{{=rotation}}" style="background-color:lightgrey; position:absolute; width:{{=length*elementScale}}%; height:{{=beltWidth*elementScale}}%;">
+		<div class="conveyor_straight_wall1"></div>
+		<div class="conveyor_straight_wall2"></div>		
+		<div class="conveyor_straight_wall3"></div>
+		<div class="conveyor_straight_wall4"></div>
+	</div>
+</script>
+<script type="text/template" id="conveyor_turn">
+	<div class="hmi-element conveyor-turn{{if(!msieversion()||msieversion()>8){ }} borders{{ } }}" tagname="{{=tagname}}" top="{{=top+offsetTop}}" left="{{=left+offsetLeft}}" rotation="{{=rotation}}" style="background-color:lightgrey; position:absolute; height:{{=beltWidth*elementScale*2}}%;">
+		<div class="{{if(msieversion()&&msieversion()<=8){ }}{{=rotation==0?'iebotleft':''}}{{=rotation==90?'ietopleft':''}}{{=rotation==180?'iebotright':''}}{{=rotation==270?'ietopright':''}}{{ }else{ }}conveyor_turn_wall{{ } }}"></div>
+	</div>
+</script>
+
+<script type="text/template" id="alarm_legend_row">
+
+	<div class="alarm-legend-row-wrapper">
+		<div class="legend-color-box" style="background-color:#{{=background_color}};"></div>
+		<div class="legend-color-text">{{=name}}</div>
+	</div>
+</script>
+
+<script type="text/template" id="alarm-template">
+
+    {{ var bordercolor = 'rgb(192,192,192)';}}
+    <div class="row-fluid section-config-wrapper" tag_ID="{{= tag_ID}}" style="background-color:#{{=background_color}}; color:#{{=text_color}}; border-color:{{=bordercolor}};">
+        <div class="span3">
+            <label class="mobile-label"><%= i18n(req,'Date') %>:</label>
+            <label class="mobile-element">{{= toLocaleDateTimeString(timestamp) }}
+            </label>
+        </div>
+        <div class="span2">
+            <label class="mobile-label"><%= i18n(req,'Equipment') %>:</label>
+            <label class="mobile-element">{{= equipment }}
+            </label>
+        </div>
+        <div class="span2">
+            <label class="mobile-label"><%= i18n(req,'Device') %>:</label>
+            <label class="mobile-element">{{= device }}
+            </label>
+        </div>
+        <div class="span5">
+            <label class="mobile-label"><%= i18n(req,'Alarm Type') %>:</label>
+            <label class="mobile-element">{{= text }}
+            </label>
+        </div>
+    </div>
+</script>
     
   <!--  <div class="row-fluid" style="margin-top:19px;">
     <div class="span10 offset1 page-controls-wrapper">

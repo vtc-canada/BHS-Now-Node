@@ -1,4 +1,6 @@
-DROP PROCEDURE if EXISTS `BHS_REPORTS_ExecutiveSummaryDowntime` ;
+
+DROP procedure IF EXISTS `BHS_REPORTS_ExecutiveSummaryDowntime`;
+
 DELIMITER $$
 CREATE PROCEDURE `BHS_REPORTS_ExecutiveSummaryDowntime`(IN `startTime` DATETIME,
 		IN `endTime` DATETIME,
@@ -22,7 +24,7 @@ BEGIN
 				AND cur_alarm_history.timeon > startTime);
 
 	SET locale = '{"columns":[
-			{"locale":{"en":"Jams Downtime","es":"Jams Downtime"},"modifier":"localdatetime"},
+			{"locale":{"en":"Jams Downtime","es":"Jams Downtime"}},
 			{"locale":{"en":"E-Stop Downtime","es":"E-Stop Downtime"}},
 			{"locale":{"en":"Motor Faults Downtime","es":"Motor Faults Downtime"}},
 			{"locale":{"en":"Motor Disconnect Downtime","es":"Motor Disconnect Downtime"}},
@@ -30,5 +32,7 @@ BEGIN
 			{"locale":{"en":"System Availabilty","es":"System Availabilty"},"modifier":"secondsString"}
 			]}';
 
-END $$
+END$$
+
 DELIMITER ;
+

@@ -45,7 +45,7 @@ module.exports = {
 		break;
 	    }
 	}
-	Database.localSproc('updateUser',[req.session.user.id, null, req.session.user.email, req.session.user.active, req.session.user.loginattempts, req.session.user.locale],function(err,response){
+	Database.localSproc('NMS_BASE_UpdateUser',[req.session.user.id, null, req.session.user.email, req.session.user.active, req.session.user.loginattempts, req.session.user.locale],function(err,response){
 	    res.send(req.session.user);
 	});
     },
@@ -61,7 +61,7 @@ module.exports = {
 	    return false;
 	}
 
-	Database.localSproc('getUserByUsername', [ username ], function(err, user) {
+	Database.localSproc('NMS_BASE_GetUserByUsername', [ username ], function(err, user) {
 	    if (err) {
 		console.log('Error getUserByUsername :' + err.toString());
 		return res.send(500, {
@@ -90,7 +90,7 @@ module.exports = {
 				req.session.user = foundUser;
 				req.session.user.policy = {};
 				//req.session.user.policy['default'] = policy[0][0];
-				Database.localSproc('updateUserActiveLoginAttempts', [ foundUser.id, 1, 0 ], function(err, result) {
+				Database.localSproc('NMS_BASE_UpdateUserActiveLoginAttempts', [ foundUser.id, 1, 0 ], function(err, result) {
 				    if (err)
 					console.log('Unable to update User Login Attempts');
 				});
@@ -110,7 +110,7 @@ module.exports = {
 		    if (foundUser.loginattempts >= 6) {
 			foundUser.active = 0;
 		    }
-		    Database.localSproc('updateUserActiveLoginAttempts', [ foundUser.id, foundUser.active, foundUser.loginattempts ], function(err, user) {
+		    Database.localSproc('NMS_BASE_UpdateUserActiveLoginAttempts', [ foundUser.id, foundUser.active, foundUser.loginattempts ], function(err, user) {
 			if (err) {
 			    return console.log('error' + err);
 			}
@@ -140,7 +140,7 @@ module.exports = {
 	    return false;
 	}
 
-	Database.localSproc('getUserByUsername', [ username ], function(err, user) {
+	Database.localSproc('NMS_BASE_GetUserByUsername', [ username ], function(err, user) {
 	    if (err) {
 		console.log('Error getUserByUsername :' + err.toString());
 		return res.send(500, {
@@ -157,7 +157,7 @@ module.exports = {
 		}
 		var hasher = require("password-hash");
 		if (hasher.verify(currentpassword, foundUser.password)) { // here
-		    Database.localSproc('updateUser',[foundUser.id,hasher.generate(newpassword),foundUser.email,foundUser.active,foundUser.loginattempts,foundUser.locale],function(err,user){
+		    Database.localSproc('NMS_BASE_UpdateUser',[foundUser.id,hasher.generate(newpassword),foundUser.email,foundUser.active,foundUser.loginattempts,foundUser.locale],function(err,user){
 			if (err) {
 			    console.log('Error updateUser :' + err.toString());
 			    return res.send(500, {

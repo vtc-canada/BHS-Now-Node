@@ -16,7 +16,7 @@ BEGIN
 	INNER JOIN cfg_count_id ON cfg_count_id.id = cfg_tag_id.count_ID ;
 
 	SET locale = '{"columns":[
-			{"locale":{"en":"Jams","es":"Jams"},"modifier":"localdatetime"},
+			{"locale":{"en":"Jams","es":"Jams"}},
 			{"locale":{"en":"E-Stop","es":"E-Stop"}},
 			{"locale":{"en":"Motor Faults","es":"Motor Faults"}},
 			{"locale":{"en":"Motor Disconnect","es":"Motor Disconnect"}}
