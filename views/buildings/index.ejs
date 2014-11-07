@@ -1883,7 +1883,7 @@
     		
     		google.maps.event.addListener(map, 'tilesloaded', function() {
     			google.maps.event.clearListeners(map, 'tilesloaded');
-    			//initDataTable();
+    			initDataTable();
     			
 				$('.title-collapse-wrapper').click(function(){
 					if($('.map-collapse-content').css('display')=='none'){  //currently empty
@@ -2248,7 +2248,7 @@
 		        				d.includeBuilding = selectedBuilding;
 		        			}
 		        			
-		        			if(typeof(markers)!='undefined'&&markers.constrainGPS)
+		        			if(markers.constrainGPS)
 		        			{
 			        			d.boundsLatitudeMin = map.getBounds().getSouthWest().lat();
 			        			d.boundsLatitudeMax = map.getBounds().getNorthEast().lat();
@@ -2412,7 +2412,6 @@
 		    	datatable.api().ajax.reload();
 	    	});
     	}
-    	initDataTable();
     	/*
     	$('#buildings').on('draw.dt',function(event,datatable){
 	    		//if($('#building_slideup_wrapper').html()!='')
