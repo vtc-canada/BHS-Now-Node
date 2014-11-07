@@ -3,7 +3,7 @@ DROP procedure IF EXISTS `GetBuildings`;
 
 DELIMITER $$
 USE `cred`$$
-CREATE PROCEDURE `GetBuildings`(IN ownerSearchTerms VARCHAR(128), IN addressSearchTerms VARCHAR(128),IN mortgageCompanySearchTerms VARCHAR(64),
+CREATE PROCEDURE `GetBuildings`(IN contactSearchTerms VARCHAR(128),IN addressSearchTerms VARCHAR(128),IN ownerSearchTerms VARCHAR(128), IN propertySearchTerms VARCHAR(128),IN mortgageCompanySearchTerms VARCHAR(64),
 		IN sellerSearchTerms VARCHAR(128), IN agentSearchTerms VARCHAR(128), IN ownerCompanySearchTerms VARCHAR(128), IN sellerCompanySearchTerms VARCHAR(128), IN agentCompanySearchTerms VARCHAR(128),
 		IN unitQuantityMin int, IN unitQuantityMax int, IN unitPriceMin INT, IN unitPriceMax INT, 
 		IN saleDateRangeStart datetime, IN saleDateRangeEnd datetime,
@@ -26,7 +26,7 @@ CREATE PROCEDURE `GetBuildings`(IN ownerSearchTerms VARCHAR(128), IN addressSear
 		IN mortgageDueDateRangeStart datetime, IN mortgageDueDateRangeEnd datetime,
 		IN numOfSalesMin INT, numOfSalesMax INT,
 		IN buildingTypes VARCHAR(64), IN heatSystemTypes VARCHAR(64), IN numOfParkingMin INT, IN numOfParkingMax INT,
-		IN offsetIndex int, IN recordCount INT, IN orderBy VARCHAR (255), OUT id int, OUT totalCount int) 
+		IN offsetIndex int, IN recordCount INT, IN orderBy VARCHAR (255), OUT id int, OUT totalCount int)
 BEGIN
 SELECT 
 	 SQL_CALC_FOUND_ROWS GROUP_CONCAT(DISTINCT owner_contact.name SEPARATOR ', ') as 'owner'
@@ -86,12 +86,18 @@ FROM cur_buildings
 	LEFT JOIN cur_owner_seller_property_mapping AS owner_mapping ON (owner_mapping.property_address_id = cur_address.id AND owner_mapping.contact_type_id = 1)
 	LEFT JOIN cur_contacts AS owner_contact ON (owner_contact.id = owner_mapping.contact_id AND owner_contact.is_deleted = 0)
 	LEFT JOIN cur_company AS owner_company ON (owner_company.id = owner_mapping.company_id AND owner_company.is_deleted = 0)
+	LEFT JOIN cur_company_address_mapping AS owner_company_address_mapping ON (owner_company_address_mapping.cur_company_id = owner_company.id)
+	LEFT JOIN cur_address AS owner_company_address ON (owner_company_address.id = owner_company_address_mapping.cur_address_id)
 	LEFT JOIN cur_owner_seller_property_mapping AS seller_mapping ON (seller_mapping.property_address_id = cur_address.id AND seller_mapping.contact_type_id = 2)
 	LEFT JOIN cur_contacts AS seller_contact ON (seller_contact.id = seller_mapping.contact_id AND seller_contact.is_deleted = 0)
 	LEFT JOIN cur_company AS seller_company ON (seller_company.id = seller_mapping.company_id AND seller_company.is_deleted = 0)
+	LEFT JOIN cur_company_address_mapping AS seller_company_address_mapping ON (seller_company_address_mapping.cur_company_id = seller_company.id)
+	LEFT JOIN cur_address AS seller_company_address ON (seller_company_address.id = seller_company_address_mapping.cur_address_id)
 	LEFT JOIN cur_owner_seller_property_mapping AS agent_mapping ON (agent_mapping.property_address_id = cur_address.id AND agent_mapping.contact_type_id = 3)
 	LEFT JOIN cur_contacts AS agent_contact on (agent_contact.id = agent_mapping.contact_id AND agent_contact.is_deleted = 0)
 	LEFT JOIN cur_company AS agent_company ON (agent_company.id = agent_mapping.company_id AND agent_company.is_deleted = 0)
+	LEFT JOIN cur_company_address_mapping AS agent_company_address_mapping ON (agent_company_address_mapping.cur_company_id = agent_company.id)
+	LEFT JOIN cur_address AS agent_company_address ON (agent_company_address.id = agent_company_address_mapping.cur_address_id)
 	LEFT JOIN ref_building_type ON (ref_building_type.id = cur_buildings.ref_building_type_id)
 	LEFT JOIN ref_heat_system_type ON (ref_heat_system_type.id = cur_buildings.heat_system_type_id)
 	LEFT JOIN (SELECT COUNT(DISTINCT cur_sales_record_history_id) AS 'num_of_records'
@@ -99,7 +105,18 @@ FROM cur_buildings
 				FROM cur_sales_history_contact_mapping 
 				GROUP BY cur_buildings_id) AS sales_count ON (sales_count.cur_buildings_id = cur_buildings.id)
 WHERE
-	(addressSearchTerms IS NULL OR MATCH(street_name,postal_code,city,province,street_number_begin) AGAINST (addressSearchTerms IN BOOLEAN MODE))
+	(propertySearchTerms IS NULL OR MATCH(cur_address.street_name,cur_address.postal_code,cur_address.city,cur_address.province,cur_address.street_number_begin) AGAINST (propertySearchTerms IN BOOLEAN MODE))
+	AND ((contactSearchTerms IS NULL OR MATCH (owner_contact.name, owner_contact.email) AGAINST (contactSearchTerms IN BOOLEAN MODE))
+			OR (contactSearchTerms IS NULL OR MATCH (seller_contact.name, seller_contact.email) AGAINST (contactSearchTerms IN BOOLEAN MODE))
+			OR (contactSearchTerms IS NULL OR MATCH (agent_contact.name, agent_contact.email) AGAINST (contactSearchTerms IN BOOLEAN MODE))
+			OR (contactSearchTerms IS NULL OR MATCH (mortgage_company) AGAINST (contactSearchTerms IN BOOLEAN MODE))
+			OR (contactSearchTerms IS NULL OR MATCH (owner_company.name) AGAINST (contactSearchTerms IN BOOLEAN MODE))
+			OR (contactSearchTerms IS NULL OR MATCH (seller_company.name) AGAINST (contactSearchTerms IN BOOLEAN MODE))
+			OR (contactSearchTerms IS NULL OR MATCH (agent_company.name) AGAINST (contactSearchTerms IN BOOLEAN MODE)))
+	AND ((addressSearchTerms IS NULL OR MATCH(cur_address.street_name,cur_address.postal_code,cur_address.city,cur_address.province,cur_address.street_number_begin) AGAINST (addressSearchTerms IN BOOLEAN MODE))
+			OR(addressSearchTerms IS NULL OR MATCH(owner_company_address.street_name,owner_company_address.postal_code,owner_company_address.city,owner_company_address.province,owner_company_address.street_number_begin) AGAINST (addressSearchTerms IN BOOLEAN MODE))
+			OR(addressSearchTerms IS NULL OR MATCH(seller_company_address.street_name,seller_company_address.postal_code,seller_company_address.city,seller_company_address.province,seller_company_address.street_number_begin) AGAINST (addressSearchTerms IN BOOLEAN MODE))	
+			OR(addressSearchTerms IS NULL OR MATCH(agent_company_address.street_name,agent_company_address.postal_code,agent_company_address.city,agent_company_address.province,agent_company_address.street_number_begin) AGAINST (addressSearchTerms IN BOOLEAN MODE)))
 	AND (ownerSearchTerms IS NULL OR MATCH (owner_contact.name, owner_contact.email) AGAINST (ownerSearchTerms IN BOOLEAN MODE))
 	AND (sellerSearchTerms IS NULL OR MATCH (seller_contact.name, seller_contact.email) AGAINST (sellerSearchTerms IN BOOLEAN MODE))
 	AND (agentSearchTerms IS NULL OR MATCH (agent_contact.name, agent_contact.email) AGAINST (agentSearchTerms IN BOOLEAN MODE))
@@ -171,25 +188,25 @@ ORDER BY
 	CASE WHEN orderBy='property_mgmt_company_desc' THEN property_mgmt_company END DESC,
 	CASE WHEN orderBy='owner_asc' THEN owner_contact.name END ASC,
 	CASE WHEN orderBy='owner_desc' THEN owner_contact.name END DESC,
-	CASE WHEN orderBy='street_number_begin_asc' THEN street_number_begin END ASC,
-	CASE WHEN orderBy='street_number_begin_desc' THEN street_number_begin END DESC,
-	CASE WHEN orderBy='street_number_end_asc' THEN street_number_end END ASC,
-	CASE WHEN orderBy='street_number_end_desc' THEN street_number_end END DESC,
-	CASE WHEN orderBy='street_name_asc' THEN street_name END ASC,
-	CASE WHEN orderBy='street_name_desc' THEN street_name END DESC,
-	CASE WHEN orderBy='postal_code_asc' THEN postal_code END ASC,
-	CASE WHEN orderBy='postal_code_desc' THEN postal_code END DESC,
-	CASE WHEN orderBy='city_asc' THEN city END ASC,
-	CASE WHEN orderBy='city_desc' THEN city END DESC,
+	CASE WHEN orderBy='street_number_begin_asc' THEN cur_address.street_number_begin END ASC,
+	CASE WHEN orderBy='street_number_begin_desc' THEN cur_address.street_number_begin END DESC,
+	CASE WHEN orderBy='street_number_end_asc' THEN cur_address.street_number_end END ASC,
+	CASE WHEN orderBy='street_number_end_desc' THEN cur_address.street_number_end END DESC,
+	CASE WHEN orderBy='street_name_asc' THEN cur_address.street_name END ASC,
+	CASE WHEN orderBy='street_name_desc' THEN cur_address.street_name END DESC,
+	CASE WHEN orderBy='postal_code_asc' THEN cur_address.postal_code END ASC,
+	CASE WHEN orderBy='postal_code_desc' THEN cur_address.postal_code END DESC,
+	CASE WHEN orderBy='city_asc' THEN cur_address.city END ASC,
+	CASE WHEN orderBy='city_desc' THEN cur_address.city END DESC,
 	CASE WHEN orderBy='units_asc' THEN units END ASC,
 	CASE WHEN orderBy='units_desc' THEN units END DESC,
 	CASE WHEN orderBy='sale_date_asc' THEN sale_date END ASC,
 	CASE WHEN orderBy='sale_date_desc' THEN sale_date END DESC,
-	CASE WHEN orderBy='longitude_asc' THEN longitude END ASC,
-	CASE WHEN orderBy='longitude_desc' THEN longitude END DESC,
-	CASE WHEN orderBy='latitude_asc' THEN latitude END ASC,
-	CASE WHEN orderBy='latitude_desc' THEN latitude END DESC,
-	CASE WHEN orderBy= null THEN street_number_begin END ASC
+	CASE WHEN orderBy='longitude_asc' THEN cur_address.longitude END ASC,
+	CASE WHEN orderBy='longitude_desc' THEN cur_address.longitude END DESC,
+	CASE WHEN orderBy='latitude_asc' THEN cur_address.latitude END ASC,
+	CASE WHEN orderBy='latitude_desc' THEN cur_address.latitude END DESC,
+	CASE WHEN orderBy= null THEN cur_address.street_number_begin END ASC
 LIMIT recordCount OFFSET offsetIndex;
 
 SET id = FOUND_ROWS();
