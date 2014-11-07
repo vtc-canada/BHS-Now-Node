@@ -1090,8 +1090,12 @@ cursor: default;
         overflow-y: auto;
         top: 42px;
     }
+    
     .main-content.map-padding{
-    	margin-top:50px;
+        top: 92px;
+    }
+    
+    .main-content.map-padding{
     }
 
     body{

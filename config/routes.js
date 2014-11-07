@@ -44,65 +44,13 @@ module.exports.routes = {
 	    controller : 'main',
 	    action : 'login'
 	  },
-	  '/dialhomelastonline' : {
-	    controller : 'main',
-	    action : 'dialhomelastonline'
-	  },
-	  '/getactivechatboxes' : {
-	    controller : 'main',
-	    action : 'getactivechatboxes'
-	  },
-	  '/savechatboxestosession' : {
-	    controller : 'main',
-	    action : 'savechatboxestosession'
-	  },
 	  '/joinrooms' : {
 	    controller : 'main',
 	    action : 'joinrooms'
 	  },
-	  '/loadpreviousmessagesPriorId' : {
-	    controller : 'main',
-	    action : 'loadpreviousmessagesPriorId'
-	  },
-	  '/loadpreviousmessages' : {
-	    controller : 'main',
-	    action : 'loadpreviousmessages'
-	  },
-	  '/readmessage' : {
-	    controller : 'main',
-	    action : 'readmessage'
-	  },
-	  '/sendtousername' : {
-	    controller : 'main',
-	    action : 'sendtousername'
-	  },
-	  '/signup' : {
-	    controller : 'main',
-	    action : 'signup'
-	  },
 	  '/logout' : {
 	    controller : 'main',
 	    action : 'logout'
-	  },
-	  '/search' : {
-	    controller : 'search',
-	    action : 'index'
-	  },
-	  '/airlineconfiguration' : {
-	    controller : 'defaultcarrierdestination',
-	    action : 'index'
-	  },
-	  '/flighttable/saveFlightsByCarouselandDate' : {
-	    controller : 'flighttable',
-	    action : 'saveFlightsByCarouselandDate'
-	  },
-	  '/flighttable/findByCarouselandDate' : {
-	    controller : 'flighttable',
-	    action : 'findByCarouselandDate'
-	  },
-	  '/flighttable/:date' : {
-	    controller : 'flighttable',
-	    action : 'getbydate'
 	  }
 };
 
