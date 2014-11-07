@@ -2,7 +2,7 @@
 DROP procedure IF EXISTS `BHS_REPORTS_ExecutiveSummaryDowntime`;
 
 DELIMITER $$
-CREATE DEFINER=`root`@`%` PROCEDURE `BHS_REPORTS_ExecutiveSummaryDowntime`(IN `startTime` DATETIME,
+CREATE PROCEDURE `BHS_REPORTS_ExecutiveSummaryDowntime`(IN `startTime` DATETIME,
 		IN `endTime` DATETIME,
 		OUT `locale` VARCHAR(512)
 	)

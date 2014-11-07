@@ -2,7 +2,7 @@
 DROP procedure IF EXISTS `BHS_REPORTS_ThroughputIntervalReport`;
 
 DELIMITER $$
-CREATE DEFINER=`root`@`%` PROCEDURE `BHS_REPORTS_ThroughputIntervalReport`(IN `startTime` DATETIME, 
+CREATE PROCEDURE `BHS_REPORTS_ThroughputIntervalReport`(IN `startTime` DATETIME, 
 	IN `endTime` DATETIME, 
 		IN `intervalTime` INT(11),
 	OUT `locale` VARCHAR(4096)
@@ -62,6 +62,4 @@ SET locale = '{"columns":[
 			{"locale":{"en":"Value","es":"Value"}}
 		]}';
 END$$
-
 DELIMITER ;
-

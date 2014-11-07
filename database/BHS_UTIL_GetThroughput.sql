@@ -8,5 +8,5 @@ BEGIN
 		,cur_counts.value 
 	FROM cfg_count_id
 	INNER JOIN cur_counts ON (cfg_count_id.id = cur_counts.id)
-	WHERE cur_counts.id IN (1372,1373,1374,1375,1376,1377,1378);
+	WHERE cfg_count_id.counts_group = 1;
 END $$

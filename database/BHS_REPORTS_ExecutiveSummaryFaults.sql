@@ -2,7 +2,7 @@
 DROP procedure IF EXISTS `BHS_REPORTS_ExecutiveSummaryFaults`;
 
 DELIMITER $$
-CREATE DEFINER=`root`@`%` PROCEDURE `BHS_REPORTS_ExecutiveSummaryFaults`(IN `startTime` DATETIME,
+CREATE PROCEDURE `BHS_REPORTS_ExecutiveSummaryFaults`(IN `startTime` DATETIME,
 		IN `endTime` DATETIME,
 		OUT `locale` VARCHAR(512)
 	)
@@ -24,7 +24,5 @@ BEGIN
 			{"locale":{"en":"Motor Disconnect","es":"Motor Disconnect"}}
 			]}';
 
-END$$
-
+END $$
 DELIMITER ;
-

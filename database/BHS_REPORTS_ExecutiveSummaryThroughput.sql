@@ -1,7 +1,7 @@
 DROP procedure IF EXISTS `BHS_REPORTS_ExecutiveSummaryThroughput`;
 
 DELIMITER $$
-CREATE DEFINER=`root`@`%` PROCEDURE `BHS_REPORTS_ExecutiveSummaryThroughput`(IN `startTime` DATETIME,
+CREATE PROCEDURE `BHS_REPORTS_ExecutiveSummaryThroughput`(IN `startTime` DATETIME,
 		IN `endTime` DATETIME, 
 		OUT `locale` VARCHAR(512)
 	)
@@ -19,7 +19,5 @@ BEGIN
 			{"locale":{"en":"Throughput # of Bags","es":"Throughput # of Bags"}}
 			]}';
 
-END$$
-
+END $$
 DELIMITER ;
-

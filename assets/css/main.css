@@ -503,6 +503,10 @@ table.selectable tr{
 	min-width:218px;
 }
 
+.dropdown-menu.typeahead{
+	min-width:218px;
+}
+
 @media (max-width: 979px){
 
 	.footer-padder{
@@ -646,4 +650,3 @@ table.selectable tr{
     }
 
 }
-
