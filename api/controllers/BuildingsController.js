@@ -710,7 +710,7 @@ module.exports = {
 	
 	var orderstring = null;
 	if(typeof(req.query.order)!='undefined'){
-    	    	if(req.query.order[0].column==0){  //ID column
+    	    	if(req.query.order[0].column==0||req.query.order[0].column==1){  //ID column
     	    	    //console.log(req.query.boundsLatitudeMin);
         	    	//if(req.query.boundsLatitudeMin!=null&&req.query.boundsLatitudeMin!=''){
         		    orderstring = 'maporder_asc';
@@ -719,9 +719,9 @@ module.exports = {
         		//}
     	    	    //console.log('column0');
         	    
-        	}else if(req.query.order[0].column==1){  //Address column
+        	}else if(req.query.order[0].column==2){  //Address column
         	    orderstring = 'street_number_begin'+'_'+req.query.order[0].dir;
-        	}else if(req.query.order[0].column==5){
+        	}else if(req.query.order[0].column==6){
         	    orderstring = 'sale_date'+'_'+req.query.order[0].dir;
         	}else{
         	    orderstring = req.query.columns[req.query.order[0].column].data+'_'+req.query.order[0].dir;

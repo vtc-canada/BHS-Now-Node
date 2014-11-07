@@ -657,7 +657,7 @@
 
      <!-- The MAIN DIV -- BODY SECTION -->
       <!-- This is where the actual pages themselves get loaded in -->
-    <div class="main-content <%=req.url=='/buildings'?'map-padding':''%>">
+    <div class="main-content <%=(req.url=='/buildings'||req.url.indexOf('/buildings')!=-1)?'map-padding':''%>">
    		<%- body %>
     </div> <!-- /container -->
 
