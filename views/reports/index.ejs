@@ -249,8 +249,13 @@
     // It has specific handling for datetime, select,fault,checkboxes, and even dependant and parent fields
     // It connects in AJAX calls to populate dependants- pulled from the reports object defined at the top
     rebuildParams = function(){
+        if(($(".operation-start-datetimepicker-gen" ).data('datetimepicker'))!=null){
+			this.lastStartTime = $(".operation-start-datetimepicker-gen" ).data('datetimepicker').getLocalDate();
+		}
+		if(($(".end-datetimepicker-gen" ).data('datetimepicker'))!=null){
+			this.lastEndTime = $(".end-datetimepicker-gen" ).data('datetimepicker').getLocalDate();
+		}
         $('.paramrows').remove();
-
         var report = getReportById(parseInt($('#reporttype').val()));
 
         $.each(report.parameters, function(key, param) {
@@ -274,7 +279,9 @@
                 if(key=='start_time'){
                     classtag = 'operation-start-datetimepicker-gen';
                 }
-                else{
+                else if(key=='end_time'){
+                    classtag = 'end-datetimepicker-gen';
+                }else{
                     classtag = 'datetimepicker-gen';
                 }
                 htmlappend += '<div class="input-append span8 report-control-right-control '+classtag+'">' +
@@ -335,8 +342,14 @@
           if(nowDatetime < CheckDate){
             CheckDate.setDate(CheckDate.getDate()-1);
           }
+          if(typeof(this.lastStartTime)!='undefined'){
+          	CheckDate=this.lastStartTime;
+          }
           
-
+          var endDate = new Date();
+		  if(typeof(this.lastEndTime)!='undefined'){
+		     endDate = this.lastEndTime;
+		  }
 
         $(".operation-start-datetimepicker-gen" ).datetimepicker({
             language: 'en',
@@ -345,6 +358,12 @@
             pickSeconds: false
         }).data('datetimepicker').setLocalDate(CheckDate);
 
+		$('.end-datetimepicker-gen').datetimepicker({
+            language: 'en',
+            format: 'yyyy-MM-dd hh:mm',
+            pick12HourFormat: false,
+            pickSeconds: false
+        }).data('datetimepicker').setLocalDate(endDate);
 
         $(".datetimepicker-gen" ).datetimepicker({
             language: 'en',
@@ -356,6 +375,7 @@
         $('.bootstrap-datetimepicker-widget > div > div.close-datetime').click(function(){
             $(".datetimepicker-gen" ).data('datetimepicker').hide();
             $(".operation-start-datetimepicker-gen" ).data('datetimepicker').hide();
+            $(".end-datetimepicker-gen" ).data('datetimepicker').hide();
         });
 
         $('select[dependant]').unbind();
@@ -506,7 +526,6 @@
          }
 
     // binds changes to the report type to rebuild the parameters
-    
     $('#reporttype').change(function(){
         rebuildParams();
     });
