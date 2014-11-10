@@ -100,7 +100,6 @@
     		return resultset[0][field];
 		}
     }
-	var maxRecords = 1000;
     var printers;       // stores printers list
     var filename;       // stores filename of generated report
     var operational_day_start_time = getConfig('operational_day_start_time','time_val');
@@ -446,6 +445,7 @@
          function runReport(){
              $('.alert').remove();
              var report = getReportById(parseInt($('#reporttype').val()));
+             var eachError = false;
              $.each(report.parameters,function(key,param){
                  // param.value=$('#'+report.id).val();
                  if(report.parameters[key].type=='checkboxes'){
@@ -469,6 +469,29 @@
                      }
                  }
                  
+                 
+                 if(key=='interval'&&typeof(report.parameters[key].limit)!='undefined'){
+	                var period = (new Date(report.parameters.end_time.value)) - (new Date(report.parameters.start_time.value)); //milliseconds
+	             	var numPeriods = Math.floor((period/1000)/parseInt($('#interval').val()))+1; 
+	             	var totalRecordsPerChart = 0;
+	             	var maxRecords = parseInt(report.parameters[key].limit);
+	             	if($('#eqp_id').length>0){
+	             		totalRecordsPerChart = ($('#eqp_id').val()==''?$('#eqp_id option').size():1)*numPeriods;
+	             	}else{
+	             		totalRecordsPerChart = (2)*numPeriods;
+	             	}
+	             	
+	             	
+	             	if(totalRecordsPerChart>maxRecords){
+	             		var message = 'This report would have returned more than '+maxRecords+' rows.  You might want to constrain the time range to '+secondsToStringRoundDaysHours(parseInt(period*(maxRecords/totalRecordsPerChart)/1000))+'.';
+	              		$('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
+			                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+			                        ''+message+'</div>');
+		                	$('.main-content')[0].scrollTop=0;
+		                eachError = true;	
+	                	return false;  //break out of $.each
+	             	}
+                 }
 
              });
 
@@ -479,20 +502,9 @@
                  return;
              }
              
-             if(report.id==3){  //Limits on Interval Report
-             	var period = (new Date(report.parameters.end_time.value)) - (new Date(report.parameters.start_time.value)); //milliseconds
-             	var numPeriods = Math.floor((period/1000)/parseInt($('#interval').val()))+1; 
-             	var totalRecordsPerChart = ($('#eqp_id').val()==''?$('#eqp_id option').size():1)*numPeriods;
-             	
-             	if(totalRecordsPerChart>maxRecords){
-             		var message = 'This report would have returned more than '+maxRecords+' rows.  You might want to constrain the time range to '+secondsToStringRoundDaysHours(parseInt(period*(maxRecords/totalRecordsPerChart)/1000))+'.';
-              		$('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
-		                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
-		                        ''+message+'</div>');
-	                	$('.main-content')[0].scrollTop=0;
-                	return;
-             	}
-             }
+             if(eachError){
+             	return;
+         	}
              
              
              // We're a GO at this point for running the report.
