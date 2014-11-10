@@ -201,6 +201,7 @@ module.exports.views = {
 			type : 'select',
 			source : 'intervals',
 			parent : 'eqp_id',
+			limit : 1000,
 			disabled : true,
 			locale_label : {
 			    en : 'Interval',
