@@ -371,13 +371,15 @@
             pickSeconds: false
         }).data('datetimepicker').setLocalDate(endDate);
 
-        $(".datetimepicker-gen" ).datetimepicker({
-            language: 'en',
-            format: 'yyyy-MM-dd hh:mm',
-            pick12HourFormat: false,
-            pickSeconds: false
-        }).data('datetimepicker').setLocalDate(new Date());
-
+		if($(".datetimepicker-gen" ).lenght>0){
+	        $(".datetimepicker-gen" ).datetimepicker({
+	            language: 'en',
+	            format: 'yyyy-MM-dd hh:mm',
+	            pick12HourFormat: false,
+	            pickSeconds: false
+	        }).data('datetimepicker').setLocalDate(new Date());
+		}
+		
         $('.bootstrap-datetimepicker-widget > div > div.close-datetime').click(function(){
             $(".datetimepicker-gen" ).data('datetimepicker').hide();
             $(".operation-start-datetimepicker-gen" ).data('datetimepicker').hide();
@@ -473,6 +475,7 @@
                          report.parameters[key].text = $('#'+key+' option[value='+$('#'+key).val()+']').text();
                      }
                  }
+                 
 
              });
 
@@ -496,8 +499,6 @@
 	                	$('.main-content')[0].scrollTop=0;
                 	return;
              	}
-             	
-             	
              }
              
              
