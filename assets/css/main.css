@@ -272,6 +272,10 @@ div.language-flag.chile{
     width: 180px;
 }
 
+.end-datetimepicker-gen input{
+    width: 180px;
+}
+
 #changeModal label.change-label{
     float: left;
 
