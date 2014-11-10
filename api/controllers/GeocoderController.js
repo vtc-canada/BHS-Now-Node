@@ -39,6 +39,9 @@ module.exports = {
 	var countupdated;
 	var series = ['first',10000];
 	var recentsize = 20;
+	if (typeof (req.params.id) != 'undefined') {
+	    recentsize = parseInt(req.params.id);
+	}
 	for(var i=1;i<11;i++){
 	    series.push(series[i]/2.32);
 	}
