@@ -38,7 +38,7 @@ module.exports = {
 	var geolib = require('geolib');
 	var countupdated;
 	var series = ['first',10000];
-	var recentsize = 30;
+	var recentsize = 20;
 	for(var i=1;i<11;i++){
 	    series.push(series[i]/2.32);
 	}
