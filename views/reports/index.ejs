@@ -414,6 +414,11 @@
 	    if($('#search_field').length>0&&$('#search_field').val()!=''){
 	       runReport();
 	    }
+	    
+	    $('#iframediv').css('visibility','hidden');
+         $('#promptprint').css('display','none');
+         $('#savemodalbtn').css('display','none');
+         $('#report-header-name').html('<%= i18n(req,'Report Header') %>');
     }
     
     // This run report button handler prepares the report object, and requests serverside for the HTML generated from the report.
