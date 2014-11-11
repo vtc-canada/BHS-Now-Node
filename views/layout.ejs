@@ -276,7 +276,7 @@
 	        fixheight();
 	    });
 	    function fixheight(){
-	        $('.main-content').css('height',$(window).height()-$('.navbar').height()-($('.isn-content-footer').length>0?30:0)+'px');
+	        $('.main-content').css('height',$(window).height()-($('.navbar').css('display')=='none'?0:$('.navbar').height())-($('.isn-content-footer').length>0?30:0)+'px');
 	    }
 	    // Clicking the Locale Flag, triggers a page refresh. Just rotates the locale according to serverside
         $('.language-a').click(function(event){
