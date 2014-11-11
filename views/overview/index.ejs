@@ -11,6 +11,11 @@
 		<div class="{{if(msieversion()&&msieversion()<=8){ }}{{=rotation==0?'iebotleft':''}}{{=rotation==90?'ietopleft':''}}{{=rotation==180?'iebotright':''}}{{=rotation==270?'ietopright':''}}{{ }else{ }}conveyor_turn_wall{{ } }}"></div>
 	</div>
 </script>
+<script type="text/template" id="conveyor_label">
+	<div class="hmi-element {{if(!msieversion()||msieversion()>8){ }} borders{{ } }}" top="{{=top+offsetTop}}" left="{{=left+offsetLeft}}" rotation="{{=rotation}}" style="position:absolute; color:black; ">
+		{{=tagname}}
+	</div>
+</script>
 
 <script type="text/template" id="alarm_legend_row">
 
@@ -47,81 +52,127 @@
     </div>
 </script>
     
-  <!--  <div class="row-fluid" style="margin-top:19px;">
-    <div class="span10 offset1 page-controls-wrapper">
-        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;">BHS Overview</span></div>
-        <div class="row-fluid" id="iframediv">
-            <div class="row-fluid">-->
-<div class="row-fluid tc-lines-wrapper-div">            
-    <div class="tc-lines-wrapper"> 
-	    <div id="SS1-03" tagname="G_SS1_03_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS1-03"></div>
-	    <div id="SS1-04" tagname="G_SS1_04_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS1-04"></div>
-	    <div id="SS1-05" tagname="G_SS1_05_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS1-05" ></div>
-	    <div id="SS1-06" tagname="G_SS1_06_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS1-06" ></div>
-	    <div id="SS1-07" tagname="G_SS1_07_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS1-07" ></div>
-	    <div id="SS1-08" tagname="G_SS1_08_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS1-08" ></div>
-	    <div id="SS1-09" tagname="G_SS1_09_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS1-09" ></div>
-	    <div id="SS1-10" tagname="G_SS1_10_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS1-10" ></div>
-	    <div id="SS1-11" tagname="G_SS1_11_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS1-11" ></div>
-	    <div id="SS1-12" tagname="G_SS1_12_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS1-12" ></div>
-	    <div id="SS1-13" tagname="G_SS1_13_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS1-13" ></div>
-	    <div id="SS1-14" tagname="G_SS1_14_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS1-14" ></div>
-	    <div id="EDS-SS1" class="gwd-canvas-EDS-SS1 eds-machine" ></div>
-	    <div id="SS1-03-text" class="conveyor-text gwd-div-text-general gwd-div-SS1-03-text">03</div>
-	    <div id="SS1-04-text" class="conveyor-text gwd-div-text-general gwd-div-SS1-04-text">04</div>
-	    <div id="SS1-05-text" class="conveyor-text gwd-div-text-general gwd-div-SS1-05-text">05</div>
-	    <div id="SS1-06-text" class="conveyor-text gwd-div-text-general gwd-div-SS1-06-text">06</div>
-	    <div id="SS1-07-text" class="conveyor-text gwd-div-text-general gwd-div-SS1-07-text">07</div>
-	    <div id="SS1-08-text" class="conveyor-text gwd-div-text-general gwd-div-SS1-08-text">08</div>
-	    <div id="SS1-09-text" class="conveyor-text gwd-div-text-general gwd-div-SS1-09-text">09</div>
-	    <div id="EDS-SS1-text" class="conveyor-text gwd-div-text-general gwd-div-EDS-SS1-text">EDS-SS1</div>
-	    <div id="SS1-10-text" class="conveyor-text gwd-div-text-general gwd-div-SS1-10-text">10</div>
-	    <div id="SS1-11-text" class="conveyor-text gwd-div-text-general gwd-div-SS1-11-text">11</div>
-	    <div id="SS1-12-text" class="conveyor-text gwd-div-text-general gwd-div-SS1-12-text">12</div>
-	    <div id="SS1-13-text" class="conveyor-text gwd-div-text-general gwd-div-SS1-13-text">13</div>
-	    <div id="SS1-14-text" class="conveyor-text gwd-div-text-general gwd-div-SS1-14-text">14</div>
-	    <div id="SS2-03" tagname="G_SS2_03_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS2-03"></div>
-	    <div id="SS2-04" tagname="G_SS2_04_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS2-04" ></div>
-	    <div id="SS2-05" tagname="G_SS2_05_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS2-05" ></div>
-	    <div id="SS2-06" tagname="G_SS2_06_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS2-06" ></div>
-	    <div id="SS2-07" tagname="G_SS2_07_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS2-07" ></div>
-	    <div id="SS2-08" tagname="G_SS2_08_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS2-08" ></div>
-	    <div id="SS2-09" tagname="G_SS2_09_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS2-09" ></div>
-	    <div id="SS2-10" tagname="G_SS2_10_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS2-10" ></div>
-	    <div id="SS2-11" tagname="G_SS2_11_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS2-11" ></div>
-	    <div id="SS2-12" tagname="G_SS2_12_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS2-12" ></div>
-	    <div id="SS2-13" tagname="G_SS2_13_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS2-13" ></div>
-	    <div id="SS2-14" tagname="G_SS2_14_STATUS" class="gwd-canvas-conveyor gwd-canvas-SS2-14" ></div>
-	    <div id="EDS-SS2" class="gwd-canvas-EDS-SS2 eds-machine"></div>
-	    <div id="SS2-03-text" class="conveyor-text gwd-div-text-general gwd-div-SS2-03-text">03</div>
-	    <div id="SS2-04-text" class="conveyor-text gwd-div-text-general gwd-div-SS2-04-text">04</div>
-	    <div id="SS2-05-text" class="conveyor-text gwd-div-text-general gwd-div-SS2-05-text">05</div>
-	    <div id="SS2-06-text" class="conveyor-text gwd-div-text-general gwd-div-SS2-06-text">06</div>
-	    <div id="SS2-07-text" class="conveyor-text gwd-div-text-general gwd-div-SS2-07-text">07</div>
-	    <div id="SS2-08-text" class="conveyor-text gwd-div-text-general gwd-div-SS2-08-text">08</div>
-	    <div id="SS2-09-text" class="conveyor-text gwd-div-text-general gwd-div-SS2-09-text">09</div>
-	    <div id="EDS-SS2-text" class="conveyor-text gwd-div-text-general gwd-div-EDS-SS2-text">EDS-SS2</div>
-	    <div id="SS2-10-text" class="conveyor-text gwd-div-text-general gwd-div-SS2-10-text">10</div>
-	    <div id="SS2-11-text" class="conveyor-text gwd-div-text-general gwd-div-SS2-11-text">11</div>
-	    <div id="SS2-12-text" class="conveyor-text gwd-div-text-general gwd-div-SS2-12-text">12</div>
-	    <div id="SS2-13-text" class="conveyor-text gwd-div-text-general gwd-div-SS2-13-text">13</div>
-	    <div id="SS2-14-text" class="conveyor-text gwd-div-text-general gwd-div-SS2-14-text">14</div>
+    
+    <div class="overview-fullscreen">
+    	<i class="icon icon-fullscreen icon-3x"></i>
     </div>
-</div>            
-            
-<!--            </div>
+
+<div class="row-fluid" style="margin-top:0px;">
+    <div class="span10 offset1 page-controls-wrapper">
+        <div class="row-fluid overview-header" id="reportheader" ><span style="padding-left:10px;">BHS Overview</span></div>
+        <div class="row-fluid" id="iframediv">
+            <div class="row-fluid" style="position:relative; overflow:hidden;">
+                <div id="overview" class="row-fluid" style="position:relative;">
+                    
+                </div>
+                
+                <div id="alarm_legend" class="alarm-legend">
+                    
+                </div>
+            </div>
         </div>
     </div>
 </div>
-    -->
+
+<div class="row-fluid" style="margin-top:0px;">
+    <div class="span10 offset1 page-controls-wrapper">
+        <div class="row-fluid alarms-header" id="reportheader" style="margin-top:0px;"><span style="padding-left:10px;"><%= i18n(req,'Alarms') %></span></div>
+        <div class="row-fluid" id="iframediv">
+            <div class="row-fluid">
+                <div  class="row-fluid sort-destination-plan-titles" style="margin-bottom:0px;">
+                    <div class="row-fluid alarm-header">
+                        <div class="span3 titlerow">
+                            <%= i18n(req,'Time') %>
+                        </div>
+                        <div class="span2">
+                            <%= i18n(req,'Equipment') %>
+                        </div>
+                        <div class="span2">
+                            <%= i18n(req,'Device') %>
+                        </div>
+                        <div class="span5">
+                            <%= i18n(req,'Alarm Type') %>
+                        </div>
+                    </div>
+                </div>
+                <div class="row-fluid" id="alarmsdiv" style="overflow-y:auto;">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+   
     
     
+    <script type="text/javascript">
     
-    <script>
-    $(function(){
+    var alarm_legend = <%- JSON.stringify(alarm_legend)%>;
+    var aspectRatio = 16/9;
+    var offsetLeft = 10;
+    var offsetTop = 0;
+    var elementScale = 5; //(belth width as percent of screen width)
+    var beltWidth = 2; // Depends on elementScale
+    $(document).ready(function(){
+    	socket.on('connect',initialize);
+    });
+    
+    
+    function initialize(){
     	//alert('ready');
+    	var overview = $('#overview');
+    
+    	var conveyor_straight = _.template($('#conveyor_straight').html());	
+    	var conveyor_turn = _.template($('#conveyor_turn').html());	
+    	var alarm_legend_row = _.template($('#alarm_legend_row').html());
+    	var conveyor_label = _.template($('#conveyor_label').html());
     	
+    	
+    	overview.append(conveyor_turn({tagname:'G_OB1_07_STATUS', rotation:0, left:40.0, top:0}));
+    	overview.append(conveyor_turn({tagname:'G_OB1_02_STATUS', rotation:90, left:40.0, top:78}));
+    	overview.append(conveyor_straight({tagname:'G_OB1_08_STATUS',length:8, rotation:0, left:0, top:0}));
+    	overview.append(conveyor_straight({tagname:'G_OB1_06_STATUS',length:2.2, rotation:90, left:43.1, top:25}));
+    	overview.append(conveyor_straight({tagname:'tagname',length:2.2, rotation:90, left:43.1, top:44.2}));
+    	overview.append(conveyor_straight({tagname:'G_OB1_03_STATUS',length:2.2, rotation:90, left:43.1, top:63.4}));
+    	overview.append(conveyor_straight({tagname:'G_OB1_01_STATUS',length:8, rotation:0, left:0, top:88.4}));
+    	
+    	
+    	overview.append(conveyor_label({tagname:'G_OB1_07_STATUS', rotation:0, left:50.0, top:0}));
+    	overview.append(conveyor_label({tagname:'G_OB1_02_STATUS', rotation:0, left:50.0, top:90}));
+    	overview.append(conveyor_label({tagname:'G_OB1_08_STATUS',rotation:0, left:0, top:12}));
+    	overview.append(conveyor_label({tagname:'G_OB1_06_STATUS',rotation:0, left:52.1, top:25}));
+    	overview.append(conveyor_label({tagname:'',rotation:0, left:50.0, top:44.2}));
+    	overview.append(conveyor_label({tagname:'G_OB1_03_STATUS',rotation:0, left:52.1, top:63.4}));
+    	overview.append(conveyor_label({tagname:'G_OB1_01_STATUS', rotation:0, left:0, top:80.4}));
+    	
+    	
+    	
+    	for(var i=0;i<alarm_legend.length;i++){
+    		$('#alarm_legend').append(alarm_legend_row(alarm_legend[i]));
+    	}
+    	
+    	/// Initializes all the positions, rotations, corners.
+    	setTimeout(function(){
+	    	$('.hmi-element').each(function(){
+	    		$(this).css('transform','rotate('+$(this).attr('rotation')+'deg)');
+	    		$(this).css('top',+$(this).attr('top')+'%');
+	    		$(this).css('left',+$(this).attr('left')+'%');
+	    		if($(this).hasClass('conveyor-turn')){
+	    			$(this).width($(this).height());
+	    			if(!msieversion()||msieversion()>8){
+		    			$(this).find('.conveyor_turn_wall').width(($(this).width()/2)+2);
+		    			$(this).find('.conveyor_turn_wall').height(($(this).height()/2)+2);
+	    			}
+	    		}
+	    	});
+    	},0);
+    	
+    	
+    	// Subscribes to overview screen
     	socket.get('/overview/joinroom');
+    	// Subscribes to the alarms room to be broadcasted to for updates
+        socket.get("/dashboard/joinAlarms");
+        
     	socket.on('overview',function(message){
     		$('div[tagname]').unbind();
     		
@@ -144,11 +195,121 @@
     	
     	
     	
+    	//////////////////////
+        // AlarmsModel      //
+        //////////////////////
+        // Collection to get the alarms
+
+        var AlarmsModel = Backbone.Model.extend({
+            urlRoot: ''    //not used really
+        });
+
+        var SailsAlarmsCollection = Backbone.Collection.extend({
+            sailsCollection: "",
+            socket: null,
+            sync: function(method, model, options){
+                if(typeof this.sailsCollection === "string" && this.sailsCollection !== "") {
+                    this.socket = socket;
+
+                    this.socket.get(this.sailsCollection, options, _.bind(function(alarms){
+                        this.set(alarms);
+                        alarmView.render();
+                    }, this));
+
+                    this.socket.on("alarms", _.bind(function(alarms){
+                        this.set(alarms);
+                        alarmView.render();
+                    }, this));
+
+                }
+            }
+        });
+
+        var AlarmsCollection = SailsAlarmsCollection.extend({
+            sailsCollection: '/dashboard/getAlarms',
+            model: AlarmsModel
+        });
+
+        alarms = new AlarmsCollection();
+
+        alarms.fetch();    // Gets the alarms
+
+        var AlarmsView = Backbone.View.extend({
+            el: '#alarmsdiv',
+            initialize: function () {
+            },
+            template: _.template($('#alarm-template').html()),
+            render: function () {
+                this.$el.html("");
+                var tcollection = this.collection.sortBy(function(message){
+                    return message.get("severity");
+                });
+                for(var i=0; i<tcollection.length; i++)
+                {
+                    this.$el.append(this.template(tcollection[i].toJSON()));
+                }
+            }
+        });
+
+        var alarmView = new AlarmsView({collection: alarms});
+    	
+    	
+    	
+    	$('.overview-fullscreen').click(function(){
+    		$(this).toggleClass('fullscreen');
+    		if($(this).hasClass('fullscreen')){
+    			$('.sidebar-background').css('display','none');
+    			$('.primary-sidebar').css('display','none');
+    			$('.navbar').css('display','none');
+    			this.oldTop = $('.main-content').css('top');
+    			$('.main-content').css('top','0px');
+    			this.oldPaddingLeft = $('.main-content').css('padding-left');
+    			$('.main-content').css('padding-left','0px');
+    			this.oldFooterMarginLeft = $('.isn-margin-footer-wrapper').css('margin-left');
+    			$('.isn-margin-footer-wrapper').css('margin-left','0px');
+    		}else{
+    			$('.sidebar-background').css('display','');
+    			$('.primary-sidebar').css('display','');
+    			$('.navbar').css('display','');
+    			$('.main-content').css('top',this.oldTop);
+    			$('.main-content').css('padding-left',this.oldPaddingLeft);
+    			$('.isn-margin-footer-wrapper').css('margin-left',this.oldFooterMarginLeft);
+    		
+    		}
+    		fixheight();
+    		$(window).resize();
+    	});
+    	
+    	
     	function setBackground($element,color){
     		$element.css('background-color',color);
     	
     	}
-    });
+    	
+    	$(window).resize(function(){
+    		var maxHeight = ($('.main-content').height()*(2/3)) -  $('.overview-header').height()-78;
+    		var overViewParentWidth = $('#overview').parent().width();
+    		if(maxHeight < (overViewParentWidth/aspectRatio)){
+    			$('#overview').height(maxHeight);
+    			$('#overview').width($('#overview').height()*aspectRatio);
+    		}else{ // Full width
+    			$('#overview').height(overViewParentWidth/aspectRatio);
+    			$('#overview').width('100%');
+    		}
+    		
+    		$('#alarmsdiv').height($('.main-content').height()*(1/3) - ($('.sort-destination-plan-titles').css('display')=='none'?0:$('.sort-destination-plan-titles').height())  - $('.alarms-header').height() - 78);
+    		
+    		
+    		$('.conveyor-turn').each(function(){
+    			$(this).width($(this).height());
+    			if(!msieversion()||msieversion()>8){
+	    			$(this).find('.conveyor_turn_wall').width(($(this).width()/2)+2);
+	    			$(this).find('.conveyor_turn_wall').height(($(this).height()/2)+2);
+    			}
+    		});
+    	});
+    	$(window).resize();
+    }
     
     
     </script>
