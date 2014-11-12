@@ -1,14 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>
-var translate = <%- JSON.stringify(translate) %>;
-
-</script>
 <meta charset="utf-8">
 <meta content="width=300, initial-scale=1" name="viewport">
 <meta name="description" content="">
-<title><%= translate[locale]['DefaultTitle'] %></title>
+<title><%= __('DefaultTitle') %></title>
 <link href="/css/bootstrap.css" rel="stylesheet">
 <link href="/css/main.css" rel="stylesheet">
 <link href="/css/font-awesome.css" rel="stylesheet">
@@ -725,7 +721,7 @@ input[type=url].form-error {
     <div class="main content clearfix">
         <div class="banner">
             <h1>
-                <%= translate[locale]['Login Title'] %>
+                <%= __('Login Title') %>
             </h1>
             <h2 class="hidden-small">
                  &nbsp
@@ -737,13 +733,13 @@ input[type=url].form-error {
             <p class="profile-name"></p>
 
                 <label class="hidden-label" for="loginName">Email</label>
-                <input type="text" id="loginName" spellcheck="false" placeholder="<%= translate[locale]['User'] %>" value="" />
+                <input type="text" id="loginName" spellcheck="false" placeholder="<%= __('User') %>" value="" />
 
                 <label class="hidden-label" for="Passwd">Password</label>
 
-                <input type="password" id="loginPassword" placeholder="<%= translate[locale]['Password'] %>" value="" />
+                <input type="password" id="loginPassword" placeholder="<%= __('Password') %>" value="" />
 
-			<% var errormessage = translate[locale][req.flash('errormessage').toString()] %>
+			<% var errormessage = req.flash('errormessage').toString() %>
             <% if(typeof(errormessage)!='undefined'){ %>
                 <span role="alert" class="error-msg" id="errorMessage">
                   <%= errormessage.toString() %>
@@ -752,7 +748,7 @@ input[type=url].form-error {
                 <span style="display:none;" role="alert" class="error-msg" id="errorMessage">
                 </span>
             <% } %>
-                <button id="loginButton" class=" btn btn-primary" style="position:relative; width:100%;line-height: 25px;font-size: 18px;"><%= translate[locale]['Sign in'] %><span class="loading-gif pull-right" style="visibility:hidden; position: absolute; right: 8px;"><i class="icon icon-cog icon-spin"></i></span></button>
+                <button id="loginButton" class=" btn btn-primary" style="position:relative; width:100%;line-height: 25px;font-size: 18px;"><%= __('Sign in') %><span class="loading-gif pull-right" style="visibility:hidden; position: absolute; right: 8px;"><i class="icon icon-cog icon-spin"></i></span></button>
 
         </div>
     </div>
@@ -774,14 +770,14 @@ input[type=url].form-error {
 	        if (username && password) {
 	        	socket.get('/auth/login',{username: username, password:password},function(response){
 	        		if(typeof(response.error)!='undefined'){
-	                    $('#errorMessage').css('display','block').html( translate['<%= locale%>'][response.error]);
+	                    $('#errorMessage').css('display','block').html(response.error);
 	                    $('.loading-gif').css('visibility','hidden');
 	                    return;        		
 	        		}
 	        		window.location = "/";
 	        	});
 	        } else {
-	            $('#errorMessage').css('display','block').html(translate['<%= locale%>']["Username and Password is Required"]);
+	            $('#errorMessage').css('display','block').html('<%= __("Username and Password is Required") %>');
 	            $('.loading-gif').css('visibility','hidden');
 	        }
 	

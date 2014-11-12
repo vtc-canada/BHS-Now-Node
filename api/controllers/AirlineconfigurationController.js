@@ -51,7 +51,7 @@ module.exports = {
 		});
 	    }
 	    res.json({
-		success : sails.config.views.locals.i18n(req, 'Airline Configurations have been successfully saved.')
+		success : req.__('Airline Configurations have been successfully saved.')
 	    });
 	});
     }

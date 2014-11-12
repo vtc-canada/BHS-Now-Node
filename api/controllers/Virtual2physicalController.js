@@ -32,7 +32,7 @@ module.exports = {
 	    });
 	}
 	res.json({
-	    success : sails.config.views.locals.i18n(req,'Virtual to Physical settings have been successfully saved.')
+	    success : req.__('Virtual to Physical settings have been successfully saved.')
 	});
     }
 };

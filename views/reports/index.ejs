@@ -4,13 +4,13 @@
     <div class="row-fluid">
         <div class="span3 offset1 reports-criteria-banner" style="
     padding-top: 20px;  font-size: 18px;    line-height: 28px;  color: #676767;  font-weight: 900;  padding-bottom: 20px;
-"><%= i18n(req,'Reports Criteria') %></div>
+"><%= __('Reports Criteria') %></div>
     </div>
     <div class="row">
         <div class="span5 offset2 create-report-controls">
            <div class="rowfluid">
                <div class="row">
-                   <div class="span4 report-control-left-label"><label for="reporttype"><%= i18n(req,'Report Type') %>:</label></div>
+                   <div class="span4 report-control-left-label"><label for="reporttype"><%= __('Report Type') %>:</label></div>
                    <div class="span8 report-control-right-control">
 
                        <select id="reporttype">
@@ -27,7 +27,7 @@
             <i class="icon-circle-arrow-right icon-3x"></i>
         </div>
         <div class="span3 reports-controls-right-wrapper">
-            <div id="runreport" class="btn btn-primary runreports"><%= i18n(req,'Run Report') %><div style="display:none;" id="reportcogspace">&nbsp&nbsp</div><i id="runreportcog" style="display:none;" class="icon icon-cog icon-spin"></i></div>
+            <div id="runreport" class="btn btn-primary runreports"><%= __('Run Report') %><div style="display:none;" id="reportcogspace">&nbsp&nbsp</div><i id="runreportcog" style="display:none;" class="icon icon-cog icon-spin"></i></div>
         </div>
     </div>
 </div>
@@ -69,7 +69,7 @@
      <div class="span10 offset1 iframe-border">
          <div class="row-fluid">
              <div id="reportheader" class="span12 iframe-header report-heading-pad">
-                 <span id="report-header-name"><%= i18n(req,'Report Header') %></span>
+                 <span id="report-header-name"><%= __('Report Header') %></span>
                  <a href="#printModal" role="button" data-toggle="modal" id="promptprint" class="pull-right btn btn-primary" style="display:none; font-weight:400; margin-right:10px;">Print&nbsp<i class="icon icon-print"></i></a>
                  <a href="#saveModal" role="button" data-toggle="modal" id="savemodalbtn" class="pull-right btn btn-primary" style="display:none; font-weight:400; margin-right:10px;">Save&nbsp<i class="icon icon-save"></i></a>
              </div>
@@ -84,7 +84,7 @@
     
     var reportsets={};
 	reportsets['eqp_ids']= <%- typeof(eqp_ids)=='undefined'?'[]':JSON.stringify(eqp_ids) %>;
-    reportsets['intervals'] = [{id:3600,name:'<%=i18n(req,'1 Hour')%>'},{id:1800,name:'<%=i18n(req,'30 Minutes')%>'},{id:900,name:'<%=i18n(req,'15 Minutes')%>'}];
+    reportsets['intervals'] = [{id:3600,name:'<%=__('1 Hour')%>'},{id:1800,name:'<%=__('30 Minutes')%>'},{id:900,name:'<%=__('15 Minutes')%>'}];
     /// Hardcoded Report Types.
     // Serverside knows how to handle and what to expect based on the reports ID
     // Adding a report here will make all the clientside work, following the parameter types conventions
@@ -132,7 +132,7 @@
                     location.reload(); // Will boot back to login screen
                 }
                 if(response.failure!=undefined){
-                    $('#printModal .modal-body').append('<div class="printerror"><%= i18n(req,'PrintError') %></div>');
+                    $('#printModal .modal-body').append('<div class="printerror"><%= __('PrintError') %></div>');
                     $('#printcog').css('display','none');
                     return;
                 }
@@ -433,7 +433,7 @@
 	    $('#iframediv').css('visibility','hidden');
          $('#promptprint').css('display','none');
          $('#savemodalbtn').css('display','none');
-         $('#report-header-name').html('<%= i18n(req,'Report Header') %>');
+         $('#report-header-name').html('<%= __('Report Header') %>');
     }
     
     // This run report button handler prepares the report object, and requests serverside for the HTML generated from the report.
@@ -498,7 +498,7 @@
              if(typeof(report.parameters)!='undefined'&&typeof(report.parameters.start_time)!='undefined'&&typeof(report.parameters.end_time)!='undefined'&&report.parameters.start_time.value>report.parameters.end_time.value){
                  $('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
                          '<button type="button" class="close" data-dismiss="alert">×</button>'+
-                         '<strong><%= i18n(req,'Error')%>:&nbsp</strong><%= i18n(req,'DateOrderError')%></div>');
+                         '<strong><%= __('Error')%>:&nbsp</strong><%= __('DateOrderError')%></div>');
                  return;
              }
              
