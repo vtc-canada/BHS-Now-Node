@@ -10,6 +10,9 @@ BEGIN
 		  ,color.color_name
 		  ,color.id as 'color_id'
 		  ,ref_status_def.is_flashing
+		  ,text_color.color_code 'text_color_code'
+		  ,text_color.color_name 'text_color_name'
+		  ,text_color.id AS 'text_color_id'
 		  ,flash_color.color_code 'flash_color_code'
 		  ,flash_color.color_name 'flash_color_name'
 		  ,flash_color.id AS 'flash_color_id'
@@ -24,6 +27,7 @@ BEGIN
 		INNER JOIN cur_tags ON (cfg_tag_id.id = cur_tags.id)
 		INNER JOIN ref_status_def ON (ref_status_def.id = cur_tags.value)
 		LEFT JOIN ref_color_def AS color ON (color.id = ref_status_def.color_ID)
+		LEFT JOIN ref_color_def AS text_color ON (text_color.id = ref_status_def.text_color_ID)
 		LEFT JOIN ref_color_def AS flash_color ON (flash_color.id = ref_status_def.flash_color_ID)
 		LEFT JOIN ref_color_def AS flash_text_color ON (flash_text_color.id = ref_status_def.flash_text_color_ID)
 		WHERE cfg_tag_id.ctrl_type IS NULL
