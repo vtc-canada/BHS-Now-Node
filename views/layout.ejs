@@ -2,7 +2,7 @@
 <html>
 	<head>
 		
-		<title><%= __('DefaultTitle') %> - <%= translate[req.session.user.locale]['pages'][req.url] %> </title>
+		<title><%= __('DefaultTitle') %> - <%= __('pages')[req.url] %> </title>
 	    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 	    <meta name="description" content="">
 	    <meta name="author" content="">
@@ -111,9 +111,10 @@
               <li id="liLocation">
                   <% if(req.session.user.locale=='en'){ %>
                     <a class="top-message-a language-a" style="position:relative;"><div class="language-flag english"></div><div class="top-flag-span top-messages-span">English</div></a>
-                  <% } %>
-                  <% if(req.session.user.locale=='es'){ %>
+                  <% }else if(req.session.user.locale=='es'){ %>
                     <a class="top-message-a language-a" style="position:relative;"><div class="language-flag chile"></div><div class="top-flag-span top-messages-span">Español</div></a>
+                  <% }else{ %>
+                    <a class="top-message-a language-a" style="position:relative;"><div class="language-flag"><%=req.session.user.locale%></div><div class="top-flag-span top-messages-span"><%=req.session.user.locale%></div></a>
                   <% } %>
               </li>
 <% } %> 
@@ -162,7 +163,7 @@
   				  <span class="glow"></span>   
 	              <a <% if(typeof(navpages[navpage].children)!='undefined'){ %>class="accordion-toggle" data-toggle="collapse" href="#navmenu<%=templateHelper.replaceAll(navpage,'/','_')%>"<% }else{ %> href="<%=navpage%>" <% } %>>
 	                  <i class="<%=navpages[navpage].icon%> icon-2x"></i>
-	                  <span><%= translate[req.session.user.locale]['pages'][navpage] %>
+	                  <span><%= __('pages')[navpage] %>
 	                  <% if(typeof(navpages[navpage].children)!='undefined'){ %>
                       <i class="icon-caret-down"></i>
 	                  <% } %>
@@ -178,7 +179,7 @@
 			  				<li class="<% if(req.url==childpage){ %>active<% } %>">
 				              <a href="<%=childpage%>">
 				                  <i class="<%=navpages[navpage].children[childpage].icon%>"></i>
-				                  <%= translate[req.session.user.locale]['pages'][childpage] %>
+				                  <%= __('pages')[childpage] %>
 				              </a>
 			  				</li>
 			  				
@@ -404,14 +405,14 @@
 	
 		// Layout Javascript
 		
-		/// This makes the timezone tooltip hover above the location
-        var now = new Date().toString();
-		var TZ = now.indexOf('(') > -1 ?
-		now.match(/\([^\)]+\)/)[0].match(/[A-Z]/g).join('') :
-		now.match(/[A-Z]{3,4}/)[0];
-		if (TZ == "GMT" && /(GMT\W*\d{4})/.test(now)) TZ = RegExp.$1;
+		/// This makes the timezone tooltip hover above the location  THIS DOESNT WORK
+        //var now = new Date().toString();
+		//var TZ = now.indexOf('(') > -1 ?
+		//now.match(/\([^\)]+\)/)[0].match(/[A-Z]/g).join('') :
+		//now.match(/[A-Z]{3,4}/)[0];
+		//if (TZ == "GMT" && /(GMT\W*\d{4})/.test(now)) TZ = RegExp.$1;
 
-        $('#liLocation').attr('title',TZ);
+        //$('#liLocation').attr('title',TZ);
 	
 	
 		//////////////////////////////////////////////
@@ -824,7 +825,7 @@
   				
 	  				<% if(navpages[navpage].banner){ %>
  	    <div class="row-fluid page-banner">
-	        <div class="banner-div"><i class="<%=navpages[navpage].icon%> icon-1x banner-icon-top"></i><div class="banner-div-text"><%= translate[req.session.user.locale]['pages'][req.url] %></div></div>
+	        <div class="banner-div"><i class="<%=navpages[navpage].icon%> icon-1x banner-icon-top"></i><div class="banner-div-text"><%= __('pages')[req.url] %></div></div>
 		</div> 	  				
 	  				<% } %>
 				
@@ -837,7 +838,7 @@
 				  		<% if(req.url==childpage){ %>
 				  			<% if(navpages[navpage].children[childpage].banner){ %>
 	    <div class="row-fluid page-banner">
-	        <div class="banner-div"><i class="<%=navpages[navpage].children[childpage].icon%> icon-1x banner-icon-top"></i><div class="banner-div-text"><%= translate[req.session.user.locale]['pages'][req.url] %></div></div>
+	        <div class="banner-div"><i class="<%=navpages[navpage].children[childpage].icon%> icon-1x banner-icon-top"></i><div class="banner-div-text"><%= __('pages')[req.url] %></div></div>
 		</div>				<% } %> 	
 				  			<% break; %>
 				  		<% } %>

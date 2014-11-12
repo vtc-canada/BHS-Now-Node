@@ -29,19 +29,19 @@ module.exports = {
     togglelocale:function(req,res){
 	var found = false;
 	var next=false;   
-	for(key in sails.config.i18n.locales){
+	for(var i=0;i<sails.config.i18n.locales.length;i++){
 	    if(next){
-		req.session.user.locale = key;
+		req.session.user.locale = sails.config.i18n.locales[i];
 		found = true;
 		break;
 	    }
-	    if(key==req.session.user.locale){
+	    if(sails.config.i18n.locales[i]==req.session.user.locale){
 		next=true;
 	    }
 	}
 	if(!found){ // get the first one
-	    for(key in sails.config.i18n.locales){
-		req.session.user.locale = key;
+	    for(var i=0;i<sails.config.i18n.locales.length;i++){
+		req.session.user.locale = sails.config.i18n.locales[i];
 		break;
 	    }
 	}
