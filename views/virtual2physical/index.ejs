@@ -1,21 +1,21 @@
 <div class="row-fluid page-banner">
-    <div class="banner-div"><i class="icon-sitemap icon-1x banner-icon-top"></i><div class="banner-div-text"><%= i18n(req,'Virtual 2 Physical') %></div></div>
+    <div class="banner-div"><i class="icon-sitemap icon-1x banner-icon-top"></i><div class="banner-div-text"><%= __('Virtual 2 Physical') %></div></div>
 </div>
 
 <div class="row-fluid" style="margin-top:20px;">
     <div class="span10 offset1 page-controls-wrapper">
-        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%= i18n(req,'Mapping') %></span>
-            <div class="btn btn-primary pull-right save_pull" style="margin-right:10px;font-weight: 400;" id="save_virt_2_phys"><%= i18n(req,'Save') %></div>
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%= __('Mapping') %></span>
+            <div class="btn btn-primary pull-right save_pull" style="margin-right:10px;font-weight: 400;" id="save_virt_2_phys"><%= __('Save') %></div>
         </div>
         <div class="row-fluid" id="iframediv">
             <div class="row-fluid">
                 <div class="row-fluid sort-destination-plan-titles virtual-to-physical-table-headers">
                     <div class="row-fluid">
                         <div class="span5 offset1 titlerow">
-                            <%= i18n(req,'Virtual Destination') %>
+                            <%= __('Virtual Destination') %>
                         </div>
                         <div class="span6">
-                            <%= i18n(req,'Physical Destination') %>
+                            <%= __('Physical Destination') %>
                         </div>
                     </div>
                 </div>
@@ -31,7 +31,7 @@
 <script type="text/template" id="virt-2-phys-template">
     <div class="row-fluid section-config-wrapper">
         <div class="span5 offset1">
-            <label class="mobile-label"><%= i18n(req,'Virtual Destination') %>:</label>
+            <label class="mobile-label"><%= __('Virtual Destination') %>:</label>
             <label style="cursor:default;" class="mobile-element">{{ var found_dest_text; for(var i=0; i< ref_virt_destinations.length; i++){  if(id == ref_virt_destinations[i].id){ found_dest_text = ref_virt_destinations[i].destination; } } }}{{= found_dest_text }}
             </label>
         </div>
@@ -165,7 +165,7 @@
                     return;
                 }
                 if(typeof(data.success)!='undefined'){
-                 	bannerAlert('success','<%=i18n(req,'FormSuccess')%>',data.success);
+                 	bannerAlert('success','<%=__('FormSuccess')%>',data.success);
                 }
             });
         });

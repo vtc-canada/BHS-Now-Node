@@ -28,8 +28,8 @@ module.exports = {
     },
     togglelocale:function(req,res){
 	var found = false;
-	var next=false;
-	for(key in sails.config.views.locals.translate){
+	var next=false;   
+	for(key in sails.config.i18n.locales){
 	    if(next){
 		req.session.user.locale = key;
 		found = true;
@@ -40,7 +40,7 @@ module.exports = {
 	    }
 	}
 	if(!found){ // get the first one
-	    for(key in sails.config.views.locals.translate){
+	    for(key in sails.config.i18n.locales){
 		req.session.user.locale = key;
 		break;
 	    }
@@ -56,7 +56,7 @@ module.exports = {
 
 	if (typeof (username) == 'undefined' || typeof (password) == 'undefined') {
 	    res.json({
-		error : 'username and password not posted'
+		error : req.__('username and password not posted')
 	    });
 	    return false;
 	}
@@ -72,7 +72,7 @@ module.exports = {
 		var foundUser = user[0][0];
 		if (!foundUser.active) {
 		    res.send(400, {
-			error : "Locked"
+			error : req.__("Locked")
 		    });
 		    return 
 		}
@@ -118,12 +118,12 @@ module.exports = {
 
 		    });
 		    res.send(400, {
-			error : "Wrong Password"
+			error : req.__("Wrong Password")
 		    });
 		}
 	    } else {
 		res.send(404, {
-		    error : "User not Found"
+		    error : req.__("User not Found")
 		});
 	    }
 	});

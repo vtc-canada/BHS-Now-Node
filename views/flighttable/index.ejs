@@ -3,12 +3,12 @@
 <!-- Configuration section -->
 <div class="row-fluid">
     <div class="row-fluid">
-        <div class="top-page-title span5 offset1"><%= i18n(req,'Schedule Parameters')%>:</div>
+        <div class="top-page-title span5 offset1"><%= __('Schedule Parameters')%>:</div>
     </div>
     <div class="row">
         <div class="span2 offset2">
             <div class="row">
-                <label id="timepickerlabel" style="color: #717171;" for="timepickerlabel"><%= i18n(req,'Schedule Date')%>:</label>
+                <label id="timepickerlabel" style="color: #717171;" for="timepickerlabel"><%= __('Schedule Date')%>:</label>
             </div>
         </div>
         <div class="span3 input-datepicker-smallpad">
@@ -25,11 +25,11 @@
 <!-- Gantt table section -->
 <div class="row-fluid" style="margin-top:20px;">
     <div class="span10 offset1 page-controls-wrapper">
-        <div class="row-fluid" id="reportheader"><span id="report-header-date" style="padding-left:10px;"><%= i18n(req,'Select Date')%></span>
+        <div class="row-fluid" id="reportheader"><span id="report-header-date" style="padding-left:10px;"><%= __('Select Date')%></span>
             <div class="span4 pull-right">
                 <div class="row-fluid">
-                    <button id="save_flights" class="btn-create-flight-gantt btn btn-primary" disabled="disabled"><%= i18n(req,'Save')%></button>
-                    <button id="add_flight" class="btn-add-flight-gantt btn btn-primary" data-placement="bottom" data-content="Loading.." title="" data-original-title="<%= i18n(req,'Create Flight')%>"><%= i18n(req,'Create')%></button>
+                    <button id="save_flights" class="btn-create-flight-gantt btn btn-primary" disabled="disabled"><%= __('Save')%></button>
+                    <button id="add_flight" class="btn-add-flight-gantt btn btn-primary" data-placement="bottom" data-content="Loading.." title="" data-original-title="<%= __('Create Flight')%>"><%= __('Create')%></button>
 					<div style="margin-right: 10px; color: rgb(153, 0, 0); font-weight: 400; display: none;" class="pull-right save_pull" id="changes_pending">Changes Pending. &nbsp;</div>
                 </div>
             </div>
@@ -37,7 +37,7 @@
         <div class="row-fluid" id="iframediv" >
             <div class="row-fluid">
                 <div class="span3 search-gant-wrapper">
-                    <input type="text"  placeholder="<%= i18n(req,'Filter By')%>..." id="searchgantt" />
+                    <input type="text"  placeholder="<%= __('Filter By')%>..." id="searchgantt" />
                 </div>
             </div>
 
@@ -136,7 +136,7 @@
         {{ if(lefttemp < 0){ widthtemp = widthtemp + lefttemp; yellowwidthtemp=yellowwidthtemp*prewidthtemp/widthtemp; greenwidthtemp = 100-yellowwidthtemp; lefttemp =0;   } }}
         {{ if(lefttemp + widthtemp > 100){ widthtemp = 100-lefttemp; greenwidthtemp=greenwidthtemp*prewidthtemp/widthtemp; yellowwidthtemp = 100-greenwidthtemp; } }}
 
-        <a class="progress ganntbar" savevalue="{{= departure_time }}" sort_plan_id="{{= id }}" data-placement="bottom" data-content="Loading.." title="" data-original-title="<%= i18n(req,'Flight')%> {{= getPropertybyId(ref_airline_code,'IATA_2_digit_ID',airline)+' '+flight_number }}" style="top:7px; left:{{= lefttemp }}%; width:{{= widthtemp }}%; {{ if(lefttemp==0){ }} border-radius:0px 4px 4px 0px; {{ }else if(lefttemp+prewidthtemp>100){ }} border-radius:4px 0px 0px 4px; {{ } }}">
+        <a class="progress ganntbar" savevalue="{{= departure_time }}" sort_plan_id="{{= id }}" data-placement="bottom" data-content="Loading.." title="" data-original-title="<%= __('Flight')%> {{= getPropertybyId(ref_airline_code,'IATA_2_digit_ID',airline)+' '+flight_number }}" style="top:7px; left:{{= lefttemp }}%; width:{{= widthtemp }}%; {{ if(lefttemp==0){ }} border-radius:0px 4px 4px 0px; {{ }else if(lefttemp+prewidthtemp>100){ }} border-radius:4px 0px 0px 4px; {{ } }}">
             <div class="bar bar-right progress-bar-warning" style="width:{{= yellowwidthtemp }}%;"></div>
             <div class="bar progress-bar-success gantt-flightname-div" style="width:{{= greenwidthtemp }}%;">{{= getPropertybyId(ref_airline_code,'IATA_2_digit_ID',airline)+' '+flight_number }}</div>
 
@@ -304,7 +304,7 @@
                         }*/
                         if(data.success){
                         	gantt.fetch();
-                        	bannerAlert('success','<%=i18n(req,'FormSuccess')%>','<%=i18n(req,'All changes saved.')%>');
+                        	bannerAlert('success','<%=__('FormSuccess')%>','<%=__('All changes saved.')%>');
                         }
                     });
                 });
@@ -431,7 +431,7 @@
                 flight_number_html =
                         '<div class="row-fluid">' +
                             '<div class="span12">' +
-                                '<label class="span6 popoverlabel"><%= i18n(req,'Flight Number')%>:</label><input class="span6"type="text"  id="flight_number_'+sort_plan_id+'"  >'+  //max="99999" min="0"
+                                '<label class="span6 popoverlabel"><%= __('Flight Number')%>:</label><input class="span6"type="text"  id="flight_number_'+sort_plan_id+'"  >'+  //max="99999" min="0"
                             '</div>'+
                         '</div>';
 
@@ -439,7 +439,7 @@
                 /// virtual_early_dest_
                 desthtml+=  '<div class="row-fluid">' +
                                 '<div class="span12">' +
-                                    '<label class="span6 popoverlabel" for="virtual_early_dest_'+sort_plan_id+'"><%= i18n(req,'Virtual Early Dest')%>:</label>'+
+                                    '<label class="span6 popoverlabel" for="virtual_early_dest_'+sort_plan_id+'"><%= __('Virtual Early Dest')%>:</label>'+
                                     '<select class="span6" id="virtual_early_dest_'+sort_plan_id+'">';
 
 
@@ -453,7 +453,7 @@
                 /// virtual_on_time_dest_
                 desthtml+=  '<div class="row-fluid">' +
                                 '<div class="span12">' +
-                                    '<label class="span6 popoverlabel" for="virtual_on_time_dest_'+sort_plan_id+'"><%= i18n(req,'Virtual On Time Dest')%>:</label>'+
+                                    '<label class="span6 popoverlabel" for="virtual_on_time_dest_'+sort_plan_id+'"><%= __('Virtual On Time Dest')%>:</label>'+
                                     '<select class="span6" id="virtual_on_time_dest_'+sort_plan_id+'" >';
 
 
@@ -467,7 +467,7 @@
                 //virtual_late_dest_
                 desthtml+=  '<div class="row-fluid">' +
                                 '<div class="span12">' +
-                                    '<label class="span6 popoverlabel" for="virtual_late_dest_'+sort_plan_id+'"><%= i18n(req,'Virtual Late Dest')%>:</label>'+
+                                    '<label class="span6 popoverlabel" for="virtual_late_dest_'+sort_plan_id+'"><%= __('Virtual Late Dest')%>:</label>'+
                                     '<select class="span6" id="virtual_late_dest_'+sort_plan_id+'">';
 
 
@@ -481,7 +481,7 @@
                 // virtual_locked_out_dest_
                 desthtml+=  '<div class="row-fluid">' +
                                 '<div class="span12">' +
-                                    '<label class="span6 popoverlabel" for="virtual_locked_out_dest_'+sort_plan_id+'"><%= i18n(req,'Virtual Locked Out Dest')%>:</label>'+
+                                    '<label class="span6 popoverlabel" for="virtual_locked_out_dest_'+sort_plan_id+'"><%= __('Virtual Locked Out Dest')%>:</label>'+
                                     '<select class="span6" id="virtual_locked_out_dest_'+sort_plan_id+'">';
 
 
@@ -508,14 +508,14 @@
                 flight_number_html =
                 '<div class="row-fluid">' +
                     '<div class="span12">' +
-                        '<label class="span6 popoverlabel" for="flight_number_'+sort_plan_id+'"><%= i18n(req,'Flight Number')%>:</label><div style="line-height:30px;"  class="span6">'+airline_2_code+'</div>'+
+                        '<label class="span6 popoverlabel" for="flight_number_'+sort_plan_id+'"><%= __('Flight Number')%>:</label><div style="line-height:30px;"  class="span6">'+airline_2_code+'</div>'+
                     '</div>'+
                 '</div>';
 
                 /// virtual_early_dest_
                 desthtml+=  '<div class="row-fluid">' +
                         '<div class="span12">' +
-                        '<label class="span6 popoverlabel" for="virtual_early_dest_'+sort_plan_id+'"><%= i18n(req,'Virtual Early Dest')%>:</label>'+
+                        '<label class="span6 popoverlabel" for="virtual_early_dest_'+sort_plan_id+'"><%= __('Virtual Early Dest')%>:</label>'+
                         '<select class="span6" id="virtual_early_dest_'+sort_plan_id+'">';
 
 
@@ -534,7 +534,7 @@
                 /// virtual_on_time_dest_
                 desthtml+=  '<div class="row-fluid">' +
                         '<div class="span12">' +
-                        '<label class="span6 popoverlabel" for="virtual_on_time_dest_'+sort_plan_id+'"><%= i18n(req,'Virtual On Time Dest')%>:</label>'+
+                        '<label class="span6 popoverlabel" for="virtual_on_time_dest_'+sort_plan_id+'"><%= __('Virtual On Time Dest')%>:</label>'+
                         '<select class="span6" id="virtual_on_time_dest_'+sort_plan_id+'" >';
 
 
@@ -553,7 +553,7 @@
                 //virtual_late_dest_
                 desthtml+=  '<div class="row-fluid">' +
                         '<div class="span12">' +
-                        '<label class="span6 popoverlabel" for="virtual_late_dest_'+sort_plan_id+'"><%= i18n(req,'Virtual Late Dest')%>:</label>'+
+                        '<label class="span6 popoverlabel" for="virtual_late_dest_'+sort_plan_id+'"><%= __('Virtual Late Dest')%>:</label>'+
                         '<select class="span6" id="virtual_late_dest_'+sort_plan_id+'">';
 
 
@@ -572,7 +572,7 @@
                 // virtual_locked_out_dest_
                 desthtml+=  '<div class="row-fluid">' +
                         '<div class="span12">' +
-                        '<label class="span6 popoverlabel" for="virtual_locked_out_dest_'+sort_plan_id+'"><%= i18n(req,'Virtual Locked Out Dest')%>:</label>'+
+                        '<label class="span6 popoverlabel" for="virtual_locked_out_dest_'+sort_plan_id+'"><%= __('Virtual Locked Out Dest')%>:</label>'+
                         '<select class="span6" id="virtual_locked_out_dest_'+sort_plan_id+'">';
 
 
@@ -589,13 +589,13 @@
                         '</div>';
 
 
-                deletehtml ='<button class="pull-right btn btn-danger set_flight del_flight" sort_plan_id="'+sort_plan_id+'" id="del_flight_'+sort_plan_id+'"><%= i18n(req,'Delete')%></button>' ;
+                deletehtml ='<button class="pull-right btn btn-danger set_flight del_flight" sort_plan_id="'+sort_plan_id+'" id="del_flight_'+sort_plan_id+'"><%= __('Delete')%></button>' ;
             }
 
             $('.popover[sort_plan_id='+sort_plan_id+'] .popover-content').html(
                 '<div class="row-fluid">' +
                     '<div class="span12">' +
-                        '<label class="span6 popoverlabel" for="departure_time_'+sort_plan_id+'"><%= i18n(req,'Departure Time')%>:</label>' +
+                        '<label class="span6 popoverlabel" for="departure_time_'+sort_plan_id+'"><%= __('Departure Time')%>:</label>' +
                         '<div id="datetimepicker_'+sort_plan_id+'" class="input-append span6">'+
                             '<input id="departure_time_'+sort_plan_id+'" data-format="MM/dd/yyyy HH:mm:ss PP" type="text" value=""></input>'+
                             '<span class="add-on">'+
@@ -607,30 +607,30 @@
                 '</div>'+
                 '<div class="row-fluid">' +
                     '<div class="span12">' +
-                        '<label class="span6 popoverlabel"  for="airline_'+sort_plan_id+'"><%= i18n(req,'Airline')%>:</label>'+  airlinehtml+
+                        '<label class="span6 popoverlabel"  for="airline_'+sort_plan_id+'"><%= __('Airline')%>:</label>'+  airlinehtml+
                     '</div>'+
                 '</div>'+
                 flight_number_html+
                 '<div class="row-fluid">' +
                     '<div class="span12">' +
-                        '<label class="span6 popoverlabel" for="sort_open_'+sort_plan_id+'"><%= i18n(req,'On Time Offset')%>:</label><input class="span6" id="sort_open_'+sort_plan_id+'" type="number" min="-480" max="480" step="15" value="'+-parseInt(sort_open_val)+'">'+
+                        '<label class="span6 popoverlabel" for="sort_open_'+sort_plan_id+'"><%= __('On Time Offset')%>:</label><input class="span6" id="sort_open_'+sort_plan_id+'" type="number" min="-480" max="480" step="15" value="'+-parseInt(sort_open_val)+'">'+
                     '</div>'+
                 '</div>'+
                 '<div class="row-fluid">' +
                     '<div class="span12">' +
-                        '<label class="span6 popoverlabel" for="sort_late_'+sort_plan_id+'"><%= i18n(req,'Late Offset')%>:</label><input class="span6" id="sort_late_'+sort_plan_id+'"  type="number" min="-480" max="480" step="15" value="'+-parseInt(sort_late_val)+'">'+
+                        '<label class="span6 popoverlabel" for="sort_late_'+sort_plan_id+'"><%= __('Late Offset')%>:</label><input class="span6" id="sort_late_'+sort_plan_id+'"  type="number" min="-480" max="480" step="15" value="'+-parseInt(sort_late_val)+'">'+
                     '</div>'+
                 '</div>'+
                 '<div class="row-fluid">' +
                     '<div class="span12">' +
-                        '<label class="span6 popoverlabel" for="sort_locked_out_'+sort_plan_id+'"><%= i18n(req,'Closed Offset')%>:</label><input class="span6" id="sort_locked_out_'+sort_plan_id+'"   type="number" min="-480" max="480" step="15" value="'+-parseInt(sort_locked_out_val)+'">'+
+                        '<label class="span6 popoverlabel" for="sort_locked_out_'+sort_plan_id+'"><%= __('Closed Offset')%>:</label><input class="span6" id="sort_locked_out_'+sort_plan_id+'"   type="number" min="-480" max="480" step="15" value="'+-parseInt(sort_locked_out_val)+'">'+
                     '</div>'+
                 '</div>' +
                 desthtml+
                 '<div class="row-fluid bottom-buttons-popover" >' +
 
 
-                        '<button class="pull-right btn btn-primary set_flight" sort_plan_id="'+sort_plan_id+'" id="save_flight_'+sort_plan_id+'"><%= i18n(req,'Set')%></button>'+
+                        '<button class="pull-right btn btn-primary set_flight" sort_plan_id="'+sort_plan_id+'" id="save_flight_'+sort_plan_id+'"><%= __('Set')%></button>'+
                         deletehtml+
                 '</div>'
             );
@@ -777,7 +777,7 @@
                 if($('#flight_number_'+sort_plan_id).val()==''||$('#flight_number_'+sort_plan_id).val()=='0'){
                     $('.popover[sort_plan_id='+sort_plan_id+'] > h3.popover-title').after('<div class="alert alert-error fade in" style="margin-bottom: 0px; border-radius: 0px; padding: 4px 33px 4px 14px; font-weight: 400;">'+
                             '<button type="button" class="close" style="top:5px;" data-dismiss="alert">×</button>'+
-                            '<strong>'+'<%= i18n(req,'FormError')%>'+':&nbsp</strong>'+'<%= i18n(req,'Invalid Flight Number')%>'+'</div>');
+                            '<strong>'+'<%= __('FormError')%>'+':&nbsp</strong>'+'<%= __('Invalid Flight Number')%>'+'</div>');
                     $('#flight_number_'+sort_plan_id).focus();
                     $('#flight_number_'+sort_plan_id).css('border','1px solid #A50000');
                     return;
@@ -786,13 +786,13 @@
                 if(parseInt($('#sort_late_'+sort_plan_id).val())>parseInt($('#sort_open_'+sort_plan_id).val())){
                     $('.popover[sort_plan_id='+sort_plan_id+'] > h3.popover-title').after('<div class="alert alert-error fade in" style="margin-bottom: 0px; border-radius: 0px; padding: 4px 33px 4px 14px; font-weight: 400;">'+
                             '<button type="button" class="close" style="top:5px;" data-dismiss="alert">×</button>'+
-                            '<strong>'+'<%= i18n(req,'FormError')%>'+':&nbsp</strong>'+'<%= i18n(req,'Late Offset must be less than Open Offset')%>'+'</div>');
+                            '<strong>'+'<%= __('FormError')%>'+':&nbsp</strong>'+'<%= __('Late Offset must be less than Open Offset')%>'+'</div>');
                     return;
                 }
                 if(parseInt($('#sort_locked_out_'+sort_plan_id).val())>parseInt($('#sort_late_'+sort_plan_id).val())){
                     $('.popover[sort_plan_id='+sort_plan_id+'] > h3.popover-title').after('<div class="alert alert-error fade in" style="margin-bottom: 0px; border-radius: 0px; padding: 4px 33px 4px 14px; font-weight: 400;">'+
                             '<button type="button" class="close" style="top:5px;" data-dismiss="alert">×</button>'+
-                            '<strong>'+'<%= i18n(req,'FormError')%>'+':&nbsp</strong>'+'<%= i18n(req,'Closed Offset must be less than Late Offset')%>'+'</div>');
+                            '<strong>'+'<%= __('FormError')%>'+':&nbsp</strong>'+'<%= __('Closed Offset must be less than Late Offset')%>'+'</div>');
                     return;
                 }
 
@@ -803,7 +803,7 @@
                     if(checkotherflightnumbers[ilk].get('flight_number') == parseInt($('#flight_number_'+sort_plan_id).val())&&checkotherflightnumbers[ilk].get('id')!=sort_plan_id){
                         $('.popover[sort_plan_id='+sort_plan_id+'] > h3.popover-title').after('<div class="alert alert-error fade in" style="margin-bottom: 0px; border-radius: 0px; padding: 4px 33px 4px 14px; font-weight: 400;">'+
                             '<button type="button" class="close" style="top:5px;" data-dismiss="alert">×</button>'+
-                            '<strong>'+'<%= i18n(req,'FormError')%>'+':&nbsp</strong>'+'<%=i18n(req,'Another flight with the same Flight Number already exists.')%>'+'</div>');
+                            '<strong>'+'<%= __('FormError')%>'+':&nbsp</strong>'+'<%=__('Another flight with the same Flight Number already exists.')%>'+'</div>');
                         $('#flight_number_'+sort_plan_id).focus();
                     	$('#flight_number_'+sort_plan_id).css('border','1px solid #A50000');
                         return;
@@ -873,7 +873,7 @@
             pick12HourFormat: false
         }).on('changeDate',function(e){
             gantt.fetch();
-            $('#report-header-date').html($('#datepicker').data('datetimepicker').getLocalDate().toDateString()+ ' <%= i18n(req,'Flight Schedule')%>');
+            $('#report-header-date').html($('#datepicker').data('datetimepicker').getLocalDate().toDateString()+ ' <%= __('Flight Schedule')%>');
         });
 
         // We do patchwork to make sure the datepicker is within the screen bounds
@@ -902,7 +902,7 @@
         gantt.fetch();
 
         // Sets the gantt chart area title
-        $('#report-header-date').html($('#datepicker').data('datetimepicker').getLocalDate().toDateString()+ ' <%= i18n(req,'Flight Schedule')%>');
+        $('#report-header-date').html($('#datepicker').data('datetimepicker').getLocalDate().toDateString()+ ' <%= __('Flight Schedule')%>');
         $('.bootstrap-datetimepicker-widget:not([sort_plan_id])').attr('sort_plan_id','select_date');
         $('.bootstrap-datetimepicker-widget[sort_plan_id=select_date] > div > div.close-datetime').click(function(){
             $('#datepicker').data('datetimepicker').hide();

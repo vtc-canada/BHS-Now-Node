@@ -25,11 +25,12 @@ module.exports = function(req,res,next) {
         				// Missing!@'+req.session.user.id+':'+path});          	    
             	}else{
                 	if(req.session.user.policy[path].create==0&&req.session.user.policy[path].read==0&&req.session.user.policy[path].update==0&&req.session.user.policy[path].delete==0){
-                	    req.flash('errormessage','Invalid Access');
+                	    req.flash('errormessage',req.__('Invalid Access'));
                             req.flash('errordebug','UserId:'+req.session.user.id+' @Path:'+path);
                             res.json(403,{error:'Invalid Access! UserId:'+req.session.user.id+' @Path:'+path});
                             return;
                 	}
+                	req.setLocale(req.session.user.locale); // Sets the locale!
                     next();  
             	}
             }else{
@@ -63,7 +64,7 @@ module.exports = function(req,res,next) {
                  res.writeHead(302,{
               	'Location':'/auth'
                   });
-                 req.flash('errormessage','You are not logged into the system. Please log in.');
+                 req.flash('errormessage',req.__('You are not logged into the system. Please log in.'));
                  res.end();
              }
              catch(err){

@@ -2,21 +2,21 @@
 
 <div class="row-fluid" style="margin-top:20px;">
     <div class="span10 offset1 page-controls-wrapper">
-        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%=i18n(req,'Airlines') %></span>
-                <div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="save_default_destinations"><%=i18n(req,'Save') %></div>
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%=__('Airlines') %></span>
+                <div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="save_default_destinations"><%=__('Save') %></div>
         </div>
         <div class="row-fluid" id="iframediv" >
             <div class="row-fluid">
                 <div class="row-fluid sort-destination-plan-titles airline-config-titles">
                     <div class="row-fluid">
                         <div class="span3 offset1">
-                            <%=i18n(req,'Airline') %>
+                            <%=__('Airline') %>
                         </div>
                         <div class="span4 ">
-                            <%=i18n(req,'Carrier Destination') %>
+                            <%=__('Carrier Destination') %>
                         </div>
                         <div class="span4">
-                            <%=i18n(req,'Sort Mode') %>
+                            <%=__('Sort Mode') %>
                         </div>
                     </div>
                 </div>
@@ -33,10 +33,10 @@
 <script type="text/template" id="default-destination-template">
     <div class="row-fluid section-config-wrapper">
         <div class="span3 offset1">
-            <label class="mobile-label"><%=i18n(req,'Carrier') %>:</label><label class="mobile-element" style="cursor:default;">{{= carrier }}</label>
+            <label class="mobile-label"><%=__('Carrier') %>:</label><label class="mobile-element" style="cursor:default;">{{= carrier }}</label>
         </div>
         <div class="span4">
-            <label class="mobile-label"><%=i18n(req,'Carrier Destination') %>:</label>
+            <label class="mobile-label"><%=__('Carrier Destination') %>:</label>
             <select class="carrier_select mobile-element" id="select_{{= id }}" carrier_id="{{= id }}" >
             {{ for(var i=0; i< ref_sort_destinations.length; i++){ }}
                 <option {{ if(default_destination == ref_sort_destinations[i].id){ }}selected="selected"{{ } }}    value="{{= ref_sort_destinations[i].id }}">{{= ref_sort_destinations[i].destination }}</option>
@@ -44,14 +44,14 @@
             </select>
         </div>
         <div class="span4">
-            <label class="mobile-label"><%=i18n(req,'Sort Mode') %>:</label>
+            <label class="mobile-label"><%=__('Sort Mode') %>:</label>
             <select class="carrier_sort_mode mobile-element" id="sort_{{= id }}" mode_id="{{= id }}" >
                 {{ if(carrier_sort_active==1){ }}
-                   <option value="carrier_sort_active" selected="selected"><%=i18n(req,'Sort By Carrier') %></option>
-                   <option value="flight_sort_active"><%=i18n(req,'Sort By Flight') %></option>
+                   <option value="carrier_sort_active" selected="selected"><%=__('Sort By Carrier') %></option>
+                   <option value="flight_sort_active"><%=__('Sort By Flight') %></option>
                 {{ }else{ }}
-                    <option value="carrier_sort_active" ><%=i18n(req,'Sort By Carrier') %></option>
-                    <option value="flight_sort_active" selected="selected"><%=i18n(req,'Sort By Flight') %></option>
+                    <option value="carrier_sort_active" ><%=__('Sort By Carrier') %></option>
+                    <option value="flight_sort_active" selected="selected"><%=__('Sort By Flight') %></option>
                 {{ } }}
             </select>
         </div>
@@ -178,7 +178,7 @@
                     return;
                 }
                  if(typeof(data.success)!='undefined'){
-                 	bannerAlert('success','<%=i18n(req,'FormSuccess')%>',data.success);
+                 	bannerAlert('success','<%=__('FormSuccess')%>',data.success);
                  }
             });
         });
