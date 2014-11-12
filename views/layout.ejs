@@ -2,7 +2,7 @@
 <html>
 	<head>
 		
-		<title><%= i18n(req,'DefaultTitle') %> - <%= translate[req.session.user.locale]['pages'][req.url] %> </title>
+		<title><%= __('DefaultTitle') %> - <%= translate[req.session.user.locale]['pages'][req.url] %> </title>
 	    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 	    <meta name="description" content="">
 	    <meta name="author" content="">
@@ -68,18 +68,18 @@
       <!-- This Modal Dialog is displayed when the user goes to change his password from the myaccount dropdown -->
       <div id="changepasswordModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
           <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-              <h3 id="myModalLabelChange"><%= i18n(req,'Change Password') %></h3>
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">Ã—</button>
+              <h3 id="myModalLabelChange"><%= __('Change Password') %></h3>
           </div>
           <div class="modal-body">
-              <div class="row-fluid"><p><%= i18n(req,'Enter a new password for') %> <b><%=req.session.user.username%></b>.</p></div>
-              <div class="row-fluid"><label class="change-label" for="mycurrentpassword"><%= i18n(req,'Current Password') %>:</label><input class="change-input" id="mycurrentpassword" type="password"></div>
-              <div class="row-fluid"><label class="change-label" for="mynewpassword"><%= i18n(req,'New Password') %>:</label><input class="change-input" id="mynewpassword" type="password"></div>
-              <div class="row-fluid"><label class="change-label" for="confirmmypassword"><%= i18n(req,'Confirm Password') %>:</label><input class="change-input"  id="confirmmypassword" type="password"> </div>
+              <div class="row-fluid"><p><%= __('Enter a new password for') %> <b><%=req.session.user.username%></b>.</p></div>
+              <div class="row-fluid"><label class="change-label" for="mycurrentpassword"><%= __('Current Password') %>:</label><input class="change-input" id="mycurrentpassword" type="password"></div>
+              <div class="row-fluid"><label class="change-label" for="mynewpassword"><%= __('New Password') %>:</label><input class="change-input" id="mynewpassword" type="password"></div>
+              <div class="row-fluid"><label class="change-label" for="confirmmypassword"><%= __('Confirm Password') %>:</label><input class="change-input"  id="confirmmypassword" type="password"> </div>
           </div>
           <div class="modal-footer">
-              <button class="btn" data-dismiss="modal" id="confirmmypasswordchangecancel" aria-hidden="true"><%= i18n(req,'FormCancel') %></button>
-              <button class="btn btn-primary" id="confirmmypasswordchange"><%= i18n(req,'FormSet') %></button>
+              <button class="btn" data-dismiss="modal" id="confirmmypasswordchangecancel" aria-hidden="true"><%= __('FormCancel') %></button>
+              <button class="btn btn-primary" id="confirmmypasswordchange"><%= __('FormSet') %></button>
           </div>
       </div>
       
@@ -118,10 +118,10 @@
               </li>
 <% } %> 
 <% if(messaging){ %> 
-              <li <% if (req.url=='/messages'){ %>class="active"<% } %>><a class="top-message-a" href="/messages" style="position:relative;"><div style="display:none;" class="badge-div" ><span class="badge badge-important">6</span></div><i class="icon-envelope-alt icon-2x top-messages-icon"></i><div class="top-messages-span"><%= i18n(req,'Messages') %></div></a></li>
+              <li <% if (req.url=='/messages'){ %>class="active"<% } %>><a class="top-message-a" href="/messages" style="position:relative;"><div style="display:none;" class="badge-div" ><span class="badge badge-important">6</span></div><i class="icon-envelope-alt icon-2x top-messages-icon"></i><div class="top-messages-span"><%= __('Messages') %></div></a></li>
 <% } %> 
               <%if(search.enabled){%>
-              <li><form id="search-form" action="<%=search.url%>" method="post" style="margin-bottom: 0px;" ><input name="search_field" type="text" placeholder="<%= i18n(req,'Search') %>" id="main-search" class="main-search"><i class="icon-search top-search-icon"></i></form></li>
+              <li><form id="search-form" action="<%=search.url%>" method="post" style="margin-bottom: 0px;" ><input name="search_field" type="text" placeholder="<%= __('Search') %>" id="main-search" class="main-search"><i class="icon-search top-search-icon"></i></form></li>
               <% } %>
               <li class="myaccount-topmenu"><a id="myaccount" data-placement="bottom" data-content="Loading.." title="" data-original-title="" ><i class="icon-user"></i>&nbsp<%= req.session.user.username %></a>
                   <!--[if lt IE 9]>
@@ -129,12 +129,12 @@
                   <ul id="myaccountmobile" class="collapse">
                       <li class="<% if (typeof(url)!=='undefined'&&url=='myaccount'){ %>active<% } %>">
                           <a id="changemypasswordmobile">
-                              <i class="icon-gear"></i> <%= i18n(req,'Change Password') %>
+                              <i class="icon-gear"></i> <%= __('Change Password') %>
                           </a>
                       </li>
                       <li class="">
                           <a href="/auth/logout">
-                              <i class="icon-signout"></i> <%= i18n(req,'Sign Out') %>
+                              <i class="icon-signout"></i> <%= __('Sign Out') %>
                           </a>
                       </li>
                   </ul>
@@ -190,8 +190,8 @@
       </ul>
 <% if(messaging){ %> 
         <div id="chat-section-wrapper" class="showchatusers collapse nav-collapse">
-            <div class="row-fluid" id="users-toggler"><i class="icon-envelope-alt"></i> &nbsp&nbsp<%= i18n(req,'Messaging') %></div>
-            <div id="user-search-box" class="user-search-box"><input type="text" id="users-search" placeholder="<%= i18n(req,'Search people') %>..."></div>
+            <div class="row-fluid" id="users-toggler"><i class="icon-envelope-alt"></i> &nbsp&nbsp<%= __('Messaging') %></div>
+            <div id="user-search-box" class="user-search-box"><input type="text" id="users-search" placeholder="<%= __('Search people') %>..."></div>
             <ul id="chatwrapper" class="chatnav  nav-collapse-chat">
 
             </ul>
@@ -218,6 +218,7 @@
     <script src="/js/autoNumeric.js"></script>
     <script type="text/javascript" src="/js/jquery.dataTables.js"></script>
     <script type="text/javascript" src="/js/jquery.sparkline.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.transform2d.js"></script>
     <script type="text/javascript" src="/js/raphael.2.1.0.min.js"></script>
     <script type="text/javascript" src="/js/justgage.1.0.1.min.js"></script>
     <script type="text/javascript" src="/js/fastclick.js"></script>
@@ -274,7 +275,7 @@
 	        fixheight();
 	    });
 	    function fixheight(){
-	        $('.main-content').css('height',$(window).height()-$('.navbar').height()-($('.isn-content-footer').length>0?30:0)+'px');
+	        $('.main-content').css('height',$(window).height()-($('.navbar').css('display')=='none'?0:$('.navbar').height())-($('.isn-content-footer').length>0?30:0)+'px');
 	    }
 	    // Clicking the Locale Flag, triggers a page refresh. Just rotates the locale according to serverside
         $('.language-a').click(function(event){
@@ -287,6 +288,17 @@
             showChangeMyPasswordModal();
         });
         
+        function msieversion() {
+
+	        var ua = window.navigator.userAgent;
+	        var msie = ua.indexOf("MSIE ");
+	
+	        if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)){      // If Internet Explorer, return version number
+	            return (parseInt(ua.substring(msie + 5, ua.indexOf(".", msie))));
+            }
+	        
+		   return false;
+		}
 	    function padLeft(nr, n, str){
 	        return Array(n-String(nr).length+1).join(str||'0')+nr;
 	    }
@@ -412,7 +424,7 @@
 			,placement:'bottom'
 			,html:true
 			,trigger:'manual'
-			,content:'<a class="pull-right close myaccount-close-x popover-close" sort_plan_id="myaccount">&times;</a><div class="row-fluid myaccount-popover-username" style="width:100px;"><%= req.session.user.username %></div><div class="row-fluid" style="width:120px;"><a onclick="showChangeMyPasswordModal();" class="span12 btn"><%= i18n(req,'Change Password') %></a></div><div class="row-fluid" style="width:120px;"><a href="/auth/logout" class="span12 btn btn-danger"><%= i18n(req,'Sign Out') %></a></div>'
+			,content:'<a class="pull-right close myaccount-close-x popover-close" sort_plan_id="myaccount">&times;</a><div class="row-fluid myaccount-popover-username" style="width:100px;"><%= req.session.user.username %></div><div class="row-fluid" style="width:120px;"><a onclick="showChangeMyPasswordModal();" class="span12 btn"><%= __('Change Password') %></a></div><div class="row-fluid" style="width:120px;"><a href="/auth/logout" class="span12 btn btn-danger"><%= __('Sign Out') %></a></div>'
 		});
 		
 		// TODO: Find a way to refactor these popover conflicts.
@@ -449,12 +461,12 @@
             $('#changepasswordModal div.alert-error').remove();
             if($('#mynewpassword').val()!=$('#confirmmypassword').val()){
                 $('#changepasswordModal div.modal-header').after(
-                        '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">Ã—</button><strong><%= i18n(req,'FormError') %>:&nbsp;</strong><%= i18n(req,'Password fields do not match.') %></div>');//' .error-message').html('Password fields do not match.');
+                        '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">Ã—</button><strong><%= __('FormError') %>:&nbsp;</strong><%= __('Password fields do not match.') %></div>');//' .error-message').html('Password fields do not match.');
 
             }else if($('#mynewpassword').val()==''){
 
                 $('#changepasswordModal div.modal-header').after(
-                        '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">Ã—</button><strong><%= i18n(req,'FormError') %>:&nbsp;</strong><%= i18n(req,'Password must be at least 1 character long.') %></div>');
+                        '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">Ã—</button><strong><%= __('FormError') %>:&nbsp;</strong><%= __('Password must be at least 1 character long.') %></div>');
 
             }else{
                 socket.get('/auth/checkandchangemypassword',{currentpassword:$('#mycurrentpassword').val(),newpassword:$('#mynewpassword').val()},function(data){
@@ -464,12 +476,12 @@
                     }
                     if(typeof(data.failure)!='undefined'){
                         $('#changepasswordModal div.modal-header').after(
-                                '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">Ã—</button><strong><%= i18n(req,'FormError') %>:&nbsp;</strong><%= i18n(req,'Current password was incorrect.') %></div>');
+                                '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">Ã—</button><strong><%= __('FormError') %>:&nbsp;</strong><%= __('Current password was incorrect.') %></div>');
                         return;
                     }
                     if(typeof(data.success)!='undefined'){
 	                    $('#changepasswordModal div.modal-header').after(
-	                            '<div class="alert alert-success fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">Ã—</button><strong><%= i18n(req,'FormSuccess') %>:&nbsp;</strong><%= i18n(req,'Password has been successfully changed.') %></div>');
+	                            '<div class="alert alert-success fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">Ã—</button><strong><%= __('FormSuccess') %>:&nbsp;</strong><%= __('Password has been successfully changed.') %></div>');
 	                    setTimeout(function(){
 	                        $('#changepasswordModal .alert-success').remove();
 	                        $('.alert-success').removeClass('in');
@@ -541,7 +553,7 @@
             });
         }
         // this initially initialzes the chatbox manager.
-        chatboxManager.init({messageSent : broadcastMessageCallback,loadearliertext:'<%= i18n(req,'Load Earlier Messages') %>'});
+        chatboxManager.init({messageSent : broadcastMessageCallback,loadearliertext:'<%= __('Load Earlier Messages') %>'});
         
         //////////////////////////////////////////////////
         //////// USERS ///////////////////////////////////
@@ -756,7 +768,7 @@
 	                        }
 	                        if(msgs.length==0){
 	                            $("#chatbox_" + boxId).unbind();
-	                            $("#chatbox_" + boxId).chatbox("option", "boxManager").prependMsg('', '<%= i18n(req,'End of messages') %>',0);
+	                            $("#chatbox_" + boxId).chatbox("option", "boxManager").prependMsg('', '<%= __('End of messages') %>',0);
 	                            $("#chatbox_" + boxId).scrollTop(100);
 	                            return;
 	                        }
@@ -891,11 +903,11 @@
 
 
 
-		<% var errormessage = i18n(req,req.flash('errormessage').toString())%>
+		<% var errormessage = req.flash('errormessage').toString()%>
 		<% var errordebug = req.flash('errordebug').toString() %>
-		<% if(typeof(errormessage)!='undefined'){ %>
+		<% if(errormessage!=''){ %>
 		<script>
-			bannerAlert('error','<%=i18n(req,'Error')%>','<%=errormessage%> <%=typeof(errordebug)!='undefined'?errordebug:''%> <% if(typeof(errorurl)!='undefined'){ %> <%= req.url %><% } %>');
+			bannerAlert('error','<%=__('Error')%>','<%=errormessage%> <%=typeof(errordebug)!='undefined'?errordebug:''%> <% if(typeof(errorurl)!='undefined'){ %> <%= req.url %><% } %>');
 		</script>
 		<% } %>
 
