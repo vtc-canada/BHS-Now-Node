@@ -1390,13 +1390,16 @@
 						<div class="pull-right">{{=contacts[i].contact_name}}</div>
 					</div>
 					{{ } } }}
+					
+					{{ for(var i=0; i<contacts.length; i++){ if(contacts[i].contact_type=='agent'){ }}
+					<div class="row-fluid" contact_id="{{=contacts[i].contact_id}}">
+						<div class="pull-left">Agent:</div>
+						<div class="pull-right">{{=contacts[i].contact_name}}</div>
+					</div>
+					{{ } } }}
 					<div class="row-fluid">
 						<div class="pull-left">Prop. Mngr:</div>
 						<div class="pull-right">{{=property_mgmt_company}}</div>
-					</div>
-					<div class="row-fluid">
-						<div class="pull-left">Price:</div>
-						<div class="pull-right block-value">{{=last_sale_price}}</div>
 					</div>
 				</div>
 				<div class="span3 building-overlay-block-details">
