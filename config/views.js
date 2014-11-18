@@ -66,7 +66,7 @@ module.exports.views = {
 	alertDuration:300,
 	navpages : {
 	    '/dashboard':{
-		enabled:true,
+		enabled:false,
 		banner:true,
 		icon:'icon-dashboard',
 		footer:true
@@ -78,11 +78,17 @@ module.exports.views = {
 		footer:false
 	    },
 	    '/overview':{
-		enabled:true,
+		enabled:false,
 		banner:false,
 		icon:'icon-sitemap',
 		footer:true
 	    },
+	    '/contacts':{
+			enabled:true,
+			banner:true,
+			icon:'icon-copy',
+			footer:true
+		    },
 	    '/reports':{
 		enabled:true,
 		banner:true,

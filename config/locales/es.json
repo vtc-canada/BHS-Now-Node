@@ -138,6 +138,7 @@
       "/dashboard" : "Dashboard",
       "/engineering" : "Engineering",
       "/flighttable" : "Flight Table",
+      "/contacts" : "Passengers",
       "/messages" : "Messaging",
       "/overview" : "Overview",
       "/reports" : "Reports",
