@@ -225,12 +225,24 @@ module.exports = {
 		sails.controllers.database.credSproc('UpdateContact',[contact.contact_id,contact.contact_name,contact.email],function(err,resContact){
 		    if(err)
 			return res.json({error:err},500);
-		
-		   sails.controllers.database.credSproc('UpdatePhoneNumberByContactId',[contact.contact_id,contact.phone_number],function(err,resPhone){
+		    sails.controllers.database.credSproc('GetPhoneNumberByContactId',[contact.contact_id],function(err,resPhone){
 		        if(err)
     			    return res.json({error:'Database Error:'+err},500);
+		        if(resPhone[0].length==0){
+		            sails.controllers.database.credSproc('CreatePhoneNumber',[contact.phone_number,contact.contact_id,'@outparamphone'],function(err,resPhone){
+			        if(err)
+	    			    return res.json({error:err.toString()},500);
+	    			cb();
+		            });
+		        }else{
+		            sails.controllers.database.credSproc('UpdatePhoneNumberByContactId',[contact.contact_id,contact.phone_number],function(err,resPhone){
+				if(err)
+				    return res.json({error:'Database Error:'+err},500);
+		    		cb();
+		            });
+		        }
     			cb(); 
-		   });
+		    });
 		});
 	    }else if(contact.contact_id == 'new'){
 		var outcontactId = '@out' + Math.floor((Math.random() * 1000000) + 1);

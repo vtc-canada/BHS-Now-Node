@@ -26,7 +26,7 @@ module.exports = {
    */
   _config: {},
   fixNotesDates:function(req,res){
-      sails.controllers.database.credQuery("UPDATE cur_notes SET timestamp = '2014-10-01 00:00:00' WHERE timestamp = '2014-01-01 00:00:00'",function(err,result){
+      sails.controllers.database.credQuery("UPDATE cur_notes SET timestamp = '2014-10-01 00:00:00' WHERE timestamp = '2014-01-01 05:00:00'",function(err,result){
 	  if(err){
 	      res.json(err);
 	  }else{

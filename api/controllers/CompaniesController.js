@@ -196,11 +196,30 @@ module.exports = {
 			    lat = responseGeocode[0].latitude;
 			    lng = responseGeocode[0].longitude;
 			}
-			sails.controllers.database.credSproc('UpdateAddressByCompanyId',[company.company_id,company.street_number_begin ,company.street_number_end,company.street_name,company.postal_code,company.city,company.province,lat, lng],function(err,resAddress){
-    		        if(err)
-      			    return res.json({error:'Database Error:'+err},500);
-      			cb(); 
-    		   });
+			
+			sails.controllers.database.credSproc('GetAddressOnlyByCompanyId',[company.company_id],function(err,resAddress){
+		        	if(err)
+		        	    return res.json({error:'Database Error:'+err},500);
+		        	if(resAddress[0].length==0){
+		        	    var outaddressId = '@out' + Math.floor((Math.random() * 1000000) + 1);
+	        		    sails.controllers.database.credSproc('CreateAddress',[company.street_number_begin ,company.street_number_end,company.street_name,company.postal_code,company.city,2,company.province,lat, lng,null,outaddressId],function(err,resAddress){
+	        		        if(err)
+	          			    return res.json({error:'Database Error:'+err},500);
+	        		        
+	        		        sails.controllers.database.credSproc('CreateCompanyAddressMapping',[company.company_id,resAddress[1][outaddressId],'@paramout'],function(err,resMapping){
+	        			        if(err)
+	        	  			    return res.json({error:'Database Error:'+err},500);		            
+	        	  			cb(); 	            
+	        		        });
+	        		   });	    
+		        	}else{
+		        	    sails.controllers.database.credSproc('UpdateAddressByCompanyId',[company.company_id,company.street_number_begin ,company.street_number_end,company.street_name,company.postal_code,company.city,company.province,lat, lng],function(err,resAddress){
+	    		        	if(err)
+	    		        	    return res.json({error:'Database Error:'+err},500);
+	      				cb(); 
+		        	    });	    
+		        	} 
+			});
      		   });
 		});
 	    }else if(company.company_id == 'new'){

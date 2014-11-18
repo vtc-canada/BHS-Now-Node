@@ -624,6 +624,7 @@ div.tableheader{
 	margin: 0px;
 	margin-bottom: 4px;
 	padding: 2px 1%;
+	height:120px;
 }
 .main-search{
     line-height: 15px !important;

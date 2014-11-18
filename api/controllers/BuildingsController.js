@@ -565,13 +565,15 @@ module.exports = {
 	    if(typeof(results[0])!='undefined'){
 		results = results[0];
 	    }
-	    var bodystring = 'Address,Owner,Owner Company,Seller,Seller Company,Agent,Agent Company,Building Type,Property Management Company,Previous Property Management Company,Heat System,Heat System Installed Year,Boiler Installed Year,Last Boiler Upgrade Year'
+	    var bodystring = 'Address,Postal Code,Owner,Owner Company,Seller,Seller Company,Agent,Agent Company,Building Type,Property Management Company,Previous Property Management Company,Heat System,Heat System Installed Year,Boiler Installed Year,Last Boiler Upgrade Year'
 		+',Cable Internet Provider,Elevator,Elevator Installed Year,Last Elevator Upgrade Year,Windows Installed Year,Stories,Assessed Value,Mortgage Company,Mortgage Due Date,Bachelor Price,1 Bedroom Price,2 Bedroom Price,3 Bedroom Price'
 		+',Bachelor Units,1 Bedroom Units,2 Bedroom Units,3 Bedroom Units,Total Units,Building Income,Average Unit Price,CAP Rate,Last Sale Date,Last Sale Price'
 		+'\r\n';
 	    for(var i=0;i<results.length;i++){
-
+		var postal_code = results[i].postal_code!=null?escapeRegExp(results[i].postal_code):null;
+		results[i].postal_code = null;
 		bodystring+='"'+buildAddressString(results[i])+'"';
+		bodystring+=',"'+ (postal_code==null?'':postal_code)+'"';
 		bodystring+=',"'+ (results[i].owner==null?'':results[i].owner)+'"';
 		bodystring+=',"'+ (results[i].owner_company==null?'':results[i].owner_company)+'"';
 		bodystring+=',"'+ (results[i].seller==null?'':results[i].seller)+'"';
@@ -1007,3 +1009,6 @@ function checkAndUpdateBuildingLastSale(buildingsale,cb){
 	});
 }
   
+function escapeRegExp(string) {
+    return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+}
