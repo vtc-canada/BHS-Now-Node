@@ -45,7 +45,7 @@ module.exports.connections = {
 	host : '10.1.1.60',
 	user : 'root',
 	password : 'Glasgow931',
-	database : 'bhs_scada',
+	database : 'fms_nca',
 	timezone : 'utc'
     },
     nowManagementBaseMysqlProduction : {
@@ -53,7 +53,7 @@ module.exports.connections = {
 	host : '10.1.1.60',
 	user : 'root',
 	password : 'Glasgow931',
-	database : 'bhs_scada_mhk',
+	database : 'fms_nca',
 	timezone : 'utc'
     },
 
