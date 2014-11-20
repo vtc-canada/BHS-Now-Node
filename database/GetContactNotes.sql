@@ -1,4 +1,3 @@
-USE cred;
 DROP PROCEDURE if EXISTS `GetContactNotes` ;
 
 DELIMITER $$

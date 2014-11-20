@@ -218,7 +218,7 @@ module.exports = {
 	notes = req.body.notes;
 	function updateContact(contact,cb){
 	    if(contact.contact_id != 'new'&&typeof(contact.modified)!='undefined'){
-		Database.dataSproc('UpdateContact',[contact.contact_id,contact.contact_name,contact.email,contact.phone_number],function(err,resContact){
+		Database.dataSproc('UpdateContact',[contact.contact_id,contact.first_name,contact.last_name,contact.email,contact.phone_number],function(err,resContact){
 		    if(err){
 		    	return res.json({error:err},500);
 		    }
@@ -226,7 +226,7 @@ module.exports = {
 		});
 	    }else if(contact.contact_id == 'new'){
 		var outcontactId = '@out' + Math.floor((Math.random() * 1000000) + 1);
-		Database.dataSproc('CreateContact',[contact.contact_name, contact.email,contact.phone_number,outcontactId],function(err, responseCreateContact){
+		Database.dataSproc('CreateContact',[contact.first_name, contact.last_name,contact.email,contact.phone_number,outcontactId],function(err, responseCreateContact){
 		    if(err)
     			return res.json({error:err.toString()},500);
 		    cb(); 

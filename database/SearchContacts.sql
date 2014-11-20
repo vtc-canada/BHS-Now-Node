@@ -6,8 +6,7 @@ CREATE PROCEDURE `SearchContacts`(IN contactSearchTerms VARCHAR(128), IN uncondi
 BEGIN
 	SELECT
 		SQL_CALC_FOUND_ROWS cur_contacts.id as 'contact_id'
-		,cur_contacts.name as 'contact_name'
-		#,GROUP_CONCAT(DISTINCT cur_phone_numbers.phone_number) as 'phone'
+		,CONCAT_WS(',',cur_contacts.last_name,cur_contacts.first_name) as 'contact_name'
 		,cur_contacts.phone_number as 'phone'
 		,cur_contacts.email
 		,GROUP_CONCAT(cur_company.name SEPARATOR ',') as 'company'
@@ -17,12 +16,12 @@ BEGIN
 	WHERE 
 		cur_contacts.is_deleted = 0
 		AND 
-		((contactSearchTerms IS NULL OR MATCH (cur_contacts.name, cur_contacts.email, cur_contacts.phone_number) AGAINST (contactSearchTerms IN BOOLEAN MODE))
+		((contactSearchTerms IS NULL OR MATCH (cur_contacts.first_name,cur_contacts.last_name,cur_contacts.email, cur_contacts.phone_number) AGAINST (contactSearchTerms IN BOOLEAN MODE))
 			OR (contactSearchTerms IS NULL OR cur_company.name LIKE CONCAT('%', unconditionedTerm, '%')))	
 	GROUP BY cur_contacts.id
 ORDER BY
-	CASE WHEN orderBy='contact_name_asc' THEN contact_name END ASC,
-	CASE WHEN orderBy='contact_name_desc' THEN contact_name END DESC,
+	CASE WHEN orderBy='contact_name_asc' THEN last_name END ASC,
+	CASE WHEN orderBy='contact_name_desc' THEN last_name END DESC,
 	CASE WHEN orderBy='company_asc' THEN cur_company.name END ASC,
 	CASE WHEN orderBy='company_desc' THEN cur_company.name  END DESC,
 	CASE WHEN orderBy='phone_asc' THEN cur_contacts.phone_number END ASC,

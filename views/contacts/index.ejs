@@ -143,17 +143,20 @@
 </div>
 <script type="text/template" id="contact-template">
 	<div class="row-fluid " style="position:relative; cursor:default;" contact_id="{{=contact_id}}">
-
 		<div class="row-fluid building-segment-wrapper">
-			<div class="span5 segment-label" style="min-height:40px;">Passenger Name:</div>
-			<div class="span7" style="min-height:40px;"><input type="text" id="contact_name" class="contact_name" value="{{=contact_name}}"></div>
+			<div class="span5 segment-label" style="min-height:40px;">First Name:</div>
+			<div class="span7" style="min-height:40px;"><input type="text" id="first_name" class="contact_name" value="{{=first_name}}"></div>
 		</div>
 		<div class="row-fluid building-segment-wrapper">
-			<div class="span5 segment-label">Passenger Number:</div>
+			<div class="span5 segment-label" style="min-height:40px;">Last Name:</div>
+			<div class="span7" style="min-height:40px;"><input type="text" id="last_name" class="contact_name" value="{{=last_name}}"></div>
+		</div>
+		<div class="row-fluid building-segment-wrapper">
+			<div class="span5 segment-label">Phone Number:</div>
 			<div class="span7"><input type="text" id="phone_number" value="{{=phone_number}}"></div>
 		</div>
 		<div class="row-fluid building-segment-wrapper">
-			<div class="span5 segment-label">Passenger Email:</div>
+			<div class="span5 segment-label">Email:</div>
 			<div class="span5"><input type="text" id="email" value="{{=email}}"></div>
 		</div>
 	</div>
@@ -404,8 +407,10 @@
 					return;
 				}
     			socket.get('/contacts/getaddressbycompanyid/'+companyid,{},function(addressval){
+        			
     				if(addressval.address_id!='new'&&typeof(companies.findWhere({company_id:companyid}))=='undefined'){ //new indicates an error
     					addressval.new = true;
+    					alert("rob : " +addressval.address_id);
     					companies.add(addressval);
     					companyView.render();
     				}else if(typeof(companies.findWhere({company_id:companyid}))!='undefined'){
@@ -529,7 +534,7 @@
 			$('#delete_contact').css('display','none');
 			$('.edit-item-section').css('display','');			
 			notes.reset();
-			contact = new ContactModel({contact_id:'new',contact_name:'',email:'',phone_number:''});
+			contact = new ContactModel({contact_id:'new',first_name:'',last_name:'',email:'',phone_number:''});
 			contactView.render();
 			companies.reset();
 			companyView.render();
@@ -561,13 +566,8 @@
 		$('#delete_contact').click(function(){
 			if(contact.get('contact_id')!='new'){
 	            $('#myModalLabeldelete').html('Delete Contact');
-	            $('#deleteModal > div.modal-body').html('<p>Are you sure you want to delete <b>'+contact.get('contact_name')+'</b>?</p>');
+	            $('#deleteModal > div.modal-body').html('<p>Are you sure you want to delete <b>'+contact.get('first_name')+' '+contact.get('last_name')+'</b>?</p>');
 	            $('#deleteModal').modal('show');
-			}else{
-				/*contact = new ContactModel({contact_id:'new',contact_name:'',email:'',phone_number:''});
-				contactView.render();
-				companies.reset();
-				companyView.render();*/
 			}
 		});
 		
@@ -587,7 +587,7 @@
 				datatable.api().ajax.reload(function(){},false);
 				$('#delete_contact').css('display','none');
 				$('.edit-item-section').css('display','');			
-				contact = new ContactModel({contact_id:'new',contact_name:'',email:'',phone_number:''});
+				contact = new ContactModel({contact_id:'new',first_name:'',last_name:'',email:'',phone_number:''});
 				contactView.render();
 				companies.reset();
 				companyView.render();
@@ -720,27 +720,7 @@
 	    			change = true;
 	    		}
 	    	});
-	    
-	    	/*if(contact.get('contact_id')=='new'){
-	    		$('#new_contact_pending').css('display','block');
-	    		$('#mapped_contact_pending').css('display','none');
-	    		$('#modified_contact_pending').css('display','none');
-	    	}else if(typeof(contact.get('modified'))!='undefined'){
-	    		$('#new_contact_pending').css('display','none');
-	    		$('#mapped_contact_pending').css('display','none');
-	    		$('#modified_contact_pending').css('display','block');
-	    	}else if(typeof(contact.get('modified'))!='undefined'){
-	    		$('#new_contact_pending').css('display','none');
-	    		$('#mapped_contact_pending').css('display','block');
-	    		$('#modified_contact_pending').css('display','none');
-	    	}
-	    	return;*/
-            //buildingcontacts.each(function(bcontact){
-           //	if(typeof(bcontact.get('dodelete'))!='undefined'||typeof(bcontact.get('modified'))!='undefined')
-            //	{
-            //		change = true;
-            //	}
-            //});
+
 	        if(typeof($('#save_contact')[0])!='undefined'){
 	        	$('#save_contact')[0].disabled = !change;
 	        	$('#save_note_admin')[0].disabled = !change;
@@ -797,10 +777,10 @@
 	    var ContactBackboneView = Backbone.View.extend({
 	        el: '#contact_information_section',
 	        events: {
-	           "keyup input#contact_name":"name",
+	           "keyup input#first_name":"first_name",
+	           "keyup input#last_name":"last_name",
 	           "keyup input#phone_number":"phone",
 	           "keyup input#email":"email",
-	           "change input#contact_name":"name",
 	           "change input#phone_number":"phone",
 	           "change input#email":"email"
 	           
@@ -815,16 +795,15 @@
 	        	contact.set('modified',true);
 	        	setChangesPending();
 	        },
-	        name:function(event){
-	        	contact.set('contact_name',$('input#contact_name').val());
+	        first_name:function(event){
+	        	contact.set('first_name',$('input#first_name').val());
 	        	contact.set('modified',true);
 	        	setChangesPending();
-	        	//contact.set('contact_id','new');
-	        	//contact.unset('createmode');
-	        	//contact.set('editmode',true);
-	        	//contactView.render();
-	        	//enableContactFields(true);
-	        	//$('input.contact_name').change();
+	        },
+	        last_name:function(event){
+	        	contact.set('last_name',$('input#last_name').val());
+	        	contact.set('modified',true);
+	        	setChangesPending();
 	        },
 	        initialize: function () {
 	            //this.render();
@@ -869,11 +848,6 @@
                         this.set(tempcompanies);
                         companyView.render();
                     }, this));
-
-                    //this.socket.on("companyView", _.bind(function(tempcompanies){
-                   //     this.set(tempcompanies);
-                   ///     companyView.render();
-                   // }, this));
                 }
             }
         });
@@ -911,33 +885,6 @@
 	        		company.set('dodelete',true);
 	        	}
 	        	companyView.render();
-	        },
-	        hand:function(event){
-	        	var thehoa = hoas.findWhere({'eqp_ID':10001});
-	        	var params = { opc_url : thehoa.get('handreq_opc_url')
-	        				, opc_path : thehoa.get('handreq_opc_path')
-	        				,tag_address : thehoa.get('handreq_tag_address')};
-	        	socket.request('/engineering/sendhoaclick',params,function(response){
-	        	
-	        	});
-	        },
-	        off:function(event){
-	        	var thehoa = hoas.findWhere({'eqp_ID':10001});
-	        	var params = { opc_url : thehoa.get('offreq_opc_url')
-	        				, opc_path : thehoa.get('offreq_opc_path')
-	        				,tag_address : thehoa.get('offreq_tag_address')};
-	        	socket.request('/engineering/sendhoaclick',params,function(response){
-	        	
-	        	});
-	        },
-	        auto:function(event){
-	        	var thehoa = hoas.findWhere({'eqp_ID':10001});
-	        	var params = { opc_url : thehoa.get('autoreq_opc_url')
-	        				, opc_path : thehoa.get('autoreq_opc_path')
-	        				,tag_address : thehoa.get('autoreq_tag_address')};
-	        	socket.request('/engineering/sendhoaclick',params,function(response){
-	        	
-	        	});
 	        },
             initialize: function () {
             },
