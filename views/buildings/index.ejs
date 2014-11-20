@@ -1148,14 +1148,14 @@
 		<div class="row-fluid">
 			<div class="span5 segment-label">Building Income:</div>
 			<div class="span7" style="margin-bottom:10px;">
-				<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="building-income-radio" id="income_calculated_radio" {{ if(!building_income_manual_mode){ }}checked="checked"{{ } }}>&nbsp&nbsp&nbspCalculated - <span id="income_calculated_radio_label">{{ if(!building_income_manual_mode){ }}{{='$'+(building_income==null?'0.00':building_income.toFixed(2))}}{{ } }}</span></div>
+				<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="building-income-radio" id="income_calculated_radio" {{ if(!building_income_manual_mode){ }}checked="checked"{{ } }}>&nbsp&nbsp&nbspCalculated - <span id="income_calculated_radio_label">{{ if(!building_income_manual_mode){ }}{{=building_income_cs}}{{ } }}</span></div>
 				<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="building-income-radio" id="income_manual_radio" {{ if(building_income_manual_mode){ }}checked="checked"{{ } }}>&nbsp&nbsp&nbspManual - <input style="width:118px; margin-bottom:0px;" type="text" class="" id="building_income" {{ if(!building_income_manual_mode){ }}disabled="disabled" {{ }else{ }}value="{{=building_income}}"{{ } }}></div>
 			</div>
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">Unit Price:</div>
 			<div class="span7" style="margin-bottom:10px;">
-				<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="unit-price-radio" id="unit_price_calculated_radio" {{ if(!unit_price_manual_mode){ }}checked="checked"{{ } }}>&nbsp&nbsp&nbspCalculated - <span id="unit_price_calculated_radio_label">{{ if(!unit_price_manual_mode){ }}{{='$'+(unit_price==null?'0.00':unit_price.toFixed(2))}}{{ } }}</span></div>
+				<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="unit-price-radio" id="unit_price_calculated_radio" {{ if(!unit_price_manual_mode){ }}checked="checked"{{ } }}>&nbsp&nbsp&nbspCalculated - <span id="unit_price_calculated_radio_label">{{ if(!unit_price_manual_mode){ }}{{='$'+(unit_price==null?'0.00':commaSeparateNumber(unit_price.toFixed(2)))}}{{ } }}</span></div>
 				<div class="row-fluid" style="margin-top: 5px;"><input type="radio" class="segment-form-radio" name="unit-price-radio" id="unit_price_manual_radio" {{ if(unit_price_manual_mode){ }}checked="checked"{{ } }}>&nbsp&nbsp&nbspManual - <input style="width:118px; margin-bottom:0px;" type="text" class="" id="unit_price" {{ if(!unit_price_manual_mode){ }}disabled="disabled" {{ }else{ }}value="{{=unit_price}}"{{ } }}></div>
 			</div>
 		</div>
@@ -2318,7 +2318,7 @@
 				        ,{"mData":function(data,b){
 				        	if(data.sale_date==null)
 				        		return '';
-				        	return toSaleDateTimeString(new Date(data.sale_date));
+				        	return new Date(data.sale_date).toDateString();
 				        }}
 			        ],
 			        "createdRow": function( row, data, dataIndex ) {
@@ -3778,7 +3778,7 @@
 	        			unitPrice =    ((parseFloat(building.get('last_sale_price')))/(totalUnits)).toFixed(2);
 	        		}
 	        		
-	        		$('#unit_price_calculated_radio_label').html('$'+(isNaN(parseFloat(unitPrice))?'0.00':parseFloat(unitPrice).toFixed(2)));
+	        		$('#unit_price_calculated_radio_label').html('$'+(isNaN(parseFloat(unitPrice))?'0.00':commaSeparateNumber(parseFloat(unitPrice).toFixed(2))));
 	        		building.set('unit_price',parseFloat(unitPrice));
 	        		this.unitQuantityChange();
 	        },
@@ -3803,7 +3803,7 @@
 	        		var buildingIncome = (((bachelorUnits*bachelorRent)+(bedroom1Units*bedroom1Rent)+(bedroom2Units*bedroom2Rent)+(bedroom3Units*bedroom3Rent))*12).toFixed(2); 
 	        		//(averageUnitPrice*numberOfUnits*12).toFixed(2);
 	        		
-	        		$('#income_calculated_radio_label').html('$'+parseFloat(buildingIncome).toFixed(2));
+	        		$('#income_calculated_radio_label').html('$'+commaSeparateNumber(parseFloat(buildingIncome).toFixed(2)));
 	        		building.set('building_income',parseFloat(buildingIncome));
 	        		this.updateCapRate();
         		}else{
@@ -3837,7 +3837,7 @@
 	        	}else if($(event.target).attr('id')=='income_manual_radio'){
 	        		building.set('building_income_manual_mode',true);
 	        		$('#building_income').removeAttr('disabled');
-	        		$('#building_income').val('$'+(building.get('building_income')==null?'0.00':building.get('building_income').toFixed(2)));
+	        		$('#building_income').val('$'+(building.get('building_income')==null?'0.00':commaSeparateNumber(building.get('building_income').toFixed(2))));
 	        		$('#income_calculated_radio_label').empty();
 	        	}else if($(event.target).attr('id')=='unit_price_calculated_radio'){
 	        		building.set('unit_price_manual_mode',false);
@@ -3848,7 +3848,7 @@
 	        	}else if($(event.target).attr('id')=='unit_price_manual_radio'){
 	        		building.set('unit_price_manual_mode',true);
 	        		$('#unit_price').removeAttr('disabled');
-	        		$('#unit_price').val('$'+(building.get('unit_price')==null?'0.00':building.get('unit_price').toFixed(2)));
+	        		$('#unit_price').val('$'+(building.get('unit_price')==null?'0.00':commaSeparateNumber(building.get('unit_price').toFixed(2))));
 	        		$('#unit_price_calculated_radio_label').empty();
 	        	}
 	        	setChangesPending();
@@ -3875,7 +3875,7 @@
 	            	$('#building-section-title').html('Edit Building Details');
 	            }
 	            
-	            
+	            building.set('building_income_cs',building.get('building_income')==null?'$0.00':'$'+commaSeparateNumber(building.get('building_income').toFixed(2)));
 	            this.$el.append(this.template(building.toJSON()));
 	            if(user.policy.update==0){
 		        	$('#main-building-details input').attr('disabled','disabled');
@@ -3925,8 +3925,8 @@
 	         	
 	         	$('#last_boiler_upgrade_year').autoNumeric('init',{vMin: '0', vMax: '2099', mDec: '0',aSep: ''});
 	         	$('#unit_quantity').autoNumeric('init',{vMin: '0', vMax: '40000', mDec: '0',aSep: '',wEmpty: 'zero'});
-	         	$('#unit_price').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '999999', mDec: '2',aSep: '',wEmpty: 'zero'});
-	         	$('#building_income').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '99999999999', mDec: '2',aSep: '',wEmpty: 'zero'});
+	         	$('#unit_price').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '999999', mDec: '2',aSep: ',',wEmpty: 'zero'});
+	         	$('#building_income').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '99999999999', mDec: '2',aSep: ',',wEmpty: 'zero'});
 	         	$('#last_sale_price').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '99999999999', mDec: '2',aSep: ',',wEmpty: 'zero'});
 	         	//$('#assessed_value').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '99999999999', mDec: '2' ,aSep: ',',wEmpty:'zero'});
 	         	$('#bachelor_price').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '99999', mDec: '2',aSep: ',',wEmpty: 'zero'});
@@ -4796,8 +4796,7 @@
 	            		tcollection[i].set('selected',true);
 						$('#delete_building').css('display','none')
 	            	}
-	            	
-	            	tcollection[i].set('sale_datestring',toSaleDateTimeString(tcollection[i].get('sale_date')));
+	            	tcollection[i].set('sale_datestring',new Date(tcollection[i].get('sale_date')).toDateString());
 	            	tcollection[i].set('formatted_sale_price','$'+commaSeparateNumber(tcollection[i].get('sale_price')));
                 	$(this.el).prepend(this.template(tcollection[i].toJSON()));
 	            }
@@ -4900,7 +4899,7 @@
 	    var buildingsalesView;	
     	
      	$('#sale_price').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '99999999999', mDec: '2',aSep: ',',wEmpty: 'zero'});
-        $('#new_unit_price').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '99999999999', mDec: '2',aSep: '',wEmpty: 'zero'});
+        $('#new_unit_price').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '99999999999', mDec: '2',aSep: ',',wEmpty: 'zero'});
         $('#new_unit_price_manual_radio').click(function(){
         	$('#new_unit_price').removeAttr('disabled');
         });
