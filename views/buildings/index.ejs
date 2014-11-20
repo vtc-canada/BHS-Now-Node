@@ -1092,7 +1092,7 @@
 	<div class="row-fluid building-segment-wrapper">
 		<div class="row-fluid">
 			<div class="span5 segment-label">Assessed Value:</div>
-			<div class="span7"><input type="text" id="assessed_value" maxlength="1024" value="{{=assessed_value}}"></div>
+			<div class="span7"><input type="text" id="assessed_value" value="{{=assessed_value}}"></div>
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">Mortgage Company:</div>
@@ -3332,11 +3332,11 @@
 		$('.bootstrap-datetimepicker-widget:not([picker_name])').attr('picker_name','new_sale_date_gen');
         
         $('#sale_price').keyup(function(){
-          	var priceperunit = 0 ;
+          	var priceperunit = 0;
 	        if(!isNaN(parseInt(building.get('unit_quantity')))&&!isNaN(parseInt($('#sale_price').autoNumeric('get')))){
 	        	priceperunit = (parseInt($('#sale_price').autoNumeric('get')) / parseInt(building.get('unit_quantity'))).toFixed(2);			        	
 	        }
-        	$('#new_unit_price_calculated_radio_label').html('$'+priceperunit);//.formatMoney(2,'.',','));
+        	$('#new_unit_price_calculated_radio_label').html('$'+ commaSeparateNumber(priceperunit));//.formatMoney(2,'.',','));
     	});
     	
     	$('#confirmaddsale').click(function(){
@@ -3928,11 +3928,13 @@
 	         	$('#unit_price').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '999999', mDec: '2',aSep: '',wEmpty: 'zero'});
 	         	$('#building_income').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '99999999999', mDec: '2',aSep: '',wEmpty: 'zero'});
 	         	$('#last_sale_price').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '99999999999', mDec: '2',aSep: ',',wEmpty: 'zero'});
+	         	//$('#assessed_value').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '99999999999', mDec: '2' ,aSep: ',',wEmpty:'zero'});
 	         	$('#bachelor_price').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '99999', mDec: '2',aSep: ',',wEmpty: 'zero'});
 	         	$('#bedroom1_price').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '99999', mDec: '2',aSep: ',',wEmpty: 'zero'});
 	         	$('#bedroom2_price').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '99999', mDec: '2',aSep: ',',wEmpty: 'zero'});
 	         	$('#bedroom3_price').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '99999', mDec: '2',aSep: ',',wEmpty: 'zero'});
 	         	
+	         	//$('#assessed_value').autoNumeric('update');
 	         	$('#bachelor_price').autoNumeric('update');
 	         	$('#bedroom1_price').autoNumeric('update');
 	         	$('#bedroom2_price').autoNumeric('update');
@@ -4504,20 +4506,16 @@
 	        	
 	    		$notelement.find('.cancel-note-textarea-editable').mousedown(function(){
 	    			blockNoteSave = true;
-	    			
 	    		});
-	    		
 	    		
 	    		$notelement.find('.note-textarea-editable').unbind();
 	        	$notelement.find('.note-textarea-editable').blur(function(){
-	        		
 		        	blurTimeout = setTimeout(function(){
 		        		if(!blockNoteSave&&trackdetailstyping!=''){
 				        	self.collection.get(noteid).set('note', trackdetailstyping.replace(/(?:\r\n|\r|\n)/g, '<br />'));//$notelement.find('.note-textarea-editable').val());
 			        		self.collection.get(noteid).set('modified', true);
 			        		building.set('dosync',true);
 			        		setChangesPending();
-			        		
 		        		}else{
 		        			blockNoteSave = false;
 		        			if($notelement.find('.note-textarea-editable').html()==''&&noteid.indexOf('new')!=-1){
@@ -4569,7 +4567,7 @@
 	            for(var i=0; i<tcollection.length; i++)
 	            {
 	                if(typeof(tcollection[i].get('deleted'))=='undefined'){
-	                	tcollection[i].set('note_datetime',toDateTimeString(tcollection[i].get('timestamp')));
+	                	tcollection[i].set('note_datetime',new Date(tcollection[i].get('timestamp')).toDateString());
 	                	this.$el.prepend(this.template(tcollection[i].toJSON()));
 	            	}
 	            }
@@ -4798,8 +4796,9 @@
 	            		tcollection[i].set('selected',true);
 						$('#delete_building').css('display','none')
 	            	}
+	            	
 	            	tcollection[i].set('sale_datestring',toSaleDateTimeString(tcollection[i].get('sale_date')));
-	            	tcollection[i].set('formatted_sale_price','$'+tcollection[i].get('sale_price'));
+	            	tcollection[i].set('formatted_sale_price','$'+commaSeparateNumber(tcollection[i].get('sale_price')));
                 	$(this.el).prepend(this.template(tcollection[i].toJSON()));
 	            }
 	            
@@ -4900,7 +4899,7 @@
 	    });
 	    var buildingsalesView;	
     	
-     	$('#sale_price').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '99999999999', mDec: '2',aSep: '',wEmpty: 'zero'});
+     	$('#sale_price').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '99999999999', mDec: '2',aSep: ',',wEmpty: 'zero'});
         $('#new_unit_price').autoNumeric('init',{aSign: '$', vMin: '0', vMax: '99999999999', mDec: '2',aSep: '',wEmpty: 'zero'});
         $('#new_unit_price_manual_radio').click(function(){
         	$('#new_unit_price').removeAttr('disabled');

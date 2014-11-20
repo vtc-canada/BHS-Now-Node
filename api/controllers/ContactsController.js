@@ -217,6 +217,7 @@ module.exports = {
 	}
     },
     updatecontact:function(req,res){
+	console.log('updatecontact');
 	contact = req.body.contact;
 	companies = req.body.companies;
 	notes = req.body.notes;
@@ -238,10 +239,9 @@ module.exports = {
 		            sails.controllers.database.credSproc('UpdatePhoneNumberByContactId',[contact.contact_id,contact.phone_number],function(err,resPhone){
 				if(err)
 				    return res.json({error:'Database Error:'+err},500);
-		    		cb();
+				cb();
 		            });
 		        }
-    			cb(); 
 		    });
 		});
 	    }else if(contact.contact_id == 'new'){
@@ -253,14 +253,13 @@ module.exports = {
 		    sails.controllers.database.credSproc('CreatePhoneNumber',[contact.phone_number,contact.contact_id,'@outparamphone'],function(err,resPhone){
 		        if(err)
     			    return res.json({error:err.toString()},500);
-    			cb(); 
+    			cb();
 		   });
 		});
 	    }else{
 		cb();
 	    }
 	}
-	
 	function processNotes(cb){
 	    function loopNotes(i){
 		if (notes[i].id.toString().indexOf('new')>-1) { // new
@@ -271,19 +270,18 @@ module.exports = {
 			    return res.json({
 				error : err.toString()
 			    }, 500);
-			
 			sails.controllers.database.credSproc('CreateNoteMapping',[contact.contact_id, responseNote[1][tempOutNoteVar], 1,'@outId'],function(err,responseNoteMapping){
 			    if (err)
 				return res.json({
 					error : err.toString()
 				    }, 500);
 			    
-				i++;
-				if (i < notes.length) {
-				    loopNotes(i);
-				} else {
-				    cb();
-				}
+			    i++;
+			    if (i < notes.length) {
+				loopNotes(i);
+			    } else {
+				cb();
+			    }
 			});
 			
 		    });
@@ -414,7 +412,6 @@ module.exports = {
 		cb();
 	    }
 	}
-	
 	if(req.session.user.policy[req.route.path].update==0){  // readonly account Notes update.
 	    processReadOnlyNotes(function(){
 		    return res.json({
@@ -424,6 +421,10 @@ module.exports = {
 	    });
 	}else{
         	updateContact(contact,function(){
+        	    
+        	    console.log('updatecontactcall');
+        	    
+        	    
         	    processNotes(function(){
                 	    function loopCompanies(i)
                 	    {

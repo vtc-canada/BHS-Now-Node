@@ -1024,7 +1024,6 @@
 	        events: {
 	            "click a.delete-note"   : "deleteNote",
 	            "click a.edit-note" : "editNote"
-	
 	        },
 	        editNote:function(event){
 	        	var self = this;
@@ -1033,7 +1032,7 @@
 	        	var $notelement = $(event.target).parents('.note');
 	        	var noteid= $notelement.attr('noteid');
 	        	$('.no-notes-remove').remove();
-	        	$notelement.find('.note-editable').replaceWith('<div class="row-fluid"><div class="row-fluid"><textarea maxlength=512" class="note-textarea-editable">'+this.collection.get(noteid).get('note')+'</textarea></div><div class="row-fluid"><button class="save-note-textarea-editable btn btn-primary">Set</button><button class="cancel-note-textarea-editable btn ">Cancel</button></div></div>');
+	        	$notelement.find('.note-editable').replaceWith('<div class="row-fluid"><div class="row-fluid"><textarea maxlength=512" class="note-textarea-editable">' + this.collection.get(noteid).get('note').replace(/<br\s*[\/]?>/gi, "\n") +'</textarea></div><div class="row-fluid"><button class="save-note-textarea-editable btn btn-primary">Set</button><button class="cancel-note-textarea-editable btn ">Cancel</button></div></div>');
 	        	
 	    		$notelement.find('.cancel-note-textarea-editable').mousedown(function(){
 	    			blockNoteSave = true;
@@ -1044,7 +1043,7 @@
 	        	$notelement.find('.note-textarea-editable').blur(function(){
 		        	blurTimeout = setTimeout(function(){
 		        		if(!blockNoteSave&&trackdetailstyping!=''){
-				        	self.collection.get(noteid).set('note', trackdetailstyping);
+				        	self.collection.get(noteid).set('note', trackdetailstyping.replace(/(?:\r\n|\r|\n)/g, '<br />'));//$notelement.find('.note-textarea-editable').val());
 			        		self.collection.get(noteid).set('modified', true);
 	        				company.set('modified',true);
 			        		setChangesPending();
@@ -1096,7 +1095,7 @@
 	            for(var i=0; i<tcollection.length; i++)
 	            {
 	                if(typeof(tcollection[i].get('deleted'))=='undefined'){
-	                	tcollection[i].set('note_datetime',toDateTimeString(tcollection[i].get('timestamp')));
+	                	tcollection[i].set('note_datetime', new Date(tcollection[i].get('timestamp')).toDateString());
 	                	this.$el.prepend(this.template(tcollection[i].toJSON()));
 	            	}
 	            }
