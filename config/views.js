@@ -84,11 +84,29 @@ module.exports.views = {
 		footer:true
 	    },
 	    '/contacts':{
-			enabled:true,
-			banner:true,
-			icon:'icon-copy',
-			footer:true
-		    },
+		enabled:true,
+		banner:true,
+		icon:'icon-group',
+		footer:true
+		},
+		'/companies':{
+		enabled:true,
+		banner:true,
+		icon:'icon-briefcase',
+		footer:true
+		},
+	    '/flighttable':{
+		enabled:true,
+		banner:true,
+		icon:'icon-calendar',
+		footer:true
+		 },
+		'/manifests':{
+		enabled:true,
+		banner:true,
+		icon:'icon-list-ol',
+		footer:true
+		},
 	    '/reports':{
 		enabled:true,
 		banner:true,
@@ -101,12 +119,7 @@ module.exports.views = {
 		icon:'icon-suitcase',
 		footer:true
 	    },
-	    '/flighttable':{
-		enabled:true,
-		banner:true,
-		icon:'icon-calendar',
-		footer:true
-	    },
+
 	    '/systemconfig':{
 		enabled:true,
 		icon:'icon-cogs',
