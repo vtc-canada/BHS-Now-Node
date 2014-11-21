@@ -793,42 +793,15 @@
 	        		company.set('dodelete',true);
 	        	}
 	        	companyView.render();
-	        },
-	        hand:function(event){
-	        	var thehoa = hoas.findWhere({'eqp_ID':10001});
-	        	var params = { opc_url : thehoa.get('handreq_opc_url')
-	        				, opc_path : thehoa.get('handreq_opc_path')
-	        				,tag_address : thehoa.get('handreq_tag_address')};
-	        	socket.request('/engineering/sendhoaclick',params,function(response){
-	        	
-	        	});
-	        },
-	        off:function(event){
-	        	var thehoa = hoas.findWhere({'eqp_ID':10001});
-	        	var params = { opc_url : thehoa.get('offreq_opc_url')
-	        				, opc_path : thehoa.get('offreq_opc_path')
-	        				,tag_address : thehoa.get('offreq_tag_address')};
-	        	socket.request('/engineering/sendhoaclick',params,function(response){
-	        	
-	        	});
-	        },
-	        auto:function(event){
-	        	var thehoa = hoas.findWhere({'eqp_ID':10001});
-	        	var params = { opc_url : thehoa.get('autoreq_opc_url')
-	        				, opc_path : thehoa.get('autoreq_opc_path')
-	        				,tag_address : thehoa.get('autoreq_tag_address')};
-	        	socket.request('/engineering/sendhoaclick',params,function(response){
-	        	
-	        	});
-	        },
+	        },	       
             initialize: function () {
             },
             template: _.template($('#company-template').html()),
             render: function () {
 	            $('.associated-companies-alert').empty();
                 this.$el.html("");
-                var tcollection = this.collection.sortBy(function(hoarow){
-                    return hoarow.get("eqp_ID");
+                var tcollection = this.collection.sortBy(function(company){
+                    return company.get("company_name");
                 });
                 for(var i=0; i<tcollection.length; i++)
                 {
