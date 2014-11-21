@@ -138,6 +138,8 @@
       "/dashboard" : "Dashboard",
       "/engineering" : "Engineering",
       "/flighttable" : "Flight Table",
+      "/manifests" : "Flight Manifest",
+      "/companies" : "Companies",
       "/contacts" : "Passengers",
       "/messages" : "Messaging",
       "/overview" : "Overview",

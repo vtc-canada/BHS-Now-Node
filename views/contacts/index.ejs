@@ -1,88 +1,8 @@
-<%
-    var translate = {
-        'en' : {
-            'You do not have sufficient privileges to access':'You do not have sufficient privileges to access',
-            'Error':'Error',
-            'Buildings':'Buildings',
-            'Date':'Date',
-            'Equipment':'Equipment',
-            'Device':'Device',
-            'Alarm Type':'Alarm Type',
-            'System Health':'System Health',
-            'System Throughput':'System Throughput',
-            'Time In System':'Time In System',
-            'BHS Overview':'BHS Overview',
-            'Time':'Time',
-            'Alarms':'Alarms',
-            'Daily Reminders':'Daily Reminders',
-            'Predictive Mainenance Tasks':'Predictive Mainenance Tasks',
-            'DEVICE':'DEVICE',
-            'REASON':'REASON',
-            'Uptime':'Uptime',
-            'Failsafe Rate':'Failsafe Rate',
-            'Tracking Rate':'Tracking Rate',
-            'Key Performance Indicators':'Key Performance Indicators',
-            'Throughput (bph)':'Throughput (bph)',
-            'State':'State',
-            'Jam Rate':'Jam Rate',
-            'ATR Read Rate':'ATR Read Rate',
-            'Cancel':'Cancel',
-            'Delete':'Delete',
-            'To create a new owner':'To create a new owner, select the contact and/or company associated with this building',
-            'To create a new sale':'To create a new sale, click create',
-            'Create':'Create',
-            'Contact':'Passenger',
-            'Contacts':'Passengers',
-            'Company':'Company',
-            'Confirm':'Confirm'
-        },
-        'es' : {
-            'You do not have sufficient privileges to access':'Usted no tiene suficientes privilegios para acceder a',
-            'Error':'Error',
-            'Buildings':'Salpicadero',
-            'Date':'Date',
-            'Equipment':'Equipment',
-            'Device':'Device',
-            'REASON':'REASON',
-            'Alarm Type':'Alarm Type',
-            'System Health':'System Health',
-            'System Throughput':'System Throughput',
-            'Time In System':'Time In System',
-            'BHS Overview':'BHS Overview',
-            'Time':'Time',
-            'Alarms':'Alarms',
-            'Daily Reminders':'Daily Reminders',
-            'Predictive Mainenance Tasks':'Predictive Mainenance Tasks',
-            'DEVICE':'DEVICE',
-            'Uptime':'Uptime',
-            'Failsafe Rate':'Failsafe Rate',
-            'Tracking Rate':'Tracking Rate',
-            'Key Performance Indicators':'Key Performance Indicators',
-            'Throughput (bph)':'Throughput (bph)',
-            'State':'State',
-            'Jam Rate':'Jam Rate',
-            'ATR Read Rate':'ATR Read Rate',
-            'Cancel':'Cancel',
-            'Delete':'Delete',
-            'To create a new owner':'To create a new owner, select the contact and/or company associated with this building',
-            'To create a new sale':'To create a new sale, click create',
-            'Create':'Create',
-            'Contact':'Contact',
-            'Contacts':'Contacts',
-            'Company':'Company',
-            'Confirm':'Confirm'
-        }
-    }
-%>
-
 <div class="row-fluid create-report-controls-wrapper">
-<div class="span10 offset1 report-control-left-label"  style="min-height: 30px;padding-top: 5px; font-size:18px; font-weight:bold;margin-top: 33px;">
-	<i class="icon-search icon-2x banner-icon-top" style="margin-top: -12px; margin-right: 10px;"></i><div class="banner-div-text">Search Filter</div>
-
+	<div class="span10 offset1 report-control-left-label"  style="min-height: 30px;padding-top: 5px; font-size:18px; font-weight:bold;margin-top: 33px;">
+		<i class="icon-search icon-2x banner-icon-top" style="margin-top: -12px; margin-right: 10px;"></i><div class="banner-div-text"><%=  __('Search') %></div>
+	</div>
 </div>
-</div>
-
-
 
     <!-- Modal -  -->
 <div id="exportModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -97,7 +17,7 @@
     </div>
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-        <!--<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" id="confirmdeletes"><%= translate[locale]['Confirm'] %></button>-->
+        <!--<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" id="confirmdeletes"><%=  __('Confirm') %></button>-->
     </div>
 </div>
 
@@ -106,7 +26,7 @@
         <div class="span10 offset2 create-report-controls" style="padding-top: 20px;">
            <div class="row-fluid">
                <div class="row">
-                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_contact">Passenger Details:</label></div>
+                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_contact"><%= __('Passenger Details') %></label></div>
                    <div class="span8 report-control-right-control">
                        <input type="text" id="search_contact" value="">
                    </div>
@@ -118,10 +38,9 @@
 
 <div class="row-fluid" style="margin-top:19px; margin-bottom:25px;">
     <div class="span10 offset1 page-controls-wrapper">
-        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;">Passengers</span>
-             <% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="create_contact">Create New</div><% } %>
-        <% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="export_contacts">Export</div><% } %>
-        
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%= __('Passengers') %></span>
+        	<% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="create_contact"><%= __('Create New User') %></div><% } %>
+        	<% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="export_contacts"><%= __('Export') %></div><% } %>
         </div>
         <div class="row-fluid key-indicaters-frame" id="iframediv">
             <div class="row-fluid">
@@ -129,13 +48,12 @@
 			        <thead>
 			            <tr>
 			            	<th>Id<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
-			                <th>Passenger<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
-			                <th>Company<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
-			                <th>Phone<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
-			                <th>Email<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+			                <th><%= __('Passengers') %><i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+			                <th><%= __('Company') %><i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+			                <th><%= __('Phone') %><i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+			                <th><%= __('Email') %><i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
 			            </tr>
-			        </thead>
-			 
+			        </thead>			 
 			    </table>
             </div>
         </div>
@@ -163,8 +81,8 @@
 </script>
 <script type="text/template" id="company-template">
 	<div class="row-fluid company-div building-sale-wrapper building-segment-wrapper companycard{{ if(typeof(dodelete)!='undefined'){ }} user-delete{{ } }}" userid="" company_id="{{=company_id}}">
-		<div class="span4 first-company-value" ><span class="mobilelabel">Company:</span>{{=company_name}}</div>
-		<div class="span6"><span class="mobilelabel">Address:</span>{{=address}}</div>
+		<div class="span4 first-company-value" >{{=company_name}}</div>
+		<div class="span6">{{=address}}</div>
 		<div class="span2 "><% if(req.session.user.policy[req.route.path].update==1){ %>{{ if(typeof(dodelete)=='undefined'){ }}<div class="pull-right btn btn-danger delete-company-mapping">Remove</div>{{ }else{ }}<div class="pull-right btn btn-success cancel-delete-company-mapping">Cancel</div>{{ } }}<% } %></div>
 	</div>
 </script>
@@ -267,10 +185,8 @@
 					<div class="span2 "></div>
 				</div>
         		<div id="companies-div" style="width:100%; margin:0px; line-height: 35px; margin-top: 5px;">
-        		</div>
-        		
-				<div class="note-wrapper" style="display:none;">
-				
+        		</div>        		
+				<div class="note-wrapper" style="display:none;">				
 	        		<div class="row-fluid">
 						<div class="span12">
 							<div class="row-fluid">
@@ -300,16 +216,14 @@
 												</span>
 											</div>
 						         	
-						         	<% } %>
-											
+						         	<% } %>											
 						         	<% if(true||req.session.user.policy[req.route.path].update==0){ %>
 						         	<div style="margin-right: 10px; color: rgb(153, 0, 0); font-weight: 400; display: none;" class="pull-right save_pull" id="changes_pending_notes">Changes Pending. &nbsp;</div>
 						         	<% } %>
 								</div>
 							</div>
 						</div>
-					</div>
-					
+					</div>					
 					<div id="notes-table-header" class="tableheader row-fluid">
 						<div class="span2">
 							Timestamp
@@ -324,8 +238,7 @@
 							Modify
 						</div>
 					</div>
-					<div id="notes-wrapper" class="row-fluid css-notes-wrapper">
-					
+					<div id="notes-wrapper" class="row-fluid css-notes-wrapper">					
 					</div>
 	        	</div>
             </div>
@@ -343,8 +256,8 @@
         <p>One fine body…</p>
     </div>
     <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true"><%= translate[locale]['Cancel'] %></button>
-        <button class="btn btn-danger" data-dismiss="modal" aria-hidden="true" id="confirmdelete"><%= translate[locale]['Delete'] %></button>
+        <button class="btn" data-dismiss="modal" aria-hidden="true"><%= __('Cancel')%></button>
+        <button class="btn btn-danger" data-dismiss="modal" aria-hidden="true" id="confirmdelete"><%=  __('Delete') %></button>
     </div>
 </div>
 
@@ -352,12 +265,12 @@
 <script type="text/template" id="notes-template">
 	<div class="row-fluid note" noteid="{{=id}}">
 		<div class="span2">
-			<span class="mobilelabel">Timestamp:</span>{{=note_datetime}}
+			{{=note_datetime}}
 		</div>
 		<div class="span2">
-			<span class="mobilelabel">User:</span>{{=user}}
+			{{=user}}
 		</div>
-		<div class="span6"><span class="mobilelabel">Details:</span><div class="note-editable">{{=note}}</div></div>
+		<div class="span6"><div class="note-editable">{{=note}}</div></div>
 		<div class="span2" style="padding-top:0px;">
 			<div class="row-fluid" style="padding:6px;">
 				{{ if(user=='<%=req.session.user.username%>'||<%=req.session.user.policy[req.route.path].update==1%>){ }}<a class="edit-note" style="color:#0F74BC;cursor:pointer;padding-right:6px;"><i class="icon-edit icon-2x"></i></a>{{ } }}
@@ -371,8 +284,7 @@
 
     $(document).ready(function(){
     
-    	var init_id = <%=typeof(init_id)!='undefined'?init_id:null%>;
-    	
+    	var init_id = <%=typeof(init_id)!='undefined'?init_id:null%>;    	
     	var curcontactsval = '';
 		var contactssearchtimer;
 		var contactscombobox;
@@ -389,7 +301,6 @@
         		}
         	}
         	companycombobox = $('select.companycombobox').combobox();
-        	//$('.combobox-container .icon-remove').click();
         	$('input.companycombobox').on('keyup',function(e){
         		if(curcompanyval!=$('input.companycombobox').val()&&e.keyCode!=9&&e.keyCode!=13&&e.keyCode!=27){
     				curcompanyval =  $('input.companycombobox').val();
@@ -410,17 +321,16 @@
         			
     				if(addressval.address_id!='new'&&typeof(companies.findWhere({company_id:companyid}))=='undefined'){ //new indicates an error
     					addressval.new = true;
-    					alert("rob : " +addressval.address_id);
-    					companies.add(addressval);
+       					companies.add(addressval);
     					companyView.render();
     				}else if(typeof(companies.findWhere({company_id:companyid}))!='undefined'){
     					
     					$('.associated-companies-alert').append(
-'<div class="alert alert-error" style="border-radius:0px; margin-bottom: 10px;">'
-    +'<button type="button" class="close" data-dismiss="alert">&times</button>'
-    +'<strong><%= translate[req.session.user.locale]['Error'] %>:</strong>'
-    +'This company is already associated with this contact.'
-+'</div>');
+    							'<div class="alert alert-error" style="border-radius:0px; margin-bottom: 10px;">'
+							    +'<button type="button" class="close" data-dismiss="alert">&times</button>'
+							    +'<strong>Error:</strong>'
+							    +'This company is already associated with this contact.'
+							+'</div>');
     				}
     			});
     		});
@@ -443,7 +353,7 @@
     			});
     		},100);
 		}
-        		
+        	
         		
 		var datatable = $('#contacts').dataTable({
 		        "processing": true,
@@ -825,9 +735,6 @@
 	    var contactView = new ContactBackboneView();
 	   
 	   
-	   
-	   
-	   
 	    //////////////////////
         // Company   Model  //
         //////////////////////
@@ -848,6 +755,7 @@
                         this.set(tempcompanies);
                         companyView.render();
                     }, this));
+
                 }
             }
         });
@@ -886,6 +794,33 @@
 	        	}
 	        	companyView.render();
 	        },
+	        hand:function(event){
+	        	var thehoa = hoas.findWhere({'eqp_ID':10001});
+	        	var params = { opc_url : thehoa.get('handreq_opc_url')
+	        				, opc_path : thehoa.get('handreq_opc_path')
+	        				,tag_address : thehoa.get('handreq_tag_address')};
+	        	socket.request('/engineering/sendhoaclick',params,function(response){
+	        	
+	        	});
+	        },
+	        off:function(event){
+	        	var thehoa = hoas.findWhere({'eqp_ID':10001});
+	        	var params = { opc_url : thehoa.get('offreq_opc_url')
+	        				, opc_path : thehoa.get('offreq_opc_path')
+	        				,tag_address : thehoa.get('offreq_tag_address')};
+	        	socket.request('/engineering/sendhoaclick',params,function(response){
+	        	
+	        	});
+	        },
+	        auto:function(event){
+	        	var thehoa = hoas.findWhere({'eqp_ID':10001});
+	        	var params = { opc_url : thehoa.get('autoreq_opc_url')
+	        				, opc_path : thehoa.get('autoreq_opc_path')
+	        				,tag_address : thehoa.get('autoreq_tag_address')};
+	        	socket.request('/engineering/sendhoaclick',params,function(response){
+	        	
+	        	});
+	        },
             initialize: function () {
             },
             template: _.template($('#company-template').html()),
@@ -908,10 +843,6 @@
         });
 
         var companyView = new CompanyView({collection: companies});
-	   
-	   
-	   
-	   
 	   ///////////////////////////
 	    ///  NOTES ////////
 	    ///////////////////////////
