@@ -472,37 +472,3 @@ function padLeft(nr, n, str){
 }
 
 
-function buildAddressString(data){
-	var street_number_begin = '';
-	var street_number_end = '';
-	var street_name = '';
-	var city = '';
-	var province = '';
-	var postal_code = '';
-	
-	if(data.street_number_begin!=null){
-		street_number_begin = data.street_number_begin;
-	}
-	if(data.street_number_end!=null&&data.street_number_end!=''){
-		street_number_end = data.street_number_end==null||data.street_number_end=='null'?'':' - '+data.street_number_end;
-	}
-	if(data.street_name!=null&&data.street_name!='')
-	{
-		street_name= data.street_name==null||data.street_name=='null'?'':' '+data.street_name;
-	}
-	if(data.city != null && data.city != '')
-	{
-		city = data.city==null||data.city=='null'?'':data.city;
-	}
-	if(data.province != null && data.province != '')
-	{
-		province = data.province==null||data.province=='null'?'':data.province;
-	}
-	if(data.postal_code != null && data.postal_code != '')
-	{
-		postal_code =  data.postal_code==null||data.postal_code=='null'?'':data.postal_code; 
-	}
-	return street_number_begin+street_number_end+','+street_name+','+city+','+province+','+postal_code; 
-
-}
-  
