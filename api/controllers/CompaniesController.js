@@ -1,18 +1,20 @@
 /**
  * CompaniesController
- *
- * @module      :: Controller
- * @description	:: A set of functions called `actions`.
- *
- *                 Actions contain code telling Sails how to respond to a certain type of request.
- *                 (i.e. do stuff, then send some JSON, show an HTML page, or redirect to another URL)
- *
- *                 You can configure the blueprint URLs which trigger these actions (`config/controllers.js`)
- *                 and/or override them with custom routes (`config/routes.js`)
- *
- *                 NOTE: The code you write here supports both HTTP and Socket.io automatically.
- *
- * @docs        :: http://sailsjs.org/#!documentation/controllers
+ * 
+ * @module :: Controller
+ * @description :: A set of functions called `actions`.
+ * 
+ * Actions contain code telling Sails how to respond to a certain type of
+ * request. (i.e. do stuff, then send some JSON, show an HTML page, or redirect
+ * to another URL)
+ * 
+ * You can configure the blueprint URLs which trigger these actions
+ * (`config/controllers.js`) and/or override them with custom routes
+ * (`config/routes.js`)
+ * 
+ * NOTE: The code you write here supports both HTTP and Socket.io automatically.
+ * 
+ * @docs :: http://sailsjs.org/#!documentation/controllers
  */
 
 module.exports = {
@@ -21,9 +23,9 @@ module.exports = {
 
 
   /**
-   * Overrides for the settings in `config/controllers.js`
-   * (specific to CompaniesController)
-   */
+	 * Overrides for the settings in `config/controllers.js` (specific to
+	 * CompaniesController)
+	 */
   _config: {},
   index : function(req, res) {
 		res.view('',{});
@@ -65,7 +67,8 @@ module.exports = {
   },
   deletecompany:function(req,res){
 
-	if(req.session.user.policy[req.route.path].delete==1){  // Delete access on this route?
+	if(req.session.user.policy[req.route.path].delete==1){  // Delete access on
+															// this route?
         	if(typeof(req.body.company_id)!='undefined'&&!isNaN(parseInt(req.body.company_id))){
         	      Database.dataSproc('DeleteCompany',[parseInt(req.body.company_id)],function(err,resultDelete){
         		if(err)
@@ -106,7 +109,7 @@ module.exports = {
 
 	    var s3 = new AWS.S3(); 
 
-	     //s3.createBucket({Bucket: 'myBucket'}, function() {
+	     // s3.createBucket({Bucket: 'myBucket'}, function() {
 
 	    var crypto = require("crypto");
 	    var current_date = (new Date()).valueOf().toString();
@@ -144,7 +147,7 @@ module.exports = {
 
 	var orderstring = null;
 	if(typeof(req.query.order)!='undefined'){
-		if(req.query.order[0].column==1){  //Address column
+		if(req.query.order[0].column==1){  // Address column
 		    orderstring = 'company_name';
 		}else if(req.query.order[0].column==2){
 		    orderstring = 'street_name';
@@ -170,38 +173,12 @@ module.exports = {
 	
 	function updateCompany(contact,cb){
 	    if(company.company_id != 'new'&&typeof(company.modified)!='undefined'){
-		  Database.dataSproc('UpdateCompany',[company.company_id,company.company_name],function(err,resContact){
-		    if(err)
-			return res.json({error:'Database Error:'+err},500);
-		
 		    var street_number_end = (company.street_number_end == null || company.street_number_end == 0) ? '' : ' ' + company.street_number_end;
-		    var addressSearch = company.street_number_begin + " " + street_number_end + " " + company.street_name + ', ' + company.city + ', '
-			    + company.province + ', Canada, ' + company.postal_code;
-
-		    var geocoderProvider = 'google';
-		    var httpAdapter = 'http';
-		    // optionnal
-		    var extra = {
-			// apiKey: 'YOUR_API_KEY', // for map quest
-			formatter : null
-		    // 'gpx', 'string', ...
-		    };
-
-		    var geocoder = require('node-geocoder').getGeocoder(geocoderProvider, httpAdapter, extra);
-
-		    geocoder.geocode(addressSearch, function(err, responseGeocode) {
-			var lat = null;
-			var lng = null;
-			if (typeof (responseGeocode) != 'undefined' && responseGeocode.length > 0) {
-			    lat = responseGeocode[0].latitude;
-			    lng = responseGeocode[0].longitude;
-			}
-			  Database.dataSproc('UpdateAddressByCompanyId',[company.company_id,company.street_number_begin ,company.street_number_end,company.street_name,company.postal_code,company.city,company.province,lat, lng],function(err,resAddress){
-    		        if(err)
-      			    return res.json({error:'Database Error:'+err},500);
+		  Database.dataSproc('UpdateCompany',[company.company_id,company.company_name,company.street_number_begin ,company.street_number_end,company.street_name,company.postal_code,company.city,company.province],function(err,resContact){
+		    if(err){ 
+		    	return res.json({error:'Database Error:'+err},500);
+		    }
       			cb(); 
-    		   });
-     		   });
 		});
 	    }else if(company.company_id == 'new'){
 		var outcompanyId = '@out' + Math.floor((Math.random() * 1000000) + 1);
@@ -409,7 +386,8 @@ module.exports = {
 	}
 	
 	
-	if(req.session.user.policy[req.route.path].update==0){  // readonly account Notes update.
+	if(req.session.user.policy[req.route.path].update==0){  // readonly account
+															// Notes update.
 	    processReadOnlyNotes(function(){
 		    return res.json({
 			success : 'success',
