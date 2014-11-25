@@ -115,6 +115,19 @@ table.dataTable > thead > tr > td:focus{
 }
 
 
+
+.dataTables_wrapper {
+	position: relative;
+	clear: both;
+	zoom: 1;
+	width: 96%;
+	margin-left: 2%;
+	margin-right: 2%;
+	margin-bottom: 12px;
+}
+
+
+
 .main-search{
     line-height: 15px !important;
 
@@ -143,6 +156,18 @@ a.isys-a{
 a.isys-a.small{
     display:none;
 }
+
+table.dataTable > tbody > tr.selected{
+    background: #0F74BC !important;/*-webkit-focus-ring-color auto 5px;*/
+   color:white;
+}
+
+.table-row-selected{
+    background: #0F74BC;/*-webkit-focus-ring-color auto 5px;*/
+   color:white;
+}
+
+
 @media (max-width:979px){
     a.isys-a.small{
         display:block;
@@ -477,6 +502,7 @@ table.selectable tr{
 
     .main-content{
         overflow-y: auto;
+        overflow-x:hidden;
         top: 42px;
     }
 
