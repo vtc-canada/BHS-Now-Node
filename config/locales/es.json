@@ -139,6 +139,7 @@
       "/engineering" : "Engineering",
       "/flighttable" : "Flight Table",
       "/manifests" : "Flight Manifest",
+      "/airplanes" : "Airplanes",
       "/companies" : "Companies",
       "/contacts" : "Passengers",
       "/messages" : "Messaging",

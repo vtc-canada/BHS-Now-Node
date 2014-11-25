@@ -1,0 +1,609 @@
+<%
+    var translate = {
+        'en' : {
+            'You do not have sufficient privileges to access':'You do not have sufficient privileges to access',
+            'Error':'Error',
+            'Buildings':'Buildings',
+            'Date':'Date',
+            'Equipment':'Equipment',
+            'Device':'Device',
+            'Alarm Type':'Alarm Type',
+            'System Health':'System Health',
+            'System Throughput':'System Throughput',
+            'Time In System':'Time In System',
+            'BHS Overview':'BHS Overview',
+            'Time':'Time',
+            'Alarms':'Alarms',
+            'Daily Reminders':'Daily Reminders',
+            'Predictive Mainenance Tasks':'Predictive Mainenance Tasks',
+            'DEVICE':'DEVICE',
+            'REASON':'REASON',
+            'Uptime':'Uptime',
+            'Failsafe Rate':'Failsafe Rate',
+            'Tracking Rate':'Tracking Rate',
+            'Key Performance Indicators':'Key Performance Indicators',
+            'Throughput (bph)':'Throughput (bph)',
+            'State':'State',
+            'Jam Rate':'Jam Rate',
+            'ATR Read Rate':'ATR Read Rate',
+            'Cancel':'Cancel',
+            'Delete':'Delete',
+            'To create a new owner':'To create a new owner, select the contact and/or company associated with this building',
+            'To create a new sale':'To create a new sale, click create',
+            'Create':'Create',
+            'Contact':'Passenger',
+            'Contacts':'Passengers',
+            'Company':'Company',
+            'Confirm':'Confirm'
+        },
+        'es' : {
+            'You do not have sufficient privileges to access':'Usted no tiene suficientes privilegios para acceder a',
+            'Error':'Error',
+            'Buildings':'Salpicadero',
+            'Date':'Date',
+            'Equipment':'Equipment',
+            'Device':'Device',
+            'REASON':'REASON',
+            'Alarm Type':'Alarm Type',
+            'System Health':'System Health',
+            'System Throughput':'System Throughput',
+            'Time In System':'Time In System',
+            'BHS Overview':'BHS Overview',
+            'Time':'Time',
+            'Alarms':'Alarms',
+            'Daily Reminders':'Daily Reminders',
+            'Predictive Mainenance Tasks':'Predictive Mainenance Tasks',
+            'DEVICE':'DEVICE',
+            'Uptime':'Uptime',
+            'Failsafe Rate':'Failsafe Rate',
+            'Tracking Rate':'Tracking Rate',
+            'Key Performance Indicators':'Key Performance Indicators',
+            'Throughput (bph)':'Throughput (bph)',
+            'State':'State',
+            'Jam Rate':'Jam Rate',
+            'ATR Read Rate':'ATR Read Rate',
+            'Cancel':'Cancel',
+            'Delete':'Delete',
+            'To create a new owner':'To create a new owner, select the contact and/or company associated with this building',
+            'To create a new sale':'To create a new sale, click create',
+            'Create':'Create',
+            'Contact':'Contact',
+            'Contacts':'Contacts',
+            'Company':'Company',
+            'Confirm':'Confirm'
+        }
+    }
+%>
+
+<div class="row-fluid create-report-controls-wrapper">
+<div class="span10 offset1 report-control-left-label"  style="min-height: 30px;padding-top: 5px; font-size:18px; font-weight:bold;margin-top: 33px;">
+	<i class="icon-search icon-2x banner-icon-top" style="margin-top: -12px; margin-right: 10px;"></i><div class="banner-div-text">Search Filter</div>
+
+</div>
+</div>
+
+<div class="row-fluid create-report-controls-wrapper">
+    <div class="row">
+        <div class="span10 offset2 create-report-controls" style="padding-top: 20px;">
+           <div class="row-fluid">
+               <div class="row">
+                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_manifest">Manifest:</label></div>
+                   <div class="span8 report-control-right-control">
+                       <input type="text" id="search_manifest" value="">
+                   </div>
+               </div>
+           </div>
+        </div>
+    </div>
+</div>
+
+<div class="row-fluid" style="margin-top:19px; margin-bottom:25px;">
+    <div class="span10 offset1 page-controls-wrapper">
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;">manifestTable
+             <% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="create_contact">Create New</div><% } %>
+         
+        </div>
+        <div class="row-fluid key-indicaters-frame" id="iframediv">
+            <div class="row-fluid">
+                <table id="manifests" class="display" cellspacing="0" width="100%">
+			        <thead>
+			            <tr>
+			            	<th>Id<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+			                <th>Manifest<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+			                <th>Flight No.<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+			                <th>Regn. No<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+			                <th>Max Resource Payload<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+			                <th>Max Leg Payload<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+			                <th>Route<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+			            </tr>
+			        </thead>
+			 
+			    </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row-fluid" style="margin-top:19px; margin-bottom:25px;">
+<div class="span10 offset1 page-controls-wrapper">
+    <div class="row-fluid" id="reportheader"><span style="padding-left:10px;">Manifest Details</span>
+         <% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="create_contact">Create New</div><% } %>
+     
+    </div>
+    <div class="row-fluid key-indicaters-frame" id="iframediv">
+        <div class="row-fluid">
+            <table id="manifest_details" class="display" cellspacing="0" width="100%">
+		        <thead>
+		            <tr>
+		            	<th>Id<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+		                <th>Manifest<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+		                <th>Flight No.<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+		                <th>Regn. No<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+		                <th>Max Resource Payload<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+		                <th>Max Leg Payload<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+		                <th>Route<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+		            </tr>
+		        </thead>
+		 
+		    </table>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+<!-- Modal - confirms you want to continue to delete contact -->
+<div id="deleteModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabeldelete"></h3>
+    </div>
+    <div class="modal-body">
+        <p>One fine body…</p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true"><%= translate[locale]['Cancel'] %></button>
+        <button class="btn btn-danger" data-dismiss="modal" aria-hidden="true" id="confirmdelete"><%= translate[locale]['Delete'] %></button>
+    </div>
+</div>
+<script>
+
+    $(document).ready(function(){
+		var manifestTable = $('#manifests').dataTable({
+		        "processing": true,
+		        "serverSide": true,
+		        "dom":"tipr",
+		        "ajax": {
+		        	"url":"/manifests/searchmanifests",
+	        		"data":function(d){
+	        			d.manifest_search = $("#search_manifest").val();
+	        		},
+	        		error: function(xhr, error, thrown){
+	        			if(error.toString()=='parsererror'){
+	        				location.reload();
+	        			}else{
+		    				$('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
+			                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+			                        ''+error.toString()+'</div>');
+			                
+								if($('body').width()>979){
+									$('.main-content').animate({
+								        scrollTop: 0
+								    }, 500);
+								}else{
+									$('html, body').animate({
+								        scrollTop: 0
+								    }, 500);
+								}
+		                }
+	        			
+	        		}
+	        	},
+		        "aoColumns":[
+		           {"mData":"id","visible":false}
+			        ,{"mData":function(data,b){
+			        	return '<b>'+data.manifest_id+'</b>';
+			        	}
+					}
+			        ,{"mData":"flight_no"}
+			        ,{"mData":"regn_no"}
+			        ,{"mData":"max_resource_payload"}
+			        ,{"mData":"max_leg_payload"}
+			        ,{"mData":"route"}
+			        ],
+		        "rowCallback": function( row, data, displayIndex ) {
+					$(row).attr('contact_id',data['contact_id']);
+					$(row).click(function(){
+						$('.edit-item-section').css('display','');
+						$('#delete_contact').css('display','');
+    					manifest.fetch({id:parseInt($(row).attr('id'))});
+    					
+        				companies.fetch({contact_id:parseInt($(row).attr('id'))});    
+               		});
+		        }
+	    });
+	    $('select[name=contacts_length]').css('margin-top','10px');
+	    $('#manifests_length label').css('margin-bottom','0px');
+	    
+        $('#manifests tbody').on('click', 'tr', function () {
+        	$(this).siblings().removeClass('selected');
+        	$(this).removeClass('selected').addClass('selected');
+	    });
+	    $('#manifests').on('draw.dt',function(event,manifestTable){
+	     	if(!isNaN(parseInt(manifest.get('id')))){
+	     		$('#manifests tbody tr[contact_id='+manifest.get('id')+']').addClass('selected');
+	     	}
+    	});
+    	
+	    
+	    var manifestDetailsTable = $('#manifestDetails').dataTable({
+	        "processing": true,
+	        "serverSide": true,
+	        "dom":"tipr",
+	        "ajax": {
+	        	"url":"/manifests/searchmanifests",
+        		"data":function(d){
+        			d.manifest_search = $("#search_manifest").val();
+        		},
+        		error: function(xhr, error, thrown){
+        			if(error.toString()=='parsererror'){
+        				location.reload();
+        			}else{
+	    				$('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
+		                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+		                        ''+error.toString()+'</div>');
+		                
+							if($('body').width()>979){
+								$('.main-content').animate({
+							        scrollTop: 0
+							    }, 500);
+							}else{
+								$('html, body').animate({
+							        scrollTop: 0
+							    }, 500);
+							}
+	                }
+        			
+        		}
+        	},
+	        "aoColumns":[
+	           {"mData":"id","visible":false}
+		        ,{"mData":function(data,b){
+		        	return '<b>'+data.manifest_id+'</b>';
+		        	}
+				}
+		        ,{"mData":"flight_no"}
+		        ,{"mData":"regn_no"}
+		        ,{"mData":"max_resource_payload"}
+		        ,{"mData":"max_leg_payload"}
+		        ,{"mData":"route"}
+		        ],
+	        "rowCallback": function( row, data, displayIndex ) {
+				$(row).attr('contact_id',data['contact_id']);
+				$(row).click(function(){
+					$('.edit-item-section').css('display','');
+					$('#delete_contact').css('display','');
+					manifest.fetch({id:parseInt($(row).attr('id'))});
+					
+    				companies.fetch({contact_id:parseInt($(row).attr('id'))});    
+           		});
+	        }
+    });
+    $('select[name=contacts_length]').css('margin-top','10px');
+    $('#manifestDetails_length label').css('margin-bottom','0px');
+    
+    $('#manifestDetails tbody').on('click', 'tr', function () {
+    	$(this).siblings().removeClass('selected');
+    	$(this).removeClass('selected').addClass('selected');
+    });
+    $('#manifestDetails').on('draw.dt',function(event,manifestDetailsTable){
+     	if(!isNaN(parseInt(manifest.get('id')))){
+     		$('#manifestDetails tbody tr[contact_id='+manifest.get('id')+']').addClass('selected');
+     	}
+	});
+	
+	    
+    	
+
+		$('#search_manifest').keydown(function(){
+			setTimeout(function(){
+				manifestTable.api().ajax.reload();
+			},10);
+		});
+		$('#create_contact').click(function(){
+			$('#delete_contact').css('display','none');
+			$('.edit-item-section').css('display','');			
+			notes.reset();
+			manifest = new ManifestModel({contact_id:'new',contact_name:'',email:'',phone_number:''});
+			contactView.render();
+			companies.reset();
+			companyView.render();
+			if(notesView!=null){
+				notesView.render();
+			}
+			$('#manifests tbody tr').removeClass('selected');
+     		
+            setTimeout(function(){
+				if($('body').width()>979){
+					$('.main-content').animate({
+				        scrollTop: ($(".edit-item-section").offset().top+$('.main-content').scrollTop()-$('.navbar-fixed-top').height())
+				    }, 500);
+				}else{
+					$('html, body').animate({
+				        scrollTop: $(".edit-item-section").offset().top
+				    }, 500);
+				}
+            },100);
+		});
+		
+		$('#cancel_contact').click(function(){
+			$('#delete_contact').css('display','none');
+			$('.edit-item-section').css('display','none');	
+     		$('#manifests tbody tr').removeClass('selected');
+			
+		});
+		
+		$('#delete_contact').click(function(){
+			if(manifest.get('contact_id')!='new'){
+	            $('#myModalLabeldelete').html('Delete Contact');
+	            $('#deleteModal > div.modal-body').html('<p>Are you sure you want to delete <b>'+manifest.get('contact_name')+'</b>?</p>');
+	            $('#deleteModal').modal('show');
+			}else{
+				/*contact = new ContactModel({contact_id:'new',contact_name:'',email:'',phone_number:''});
+				contactView.render();
+				companies.reset();
+				companyView.render();*/
+			}
+		});
+		
+		
+		$('#confirmdelete').click(function(){
+			socket.get('/contacts/deletecontact',{contact_id:manifest.get('contact_id')},function(response){
+				manifestTable.api().ajax.reload(function(){},false);
+				$('#delete_contact').css('display','none');
+				$('.edit-item-section').css('display','');			
+				manifest = new ManifestModel({contact_id:'new',contact_name:'',email:'',phone_number:''});
+				contactView.render();
+				companies.reset();
+				companyView.render();
+				$('#delete_contact').css('display','none');
+				$('.edit-item-section').css('display','none');	
+	           	
+			});
+		});
+		
+    	$('#save_contact').click(function(){
+    		$('.alert-success').remove();
+    		$('.alert-error').remove();
+    		var wasnew = manifest.get('contact_id')=='new'?true:false;
+    		socket.get('/contacts/updatecontact/' + manifest.get('contact_id'), {manifest:manifest.toJSON(), companies : companies.toJSON(), notes : notes.toJSON()},function(response){
+    			if(typeof(response.success)!='undefined'){
+    				if(manifest.get('contact_id')=='new'){
+    					manifest.set('contact_id',response.contact_id);
+    				}
+	                $('.page-banner').after('<div class="alert alert-success fade in" style="border-radius:0px;">'+
+	                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+	                        '<strong>'+'Success'+':&nbsp</strong>'+'Changes have been saved'+'</div>');
+	                if($('body').width()>979){
+						$('.main-content').animate({
+					        scrollTop: 0
+					    }, 500);
+					}else{
+						$('html, body').animate({
+					        scrollTop:0
+					    }, 500);
+					}                
+	                
+	                setTimeout(function(){// wait for database to be ready
+	                	if(wasnew){
+							$('.edit-item-section').css('display','none');
+							$('#delete_contact').css('display','none');
+							manifest.set('contact_id','new');
+	                	}else{
+		                	manifest.fetch({id:parseInt(manifest.get('id'))}); 
+		    				companies.fetch({contact_id:parseInt(manifest.get('id'))});  
+	                	}
+						manifestTable.api().ajax.reload(function(){},false);  // reloads the datatable- value should still be shown
+	                },100);
+	                
+					
+	                setTimeout(function(){
+	                    setTimeout(function(){
+	                        $('.alert-success').remove();
+	                    },500);
+	                    $('.alert-success').removeClass('in');
+	                },alert_fadeout_time);
+    			}else{
+    				$('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
+	                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+	                        ''+response.error+'</div>');
+	                if($('body').width()>979){
+						$('.main-content').animate({
+					        scrollTop: 0
+					    }, 500);
+					}else{
+						$('html, body').animate({
+					        scrollTop:0
+					    }, 500);
+					}
+				}
+    		});
+    	});
+    	
+		/**
+		 * Manifest
+		 */
+		var ManifestModel = Backbone.Model.extend({
+	        urlRoot: '/manifests/getmanifest',
+	        socket:null,
+	        sync:function(method,model,options){
+	        	var where = options;
+	            if(typeof this.urlRoot === "string" && this.urlRoot !== "") {
+	                this.socket = socket;
+	            	var collectionid = where.id?'/'+where.id:'';
+	                this.socket.request(this.urlRoot+collectionid, where, _.bind(function(contact){
+	                    if(contact.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
+	                        location.reload(); // Will boot back to login screen
+	                    }
+	                    this.clear();
+	                    this.set(manifest);
+                    	contactView.render();
+	                    
+	                }, this));
+	            }
+	        
+	        }
+	    });
+	    var manifest = new ManifestModel();
+		
+	    	
+	    ///////////////////////////
+	    /// Contact      View ////
+	    ///////////////////////////	
+	    var ContactBackboneView = Backbone.View.extend({
+	        el: '#contact_information_section',
+	        events: {
+	           "keyup input#contact_name":"name",
+	           "keyup input#phone_number":"phone",
+	           "keyup input#email":"email",
+	           "change input#contact_name":"name",
+	           "change input#phone_number":"phone",
+	           "change input#email":"email"
+	           
+	        },
+	        email:function(event){
+	        	manifest.set('email',$('input#email').val());
+	        	manifest.set('modified',true);
+	        	setChangesPending();
+	        },
+	        phone:function(event){
+	        	manifest.set('phone_number',$('input#phone_number').val());
+	        	manifest.set('modified',true);
+	        	setChangesPending();
+	        },
+	        name:function(event){
+	        	manifest.set('contact_name',$('input#contact_name').val());
+	        	manifest.set('modified',true);
+	        	setChangesPending();
+	        	//contact.set('contact_id','new');
+	        	//contact.unset('createmode');
+	        	//contact.set('editmode',true);
+	        	//contactView.render();
+	        	//enableContactFields(true);
+	        	//$('input.contact_name').change();
+	        },
+	        initialize: function () {
+	            //this.render();
+	        },
+	        template: _.template($('#contact-template').html()),
+	        render: function () {
+	    	    this.$el.empty();
+	        	this.$el.append(this.template(manifest.toJSON()));
+	        	
+	        	<% if(req.session.user.policy[req.route.path].update==0){ %>
+	        		$('#contact_information_section input').attr('disabled','disabled');
+	        	<% } %>
+	        	
+	        	setChangesPending();
+				
+				notes.fetch({id:manifest.get('contact_id')});
+	        }
+	    });
+	    var contactView = new ContactBackboneView();
+	   
+	   
+	   
+	   
+	   
+	    //////////////////////
+        // Company   Model  //
+        //////////////////////
+        // Collection to get the companies
+
+        var CompanyModel = Backbone.Model.extend({
+            urlRoot: ''    //not used really
+        });
+
+        var SailsCompanyCollection = Backbone.Collection.extend({
+            sailsCollection: "",
+            socket: null,
+            sync: function(method, model, options){
+                var where = options;
+                if(typeof this.sailsCollection === "string" && this.sailsCollection !== "") {
+                    this.socket = socket;
+                    this.socket.request("/" + this.sailsCollection, where, _.bind(function(tempcompanies){
+                        this.set(tempcompanies);
+                        companyView.render();
+                    }, this));
+
+                    //this.socket.on("companyView", _.bind(function(tempcompanies){
+                   //     this.set(tempcompanies);
+                   ///     companyView.render();
+                   // }, this));
+                }
+            }
+        });
+
+        var CompanyCollection = SailsCompanyCollection.extend({
+            sailsCollection: 'contacts/getcompaniesbycontactid',
+            model: CompanyModel
+        });
+
+        companies = new CompanyCollection();
+
+
+        var CompanyView = Backbone.View.extend({
+            el: '#companies-div',
+	        events: {
+	        	"click div.delete-company-mapping":"destroy",
+	        	"click div.cancel-delete-company-mapping":"canceldestroy",
+	            "click button.hoa-hand"   : "hand",
+	            "click button.hoa-off"   : "off",
+	            "click button.hoa-auto" : "auto"
+	        },
+	        canceldestroy:function(event){
+	        	var elementid = (!isNaN(parseInt($(event.target).closest('.companycard').attr('company_id')))?parseInt($(event.target).closest('.companycard').attr('company_id')):$(event.target).closest('.companycard').attr('company_id'));
+	        	var company = companies.findWhere({company_id:elementid});
+	        	company.unset('dodelete');
+	        	companyView.render();
+	        	
+	        },
+	        destroy:function(event){
+	        	var elementid = (!isNaN(parseInt($(event.target).closest('.companycard').attr('company_id')))?parseInt($(event.target).closest('.companycard').attr('company_id')):$(event.target).closest('.companycard').attr('company_id'));
+	        	var company = companies.findWhere({company_id:elementid});
+	        	if(typeof(company.get('new'))!='undefined'){
+	        		companies.remove(company);
+	        	}else{
+	        		company.set('dodelete',true);
+	        	}
+	        	companyView.render();
+	        },
+
+            initialize: function () {
+            },
+            template: _.template($('#company-template').html()),
+            render: function () {
+	            $('.associated-companies-alert').empty();
+                this.$el.html("");
+                var tcollection = this.collection.sortBy(function(hoarow){
+                    return hoarow.get("eqp_ID");
+                });
+                for(var i=0; i<tcollection.length; i++)
+                {
+                	tcollection[i].set('address',buildAddressString(tcollection[i].toJSON()));
+                    this.$el.append(this.template(tcollection[i].toJSON()));
+                }
+                
+	            $('#companies-div > div.row-fluid:even').addClass('odd');
+	            $('#companies-div > div.row-fluid:odd').addClass('even');
+	            setChangesPending();
+            }
+        });
+
+        var companyView = new CompanyView({collection: companies});
+
+	   
+	   
+    });
+</script>

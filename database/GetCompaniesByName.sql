@@ -8,6 +8,7 @@ SELECT
 		,cur_company.name as 'company_name'
 FROM cur_company
 WHERE  (companySearchTerms IS NULL OR cur_company.name LIKE CONCAT('%', companySearchTerms, '%'))
+	AND cur_company.is_deleted = 0
 LIMIT 10;
 END$$
 DELIMITER ; 

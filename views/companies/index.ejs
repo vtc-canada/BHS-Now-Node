@@ -1,0 +1,1097 @@
+<%
+    var translate = {
+        'en' : {
+            'You do not have sufficient privileges to access':'You do not have sufficient privileges to access',
+            'Error':'Error',
+            'Buildings':'Buildings',
+            'Date':'Date',
+            'Equipment':'Equipment',
+            'Device':'Device',
+            'Alarm Type':'Alarm Type',
+            'System Health':'System Health',
+            'System Throughput':'System Throughput',
+            'Time In System':'Time In System',
+            'BHS Overview':'BHS Overview',
+            'Time':'Time',
+            'Alarms':'Alarms',
+            'Daily Reminders':'Daily Reminders',
+            'Predictive Mainenance Tasks':'Predictive Mainenance Tasks',
+            'DEVICE':'DEVICE',
+            'REASON':'REASON',
+            'Uptime':'Uptime',
+            'Failsafe Rate':'Failsafe Rate',
+            'Tracking Rate':'Tracking Rate',
+            'Key Performance Indicators':'Key Performance Indicators',
+            'Throughput (bph)':'Throughput (bph)',
+            'State':'State',
+            'Jam Rate':'Jam Rate',
+            'ATR Read Rate':'ATR Read Rate',
+            'Cancel':'Cancel',
+            'Delete':'Delete',
+            'To create a new owner':'To create a new owner, select the contact and/or company associated with this building',
+            'To create a new sale':'To create a new sale, click create',
+            'Create':'Create',
+            'Contact':'Contact',
+            'Contacts':'Contacts',
+            'Company':'Company',
+            'Companies':'Companies'
+        },
+        'es' : {
+            'You do not have sufficient privileges to access':'Usted no tiene suficientes privilegios para acceder a',
+            'Error':'Error',
+            'Buildings':'Salpicadero',
+            'Date':'Date',
+            'Equipment':'Equipment',
+            'Device':'Device',
+            'REASON':'REASON',
+            'Alarm Type':'Alarm Type',
+            'System Health':'System Health',
+            'System Throughput':'System Throughput',
+            'Time In System':'Time In System',
+            'BHS Overview':'BHS Overview',
+            'Time':'Time',
+            'Alarms':'Alarms',
+            'Daily Reminders':'Daily Reminders',
+            'Predictive Mainenance Tasks':'Predictive Mainenance Tasks',
+            'DEVICE':'DEVICE',
+            'Uptime':'Uptime',
+            'Failsafe Rate':'Failsafe Rate',
+            'Tracking Rate':'Tracking Rate',
+            'Key Performance Indicators':'Key Performance Indicators',
+            'Throughput (bph)':'Throughput (bph)',
+            'State':'State',
+            'Jam Rate':'Jam Rate',
+            'ATR Read Rate':'ATR Read Rate',
+            'Cancel':'Cancel',
+            'Delete':'Delete',
+            'To create a new owner':'To create a new owner, select the contact and/or company associated with this building',
+            'To create a new sale':'To create a new sale, click create',
+            'Create':'Create',
+            'Contact':'Contact',
+            'Contacts':'Contacts',
+            'Company':'Company',
+            'Companies':'Companies'
+        }
+    }
+%>
+
+<div class="row-fluid create-report-controls-wrapper">
+<div class="span10 offset1 report-control-left-label"  style="min-height: 30px;padding-top: 5px; font-size:18px; font-weight:bold;margin-top: 33px;">
+	<i class="icon-search icon-2x banner-icon-top" style="margin-top: -12px; margin-right: 10px;"></i><div class="banner-div-text">Search Filters</div>
+
+</div>
+</div>
+
+
+    <!-- Modal -  -->
+<div id="exportModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="exportModalLabelgenerate">Companies Export</h3>
+    </div>
+    <p style="margin:10px;">
+    	Your report is being generated and will be available for 15 minutes.
+    </p>
+    <div class="modal-body" style="overflow:hidden;">
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <!--<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" id="confirmdeletes"><%= translate[locale]['Confirm'] %></button>-->
+    </div>
+</div>
+
+<div class="row-fluid create-report-controls-wrapper">
+    <div class="row">
+    
+                   
+    
+        <div class="span10 offset2 create-report-controls" style="padding-top: 20px;">
+           <div class="row-fluid">
+               <div class="row">
+                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_address">Address:</label></div>
+                   <div class="span8 report-control-right-control">
+                       <input type="text" id="search_address" value="">
+                   </div>
+               </div>
+               <div class="row">
+                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_company">Company:</label></div>
+                   <div class="span8 report-control-right-control">
+                       <input type="text" id="search_company" value="">
+                   </div>
+               </div>
+           </div>
+        </div>
+    </div>
+</div>
+
+<div class="row-fluid" style="margin-top:19px; margin-bottom:25px;">
+    <div class="span10 offset1 page-controls-wrapper">
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;">Companies</span>
+             <% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="create_company">Create New</div><% } %>
+            <% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="export_companies">Export</div><% } %>      
+        </div>
+        <div class="row-fluid key-indicaters-frame" id="iframediv">
+            <div class="row-fluid">
+                <table id="companies" class="display" cellspacing="0" width="100%">
+			        <thead>
+			            <tr>
+			            	<th>Id<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+			                <th>Company<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+			                <th>Address<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+			            </tr>
+			        </thead>
+			 
+			    </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/template" id="company-template">
+	<div class="row-fluid " style="position:relative; cursor:default;" company_id="{{=company_id}}">
+	{{ if(false&&latitude==null){ }}
+	<div class="alert fade in" style="margin-bottom:0px; border-radius:0px;">
+		<!-- <button type="button" class="close" data-dismiss="alert">&times</button>-->
+		<strong>Warning:&nbsp;</strong>This address is invalid and cannot be geocoded by Google Maps. This address will not display on the maps screen.
+	</div>
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="row-fluid" >
+				<div class="row-category" >
+    			</div>
+			</div>
+		</div>
+	</div>
+	{{ } }}
+	
+		
+		
+		<div class="row-fluid building-segment-wrapper">
+			<div class="span5 segment-label" >Company Name:</div>
+			<div class="span7" ><input type="text" id="company_name" class="company_name address-input"  maxlength="60" value="{{=company_name}}"></div>
+		</div>
+		<div class="row-fluid building-segment-wrapper">
+			<div class="span5 segment-label">Street Number Begin:</div>
+			<div class="span7"><input type="text" id="street_number_begin" class="address-input"  maxlength="60" value="{{=street_number_begin}}"></div>
+		</div>
+		<div class="row-fluid building-segment-wrapper">
+			<div class="span5 segment-label">Street Number End:</div>
+			<div class="span7"><input type="text" id="street_number_end" class="address-input"  maxlength="60" value="{{=street_number_end}}" ></div>
+		</div>
+		<div class="row-fluid building-segment-wrapper">
+			<div class="span5 segment-label">Street Name:</div>
+			<div class="span7"><input type="text" id="street_name" class="address-input"  maxlength="250" value="{{=street_name}}" ></div>
+		</div>
+		<div class="row-fluid building-segment-wrapper">
+			<div class="span5 segment-label">City:</div>
+			<div class="span7"><input type="text" id="city" class="address-input"  maxlength="60" value="{{=city}}"></div>
+		</div>
+		<div class="row-fluid building-segment-wrapper">
+			<div class="span5 segment-label">Province:</div>
+			<div class="span7">
+				<select id="province" class="address-input" >
+					<option value="AB" {{if(province=='AB'){ }}selected="selected"{{ } }}>AB</option>
+					<option value="BC" {{if(province=='BC'){ }}selected="selected"{{ } }}>BC</option>
+					<option value="MB" {{if(province=='MB'){ }}selected="selected"{{ } }}>MB</option>
+					<option value="NB" {{if(province=='NB'){ }}selected="selected"{{ } }}>NB</option>
+					<option value="NL" {{if(province=='NL'){ }}selected="selected"{{ } }}>NL</option>
+					<option value="NS" {{if(province=='NS'){ }}selected="selected"{{ } }}>NS</option>
+					<option value="NT" {{if(province=='NT'){ }}selected="selected"{{ } }}>NT</option>
+					<option value="NU" {{if(province=='NU'){ }}selected="selected"{{ } }}>NU</option>
+					<option value="ON" {{if(province=='ON'){ }}selected="selected"{{ } }}>ON</option>
+					<option value="PE" {{if(province=='PE'){ }}selected="selected"{{ } }}>PE</option>
+					<option value="QC" {{if(province=='QC'){ }}selected="selected"{{ } }}>QC</option>
+					<option value="SK" {{if(province=='SK'){ }}selected="selected"{{ } }}>SK</option>
+					<option value="YT" {{if(province=='YT'){ }}selected="selected"{{ } }}>YT</option>
+				</select>
+			</div>
+			<div class="row-fluid building-segment-wrapper">
+				<div class="span5 segment-label">Postal Code:</div>
+				<div class="span7"><input type="text" id="postal_code" class="address-input" maxlength="7" value="{{=postal_code}}"></div>
+			</div>
+			
+		</div>
+		
+	</div>
+</script>
+<script type="text/template" id="contact-template">
+	<div class="row-fluid building-segment-wrapper contactcard{{ if(typeof(dodelete)!='undefined'){ }} user-delete{{ } }}" userid="" contact_id="{{=contact_id}}">
+		<div class="span3 ">{{=contact_name}}</div>
+		<div class="span3">{{=phone_number}}{{=email}}</div>
+		<div class="span3 ">{{ if(typeof(dodelete)=='undefined'){ }}<div class="pull-right btn btn-danger delete-contact-mapping">Delete</div>{{ }else{ }}<div class="pull-right btn btn-success cancel-delete-contact-mapping">Cancel</div>{{ } }}</div>
+	</div>
+</script>
+
+<script type="text/template" id="notes-template">
+	<div class="row-fluid note" noteid="{{=id}}">
+		<div class="span2">
+			<span class="mobilelabel">Timestamp:</span>{{=note_datetime}}
+		</div>
+		<div class="span2">
+			<span class="mobilelabel">User:</span>{{=user}}
+		</div>
+		<div class="span6"><span class="mobilelabel">Details:</span><div class="note-editable">{{=note}}</div></div>
+		<div class="span2" style="padding-top:0px;">
+			<div class="row-fluid" style="padding:6px;">
+				{{ if(user=='<%=req.session.user.username%>'||<%=req.session.user.policy[req.route.path].update==1%>){ }}<a class="edit-note" style="color:#0F74BC;cursor:pointer;padding-right:6px;"><i class="icon-edit icon-2x"></i></a>{{ } }}
+				{{ if(user=='<%=req.session.user.username%>'||<%=req.session.user.policy[req.route.path].update==1%>){ }}<a class="delete-note" style="color:red;cursor:pointer;"><i class="icon-remove-sign icon-2x"></i></a>{{ } }}
+			</div>
+		</div>
+	</div>
+</script>
+
+<div class="row-fluid edit-item-section" style="display:none; margin-top:19px; margin-bottom:35px;">
+    <div class="span10 offset1 page-controls-wrapper">
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;" id="building-section-title">Edit Company Details</span>
+         	<% if(req.session.user.policy[req.route.path].update==1){ %><button style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="save_company"><i class="only-mobile icon-save"></i><span class="only-desktop">Save</span></button><% } %>
+         	<% if(req.session.user.policy[req.route.path].delete==1){ %><button style="margin-right:10px;font-weight: 400;" class="btn btn-danger pull-right save_pull" id="delete_company"><i class="only-mobile icon-trash"></i><span class="only-desktop">Delete</span></button><% } %>
+         	<button style="margin-right:10px;font-weight: 400;" class="btn pull-right save_pull" id="cancel_company"><i class="only-mobile icon-circle-arrow-left"></i><span class="only-desktop">Cancel</span></button>
+         	<% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right: 10px; color: rgb(153, 0, 0); font-weight: 400; display: none;" class="pull-right save_pull" id="changes_pending">Changes Pending. &nbsp;</div><% } %>
+  		 </div>
+        <div class="row-fluid " id="iframediv">
+        	<div class="content-wrapper building-details-frame">
+    			<div class="row-fluid">
+					<div class="span12">
+						<div class="row-fluid">
+							<div class="row-category">
+								<span class="" id="sales_title">
+									<i class="icon-plus-sign" style="margin-right:10px; display:none;"></i>
+									<i class="icon-briefcase"></i> &nbsp&nbsp<b>Company Information</b>
+								</span>
+								<div class="pull-right" style="height:40px; display:none;">
+									<span  id="delete_mapping" class="row-category-button-wrapper">
+										<span class="btn btn-danger">
+						                    <i class="glyphicon glyphicon-plus"></i>
+						                    <span>Delete Mapping</span>
+						                </span>
+									</span>
+								</div>
+								<div style="margin-right: 10px; color: rgb(153, 0, 0); font-weight: 400; display: none;" class="pull-right save_pull" id="new_contact_pending">Contact Created. &nbsp;</div>
+								<div style="margin-right: 10px; color: rgb(153, 0, 0); font-weight: 400; display: none;" class="pull-right save_pull" id="mapped_contact_pending">Mapping Changed. &nbsp;</div>
+								<div style="margin-right: 10px; color: rgb(153, 0, 0); font-weight: 400; display: none;" class="pull-right save_pull" id="modified_contact_pending">Contact Modified. &nbsp;</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			
+				<div id="company_information_section" class="row-fluid">
+				</div>
+				<div class="row-fluid" style="display:none;">
+					<div class="span12">
+						<div class="row-fluid">
+							<div class="row-category">
+								<span class="" id="sales_title">
+									<i class="icon-plus-sign" style="margin-right:10px; display:none;"></i>
+									<i class="icon-pencil"></i> &nbsp&nbsp<b>Associated Contacts</b>
+								</span>
+								<div class="pull-right" style="height:40px; display:none;">
+									<span  id="delete_mapping" class="row-category-button-wrapper">
+										<span class="btn btn-danger">
+						                    <i class="glyphicon glyphicon-plus"></i>
+						                    <span>Delete Mapping</span>
+						                </span>
+									</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+					
+        		<div class="row-fluid" style="display:none;">
+        				<div class="row-fluid building-segment-wrapper">
+							<div class="span5"><select id="contactcombobox" class="contactcombobox" value=""></select></div>
+							<div class="span7"><div id="add_contact_card" class="btn btn-success">Add</div></div>
+						</div>
+        		</div>
+        		
+        		<div id="adminusers" style="width:100%; margin:0px; display:none;">
+        		</div>
+        		
+				<div class="note-wrapper" style="display:none;">
+	        		<div class="row-fluid">
+						<div class="span12">
+							<div class="row-fluid">
+								<div class="row-category">
+									<i class="icon-pencil"></i> &nbsp&nbsp<b>Note History</b>
+									<div class="pull-right" style="height:40px;">
+										<span class="row-category-button-wrapper">
+											<span id="create_note" class="btn btn-success">
+			                    				<span><i class="only-mobile icon-file-alt"></i><span class="only-desktop">Create Note</span></span>
+							                </span>
+										</span>
+									</div>
+									
+						         	<% if(req.session.user.policy[req.route.path].delete==0){ %>
+											<div class="pull-right" style="height:40px;">
+												<span class="row-category-button-wrapper" id="save_note_parent">
+													<span id="save_notes" class="btn btn-primary">
+									                    <span><i class="only-mobile icon-save"></i><span class="only-desktop">Save Notes</span></span>
+									                </span>
+												</span>
+											</div>
+						         	<% }else{ %>
+						         			<div class="pull-right" style="height:40px;">
+												<span class="row-category-button-wrapper" id="save_note_parent">
+													<button id="save_note_admin" class="btn btn-primary">
+									                    <span><i class="only-mobile icon-save"></i><span class="only-desktop">Save</span></span>
+									                </button>
+												</span>
+											</div>
+						         	
+						         	<% } %>
+											
+						         	<% if(true||req.session.user.policy[req.route.path].update==0){ %>
+						         	<div style="margin-right: 10px; color: rgb(153, 0, 0); font-weight: 400; display: none;" class="pull-right save_pull" id="changes_pending_notes">Changes Pending. &nbsp;</div>
+						         	<% } %>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div id="notes-table-header" class="tableheader row-fluid">
+						<div class="span2">
+							Timestamp
+						</div>
+						<div class="span2">
+							User
+						</div>
+						<div class="span6">
+							Details
+						</div>
+						<div class="span2">
+							Modify
+						</div>
+					</div>
+					<div id="notes-wrapper" class="row-fluid css-notes-wrapper">
+					
+					</div>
+        		</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Modal - confirms you want to continue to delete contact -->
+<div id="deleteModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabeldelete"></h3>
+    </div>
+    <div class="modal-body">
+        <p>One fine body…</p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true"><%= translate[locale]['Cancel'] %></button>
+        <button class="btn btn-danger" data-dismiss="modal" aria-hidden="true" id="confirmdelete"><%= translate[locale]['Delete'] %></button>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function(){
+    
+    	var init_id = <%=typeof(init_id)!='undefined'?init_id:null%>;
+    	
+		var curcontactval = '';
+		var contactsearchtimer;
+		var contactcombobox;
+		var blockNoteSave = false;
+		
+    	socket.get('/companies/getcontactsbyname',{},function(res){
+    		for(var i=0;i<res.length;i++){
+        		if(parseInt(company.get('company_id'))!=parseInt(res[i].company_id)){
+	        		$('select.contactcombobox').append('<option contact_name="'+res[i].contact_name+'" contact_id="'+res[i].contact_id+'">'+res[i].contact_name+'</option>');
+        		}
+        	}
+        	contactcombobox = $('select.contactcombobox').combobox();
+        	$('input.contactcombobox').on('keyup',function(e){
+        		if(curcontactval!=$('input.contactcombobox').val()&&e.keyCode!=9&&e.keyCode!=13&&e.keyCode!=27)
+        		{
+    				curcontactval =  $('input.contactcombobox').val();
+        			updateContactCombobox();
+    			}
+        		else if(e.keyCode==9||e.keyCode==13||e.keyCode==27)
+        		{
+        			$('input.contactcombobox').change();
+    			}
+    		});
+    		$('#add_contact_card').click(function(){
+    			var contactname = $('input.contactcombobox').val()
+				var contactid =  parseInt($('select.contactcombobox option[contact_name="'+contactname+'"]').attr('contact_id'));
+    			socket.get('/companies/getcontact/'+contactid,{},function(contactnew){
+    				if(contactnew.contact_id!='new'&&typeof(contacts.findWhere({contact_id:contactid}))=='undefined'){ //new indicates an error
+    					
+    					contactnew.new = true;
+    					contacts.add(contactnew);
+    					contactsView.render();
+    				}
+    			});
+    		});
+		});
+		
+		function updateContactCombobox(){
+			clearTimeout(contactsearchtimer);
+    		contactsearchtimer = setTimeout(function(){
+    			socket.get('/companies/getcontactsbyname',{search: curcontactval},function(res){
+    				var tempval = $('input.contactcombobox').val();
+        			$('select.contactcombobox').empty();
+		    		for(var i=0;i<res.length;i++){
+		        		if(parseInt(contacts.get('contact_id'))!=parseInt(res[i].contact_id)){
+			        		$('select.contactcombobox').append('<option contact_name="'+res[i].contact_name+'" contact_id="'+res[i].contact_id+'">'+res[i].contact_name+'</option>');
+		        		}
+		        	}
+        			contactcombobox.data('combobox').refresh(); 
+        			$('input.contactcombobox').val(tempval);
+        			contactcombobox.data('combobox').lookup();
+    			});
+    		},100);
+		}
+        		
+        		
+		var datatable = $('#companies').dataTable({
+		        "processing": true,
+		        "serverSide": true,
+		        "dom":"tipr",
+		        "ajax": {
+		        	"url":"/companies/searchcompanies",
+	        		"data":function(d){
+	        			d.address_search = $("#search_address").val();
+	        			d.contact_search = $("#search_company").val();
+	        		},
+	        		error: function(xhr, error, thrown){
+	        			if(error.toString()=='parsererror'){
+	        				location.reload();
+	        			}else{
+		    				$('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
+			                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+			                        ''+error.toString()+'</div>');
+			                if($('body').width()>979){
+								$('.main-content').animate({
+							        scrollTop: 0
+							    }, 500);
+							}else{
+								$('html, body').animate({
+							        scrollTop: 0
+							    }, 500);
+							}
+		                }
+	        		}
+	        	},
+		        "aoColumns":[
+		        	{"mData":"mapping_id","visible":false}
+			        ,{"mData":function(data,b){
+			        	if(data.company_name==null){
+			        		return '';
+			        	}
+			        	return "<b>"+data.company_name.toString()+"</b>";
+			        }
+			        }
+			        ,{"mData":function(data,b){ 
+			        	return buildAddressString(data);
+			        }
+			        }
+		        ],
+		        "rowCallback": function( row, data, displayIndex ) {
+					$(row).attr('mapping_id',data['mapping_id']);
+					$(row).attr('company_id',data['company_id']);
+					$(row).attr('address_id',data['address_id']);
+					$(row).click(function(){
+						$('.edit-item-section').css('display','');
+						$('#delete_company').css('display','');
+    					contacts.fetch({id:parseInt($(row).attr('company_id'))});
+    					
+        				company.fetch({company_id:parseInt($(row).attr('company_id'))});    // Gets the alarms
+               		});
+		        }
+	    });
+	    $('select[name=companies_length]').css('margin-top','10px');
+	    $('#companies_length label').css('margin-bottom','0px');
+	    
+        $('#companies tbody').on('click', 'tr', function () {
+        	$(this).siblings().removeClass('selected');
+        	$(this).removeClass('selected').addClass('selected');
+	    });
+	    $('#companies').on('draw.dt',function(event,datatable){
+	     	if(!isNaN(parseInt(company.get('company_id')))){
+	     		$('#companies tbody tr[company_id='+company.get('company_id')+']').addClass('selected');
+	     	}
+	     	
+    	});
+    	
+    	$('#create_note').click(function(){
+	    	if(typeof(notes)!='undefined'){
+	    		var noteid = 'new_'+Math.floor((Math.random() * 1000000) + 1);
+	    		var newnote = new NotesModel({id:noteid,note:'',timestamp:new Date(),user:'<%=req.session.user.username%>'});
+	    		notes.add(newnote);
+	    		notesView.render();
+	    		$('.note[noteid='+noteid+'] .edit-note').click();
+	    	}	
+		});
+
+		$('#search_address').keydown(function(){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		});
+		$('#search_company').keydown(function(){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		});
+		
+		$('#create_company').click(function(){
+			$('#companies tbody tr').removeClass('selected');
+			$('#delete_company').css('display','none');
+			$('.edit-item-section').css('display','');
+			notes.reset();	
+			company = new CompanyModel({company_id:'new',company_name:'',street_number_begin:'',street_number_end:'',street_name:'',postal_code:'',city:'',province:'',latitude:'',longitude:''});
+			companyView.render();
+			contacts.reset();
+			contactsView.render();
+			if(notesView==null){
+				notesView = new NotesBackboneView({collection: notes});
+			}
+			notesView.render();
+			
+            setTimeout(function(){
+				if($('body').width()>979){
+					$('.main-content').animate({
+				        scrollTop: $(".edit-item-section").offset().top - $('.navbar-fixed-top').height()
+				    }, 500);
+				}else{
+					$('html, body').animate({
+				        scrollTop: $(".edit-item-section").offset().top
+				    }, 500);
+				}
+            },100);
+		
+		});
+		
+		$('#cancel_company').click(function(){
+			$('#delete_company').css('display','none');
+			$('.edit-item-section').css('display','none');	
+			$('#companies tbody tr').removeClass('selected');
+		});
+		
+		$('#delete_company').click(function(){
+			if(company.get('company_id')!='new'){
+			
+	            $('#myModalLabeldelete').html('Delete Company');
+	            $('#deleteModal > div.modal-body').html('<p>Are you sure you want to delete <b>'+company.get('company_name')+'</b>?</p>');
+	            $('#deleteModal').modal('show');
+			}else{
+				/*contact = new ContactModel({contact_id:'new',contact_name:'',email:'',phone_number:''});
+				contactsView.render();
+				companies.reset();
+				companyView.render();*/
+			}
+		});
+		
+		$('#confirmdelete').click(function(){
+				socket.get('/companies/deletecompany',{company_id:company.get('company_id')},function(response){
+					datatable.api().ajax.reload(function(){},false);
+					$('#delete_company').css('display','none');
+					$('.edit-item-section').css('display','');			
+					company = new CompanyModel({company_id:'new',company_name:''
+												,street_number_begin:''
+												,street_number_end:''
+												,street_name:''
+												,city:''
+												,province:''
+												,postal_code:''});
+					companyView.render();
+					contacts.reset();
+					contactsView.render();
+					$('#delete_company').css('display','none');
+					$('.edit-item-section').css('display','none');	
+				});	
+		});
+		
+		$('#save_notes').click(function(){
+			$('.alert-success').remove();
+			$('.alert-danger').remove();
+    		if($(this).hasClass('disabled')){
+    			return;
+    		}
+			socket.get('/companies/updatecompany/' + contacts.get('contact_id'), {company:company.toJSON(), contacts : contacts.toJSON(), notes: notes.toJSON()},function(response){
+    			if(typeof(response.success)!='undefined'){
+    				if(company.get('company_id')=='new'){
+    					company.set('company_id',response.company_id);
+    				}
+	                $('.page-banner').after('<div class="alert alert-success fade in" style="border-radius:0px;">'+
+	                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+	                        '<strong>'+'Success'+':&nbsp</strong>'+'Changes have been saved'+'</div>');
+	                if($('body').width()>979){
+						$('.main-content').animate({
+					        scrollTop: 0
+					    }, 500);
+					}else{
+						$('html, body').animate({
+					        scrollTop: 0
+					    }, 500);
+					}
+	                setTimeout(function(){
+		                contacts.fetch({id:parseInt(company.get('company_id'))}); 
+	    				company.fetch({company_id:parseInt(company.get('company_id'))});  
+	                },100);
+                	
+	                setTimeout(function(){
+	                    setTimeout(function(){
+	                        $('.alert-success').remove();
+	                    },500);
+	                    $('.alert-success').removeClass('in');
+	                },alert_fadeout_time);
+    			}else{
+
+    				$('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
+	                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+	                        ''+response.error.toString()+'</div>');
+	                if($('body').width()>979){
+						$('.main-content').animate({
+					        scrollTop: 0
+					    }, 500);
+					}else{
+						$('html, body').animate({
+					        scrollTop: 0
+					    }, 500);
+					}
+    			}
+    		});
+		});
+		
+		$('#export_companies').click(function(){
+			$('#exportModal .modal-body').html('<div style="font-size: 16px; font-weight:400; text-align:right;" class="pull-right"><span class=""><i class="icon icon-cog icon-spin"></i></span>&nbsp;&nbsp;Generating Report...&nbsp;</div>');
+            $('#exportModal').modal('show');
+			socket.get('/companies/export',
+				{timezoneoffset : new Date().getTimezoneOffset()
+				,address_search  : $("#search_address").val()
+				, contact_search : $("#search_company").val()
+				},function(url){
+					$('#exportModal .modal-body').html('<a class="pull-right btn btn-success" href="'+url.url+'">Download</a>');
+				
+			});
+		
+		});
+		
+    	$('#save_company').click(function(){
+			$('.alert-success').remove();
+			$('.alert-danger').remove();
+    		var wasnew = company.get('company_id')=='new'?true:false;
+    		socket.get('/companies/updatecompany', {company:company.toJSON(), contacts : contacts.toJSON(), notes: notes.toJSON()},function(response){
+    			if(typeof(response.success)!='undefined'){
+    				if(company.get('company_id')=='new'){
+    					company.set('company_id',response.company_id);
+    				}
+	                $('.page-banner').after('<div class="alert alert-success fade in" style="border-radius:0px;">'+
+	                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+	                        '<strong>'+'Success'+':&nbsp</strong>'+'Changes have been saved'+'</div>');
+	                if($('body').width()>979){
+						$('.main-content').animate({
+					        scrollTop: 0
+					    }, 500);
+					}else{
+						$('html, body').animate({
+					        scrollTop:0
+					    }, 500);
+					}
+	                setTimeout(function(){ 
+	    				if(wasnew){
+							$('.edit-item-section').css('display','none');
+							$('#delete_building').css('display','none');
+							company.set('company_id','new'); // blocks table highlighted
+	                	}else{
+			                contacts.fetch({id:parseInt(company.get('company_id'))}); 
+		    				company.fetch({company_id:parseInt(company.get('company_id'))}); 
+	                	}
+		                datatable.api().ajax.reload(function(){},false);
+	                },100);
+                	
+	                setTimeout(function(){
+	                    setTimeout(function(){
+	                        $('.alert-success').remove();
+	                    },500);
+	                    $('.alert-success').removeClass('in');
+	                },alert_fadeout_time);
+    			}else{
+    				$('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
+		                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+		                        ''+response.error.toString()+'</div>');
+	                if($('body').width()>979){
+						$('.main-content').animate({
+					        scrollTop: 0
+					    }, 500);
+					}else{
+						$('html, body').animate({
+					        scrollTop:0
+					    }, 500);
+					}
+    			}
+    		});
+    	});
+    	
+    	
+	    	 // just shows the changes are pending, by scanning through the collection to see if that's the case.
+	    function setChangesPending(){
+	    	var change = false;
+	    	if(typeof(company.get('modified'))!='undefined'){
+	    		change = true;
+	    	}
+	    	contacts.each(function(contact){
+	    		if(typeof(contact.get('dodelete'))!='undefined'||typeof(contact.get('new'))!='undefined'){
+	    			change = true;
+	    		}
+	    	});
+	    
+	    	/*if(contacts.get('contact_id')=='new'){
+	    		$('#new_contact_pending').css('display','block');
+	    		$('#mapped_contact_pending').css('display','none');
+	    		$('#modified_contact_pending').css('display','none');
+	    	}else if(typeof(contacts.get('modified'))!='undefined'){
+	    		$('#new_contact_pending').css('display','none');
+	    		$('#mapped_contact_pending').css('display','none');
+	    		$('#modified_contact_pending').css('display','block');
+	    	}else if(typeof(contacts.get('dosync'))!='undefined'){
+	    		$('#new_contact_pending').css('display','none');
+	    		$('#mapped_contact_pending').css('display','block');
+	    		$('#modified_contact_pending').css('display','none');
+	    	}
+	    	return;*/
+            //buildingcontacts.each(function(bcontact){
+           //	if(typeof(bcontacts.get('dodelete'))!='undefined'||typeof(bcontacts.get('dosync'))!='undefined')
+            //	{
+            //		change = true;
+            //	}
+            //});
+	        
+            if(typeof($('#save_company')[0])!='undefined'){
+	        	$('#save_company')[0].disabled = !change;
+	        	$('#save_note_admin')[0].disabled = !change;
+            }
+            if(typeof($('#save_notes')[0])!='undefined'){
+            	if(!change){
+            		$('#save_notes').addClass('disabled');
+        		}else{
+            		$('#save_notes').removeClass('disabled');
+        		}
+            }
+	        if(change){
+	            $('#changes_pending').css('display','block');
+	            $('#changes_pending_notes').css('display','block');
+	        }
+	        else{
+	            $('#changes_pending').css('display','none');
+	            $('#changes_pending_notes').css('display','none');
+	        }
+	    }
+	    
+	    
+    	
+    	
+    	
+		///////////////////////////
+	    /// COMPANY        ////////
+	    ///////////////////////////   
+		var CompanyModel = Backbone.Model.extend({
+	        urlRoot: '/companies/getcompany',
+	        socket:null,
+	        sync:function(method,model,options){
+	        	var where = options;
+	            if(typeof this.urlRoot === "string" && this.urlRoot !== "") {
+	                this.socket = socket;
+	            	var collectionid = where.id?'/'+where.id:'';
+	                this.socket.request(this.urlRoot+collectionid, where, _.bind(function(company){
+	                    if(company.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
+	                        location.reload(); // Will boot back to login screen
+	                    }
+	                    this.clear();
+	                    this.set(company);
+                    	companyView.render();
+	                    
+	                }, this));
+	            }
+	        
+	        }
+	    });
+	    var company = new CompanyModel();
+		
+	    	
+	    ///////////////////////////
+	    /// Company       View ////
+	    ///////////////////////////	
+	    var CompanyBackboneView = Backbone.View.extend({
+	        el: '#company_information_section',
+	        events: {
+	           "change select.address-input":"inputChange",
+	           "change input.address-input":"inputChange",
+	           "keyup input.address-input":"inputChange"
+	           
+	        },
+	        inputChange:function(event){
+	        	company.set('modified',true);
+	        	if(typeof(company.get($(event.target).attr('id')))!='undefined')
+	        	{
+	        		company.set($(event.target).attr('id'),$(event.target).val());
+	        	}
+	        	setChangesPending();
+	        },
+	        initialize: function () {
+	            //this.render();
+	        },
+	        template: _.template($('#company-template').html()),
+	        render: function () {
+	    	    this.$el.empty();
+	        	this.$el.append(this.template(company.toJSON()));
+	        	<% if(req.session.user.policy[req.route.path].update==0){ %>
+	        		$('#company_information_section input').attr('disabled','disabled');
+	        	<% } %>
+	        	notes.fetch({id:company.get('company_id')});
+	        	setChangesPending();
+				
+	        }
+	    });
+	    var companyView = new CompanyBackboneView();
+	   
+	   
+	   
+	   
+	   
+	    //////////////////////
+        // Contact   Model  //
+        //////////////////////
+        // Collection to get the companies
+
+        var ContactModel = Backbone.Model.extend({
+            urlRoot: ''    //not used really
+        });
+
+        var SailsContactsCollection = Backbone.Collection.extend({
+            sailsCollection: "",
+            socket: null,
+            sync: function(method, model, options){
+                var where = options;
+                if(typeof this.sailsCollection === "string" && this.sailsCollection !== "") {
+                    this.socket = socket;
+                    this.socket.request("/" + this.sailsCollection, where, _.bind(function(tempcontacts){
+                        this.set(tempcontacts);
+                        contactsView.render();
+                    }, this));
+
+                    //this.socket.on("companyView", _.bind(function(tempcompanies){
+                   //     this.set(tempcompanies);
+                   ///     companyView.render();
+                   // }, this));
+                }
+            }
+        });
+
+        var ContactsCollection = SailsContactsCollection.extend({
+            sailsCollection: 'companies/getcontactsbycompanyid',
+            model: ContactModel
+        });
+
+        contacts = new ContactsCollection();
+
+
+        var ContactsView = Backbone.View.extend({
+            el: '#adminusers',
+	        events: {
+	        	"click div.delete-contact-mapping":"destroy",
+	        	"click div.cancel-delete-contact-mapping":"canceldestroy"
+	        },
+	        canceldestroy:function(event){
+	        	var elementid = (!isNaN(parseInt($(event.target).closest('.contactcard').attr('contact_id')))?parseInt($(event.target).closest('.contactcard').attr('contact_id')):$(event.target).closest('.contactcard').attr('contact_id'));
+	        	var contact = contacts.findWhere({contact_id:elementid});
+	        	contact.unset('dodelete');
+	        	contactsView.render();
+	        },
+	        destroy:function(event){
+	        	var elementid = (!isNaN(parseInt($(event.target).closest('.contactcard').attr('contact_id')))?parseInt($(event.target).closest('.contactcard').attr('contact_id')):$(event.target).closest('.contactcard').attr('contact_id'));
+	        	var contact = contacts.findWhere({contact_id:elementid});
+	        	if(typeof(contact.get('new'))!='undefined'){
+	        		contacts.remove(contact);
+	        	}else{
+	        		contact.set('dodelete',true);
+	        	}
+	        	contactsView.render();
+	        },
+            initialize: function () {
+            },
+            template: _.template($('#contact-template').html()),
+            render: function () {
+                this.$el.html("");
+                var tcollection = this.collection.sortBy(function(hoarow){
+                    return hoarow.get("eqp_ID");
+                });
+                for(var i=0; i<tcollection.length; i++)
+                {
+                    this.$el.append(this.template(tcollection[i].toJSON()));
+                }
+                
+	            $('#adminusers > div.row-fluid:even').addClass('odd');
+	            $('#adminusers > div.row-fluid:odd').addClass('even');
+	            setChangesPending();
+            }
+        });
+
+        var contactsView = new ContactsView({collection: contacts});
+	   
+	   
+	   
+	   ///////////////////////////
+	    ///  NOTES ////////
+	    ///////////////////////////
+	    	
+		var NotesModel = Backbone.Model.extend({
+	        urlRoot: '/contacts/note'
+	    });
+	
+	    var NotesCollection = Backbone.Collection.extend({
+	        sailsCollection: "",
+	        socket: null,
+	        sync: function(method, model, options){
+	            var where = {};
+	            if (options.where) {
+	                where = {
+	                    where: options.where
+	                }
+	            }
+	            if(options.id){
+	            	where.id = options.id;
+	        	}
+	            if(typeof this.sailsCollection === "string" && this.sailsCollection !== "") {
+	                this.socket = socket;
+	            	var collectionid = where.id?'/'+where.id:'';
+	                this.socket.request("/" + this.sailsCollection+collectionid, where, _.bind(function(tnotes){
+	                    if(tnotes.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
+	                        location.reload(); // Will boot back to login screen
+	                    }
+	                    this.set(tnotes);
+	                    notesView = new NotesBackboneView({collection: notes});
+	                }, this));
+	            }
+	        }
+	    });
+	
+	    var NotesCollection = NotesCollection.extend({
+	        sailsCollection: 'companies/notes',
+	        model: NotesModel
+	    });
+	
+	    var notes = new NotesCollection();
+	    //buildingnotes.fetch({id:11});
+	
+	
+	
+	
+	
+	    ///////////////////////////
+	    ///     Notes View     ////
+	    ///////////////////////////
+	
+	    var NotesBackboneView = Backbone.View.extend({
+	        el: '#notes-wrapper',
+	        events: {
+	            "click a.delete-note"   : "deleteNote",
+	            "click a.edit-note" : "editNote"
+	
+	        },
+	        editNote:function(event){
+	        	var self = this;
+	        	var blurTimeout;
+	        	var trackdetailstyping = '';
+	        	var $notelement = $(event.target).parents('.note');
+	        	var noteid= $notelement.attr('noteid');
+	        	$('.no-notes-remove').remove();
+	        	$notelement.find('.note-editable').replaceWith('<div class="row-fluid"><div class="row-fluid"><textarea maxlength=512" class="note-textarea-editable">'+this.collection.get(noteid).get('note')+'</textarea></div><div class="row-fluid"><button class="save-note-textarea-editable btn btn-primary">Set</button><button class="cancel-note-textarea-editable btn ">Cancel</button></div></div>');
+	        	
+	    		$notelement.find('.cancel-note-textarea-editable').mousedown(function(){
+	    			blockNoteSave = true;
+	    			
+	    		});
+	    		
+	    		$notelement.find('.note-textarea-editable').unbind();
+	        	$notelement.find('.note-textarea-editable').blur(function(){
+		        	blurTimeout = setTimeout(function(){
+		        		if(!blockNoteSave&&trackdetailstyping!=''){
+				        	self.collection.get(noteid).set('note', trackdetailstyping);
+			        		self.collection.get(noteid).set('modified', true);
+	        				company.set('modified',true);
+			        		setChangesPending();
+			        		
+		        		}else{
+		        			blockNoteSave = false;
+		        			if($notelement.find('.note-textarea-editable').html()==''&&noteid.indexOf('new')!=-1){
+		        				self.collection.remove(self.collection.get(noteid));
+		        			}
+		        		}
+		        		self.render();
+		        	},200);
+	        	});
+	        	$notelement.find('.note-textarea-editable').keyup(function(){
+	        		trackdetailstyping = $notelement.find('.note-textarea-editable').val();
+	        	});
+	        	
+	        	trackdetailstyping = $notelement.find('.note-textarea-editable').val();
+	        	$notelement.find('.note-textarea-editable').focus();
+	        	
+	        },
+	        deleteNote:function(event){
+	        	var $notelement = $(event.target).parents('.note');
+	        	var noteid= $notelement.attr('noteid');
+	        	if($notelement.attr('noteid').indexOf("new")>-1){
+	        		this.collection.remove(noteid);
+	        		this.render();
+	        	}else{
+	        		this.collection.get(noteid).set('deleted',true);
+	        		this.render();
+	        	}
+	        	company.set('modified',true);
+        		setChangesPending();
+	        },
+	        initialize: function () {
+	            this.render();
+	        },
+	        template: _.template($('#notes-template').html()),
+	        render: function () {
+	            this.$el.html("");
+	            
+	        	if(company.get('company_id')!='new'){
+	        		//$('#building-sales').css('display','')
+	        	}
+	            var tcollection = this.collection.sortBy(function(notes){
+	                return notes.get("timestamp").toString().toUpperCase();
+	            });
+	
+	            for(var i=0; i<tcollection.length; i++)
+	            {
+	                if(typeof(tcollection[i].get('deleted'))=='undefined'){
+	                	tcollection[i].set('note_datetime',toDateTimeString(tcollection[i].get('timestamp')));
+	                	this.$el.prepend(this.template(tcollection[i].toJSON()));
+	            	}
+	            }
+	            if(tcollection.length==0){
+	            	this.$el.append('<div class="no-notes-remove">No Notes Found.</div>');
+	            }
+	            
+	            
+	            if(company.get('company_id')=='new'){
+					$('.note-wrapper').css('display','none');
+	            }else{
+					$('.note-wrapper').css('display','');
+	            }
+	            
+	            $('#save_note_admin').unbind();
+	            $('#save_note_admin').click(function(){
+		    		$('#save_company').click();
+				});
+	            
+	            //setChangesPending();  // recalculates and displays if changes are pending
+	        }
+	    });
+	    var notesView = null;
+	   
+        
+    });
+</script>

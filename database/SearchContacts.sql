@@ -6,13 +6,13 @@ CREATE PROCEDURE `SearchContacts`(IN contactSearchTerms VARCHAR(128), IN uncondi
 BEGIN
 	SELECT
 		SQL_CALC_FOUND_ROWS cur_contacts.id as 'contact_id'
-		,CONCAT_WS(',',cur_contacts.last_name,cur_contacts.first_name) as 'contact_name'
+		,CONCAT_WS(', ',cur_contacts.last_name,cur_contacts.first_name) as 'contact_name'
 		,cur_contacts.phone_number as 'phone'
 		,cur_contacts.email
 		,GROUP_CONCAT(cur_company.name SEPARATOR ',') as 'company'
 	FROM cur_contacts
 	LEFT JOIN cur_contact_company_mapping ON (cur_contact_company_mapping.cur_contacts_id = cur_contacts.id)
-	LEFT JOIN cur_company ON (cur_company.id = cur_contact_company_mapping.cur_company_id)
+	LEFT JOIN cur_company ON (cur_company.id = cur_contact_company_mapping.cur_company_id and cur_company.is_deleted = 0)
 	WHERE 
 		cur_contacts.is_deleted = 0
 		AND 

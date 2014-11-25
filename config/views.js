@@ -113,6 +113,12 @@ module.exports.views = {
 		icon:'icon-copy',
 		footer:true
 	    },
+	    '/airplanes':{
+		enabled:true,
+		banner:true,
+		icon:'icon-plane',
+		footer:true
+		},
 	    '/search':{
 		enabled:true,
 		banner:true,
