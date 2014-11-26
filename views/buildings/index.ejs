@@ -3353,7 +3353,14 @@
     		if($('#new_unit_price_manual_radio').is(':checked')&&!isNaN(parseFloat($('#new_unit_price').autoNumeric('get')))){
     			building.set('unit_price', parseFloat($('#new_unit_price').autoNumeric('get')));
     		}else{
-    			building.set('unit_price',null);
+	    		var priceperunit = 0;
+		        if(!isNaN(parseInt(building.get('unit_quantity')))&&!isNaN(parseInt($('#sale_price').autoNumeric('get')))){
+		        	priceperunit = (parseInt($('#sale_price').autoNumeric('get')) / parseInt(building.get('unit_quantity'))).toFixed(2);
+    				building.set('unit_price',priceperunit);			        	
+		        }else{
+		        	building.set('unit_price',null);
+		        }
+	        
     		}
     		//new_unit_price
     		

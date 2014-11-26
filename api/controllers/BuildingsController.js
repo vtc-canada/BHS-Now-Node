@@ -985,6 +985,7 @@ function checkAndUpdateBuildingLastSale(buildingsale,cb){
 			    building.sale_date = null;
 			    building.last_sale_price = null;
 			    building.cap_rate = null;
+			    
 			    for(var i=0;i<tempsales.length;i++){
 				if(new Date(tempsales[i].sale_date)>=building.sale_date){
 				    building.sale_date = new Date(tempsales[i].sale_date);
@@ -993,8 +994,16 @@ function checkAndUpdateBuildingLastSale(buildingsale,cb){
 			    }
 			    building.cap_rate = (building.building_income==null||building.last_sale_price==null||building.last_sale_price==0)?null:(100*parseFloat(building.building_income)/parseFloat(building.last_sale_price)).toFixed(0);
 
+			    if(building.unit_price_manual_mode==0){
+				building.unit_price = null;
+				if(building.last_sale_price!=null&&building.unit_quantity!=null&&building.unit_quantity!=0){
+				    building.unit_price = (building.last_sale_price / building.unit_quantity).toFixed(2);
+				}
+			    }
+			    
+			    
 			    sails.controllers.database.credSproc('UpdateBuildingLastSale', [ building.building_id,  toUTCDateTimeString(building.sale_date) 
-			                                                                     , building.last_sale_price, building.cap_rate], function(err, updatesale) {
+			                                                                     , building.last_sale_price, building.cap_rate, building.unit_price], function(err, updatesale) {
 				if(err)
 				    return console.log('error'+err);
 				cb();
