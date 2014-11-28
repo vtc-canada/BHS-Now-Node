@@ -75,6 +75,7 @@ body{
         margin: 0;
         padding-left:0px;
     }
+    
 }
 
 body {
@@ -529,6 +530,22 @@ table.selectable tr{
 	display:none;
 }
 
+.modal-body-overflow{
+	overflow-y:initial;
+}
+
+input.isn-datepicker{
+	width:180px;
+}
+
+.flight-leg-title{
+	font-weight:500;	
+}
+
+#editmap_preview_wrapper{
+	min-height:240px;	
+}
+
 .dropdown-menu.typeahead{
 	min-width:218px;
 }
@@ -623,7 +640,15 @@ table.selectable tr{
 }
 
 @media (min-width:768px){
-	
+	.modal-lg{
+		right: 40px;
+		left: 40px;
+		width: auto;
+		margin: 0;
+	}
+	.modal-lg.fade.in{
+		top: 20px;
+	}
 }
 
 @media (max-width: 767px){

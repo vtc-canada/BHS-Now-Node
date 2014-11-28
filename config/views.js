@@ -88,20 +88,26 @@ module.exports.views = {
 		banner:true,
 		icon:'icon-group',
 		footer:true
-		},
-		'/companies':{
+	    },
+	    '/companies':{
 		enabled:true,
 		banner:true,
 		icon:'icon-briefcase',
 		footer:true
-		},
+	    },
 	    '/flighttable':{
 		enabled:true,
 		banner:true,
 		icon:'icon-calendar',
 		footer:true
-		 },
-		'/manifests':{
+	    },
+	    '/flights':{
+		enabled:true,
+		banner:true,
+		icon:'icon-calendar',
+		footer:true
+	    },
+	    '/manifests':{
 		enabled:true,
 		banner:true,
 		icon:'icon-list-ol',

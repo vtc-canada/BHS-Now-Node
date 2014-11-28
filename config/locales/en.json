@@ -144,6 +144,7 @@
       "/dashboard" : "Dashboard",
       "/engineering" : "Engineering",
       "/flighttable" : "Flight Table",
+      "/flights" : "Flights",
       "/manifests" : "Flight Manifest",
       "/airplanes" : "Airplanes",
       "/companies" : "Companies",
