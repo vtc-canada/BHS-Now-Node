@@ -4,9 +4,11 @@ DROP procedure IF EXISTS `FMS_FLIGHTS_GetFlightsByDateRange`;
 DELIMITER $$
 CREATE PROCEDURE `FMS_FLIGHTS_GetFlightsByDateRange` (IN paramMinDate DATETIME, IN paramMaxDate DATETIME)
 BEGIN
-	SELECT id,airline,flight_number,departure_date_time,arrival_date_time, origin_airport_code, destination_airport_code
+	SELECT cur_flights.id,airline,flight_number,departure_time,arrival_time, origin_airport_code, destination_airport_code, ref_airline_code.IATA_2_digit_ID
 	FROM cur_flights
-WHERE departure_date_time > paramMinDate and departure_date_time < paramMaxDate;
+INNER JOIN ref_airline_code
+ON ref_airline_code.id = cur_flights.airline
+WHERE (departure_time < paramMaxDate AND departure_time > paramMinDate) OR (arrival_time < paramMaxDate AND arrival_time > paramMinDate);
 END$$
 
 DELIMITER ;

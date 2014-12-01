@@ -471,7 +471,9 @@ table.selectable tr{
 	width:180px;	
 }
 
-
+.fms-invalid-value{
+	color:red;
+}
 
 @media (min-width: 980px){
     body {
@@ -531,7 +533,8 @@ table.selectable tr{
 }
 
 .modal-body-overflow{
-	overflow-y:initial;
+	overflow-y:auto;
+	max-height:none;
 }
 
 input.isn-datepicker{
@@ -639,10 +642,15 @@ input.isn-datepicker{
 
 }
 
+.modal-lg{
+		
+}
+
+
 @media (min-width:768px){
 	.modal-lg{
-		right: 40px;
-		left: 40px;
+		right: 20px;
+		left: 20px;
 		width: auto;
 		margin: 0;
 	}

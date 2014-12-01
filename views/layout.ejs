@@ -44,6 +44,7 @@
 		<!-- Pre-Minimized assets are loaded here -->
 		<script type="text/javascript" src="/js/dependencies/sails.io.js"></script>
 		<script type="text/javascript" src="/js/jquery.js"></script>
+		<script src="//cdn.jsdelivr.net/mobile-detect.js/0.4.2/mobile-detect.min.js"></script>
 		<script type="text/javascript" src="/js/bootstrap-combobox.js"></script>
 		<script type="text/javascript" src="/js/bootstrap.js"></script>
 		<script type="text/javascript" src="/js/jquery-ui-1.10.3.custom.min.js"></script>
@@ -229,6 +230,7 @@
 <!-- MAIN LAYOUT Script-->
 <!-- This Section contains the messaging scripts, socket calls, and many other utility functions for all the pages -->
 	<script>
+		var mobileDetect = new MobileDetect(window.navigator.userAgent);
 		
 		if(typeof(io)=='undefined'||typeof(_)=='undefined'){ // failed to load scripts properly
 			location.reload();
@@ -275,6 +277,7 @@
 		
 		$(window).resize(function(){
 	        fixheight();
+	        fixModals();
 	    });
 	    function fixheight(){
 	        $('.main-content').css('height',$(window).height()-($('.navbar').css('display')=='none'?0:$('.navbar').height())-($('.isn-content-footer').length>0?30:0)+'px');
@@ -282,7 +285,7 @@
 	    
 	    function fixModals(){
 	    	$('.modal-lg').each(function(){
-	    		$(this).children('.modal-body').height($(window).height()-$(this).children('.modal-header').outerHeight() - $(this).children('.modal-footer').outerHeight() - 40);
+	    		$(this).children('.modal-body').height($(window).height()-$(this).children('.modal-header').outerHeight() - ($(this).children('.modal-header').height()==0?30:0) - $(this).children('.modal-footer').outerHeight()- ($(this).children('.modal-footer').height()==0?30:0)  - 40 - 30);
 	    	});
 	    }
 	    
@@ -402,6 +405,24 @@
 		  return padLeft(numdays, 2) + ":" + padLeft(numhours, 2) + ":"
 		      + padLeft(numminutes, 2) + ":" + padLeft(numseconds, 2);
 		}
+		
+		function millisecondsToHoursMinutesSecondsString(milliseconds){
+			var seconds = Math.floor(milliseconds/1000);
+		  var numhours = Math.floor((seconds) / 3600);
+		  var numminutes = Math.floor(((seconds) % 3600) / 60);
+		  var numseconds = ((seconds) % 3600) % 60;
+		  
+		  if(numhours<-99){
+		  	return "-99:99:99";
+		  }else if(numhours>99){
+		  	return "99:99:99+";
+		  }
+		  return padLeft(numhours, 2) + ":"
+		      + padLeft(numminutes, 2) + ":" + padLeft(numseconds, 2);
+		
+		}
+		
+		
 		if ( !Date.prototype.toISOString ) {
 	        ( function() {
 	

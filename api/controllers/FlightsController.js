@@ -11,14 +11,14 @@ module.exports = {
 	Database.dataSproc('BHS_UTIL_GetActiveAirlines', [], function(err, airlines) {
 	    if (err) {
 		console.log('BHS_UTIL_GetActiveAirlines Error:' + err);
-		return json({
+		return res.json({
 		    error : 'Database Error :' + err
 		}, 500);
 	    }
 	    Database.dataSproc('FMS_AIRPORTS_GetAirports', [], function(err, airports) {
 		if (err) {
 		    console.log('FMS_AIRPORTS_GetAirports Error:' + err);
-		    return json({
+		    return res.json({
 			error : 'Database Error :' + err
 		    }, 500);
 		}
@@ -31,7 +31,27 @@ module.exports = {
 	// 00:00:00','2015-01-01 00:00:00'],function(err,flights){
 	// });
     },
-    findByDate : function(req, res) {
-
+    findFlights : function(req, res) {
+	Database.dataSproc('FMS_FLIGHTS_GetFlightsByDateRange',[new Date(req.body.minDate),new Date(req.body.maxDate)],function(err,flights){
+	    if (err) {
+		console.log('FMS_FLIGHTS_GetFlightsByDateRange :' + err);
+		return res.json({
+		    error : 'FMS_FLIGHTS_GetFlightsByDateRange :' + err
+		}, 500);
+	    }
+	    res.send(flights[0]);
+	});
+    },
+    save:function(req,res){
+	var flight = req.body;
+	if(!flight.id){  // New Flight!
+	    Database.dataSproc('FMS_FLIGHTS_CreateFlight',[flight.airline, flight.flight_number, flight.departure_time, flight.arrival_time, flight.origin_airport_code, flight.destination_airport_code],function(err,response){
+		if(err){
+		    console.log(err.toString());
+		    return res.json({error:'FMS_FLIGHTS_CreateFlight :'+err},500);
+		}
+		res.json({success:'success'});
+	    });
+	}
     }
 };

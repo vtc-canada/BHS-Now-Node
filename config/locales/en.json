@@ -52,6 +52,7 @@
   "Flight" : "Flight",
   "FormCancel" : "Cancel",
   "FormError" : "Error",
+  "FormSave":"Save",
   "FormSet" : "Set",
   "FormSuccess" : "Success",
   "Inbox" : "Inbox",
