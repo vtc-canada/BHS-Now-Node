@@ -32,7 +32,7 @@ module.exports = {
 	     sails.controllers.database.credSproc('GetContactNotes', [
 	     parseInt(req.params.id) ], function(err, result) {
 		 if(err)
-		    return res.json({error:'Database Error:'+err},500);
+		    return res.json({error:'Database Error:'+err.toString()},500);
 		 res.json(result[0]);
 	     });  
 	}
@@ -41,7 +41,7 @@ module.exports = {
 	if (typeof (req.params.id) != 'undefined' && !isNaN(parseInt(req.params.id))) {
 	    sails.controllers.database.credSproc('GetContact',[parseInt(req.params.id)],function(err, contact){
 		if(err||typeof(contact[0][0])=='undefined')
-		    return res.json({error:'Database Error'+err},500);
+		    return res.json({error:'Database Error'+err.toString()},500);
 		
 		res.json(contact[0][0]);
 	    });
@@ -50,7 +50,7 @@ module.exports = {
     getcontactsbyname : function(req,res){
 	sails.controllers.database.credSproc('GetContactsByName',[typeof (req.body.search) != 'undefined' ?  req.body.search  : null],function(err, contacts){
 	    if(err||typeof(contacts[0])=='undefined')
-		return res.json({error:'Database Error'+err},500);
+		return res.json({error:'Database Error'+err.toString()},500);
 	    res.json(contacts[0]);
 	});
     },
@@ -58,7 +58,7 @@ module.exports = {
 	if (typeof (req.params.id) != 'undefined' && !isNaN(parseInt(req.params.id))) {
 	    sails.controllers.database.credSproc('GetCompany',[parseInt(req.params.id)],function(err, company){
 		if(err||typeof(company[0][0])=='undefined')
-		    return res.json({error:'Database Error'+err},500);
+		    return res.json({error:'Database Error'+err.toString()},500);
 		
 		res.json(company[0][0]);
 	    });
@@ -67,7 +67,7 @@ module.exports = {
     getcompaniesbyname : function(req,res){
 	    sails.controllers.database.credSproc('GetCompaniesByName',[typeof (req.body.search) != 'undefined' ?  req.body.search  : null],function(err, companies){
 		if(err||typeof(companies[0])=='undefined')
-		    return res.json({error:'Database Error'+err},500);
+		    return res.json({error:'Database Error'+err.toString()},500);
 		
 		res.json(companies[0]);
 	    });
@@ -75,7 +75,7 @@ module.exports = {
     getcompaniesbycontactid : function(req,res){
 	    sails.controllers.database.credSproc('GetCompaniesByContactId',[req.body.contact_id],function(err, companies){
 		if(err||typeof(companies[0])=='undefined')
-		    return res.json({error:'Database Error'+err},500);
+		    return res.json({error:'Database Error'+err.toString()},500);
 		
 		res.json(companies[0]);
 	    });
@@ -84,7 +84,7 @@ module.exports = {
 	if (typeof (req.params.id) != 'undefined' && !isNaN(parseInt(req.params.id))) {
 	    sails.controllers.database.credSproc('GetAddressByCompanyId',[parseInt(req.params.id)],function(err, address){
 		if(err)
-		    return res.json({error:'Database Error'+err},500);
+		    return res.json({error:'Database Error'+err.toString()},500);
 		if(address[0].length!=1){
 		    res.json({address_id:'new',street_number_begin:'',street_number_end:null,street_name:'', postal_code:'', city:'',address_type_id:2,province:'',latitude:'',longitude:''});
 		}else{
@@ -97,7 +97,7 @@ module.exports = {
 	if (typeof (req.params.id) != 'undefined' && !isNaN(parseInt(req.params.id))) {
 	    sails.controllers.database.credSproc('GetAddress',[parseInt(req.params.id)],function(err, address){
 		if(err||typeof(address[0][0])=='undefined')
-		    return res.json({error:'Database Error'+err},500);
+		    return res.json({error:'Database Error'+err.toString()},500);
 		
 		res.json(address[0][0]);
 	    });
@@ -193,14 +193,14 @@ module.exports = {
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
 	sails.controllers.database.credSproc('SearchContacts',[contact_search,phone_search,req.query.start, req.query.length, orderstring,filteredCount],function(err,responseContacts){
 	    if(err){
-		return res.json({error:'Database Error:'+err},500);
+		return res.json({error:'Database Error:'+err.toString()},500);
 	    }
 	    sails.controllers.database.credSproc('GetContactsCount',[],function(err,responseContactsCount){
 		if(err){
 		   return res.json({error:'Database Error:'+err},500);
 		}
 		cb(responseContacts,responseContactsCount);
-	    })
+	    });
 	});
 	
     },
@@ -209,7 +209,7 @@ module.exports = {
         	if(typeof(req.body.contact_id)!='undefined'&&!isNaN(parseInt(req.body.contact_id))){
         	    sails.controllers.database.credSproc('DeleteContact',[parseInt(req.body.contact_id)],function(err,resultDelete){
         		if(err)
-        		    return res.json({error:'Database Error:'+err},500);	
+        		    return res.json({error:'Database Error:'+err.toString()},500);	
         		res.json({success:'success'});
         		
         	    });
@@ -225,10 +225,10 @@ module.exports = {
 	    if(contact.contact_id != 'new'&&typeof(contact.modified)!='undefined'){
 		sails.controllers.database.credSproc('UpdateContact',[contact.contact_id,contact.contact_name,contact.email],function(err,resContact){
 		    if(err)
-			return res.json({error:err},500);
+			return res.json({error:err.toString()},500);
 		    sails.controllers.database.credSproc('GetPhoneNumberByContactId',[contact.contact_id],function(err,resPhone){
 		        if(err)
-    			    return res.json({error:'Database Error:'+err},500);
+    			    return res.json({error:'Database Error:'+err.toString()},500);
 		        if(resPhone[0].length==0){
 		            sails.controllers.database.credSproc('CreatePhoneNumber',[contact.phone_number,contact.contact_id,'@outparamphone'],function(err,resPhone){
 			        if(err)
@@ -238,7 +238,7 @@ module.exports = {
 		        }else{
 		            sails.controllers.database.credSproc('UpdatePhoneNumberByContactId',[contact.contact_id,contact.phone_number],function(err,resPhone){
 				if(err)
-				    return res.json({error:'Database Error:'+err},500);
+				    return res.json({error:'Database Error:'+err.toString()},500);
 				cb();
 		            });
 		        }
@@ -431,7 +431,7 @@ module.exports = {
                 		if(typeof(companies[i].new)!='undefined'){
                 		    sails.controllers.database.credSproc('CreateContactCompanyMapping',[contact.contact_id,companies[i].company_id,'@outval'],function(err,resMapping){
                 			    if(err)
-                				return res.json({error:'Database Error:'+err},500);
+                				return res.json({error:'Database Error:'+err.toString()},500);
                 			    i++;	
                 			    if(i<companies.length){
                 				loopCompanies(i);
@@ -443,7 +443,7 @@ module.exports = {
                 		}else if(typeof(companies[i].dodelete)!='undefined'){
                 		    sails.controllers.database.credSproc('DeleteContactCompanyMapping',[contact.contact_id, companies[i].company_id],function(err,resDel){
                 			    if(err)
-                				return res.json({error:'Database Error:'+err},500);
+                				return res.json({error:'Database Error:'+err.toString()},500);
                 			    i++;
                 			    if(i<companies.length){
                 				loopCompanies(i);
