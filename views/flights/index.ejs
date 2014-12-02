@@ -100,6 +100,7 @@
 	  <ul class="nav nav-tabs">
 	    <li class="active"><a href="#tab1" data-toggle="tab">General</a></li>
 	    <li><a href="#tab2" data-toggle="tab">Route Details</a></li>
+	    <li><a href="#tab3" data-toggle="tab">Assigned Companies</a></li>
 	  </ul>
 	  <div class="tab-content">
 	    <div class="tab-pane active" id="tab1">
@@ -180,6 +181,17 @@
 			</div>
 	    
 	    </div>
+	    <div class="tab-pane" id="tab3">
+	    
+	    	{{ for(var i=0;i<company_mappings.length;i++){ }}
+	    	<div class="row-fluid">
+		    	<div class="span4"><label for="edit_flight_company_mapping{{=company_mappings[i].id}}">{{=company_mappings[i].name}}</label></div>
+		    	<div class="span4"><input type="checkbox" id="edit_flight_company_mapping{{=company_mappings[i].id}}" class="assign-company-checkbox" company_id="{{=company_mappings[i].id}}"/></div>
+	    	</div>
+	    	{{ } }}
+	    	
+	    </div>
+	    
 	    
 	  </div>
 	</div>
@@ -295,7 +307,7 @@
 	var airlines = <%-JSON.stringify(airlines)%>;
 	var airports = <%-JSON.stringify(airports)%>;
     var gantt;       // This is the collection of rows/flights
-	var editFlightView; // This Backbone View wraps creating/editing new flights.
+	var editFlightView = null; // This Backbone View wraps creating/editing new flights.
 
 
 		
@@ -324,8 +336,13 @@
 		
 		
 		$('#add_flight').click(function(){
-			var newFlight = new GanttModel({id:null,airline:null,flight_number:null, origin_airport_code:null, destination_airport_code:null});
-			editFlightView = new EditFlightView({model:newFlight});
+			var newFlight = {id:null,airline:null,flight_number:null, origin_airport_code:null, destination_airport_code:null};
+			//if(editFlightView!=null){
+			//	editFlightView.remove();
+			//}
+			//editFlightView.model.clear();
+			editFlightView.model.set(newFlight);
+			editFlightView.render();
 			$('#myModalFlightLabel').html('<%=__('Create Flight')%>');
 			$('#flightModal').modal('show');
 	        
@@ -410,10 +427,18 @@
             gantClick:function(event){
                 //do_popover(event,false);
                 
-				var newFlight = new GanttModel(this.collection.get($(event.target).attr('flight_id')).toJSON());
-				editFlightView = new EditFlightView({model:newFlight});
-				$('#myModalFlightLabel').html('<%=__('Flight')%> '+newFlight.get('flight_number'));
+				var newFlight = this.collection.get($(event.target).attr('flight_id')).toJSON();
+				//if(editFlightView!=null){
+				//	editFlightView.remove();
+				//}
+				
+				//editFlightView.model.clear();
+				editFlightView.model.set(newFlight);
+				editFlightView.render();
+				$('#myModalFlightLabel').html('<%=__('Flight')%> '+editFlightView.model.get('flight_number'));
 				$('#flightModal').modal('show');
+				
+				
             },
             template: _.template($('#ganttrows-template').html()),
             render: function () {
@@ -471,17 +496,33 @@
         var ganttView = new GantView({collection: gantt});
 		
 		
+		EditFlightModel = Backbone.Model.extend({
+		});
+		var editFlightModel = new EditFlightModel;
+		
 		var EditFlightView = Backbone.View.extend({
             el: '#edit_flight_body',
             map: '#editmap_preview_wrapper',
             initialize: function () {
-            	this.render();
+            	//$('.assign-company-checkbox').unbind();
+            	
             },
             events:{
                 'change #edit_origin_airport':'originPathChanged',
                 'change #edit_destination_airport':'destinationPathChanged',
                 'change input[model-attribute]':'changeAttribute',// ="flight_number" 
-                'change #edit_airline':'airlineChanged'
+                'change #edit_airline':'airlineChanged',
+                'change .assign-company-checkbox':'assignCompany'
+            },
+            assignCompany:function(event){
+            	var mappings = this.model.get('company_mappings');
+            	for(var i=0;i<mappings.length;i++){
+            		if(mappings[i].id == parseInt($(event.target).attr('company_id'))){
+            			mappings[i].assigned = $(event.target).is(':checked')?1:0;
+            			break;
+            		}
+            	}
+            	this.model.set('company_mappings',mappings);
             },
             changeAttribute:function(event){
             	this.model.set($(event.target).attr('model-attribute'),$(event.target).val()==''?null:$(event.target).val());
@@ -606,13 +647,22 @@
             template: _.template($('#editflight-template').html()),
             staticMapTemplate: _.template($('#staticmap-template').html()),
             render: function () {
+            
+            
                 this.$el.html("");
-                this.$el.append(this.template(this.model.toJSON()));
+            	socket.get('/flights/getCfgCompanyFlightMappings/',{id:this.model.get('id')},_.bind(function(companies){
+            		if(companies.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
+                    	return location.reload(); // Will boot back to login screen
+                    }
+                    this.model.set('company_mappings',companies);
+                	this.$el.append(this.template(this.model.toJSON()));
+	                this.postRender();
+	                this.flightPathChanged();
+            		//this.render();
+            	},this));
                 
                 
                 
-                this.postRender();
-                this.flightPathChanged();
                 
             },
             postRender:function(){
@@ -683,6 +733,7 @@
 				}
             }
         });
+        editFlightView  = new EditFlightView({model:editFlightModel});
         
         
         $('#save_edit_flight').click(function(){

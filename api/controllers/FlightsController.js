@@ -31,6 +31,17 @@ module.exports = {
 	// 00:00:00','2015-01-01 00:00:00'],function(err,flights){
 	// });
     },
+    getCfgCompanyFlightMappings:function(req,res){
+	Database.dataSproc('FMS_FLIGHTS_GetCfgCompanyFlightMappings',[req.body.id],function(err,companies){
+	    if (err) {
+		console.log('FMS_FLIGHTS_GetCfgCompanyFlightMappings :' + err);
+		return res.json({
+		    error : 'FMS_FLIGHTS_GetCfgCompanyFlightMappings :' + err
+		}, 500);
+	    }
+	    res.json(companies[0]);
+	});
+    },
     findFlights : function(req, res) {
 	Database.dataSproc('FMS_FLIGHTS_GetFlightsByDateRange',[new Date(req.body.minDate),new Date(req.body.maxDate)],function(err,flights){
 	    if (err) {
