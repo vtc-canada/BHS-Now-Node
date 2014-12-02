@@ -52,6 +52,15 @@ module.exports = {
 		}
 		res.json({success:'success'});
 	    });
+	}else{
+	    Database.dataSproc('FMS_FLIGHTS_UpdateFlight',[flight.id, flight.airline, flight.flight_number, flight.departure_time, flight.arrival_time, flight.origin_airport_code, flight.destination_airport_code],function(err,response){
+		if(err){
+		    console.log(err.toString());
+		    return res.json({error:'FMS_FLIGHTS_UpdateFlight :'+err},500);
+		}
+		res.json({success:'success'});
+	    });
+	    
 	}
     }
 };

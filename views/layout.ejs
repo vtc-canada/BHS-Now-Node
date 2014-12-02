@@ -408,16 +408,14 @@
 		
 		function millisecondsToHoursMinutesSecondsString(milliseconds){
 			var seconds = Math.floor(milliseconds/1000);
-		  var numhours = Math.floor((seconds) / 3600);
-		  var numminutes = Math.floor(((seconds) % 3600) / 60);
-		  var numseconds = ((seconds) % 3600) % 60;
+		  var numhours = Math.abs(Math.floor((seconds) / 3600));
+		  var numminutes = Math.abs(Math.floor(((seconds) % 3600) / 60));
+		  var numseconds = Math.abs(((seconds) % 3600) % 60);
 		  
-		  if(numhours<-99){
-		  	return "-99:99:99";
-		  }else if(numhours>99){
-		  	return "99:99:99+";
+		  if(numhours>99){
+		  	return (milliseconds<0?'-':'')+"99:99:99" + (milliseconds>0?'+':'');
 		  }
-		  return padLeft(numhours, 2) + ":"
+		  return (milliseconds<0?'-':'') + padLeft(numhours, 2) + ":"
 		      + padLeft(numminutes, 2) + ":" + padLeft(numseconds, 2);
 		
 		}
@@ -455,30 +453,44 @@
 	    function clearBanners(){
 	    	$('.main-content > .page-banner').next('.alert').remove();
 	    }
-	    function bannerAlert(type,bold,message){
-	    	$('.main-content > .page-banner').next('.alert').remove();
+	    function bannerAlert(type,bold,message,$parentdiv){
 	    	clearTimeout(bannertimer);
 			var banner = '<div class="alert alert-'+type+' fade in" style="border-radius:0px;">'
 				    +'<button type="button" class="close" data-dismiss="alert">&times</button>'
 				    +'<strong>'+bold+':&nbsp</strong>'
 				    +message
 				+'</div>';
-	    	$('.main-content > .page-banner').after(banner);
-	    	if($(window).width()>=980){
-	    		$('.main-content').animate({
+			if($parentdiv){
+	    		$parentdiv.find('.alert').remove();
+				$parentdiv.prepend(banner);
+	    		$parentdiv.animate({
 	    			scrollTop:0
     			},300);
-	    	}else{
-	    		$('body').animate({
-	    			scrollTop:0
-    			},300);
-	    	}
-	    	bannertimer = setTimeout(function(){
-	            bannertimer = setTimeout(function(){
-	                $('.main-content > .page-banner').next('.alert').remove();
-	            },500);
-	            $('.main-content > .page-banner').next('.alert').removeClass('in');
-	    	},5000);
+		    	bannertimer = setTimeout(function(){
+		            bannertimer = setTimeout(function(){
+		                $parentdiv.find('.alert').remove();
+		            },500);
+		            $parentdiv.find('.alert').removeClass('in');
+		    	},5000);
+			}else{
+	    		$('.main-content > .page-banner').next('.alert').remove();
+				$('.main-content > .page-banner').after(banner);
+		    	if($(window).width()>=980){
+		    		$('.main-content').animate({
+		    			scrollTop:0
+	    			},300);
+		    	}else{
+		    		$('body').animate({
+		    			scrollTop:0
+	    			},300);
+		    	}
+		    	bannertimer = setTimeout(function(){
+		            bannertimer = setTimeout(function(){
+		                $('.main-content > .page-banner').next('.alert').remove();
+		            },500);
+		            $('.main-content > .page-banner').next('.alert').removeClass('in');
+		    	},5000);
+			}
 	    }
 	    
 	
