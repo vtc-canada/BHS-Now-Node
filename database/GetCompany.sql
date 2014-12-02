@@ -6,7 +6,15 @@ BEGIN
 SELECT 
 		cur_company.id AS 'company_id'
 		,cur_company.name AS 'company_name'
+		,cur_company.street_number_begin
+		,cur_company.street_name
+		,cur_company.street_number_end
+		,cur_company.city
+		,cur_company.postal_code
+		,cur_company.province
+
 FROM cur_company
 WHERE cur_company.id = companyId;
+
 END$$
 DELIMITER ; 
