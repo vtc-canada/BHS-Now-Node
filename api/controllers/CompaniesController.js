@@ -86,8 +86,16 @@ module.exports = {
                         return res.json({
                             error: 'Database Error:' + err
                         }, 500);
-                    res.json({
-                        success: 'success'
+                    sails.controllers.flights.clearCompanyFlightMappings(parseInt(req.body.company_id),null,function(err){
+                	if (err)
+                	    return res.json({
+                                error: 'Database Error:' + err
+                            }, 500);
+                	
+                        res.json({
+                            success: 'success'
+                        });
+                	
                     });
                 });
             }
@@ -215,14 +223,15 @@ module.exports = {
                 });
             } else if (company.company_id == 'new') {
                 var outcompanyId = '@out' + Math.floor((Math.random() * 1000000) + 1);
-                Database.dataSproc('CreateCompany', [company.company_name, outcompanyId], function(err, responseCreateCompany) {
+                Database.dataSproc('CreateCompany', [company.company_name, company.street_number_begin, company.street_number_end, company.street_name, company.postal_code, company.city,company.province,outcompanyId], function(err, responseCreateCompany) {
                     if (err)
                         return res.json({
                             error: 'Database Error:' + err
                         }, 500);
                     company.company_id = responseCreateCompany[1][outcompanyId];
+                    return cb();
 
-
+                    /*
                     var street_number_end = (company.street_number_end == null || company.street_number_end == 0) ? '' : ' ' + company.street_number_end;
                     var addressSearch = company.street_number_begin + " " + street_number_end + " " + company.street_name + ', ' + company.city + ', ' + company.province + ', Canada, ' + company.postal_code;
 
@@ -245,7 +254,7 @@ module.exports = {
                             lng = responseGeocode[0].longitude;
                         }
                         var outaddressId = '@out' + Math.floor((Math.random() * 1000000) + 1);
-                        Database.dataSproc('CreateAddress', [company.street_number_begin, company.street_number_end, company.street_name, company.postal_code, company.city, 2, company.province, lat, lng, null, outaddressId], function(err, resAddress) {
+                        Database.dataSproc('CreateAddress', [, lat, lng, null, outaddressId], function(err, resAddress) {
                             if (err)
                                 return res.json({
                                     error: 'Database Error:' + err
@@ -261,7 +270,7 @@ module.exports = {
                         });
 
 
-                    });
+                    });*/
                 });
             } else {
                 cb();

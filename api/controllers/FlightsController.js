@@ -6,6 +6,7 @@
  */
 
 module.exports = {
+    self : this,
     index : function(req, res) {
 
 	Database.dataSproc('BHS_UTIL_GetActiveAirlines', [], function(err, airlines) {
@@ -23,7 +24,8 @@ module.exports = {
 		    }, 500);
 		}
 		res.view({
-		    airlines : airlines[0], airports:airports[0]
+		    airlines : airlines[0],
+		    airports : airports[0]
 		});
 	    });
 	});
@@ -31,8 +33,8 @@ module.exports = {
 	// 00:00:00','2015-01-01 00:00:00'],function(err,flights){
 	// });
     },
-    getCfgCompanyFlightMappings:function(req,res){
-	Database.dataSproc('FMS_FLIGHTS_GetCfgCompanyFlightMappings',[req.body.id],function(err,companies){
+    getCfgCompanyFlightMappings : function(req, res) {
+	Database.dataSproc('FMS_FLIGHTS_GetCfgCompanyFlightMappings', [ req.body.id ], function(err, companies) {
 	    if (err) {
 		console.log('FMS_FLIGHTS_GetCfgCompanyFlightMappings :' + err);
 		return res.json({
@@ -43,7 +45,7 @@ module.exports = {
 	});
     },
     findFlights : function(req, res) {
-	Database.dataSproc('FMS_FLIGHTS_GetFlightsByDateRange',[new Date(req.body.minDate),new Date(req.body.maxDate)],function(err,flights){
+	Database.dataSproc('FMS_FLIGHTS_GetFlightsByDateRange', [ new Date(req.body.minDate), new Date(req.body.maxDate) ], function(err, flights) {
 	    if (err) {
 		console.log('FMS_FLIGHTS_GetFlightsByDateRange :' + err);
 		return res.json({
@@ -53,25 +55,90 @@ module.exports = {
 	    res.send(flights[0]);
 	});
     },
-    save:function(req,res){
+    save : function(req, res) {
 	var flight = req.body;
-	if(!flight.id){  // New Flight!
-	    Database.dataSproc('FMS_FLIGHTS_CreateFlight',[flight.airline, flight.flight_number, flight.departure_time, flight.arrival_time, flight.origin_airport_code, flight.destination_airport_code],function(err,response){
-		if(err){
-		    console.log(err.toString());
-		    return res.json({error:'FMS_FLIGHTS_CreateFlight :'+err},500);
-		}
-		res.json({success:'success'});
+
+	// Updates the companyflight mappings for the flight
+	function updateCompanyMappings(cb) {
+	    sails.controllers.flights.clearCompanyFlightMappings(null, flight.id, function(err) {
+		if (err)
+		    return cb(err);
+		async.each(flight.company_mappings,function(company_mapping,callback){
+		    if(company_mapping.assigned==0){ //skip making the mapping if it's not assigned
+			return callback(null);
+		    }
+		    sails.controllers.flights.createCompanyFlightMapping(company_mapping.id,flight.id,function(err){
+			if(err)
+			    return callback(err);
+			callback(null);
+		    });
+		},function(err){
+		    if (err)
+			return cb(err);
+		    cb(null);
+		});
 	    });
-	}else{
-	    Database.dataSproc('FMS_FLIGHTS_UpdateFlight',[flight.id, flight.airline, flight.flight_number, flight.departure_time, flight.arrival_time, flight.origin_airport_code, flight.destination_airport_code],function(err,response){
-		if(err){
-		    console.log(err.toString());
-		    return res.json({error:'FMS_FLIGHTS_UpdateFlight :'+err},500);
-		}
-		res.json({success:'success'});
-	    });
-	    
 	}
+	
+	
+	
+	
+
+	if (!flight.id) { // New Flight!
+	    Database.dataSproc('FMS_FLIGHTS_CreateFlight', [ flight.airline, flight.flight_number, flight.departure_time, flight.arrival_time,
+		    flight.origin_airport_code, flight.destination_airport_code ], function(err, response) {
+		if (err) {
+		    console.log(err.toString());
+		    return res.json({
+			error : 'FMS_FLIGHTS_CreateFlight :' + err
+		    }, 500);
+		}
+		res.json({
+		    success : 'success'
+		});
+	    });
+	} else {
+	    Database.dataSproc('FMS_FLIGHTS_UpdateFlight', [ flight.id, flight.airline, flight.flight_number, flight.departure_time, flight.arrival_time,
+		    flight.origin_airport_code, flight.destination_airport_code ], function(err, response) {
+		if (err) {
+		    console.log(err.toString());
+		    return res.json({
+			error : 'FMS_FLIGHTS_UpdateFlight :' + err
+		    }, 500);
+		}
+		updateCompanyMappings(function(err) {
+		    if (err) {
+			console.log(err.toString());
+			return res.json({
+			    error : 'Failed Updating Company Mappings :' + err
+			}, 500);
+		    }
+		    res.json({
+			success : 'success'
+		    });
+		});
+	    });
+
+	}
+    },
+
+    // / Utility Functions
+    clearCompanyFlightMappings : function(company_ID, flight_ID, cb) {
+	Database.dataSproc('FMS_FLIGHTS_ClearCfgCompanyFlightMappings', [ company_ID, flight_ID ], function(err, result) {
+	    if (err) {
+		console.log('FMS_FLIGHTS_ClearCfgCompanyFlightMappings Error' + err);
+		return cb(err);
+	    }
+	    cb(null);
+	});
+    },
+    createCompanyFlightMapping : function(company_ID, flight_ID, cb) {
+	Database.dataSproc('FMS_FLIGHTS_CreateCfgCompanyFlightMapping', [ company_ID, flight_ID ], function(err, result) {
+	    if (err) {
+		console.log('FMS_FLIGHTS_CreateCfgCompanyFlightMapping Error' + err);
+		return cb(err);
+	    }
+	    cb(null);
+	});
     }
 };

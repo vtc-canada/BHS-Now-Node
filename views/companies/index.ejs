@@ -480,7 +480,7 @@
 	        		}
 	        	},
 		        "aoColumns":[
-		        	{"mData":"mapping_id","visible":false}
+		        	{"mData":"company_id","visible":false}
 			        ,{"mData":function(data,b){
 			        	if(data.company_name==null){
 			        		return '';
@@ -494,9 +494,7 @@
 			        }
 		        ],
 		        "rowCallback": function( row, data, displayIndex ) {
-					$(row).attr('mapping_id',data['mapping_id']);
 					$(row).attr('company_id',data['company_id']);
-					$(row).attr('address_id',data['address_id']);
 					$(row).click(function(){
 						$('.edit-item-section').css('display','');
 						$('#delete_company').css('display','');

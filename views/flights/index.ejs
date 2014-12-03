@@ -186,7 +186,7 @@
 	    	{{ for(var i=0;i<company_mappings.length;i++){ }}
 	    	<div class="row-fluid">
 		    	<div class="span4"><label for="edit_flight_company_mapping{{=company_mappings[i].id}}">{{=company_mappings[i].name}}</label></div>
-		    	<div class="span4"><input type="checkbox" id="edit_flight_company_mapping{{=company_mappings[i].id}}" class="assign-company-checkbox" company_id="{{=company_mappings[i].id}}"/></div>
+		    	<div class="span4"><input type="checkbox" id="edit_flight_company_mapping{{=company_mappings[i].id}}" class="assign-company-checkbox" company_id="{{=company_mappings[i].id}}" {{if(company_mappings[i].assigned){ }}checked="checked"{{ } }} /></div>
 	    	</div>
 	    	{{ } }}
 	    	
@@ -437,8 +437,6 @@
 				editFlightView.render();
 				$('#myModalFlightLabel').html('<%=__('Flight')%> '+editFlightView.model.get('flight_number'));
 				$('#flightModal').modal('show');
-				
-				
             },
             template: _.template($('#ganttrows-template').html()),
             render: function () {
@@ -488,8 +486,8 @@
                         }
                     });
                 });
-				setChangesPending();
-                doDate();*/
+				setChangesPending();*/
+                doDate();
             }
         });
          // the view is created here, but the gantt collection is still empty.
@@ -505,7 +503,6 @@
             map: '#editmap_preview_wrapper',
             initialize: function () {
             	//$('.assign-company-checkbox').unbind();
-            	
             },
             events:{
                 'change #edit_origin_airport':'originPathChanged',
@@ -747,10 +744,34 @@
 	
 	
 	
+	// This function updates the current time indicator line
+    function doDate(){
+        $('.current-time-line').remove();
+        $('.current-time-block').remove();
+        var selectedDate = $('#flightdatepicker').data('datetimepicker').getLocalDate();
+        selectedDate.setHours(0,0,0,0);
+        var yesterday  = new Date(selectedDate);
+        yesterday.setDate(selectedDate.getDate()-1);
+        var yesterday9pm = new Date(yesterday).setHours(21);
+        var tomorrow = new Date(selectedDate);
+        tomorrow.setDate(selectedDate.getDate()+1);
+        var tomorrow3am = new Date(tomorrow).setHours(3);
+
+        var today_date = new Date();
+        if(selectedDate.getFullYear() == today_date.getFullYear()&&selectedDate.getMonth() == today_date.getMonth()&&selectedDate.getDate() == today_date.getDate()){
+            var heit = $('#ganttwrapper').height();
+            $('#ganttwrapper').append('<div class="current-time-line" style=" height:'+ heit+'px; left:'+ 100*(today_date.getTime() - yesterday9pm)/(tomorrow3am- yesterday9pm)+'%;"></div>');
+            $('#ganttwrapper').append('<div class="current-time-block" style="width:40px; left:' + (100*(today_date.getTime() - yesterday9pm)/(tomorrow3am- yesterday9pm))+'%;"><div class="time-spot">'+padLeft(today_date.getHours(),2)+':'+padLeft(today_date.getMinutes(),2)+'</div><div class="icon-spot"><i class="icon-circle-arrow-down"></i></div></div>');
+        }
+    }
+    setInterval(doDate,60000);
+    
+    
+	
 	
 	// this resizegantt function corrects the header sizing, font size/weight
     // it also corrects positioning of the popvers and datetimepickers
-    resizegantt = function (){
+     function resizegantt(){
         var elsize=0;
         var fsize = 0;
         $('.timeblock').each(function(){

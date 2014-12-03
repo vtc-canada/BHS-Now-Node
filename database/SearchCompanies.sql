@@ -5,10 +5,8 @@ CREATE PROCEDURE `SearchCompanies`(IN companySearchTerms VARCHAR(128), IN addres
 							,IN offsetIndex int, IN recordCount INT, IN orderBy VARCHAR (255), OUT filteredCount INT, OUT totalCount INT)
 BEGIN
 	SELECT
-		SQL_CALC_FOUND_ROWS  cur_company.id as 'mapping_id'
+		SQL_CALC_FOUND_ROWS  cur_company.id as 'company_id'
 		,cur_company.name as 'company_name'
-		,cur_company.id as 'company_id'
-		,cur_company.id as 'address_id'
 		,cur_company.street_number_begin
 		,cur_company.street_number_end
 		,cur_company.street_name
