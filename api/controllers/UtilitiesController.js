@@ -8,7 +8,10 @@
 module.exports = {
     prepfulltext : function(searchterms) {
 	if (searchterms != null && searchterms != '') {
-	    adr = searchterms.trim().split(" ");
+
+	    adr = searchterms.trim();
+	    adr = adr.replace(/-/g, ' ').split(" ");
+	    
 	    var result_search = '';
 	    for(var i=0;i<adr.length;i++){
 		

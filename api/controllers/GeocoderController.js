@@ -156,7 +156,7 @@ module.exports = {
 		}
 		countupdated++;
 		cb(null);
-	    })
+	    });
 	}
 
     },

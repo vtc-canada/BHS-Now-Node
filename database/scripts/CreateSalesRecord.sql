@@ -8,7 +8,7 @@ CREATE PROCEDURE `CreateSalesRecord`(IN salePrice DECIMAL(13,2),IN saleDate DATE
 , IN bachelorPrice FLOAT, IN bedroom1Price FLOAT, IN bedroom2Price FLOAT, IN bedroom3Price FLOAT, IN bachelorUnits INT, IN bedroom1Units INT
 		,IN bedroom2Units INT, IN bedroom3Units INT, IN propertyMgmtCompany VARCHAR(45), IN prev_property_mgmt_company VARCHAR(45)
 , IN cap_rate INT, IN building_type INT, IN last_boiler_upgrade_year INT
-		,IN mortgage_company VARCHAR(64), IN mortgage_due_date TIMESTAMP, IN parkingSpots INT
+		,IN mortgage_company VARCHAR(64), IN mortgage_due_date TIMESTAMP, IN parkingSpots FLOAT
 ,OUT id INT)
 BEGIN
 	INSERT INTO cur_sales_record_history(sale_price,sale_date,heat_system_age,windows_installed_year,elevator_installed_year,last_elevator_upgrade_year, has_elevator,boiler_installed_year

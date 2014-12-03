@@ -8,7 +8,7 @@ CREATE PROCEDURE `CreateBuilding`(IN addressID INT, IN buildingTypeID INT,IN hea
 		,IN propertyMgmtCompany VARCHAR(45), IN prevPropertyMgmtCompany VARCHAR(45), IN lastSalePrice VARCHAR(45), IN images VARCHAR(1024)
 		,IN bachelorPrice FLOAT, IN bedroom1Price FLOAT, IN bedroom2Price FLOAT, IN bedroom3Price FLOAT, IN bachelorUnits INT, IN bedroom1Units INT
 		,IN bedroom2Units INT, IN bedroom3Units INT, IN buildingIncome DECIMAL(13,2), IN hasElevator BOOLEAN, IN lastElevatorUpgradeYear INT, IN lastBoilerUpgradeYear INT
-		,IN mortgageCompany VARCHAR(64), IN mortgageDueDate TIMESTAMP, IN parkingSpots INT, IN capRate FLOAT
+		,IN mortgageCompany VARCHAR(64), IN mortgageDueDate TIMESTAMP, IN parkingSpots FLOAT, IN capRate FLOAT
 		,OUT id INT)
 BEGIN
 	INSERT INTO cur_buildings(cur_address_id,ref_building_type_id,is_deleted,heat_system_age,windows_installed_year

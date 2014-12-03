@@ -1057,7 +1057,7 @@
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">Number Of Stories:</div>
-			<div class="span7"><input type="text" min="0" max="2000" pattern="[0-9]" id="parking_spots" value="{{=parking_spots}}"></div>
+			<div class="span7"><input type="text" id="parking_spots" value="{{=parking_spots}}"></div>
 		</div>
 		<div class="row-fluid">
 			<div class="span5 segment-label">Has Elevator:</div>
@@ -3925,7 +3925,7 @@
 	         	$('#heat_system_age').autoNumeric('init',{vMin: '0', vMax: '2099', mDec: '0',aSep: ''});
 	         	$('#boiler_installed_year').autoNumeric('init',{vMin: '0', vMax: '2099', mDec: '0',aSep: ''});
 	         	$('#windows_installed_year').autoNumeric('init',{vMin: '0', vMax: '2099', mDec: '0',aSep: ''});
-	         	$('#parking_spots').autoNumeric('init',{vMin: '0', vMax: '2000', mDec: '0',aSep: ''});
+	         	$('#parking_spots').autoNumeric('init',{vMin: '0', vMax: '2000', mDec: '1',aSep: ''});
 	         	$('#elevator_installed_year').autoNumeric('init',{vMin: '0', vMax: '2099', mDec: '0',aSep: ''});
 	         	$('#last_elevator_upgrade_year').autoNumeric('init',{vMin: '0', vMax: '2099', mDec: '0',aSep: ''});
 	         	
