@@ -1803,8 +1803,8 @@
 				    map: map,
 				    icon:this.redImage,
 				    opacity:0.25,
-				    title:(typeof(self.building.maporder)!='undefined'?('maporder:'+self.building.maporder):'')+((typeof(self.building.street_number_begin)!='undefined'&&self.building.street_number_begin!=null)?self.building.street_number_begin:'')+((typeof(self.building.street_number_end)!='undefined'&&self.building.street_number_end!=null)?'-'+self.building.street_number_end:'')+(typeof(self.building.street_name)!='undefined'?' '+self.building.street_name:'')
-				});
+				    title:((typeof(self.building.street_number_begin)!='undefined'&&self.building.street_number_begin!=null)?self.building.street_number_begin:'')+((typeof(self.building.street_number_end)!='undefined'&&self.building.street_number_end!=null)?'-'+self.building.street_number_end:'')+(typeof(self.building.street_name)!='undefined'?' '+self.building.street_name:'')
+				}); //(typeof(self.building.maporder)!='undefined'?('maporder:'+self.building.maporder):'')+
 				this.addOpaqueTicker = setInterval(function(){
 					self.googleMarker.setOpacity((self.googleMarker.getOpacity()||0)+0.25);
 					if(self.googleMarker.getOpacity()>=1){
