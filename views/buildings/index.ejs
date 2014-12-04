@@ -1823,7 +1823,7 @@
 			this.toggle = function(pan){
 				self.selected = !self.selected;
 				if(self.selected){
-					if(typeof(building.get('sale_id'))=='undefined'){
+					if(typeof(building.get('sale_id'))=='undefined'|| self.building.building_id !=parseInt(building.get('sale_id'))){
 						building.fetch({id:parseInt(self.building.building_id)});
 					}
 					$('#buildings tbody tr').removeClass('selected');
