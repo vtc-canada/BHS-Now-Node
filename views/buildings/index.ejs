@@ -836,6 +836,10 @@
 					<i class="icon-camera"></i> &nbsp&nbsp<b>Photo</b>
 					<% if(req.session.user.policy[req.route.path].update==1){ %>
 					<div class="pull-right" style="height:40px;">
+						
+						<div class="fileupload-ontop"> <!-- style='height: 0px;width:0px; overflow:hidden;'-->
+							<input type="file" name="filesToUpload[]" id="filesToUpload" multiple="multiple"/>
+						</div>
 						<span class="row-category-button-wrapper">
 							<span class="btn btn-success fileinput-button">
 			                    <i class="glyphicon glyphicon-plus"></i>
@@ -843,9 +847,6 @@
 			                </span>
 						</span>
 						
-						<div class="fileupload-ontop"> <!-- style='height: 0px;width:0px; overflow:hidden;'-->
-							<input type="file" name="filesToUpload[]" id="filesToUpload" multiple="multiple"/>
-						</div>
 					</div>
 					<% } %>
 				</div>
