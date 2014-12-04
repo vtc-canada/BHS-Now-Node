@@ -121,9 +121,7 @@ module.exports = {
 										}
 										i++;
 										if (i < coords.length) {
-										    setTimeout(function(){
-											    loopCoords(i);
-										    },delayer);
+											loopCoords(i);
 										} else {
 										    console.log('done ' + countupdated);
 										    return callback(null)
@@ -134,10 +132,8 @@ module.exports = {
 									    i++;
 									    if (i < coords.length) {
 										setTimeout(function() {
-										    setTimeout(function(){
-											    loopCoords(i);
-										    },delayer);
-										}, 0);
+										    loopCoords(i);
+										}, delayer);
 									    } else {
 										console.log('done ' + countupdated);
 										return callback(null)
