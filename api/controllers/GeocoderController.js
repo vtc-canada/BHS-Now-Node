@@ -42,7 +42,7 @@ module.exports = {
 	var geolib = require('geolib');
 	var countupdated;
 	var series = ['first',10000];
-	var recentsize = 20;
+	var recentsize = 5;
 	if (typeof (req.params.id) != 'undefined') {
 	    recentsize = parseInt(req.params.id);
 	    recentsize = 5;
@@ -87,8 +87,10 @@ module.exports = {
 									if(i%100==0){
 									    console.log(i);
 									}
-									var clearopen =	true;
+									var clearopen =	false;
+									
 									if(closest!='first'){
+									    clearopen =	true;
 									    for(var j=0;j<ordered.length;j++){
 										//   if((Math.abs(coords[i].latitude-ordered[j].latitude)<closest)&&(Math.abs(coords[i].longitude-ordered[j].longitude)<closest)){
 										//	clearopen =false;
