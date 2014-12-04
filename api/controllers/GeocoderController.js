@@ -33,7 +33,11 @@ module.exports = {
 
 	});
     },
+    transfermaporder: function(req,res){
+	
+    },
     updatemaporder : function(req, res) {
+	var delayer = 5;
 	res.json('running');
 	var geolib = require('geolib');
 	var countupdated;
@@ -41,6 +45,8 @@ module.exports = {
 	var recentsize = 20;
 	if (typeof (req.params.id) != 'undefined') {
 	    recentsize = parseInt(req.params.id);
+	    recentsize = 5;
+	    delayer = parseInt(req.params.id);
 	}
 	for(var i=1;i<11;i++){
 	    series.push(series[i]/2.32);
@@ -115,7 +121,9 @@ module.exports = {
 										}
 										i++;
 										if (i < coords.length) {
-										    loopCoords(i);
+										    setTimeout(function(){
+											    loopCoords(i);
+										    },delayer);
 										} else {
 										    console.log('done ' + countupdated);
 										    return callback(null)
@@ -126,7 +134,9 @@ module.exports = {
 									    i++;
 									    if (i < coords.length) {
 										setTimeout(function() {
-										    loopCoords(i);
+										    setTimeout(function(){
+											    loopCoords(i);
+										    },delayer);
 										}, 0);
 									    } else {
 										console.log('done ' + countupdated);
@@ -149,7 +159,7 @@ module.exports = {
 					    });
 			});
 	function updateOrder(id, order, cb) {
-	    sails.controllers.database.credQuery('UPDATE cur_address SET maporder = ' + order + ',updatedAt = updatedAt WHERE id = ' + id, function(err, response) {
+	    sails.controllers.database.credQuery('UPDATE cur_address SET maporder = ' + order + ',last_modified = last_modified WHERE id = ' + id, function(err, response) {
 		if (err) {
 		    console.log('err' + err);
 		    cb(err);
