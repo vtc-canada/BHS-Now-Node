@@ -32,7 +32,7 @@ WHERE
 	cur_buildings.id = buildingID
 	AND cur_sales_history_contact_mapping.cur_sales_record_history_id = saleID
 	AND cur_buildings.is_deleted = 0
-
+	AND (cur_sales_history_contact_mapping.contact_id IS NOT NULL OR cur_sales_history_contact_mapping.cur_company_id IS NOT NULL)
 	AND  (CASE WHEN cur_contacts.id IS NOT NULL THEN cur_contacts.is_deleted = 0 ELSE 1 END)
 	AND  (CASE WHEN cur_company.id IS NOT NULL THEN cur_company.is_deleted = 0 ELSE 1 END);
 END$$
