@@ -3605,10 +3605,12 @@
 	        if(change){
 	            $('#changes_pending').css('display','block');
 	            $('#changes_pending_notes').css('display','block');
+	            $('#create_sale').removeClass('disabled').addClass('disabled');
 	        }
 	        else{
 	            $('#changes_pending').css('display','none');
 	            $('#changes_pending_notes').css('display','none');
+	            $('#create_sale').removeClass('disabled');
 	        }
 	    }
     	
@@ -4086,6 +4088,9 @@
 		        
 		        
 		        $('#create_sale').click(function(){
+		        	if($(this).hasClass('disabled')){
+		        		return;
+	        		}
 		        	$('#addSaleModal div.alert-error').remove();
 			        $('#addSaleModal').modal('show');
 			        $('#addSaleModal #myModalLabelAdd').html('Add Sale to Building');
