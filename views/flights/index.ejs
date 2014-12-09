@@ -101,6 +101,7 @@
 	    <li class="active"><a href="#tab1" data-toggle="tab">General</a></li>
 	    <li><a href="#tab2" data-toggle="tab">Route Details</a></li>
 	    <li><a href="#tab3" data-toggle="tab">Assigned Companies</a></li>
+	    <li><a href="#tab4" data-toggle="tab">Passengers</a></li>
 	  </ul>
 	  <div class="tab-content">
 	    <div class="tab-pane active" id="tab1">
@@ -192,7 +193,20 @@
 	    	
 	    </div>
 	    
-	    
+	    <div class="tab-pane" id="tab4">
+	    	<div class="btn btn-success" id="add_pax">Add Passenger</div>
+	    	<table id="passengers" class="display" style="" cellspacing="0" width="100%">
+		        <thead>
+		            <tr>
+		            	<th>Id<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+		                <th>Name</th>
+		                <th>Checked In</th>
+		                <th></th>
+		            </tr>
+		        </thead>
+		    </table>
+	    	
+	    </div>
 	  </div>
 	</div>
 </script>
@@ -298,6 +312,7 @@
           </div>
           <div class="modal-footer">
               <button class="btn" data-dismiss="modal" id="flightchangecancel" aria-hidden="true"><%= __('FormCancel') %></button>
+              <button class="btn btn-danger" id="delete_edit_flight"><%= __('FormDelete') %></button>
               <button class="btn btn-primary" id="save_edit_flight"><%= __('FormSave') %></button>
           </div>
       </div>
@@ -509,8 +524,14 @@
                 'change #edit_destination_airport':'destinationPathChanged',
                 'change input[model-attribute]':'changeAttribute',// ="flight_number" 
                 'change #edit_airline':'airlineChanged',
-                'change .assign-company-checkbox':'assignCompany'
+                'change .assign-company-checkbox':'assignCompany',
+                'click #add_pax':'addPassenger'
             },
+            addPassenger:function(event){
+            	alert('abcdefg');
+            	
+            	
+        	},
             assignCompany:function(event){
             	var mappings = this.model.get('company_mappings');
             	for(var i=0;i<mappings.length;i++){
@@ -608,6 +629,17 @@
                 	$('#edit_flight_stats_duration').html('');
                 }
             },
+            remove:function(){
+            	socket.get('/flights/destroy',this.model.toJSON(),function(response){
+            		if(response.error){
+            			bannerAlert('error','<%=__('FormError')%>',response.error,$('#flightModal .modal-body'));
+            		}else if(response.success){
+            			bannerAlert('success','<%=__('FormSuccess')%>','<%=__('Flight Deleted')%>');
+            			$('#flightModal').modal('hide');
+            			gantt.fetch();
+            		}
+            	});
+            },
             save:function(){
             
             	if(this.model.get('flight_number')==null){
@@ -640,6 +672,7 @@
 	            	});
             	}
             },
+            passengers : new Backbone.Collection(),
             paths:[],
             template: _.template($('#editflight-template').html()),
             staticMapTemplate: _.template($('#staticmap-template').html()),
@@ -652,15 +685,129 @@
                     	return location.reload(); // Will boot back to login screen
                     }
                     this.model.set('company_mappings',companies);
-                	this.$el.append(this.template(this.model.toJSON()));
-	                this.postRender();
-	                this.flightPathChanged();
+                    addPassengersList(this.model.get('id'),_.bind(function(err,paxs){
+	                    if(paxs!=null&&paxs.error != undefined){ // reloads with flash message or further kicking out user.
+	                    	return location.reload(); 
+	                    }
+                    	this.passengers.set(paxs);
+	                    this.$el.append(this.template(this.model.toJSON()));
+		                this.postRender();
+		                if(paxs){
+		                	this.initManifest();
+		                }
+		                this.flightPathChanged();
+                    },this));
             		//this.render();
             	},this));
                 
                 
+                function addPassengersList(flightId, cb){
+                	if(flightId==null){
+                    	return cb(null,null);
+                    }
+                	socket.get('/manifests/getandjoinmanifestdetailsbyflight',{id:flightId},function(paxs){
+                		if(paxs.error != undefined){ 
+	                    	return location.reload(); 
+	                    }
+	                    cb(null,paxs);
+                	});
+                }
                 
-                
+            },
+            passengersDatatable:null,
+            initManifest : function(){
+            
+            
+	            this.passengersDatatable = $('#passengers').dataTable( {
+					"ajax": _.bind(function (data, callback, settings) {
+				    	callback({"data":this.passengers.toJSON()});
+					},this),
+					"aoColumns":[
+			        	{"mData":"manifest_ID","visible":false}
+			         	,{"mData":function(data,b){ 
+			         		return data.first_name + ' ' + data.last_name; }
+				        },{"mData":function(data,b){ 
+				        	return "<input type=\"checkbox\" "+(data.checked_in?' checked="checked" ':'')+"class=\"checked-in\">"; }
+				        },{"mData":function(data,b){ 
+				        	return '<div class="btn btn-danger remove-pax">Remove</div>'; }
+				        }
+			        ],
+			        "rowCallback": _.bind(function( row, data, displayIndex ) {
+			        
+			        	//this.passengers.get(data['id']).set('displayIndex',displayIndex);
+			        	
+			        	
+						$(row).attr('manifest_details_id',data['id']);
+			        	$(row).find('.checked-in').click(_.partial(function(self){
+			        		//alert('hjere');
+			        		var manifestId = $(this).closest('tr').attr('manifest_details_id');
+			        		self.passengers.get(manifestId).set('checked_in',($(this).is(':checked')?1:0));
+			        		
+			        		socket.get('/manifests/updaterow',{flight_ID:self.model.get('id'),row:self.passengers.get(manifestId).toJSON()},function(result){
+				        		if(result.error != undefined){
+		                            location.reload();
+		                        }
+			        		});
+			        	},this));
+			        	
+			        	
+			        	$(row).find('.remove-pax').click(_.partial(function(self){
+			        		//alert('hjere');
+			        		var manifestId = $(this).closest('tr').attr('manifest_details_id');
+			        		self.passengers.get(manifestId).set('deleted',1);
+			        		socket.get('/manifests/updaterow',{flight_ID:self.model.get('id'),row:self.passengers.get(manifestId).toJSON()},function(result){
+				        		if(result.error != undefined){
+		                            location.reload();
+		                        }
+			        		});
+			        		
+			        		var paxData = editFlightView.passengersDatatable.api().data();
+		            		for(var i=0;i<paxData.length;i++){
+		            			if(paxData[i].id==manifestId){
+			        				editFlightView.passengersDatatable.api().row(i).remove().draw();
+		            				break;
+		            			}
+		            		}
+			        		
+			        	},this));
+			        	
+					},this)
+				});
+				
+				for(var event in  socket.$events){
+					if(event.indexOf('manifest')==0){
+						socket.removeListener(event,this.manifestEvent);
+					}
+				}
+				socket.on('manifest_'+this.model.get('id'),this.manifestEvent);
+				
+				//socket.get('/manifests/joinmanifest',this.model.get('
+            },
+            manifestEvent:function(update){
+            	//alert('a');
+            	var updateRow = editFlightView.passengers.get(update.id);
+            	if(!_.isEqual(updateRow.toJSON(),update)){
+            		if(update.deleted){
+            			editFlightView.passengers.remove(update.id);
+            			var paxData = editFlightView.passengersDatatable.api().data();
+	            		for(var i=0;i<paxData.length;i++){
+	            			if(paxData[i].id==update.id){
+		        				editFlightView.passengersDatatable.api().row(i).remove().draw();
+	            				break;
+	            			}
+	            		}
+            			
+            		}else{
+	            		updateRow.set(update);
+	            		var paxData = editFlightView.passengersDatatable.api().data();
+	            		for(var i=0;i<paxData.length;i++){
+	            			if(paxData[i].id==update.id){
+		        				editFlightView.passengersDatatable.api().row(i).data(update);
+	            				break;
+	            			}
+	            		}
+            		}
+            	}
             },
             postRender:function(){
             	this.self = this;
@@ -735,6 +882,10 @@
         
         $('#save_edit_flight').click(function(){
         	editFlightView.save();
+    	});
+    	
+    	$('#delete_edit_flight').click(function(){
+    		editFlightView.remove();
     	});
 		
 		

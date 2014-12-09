@@ -77,6 +77,32 @@ module.exports = {
 	    });
 	});
     },
+    getuserandgroupsandcompanies : function(req, res) {
+	if (isNaN(parseInt(req.body.id))) {
+	    return null;
+	}
+	Database.localSproc('NMS_BASE_GetUser', [ parseInt(req.body.id) ], function(err, user) {
+	    if (err) {
+		return res.json(err);
+	    }
+	    user[0][0].password = null; // hides the password
+	    Database.localSproc('NMS_BASE_GetUserSecurityGroups', [ parseInt(req.body.id) ], function(err, groups) {
+		if (err) {
+		    return res.json(err);
+		}
+		user[0][0].groups = groups[0];
+		Database.dataSproc('FMS_USERS_GetCfgUserCompanies',[parseInt(req.body.id)],function(err,companies){
+		    if (err) {
+			    return res.json(err);
+			}
+		    user[0][0].companies = companies[0];
+		    res.json(user[0][0]);
+		
+		});
+		
+	    });
+	});
+    },
     saveuserandgroups : function(req,res){
 	var user = req.body.user;
 	
@@ -152,5 +178,129 @@ module.exports = {
 		});
 	    });
 	});
+    },
+    saveuserandgroupsandcompanies : function(req,res){
+	var user = req.body.user;
+	
+
+	async.series([
+	    function(callback){ // NEW user
+		if(user.id!='new'){
+		    return callback(null);// skip out otherwise
+		}
+		var hasher = require("password-hash");
+		user.password = hasher.generate(user.password);
+		var paramCreateId = '@out' + Math.floor((Math.random() * 1000000) + 1);
+		Database.localSproc('NMS_BASE_CreateUser',[user.username, user.password, user.email, user.active, user.active==1?0:user.loginattempts, user.locale, paramCreateId],function(err,responseuser){
+        	    if(err){
+        		return callback(err);
+        	    }
+        	    user.password = null;
+        	    user.newid = responseuser[1][paramCreateId];
+        	    callback(null);
+        	});
+	    },
+	    function(callback){ // Existing user
+		if(user.id=='new'){ 
+		    user.id = user.newid;
+		    delete user.newid;
+		    return callback(null);// skip out otherwise
+		}
+		if(user.password!=null){
+		    var hasher = require("password-hash");
+		    user.password = hasher.generate(user.password);
+		}
+        	Database.localSproc('NMS_BASE_UpdateUser',[user.id, user.password, user.email, user.active, user.active==1?0:user.loginattempts, user.locale],function(err,responseuser){
+        	    if(err){
+        		return callback(err);
+        	    }
+        	    user.password = null;
+        	    callback(null);
+        	});
+	    }
+        ],
+        function(err){
+	    if(err){
+		console.log('Error Saving User'+err);
+		return res.json({error:'Error Saving User'+err},500);
+	    }
+	    updateSecurityGroupMappings(function(err){
+		if(err){
+		    return res.json({error:'Error Saving Security Group Mappings:'+err},500);
+		}
+		updateCompanyMappings(function(err){
+		    if(err){
+			return res.json({error:'Error Saving Company Mappings:'+err},500);
+		    }
+
+		    UsersService.pushNewUser();
+		    res.json({success:true});
+		});
+	    });
+	    
+	});
+	
+	function updateSecurityGroupMappings(cb){
+	    var keys = [];
+	    for(group in user.groups){
+		keys.push(group);
+	    }
+	    Database.localSproc('NMS_BASE_DeleteUserSecurityGroupMappings',[user.id],function(err,result){
+		if(err){
+		    console.log('Error Clearing Security Group Mappings'+err);
+		    return res.json({error:'Error Clearing Security Group Mappings'+err},500);
+		}
+		async.eachSeries(keys,function(key,callback){
+		    var securityGroupObj = user.groups[key];
+		    if(securityGroupObj.member!=1){
+			return callback(null);
+		    }
+		    Database.localSproc('NMS_BASE_CreateUserSecurityGroupMapping',[user.id,securityGroupObj.id],function(err,newmapping){
+			if(err){
+			    return callback(err);
+			}
+			callback(null);
+		    });
+		},function(err,result){
+		    if(err){
+			console.log('Error Saving Mappings:'+err);
+			return cb(err);
+		    }
+		    cb(null);
+		});
+	    });
+	}
+	
+	function updateCompanyMappings(cb){
+	    var keys = [];
+	    for(company in user.companies){
+		keys.push(company);
+	    }
+	    Database.dataSproc('FMS_USERS_DeleteUserCompanyMappings',[user.id],function(err,result){
+		if(err){
+		    console.log('Error Clearing Company Mappings'+err);
+		    return res.json({error:'Error Clearing Company Mappings'+err},500);
+		}
+		async.eachSeries(keys,function(key,callback){
+		    var companyObj = user.companies[key];
+		    if(companyObj.assigned!=1){
+			return callback(null);
+		    }
+		    Database.dataSproc('FMS_USERS_CreateUserCompanyMapping',[user.id,companyObj.id],function(err,newmapping){
+			if(err){
+			    return callback(err);
+			}
+			callback(null);
+		    });
+		},function(err,result){
+		    if(err){
+			console.log('Error Saving Company Mappings:'+err);
+			return cb(err);
+		    }
+		    cb(null);
+		});
+	    });
+	}
+	
     }
 };

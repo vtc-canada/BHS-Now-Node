@@ -1,0 +1,10 @@
+DROP PROCEDURE if EXISTS `FMS_MANIFEST_DeleteManifest` ;
+
+DELIMITER $$
+
+CREATE PROCEDURE `FMS_MANIFEST_DeleteManifest`(IN paramManifest_ID INT)
+BEGIN
+DELETE FROM cur_manifest 
+WHERE id = paramManifest_ID;
+END$$
+DELIMITER ;

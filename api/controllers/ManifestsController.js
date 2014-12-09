@@ -22,7 +22,18 @@ module.exports = {
     index : function(req, res) {
 	res.view('',{});
     },
-
+    getmanifestdetails : function(req,res){
+	if (typeof (req.params.id) == 'undefined' || isNaN(parseInt(req.params.id))) {
+	    return console.log('Missing Manifest Id');
+	}
+	
+	Database.dataSproc('FMS_MANIFEST_GetManifestDetails',[parseInt(req.params.id)],function(err,details){
+	    if(err||typeof(details[0][0])=='undefined')
+		    return res.json({error:'Database Error'+err},500);
+		
+	    res.json(details[0][0]);
+	});
+    },
     getmanifest : function(req,res){
 	if (typeof (req.params.id) != 'undefined' && !isNaN(parseInt(req.params.id))) {
 	   Database.dataSproc('GetManifest',[parseInt(req.params.id)],function(err, contact){
@@ -32,6 +43,90 @@ module.exports = {
 		res.json(contact[0][0]);
 	    });
 	}
+    },
+    updaterow : function(req,res){
+	if(typeof(req.body.flight_ID)!='undefined' && !isNaN(parseInt(req.body.flight_ID))) {
+	    
+	    if(req.body.row.deleted){
+		Database.dataSproc('FMS_MANIFEST_DeleteManifestDetails',[req.body.row.id],function(err,result){
+		    if(err)
+			return res.json({error:'Error:'+err},500);
+		    sails.io.sockets.emit('manifest_'+req.body.flight_ID, req.body.row);
+		});
+	    }else{
+		Database.dataSproc('FMS_MANIFEST_UpdateManifestDetails',[req.body.row.id,req.body.row.checked_in],function(err,result){
+		    if(err)
+			return res.json({error:'Error:'+err},500);
+		    sails.io.sockets.emit('manifest_'+req.body.flight_ID, req.body.row);
+		});
+	    }
+	}
+    },
+    getandjoinmanifestdetailsbyflight : function(req,res){
+	if (typeof (req.body.id) != 'undefined' && !isNaN(parseInt(req.body.id))) {
+	    Database.dataSproc('FMS_MANIFEST_GetManifestByFlightId',[parseInt(req.body.id)],function(err,response){
+		if(err)
+		    return res.json({error:'Error:'+err});
+		if(response[0].length==0){  // returns blank if no results
+		    console.log('No such manifest exists under flight ID:'+parseInt(req.body.id));
+		    return res.json([]);
+		}
+		var manifestId = response[0][0].id; 
+		Database.dataSproc('FMS_MANIFEST_GetManifestDetails',[manifestId],function(err, details){
+		    if(err)
+			return res.json({error:'Database Error'+err},500);
+		    
+		    res.json(details[0]);
+		    sails.controllers.manifests.subscribetomanifest(req,res,parseInt(req.body.id),function(err,sub){
+			if(err)
+			    return console.log('Database Error'+err);
+		    });
+		    
+		});
+	    });
+	}
+    },
+    clearManifestByFlightId:function(flight_ID,cb){
+	Database.dataSproc('FMS_MANIFEST_GetManifestByFlightId',[flight_ID],function(err,response){
+	    if(err||typeof(response[0][0])=='undefined')
+		    return cb(err);
+	    var manifestId = response[0][0].id; 
+	    Database.dataSproc('FMS_MANIFEST_DeleteManifestDetailsByManifest',[manifestId],function(err,response){
+		if(err)
+		    return cb(err);
+	    
+    	    	Database.dataSproc('FMS_MANIFEST_DeleteManifest',[manifestId],function(err,response){
+        	    if(err)
+        		return cb(err);
+        	    cb();
+    	    	});
+	    });
+	});
+    },
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    subscribetomanifest:function(req,res,flightId,cb){
+	for(room in sails.io.roomClients[req.socket.id]){
+	    if(room.indexOf('/manifest_')==0){
+		req.socket.leave(room);
+	    }
+	}
+	req.socket.join('manifest_'+flightId);
+	cb(null);
     },
     getcontactsbyname : function(req,res){
 	Database.dataSproc('GetContactsByName',[typeof (req.body.search) != 'undefined' ?  req.body.search  : null],function(err, contacts){
@@ -147,8 +242,10 @@ module.exports = {
 	
     },
     deletecontact:function(req,res){
-	if(req.session.user.policy[req.route.path].delete==1){  // Delete access on
-															// this route?
+	if(req.session.user.policy[req.route.path].delete==1){  // Delete access
+								// on
+															// this
+															// route?
         	if(typeof(req.body.contact_id)!='undefined'&&!isNaN(parseInt(req.body.contact_id))){
         	   Database.dataSproc('DeleteContact',[parseInt(req.body.contact_id)],function(err,resultDelete){
         		if(err)
@@ -337,8 +434,10 @@ module.exports = {
 	    }
 	}
 	
-	if(req.session.user.policy[req.route.path].update==0){  // readonly account
-															// Notes update.
+	if(req.session.user.policy[req.route.path].update==0){  // readonly
+								// account
+															// Notes
+															// update.
 	    processReadOnlyNotes(function(){
 		    return res.json({
 			success : 'success',

@@ -67,6 +67,21 @@
 			
 				<div id="secondary_information_section" class="row-fluid">
 				</div>
+				<div class="row-fluid">
+					<div class="span12">
+						<div class="row-fluid">
+							<div class="row-category">
+								<span class="" id="sales_title">
+									<i class="icon-plus-sign" style="margin-right:10px; display:none;"></i>
+									<i class="icon-pencil"></i> &nbsp&nbsp<b>Companies</b>
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			
+				<div id="company_information_section" class="row-fluid">
+				</div>
             </div>
         </div>
     </div>
@@ -108,6 +123,16 @@
 			<div class="row-fluid form-segment-wrapper">
 				<div class="span5 segment-label">{{=name}}:</div>
 				<div class="span7 segment-value"><input type="checkbox" key="securitygroup" {{if(member){}}checked="checked"{{ } }}></div>
+			</div>
+		</div>
+	</div>
+</script>
+<script type="template" id="edit_user_company">
+	<div class="edit-user-company-template" companyid="{{=id}}">
+		<div class="row-fluid " style="position:relative; cursor:default;"">
+			<div class="row-fluid form-segment-wrapper">
+				<div class="span5 segment-label">{{=name}}:</div>
+				<div class="span7 segment-value"><input type="checkbox" key="company" {{if(assigned){}}checked="checked"{{ } }}></div>
 			</div>
 		</div>
 	</div>
@@ -204,7 +229,7 @@ $(function(){
 		 		$('#datatable tbody tr').removeClass('selected');
 			}
 		}
-		socket.get('/users/saveuserandgroups',{user:user},function(response){
+		socket.get('/users/saveuserandgroupsandcompanies',{user:user},function(response){
 			if(response.success){
 				bannerAlert('success','<%=__('FormSuccess')%>','<%=__('User Saved')%>');
 				if(user.get('id')=='new'){
@@ -223,7 +248,7 @@ $(function(){
     /// USER Model     ////////
     ///////////////////////////   
 	var UserModel = Backbone.Model.extend({
-        urlRoot: '/users/getuserandgroups',
+        urlRoot: '/users/getuserandgroupsandcompanies',
         socket:null,
         sync:function(method,model,options){
             if(typeof this.urlRoot === "string" && this.urlRoot !== "") {
@@ -250,6 +275,7 @@ $(function(){
     var UserBackboneView = Backbone.View.extend({
         el: '#details_information_section',
         groupselement:'#secondary_information_section',
+        companieselement:'#company_information_section',
         events: {
            "keyup input[key]":"userChange",
            "change input[key]":"userChange"
@@ -269,9 +295,11 @@ $(function(){
         },
         template: _.template($('#edit_user_template').html()),
         grouptemplate:_.template($('#edit_user_security').html()),
+        companytemplate:_.template($('#edit_user_company').html()),
         render: function () {
     	    this.$el.empty();
     	    $(this.groupselement).empty();
+    	    $(this.companieselement).empty();
         	this.$el.append(this.template(this.model.toJSON()));
         	$('#input_password').keydown(function(){
         		user.set('modified',true);
@@ -291,6 +319,19 @@ $(function(){
     				return e.id == elementGroupId;
     			})[0]['member'] = $(this).is(':checked')?1:0;
     			user.set('groups',securitygroups);
+    			user.set('modified',true);
+    			setChangesPending();
+    		});
+        	for(var company in this.model.get('companies')){
+        		$(this.companieselement).append(this.companytemplate(this.model.get('companies')[company]));
+        	}
+    		$('.edit-user-company-template input[key=company]').click(function(){
+    			var companies = user.get('companies');
+    			var elementCompanyId = $(this).closest('.edit-user-company-template').attr('companyid');
+    			$.grep(companies, function(e){ 
+    				return e.id == elementCompanyId;
+    			})[0]['assigned'] = $(this).is(':checked')?1:0;
+    			user.set('companies',companies);
     			user.set('modified',true);
     			setChangesPending();
     		});
