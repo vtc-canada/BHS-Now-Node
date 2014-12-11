@@ -53,6 +53,14 @@
     </div>
 </script>
 
+<script type="text/template" id="contacts-search-row-template">
+	<div class="contacts-search-row row-fluid" contact_id="{{=contact_id}}">
+		<div class="span1 contacts-search-row-id"></div> <!--{{=contact_id}}-->
+		<div class="span3 contacts-search-row-name">{{=first_name+' ' +last_name}}</div>
+		<div class="span3 contacts-search-row-company">{{=email}}</div>
+	</div>
+</script>
+
 <script type="text/template" id="staticmap-template">
 	{{ var flightPathString = '',markerCount=1; }}
 	{{for(var i=0;i<paths.length;i++){ }}
@@ -77,8 +85,10 @@
 </script>
 
 <script type="text/template" id="editflight-template">
-
-	<div class="row-fluid">
+	
+	
+	
+	<div class="row-fluid collapse in" id="preview_flight_summary">
 		<div class="span3" id="editmap_preview_wrapper">
 		
 		<!--<img src="//maps.googleapis.com/maps/api/staticmap?path=geodesic:true|color:0x0000ff|weight:5|51.1139,-114.02|47.6186,-52.7519&size=320x240" alt=""/>-->
@@ -95,9 +105,14 @@
 		</div>
 	</div>
 	
+	<div class="row-fluid" style="display:none;">
+	
+	
+	
+	</div>
 		
 	<div class="tabbable"> <!-- Only required for left/right tabs -->
-	  <ul class="nav nav-tabs">
+	  <ul class="nav nav-tabs" style="margin-bottom:0px;">
 	    <li class="active"><a href="#tab1" data-toggle="tab">General</a></li>
 	    <li><a href="#tab2" data-toggle="tab">Route Details</a></li>
 	    <li><a href="#tab3" data-toggle="tab">Assigned Companies</a></li>
@@ -194,13 +209,36 @@
 	    </div>
 	    
 	    <div class="tab-pane" id="tab4">
-	    	<div class="btn btn-success" id="add_pax">Add Passenger</div>
-	    	<table id="passengers" class="display" style="" cellspacing="0" width="100%">
+	    	
+	    	<div class="row-fluid isnajaxfield-parent">
+              <!-- <div class="row">
+                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_contact"><%= __('Passenger Details') %></label></div>
+                   <div class="span8 report-control-right-control">
+                   </div>
+               </div>-->
+               <div class="row-fluid" style="position:relative">
+               
+	               <div class="row-fluid search-contact-ajax-wrapper">
+	               		<div class="inner-search-contact-wrapper span3 offset1">
+	               			<input type="text" id="search_contact" value="" placeholder="Add Passenger">
+	               		</div>
+	               </div>
+	               <div class="btn btn-success pull-right" style="position:absolute; right:4px; top:4px">Import Excel</div>
+               </div>
+               <div id="search_contact_results" ></div>
+               
+           </div>
+           
+	    	
+	    	
+	    	
+	    	<table id="passengers" class="display fms-table" style="" cellspacing="0" width="100%">
 		        <thead>
 		            <tr>
 		            	<th>Id<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
 		                <th>Name</th>
 		                <th>Checked In</th>
+		                <th></th>
 		                <th></th>
 		            </tr>
 		        </thead>
@@ -208,6 +246,12 @@
 	    	
 	    </div>
 	  </div>
+	</div>
+	
+	
+	
+	<div data-toggle="collapse" data-target="#preview_flight_summary" id="preview_flight_summary_collapse_handle">
+		<i class="icon-collapse-alt icon-2x"></i>
 	</div>
 </script>
 
@@ -301,21 +345,36 @@
     </div>
 </div>
 
-<!-- This Modal Dialog is displayed when the user goes to change his password from the myaccount dropdown -->
-      <div id="flightModal" class="modal modal-lg hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-          <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times</button>
-              <h3 id="myModalFlightLabel"><%= __('Create Flight') %></h3>
-          </div>
-          <div class="modal-body modal-body-overflow" id="edit_flight_body">
-              
-          </div>
-          <div class="modal-footer">
-              <button class="btn" data-dismiss="modal" id="flightchangecancel" aria-hidden="true"><%= __('FormCancel') %></button>
-              <button class="btn btn-danger" id="delete_edit_flight"><%= __('FormDelete') %></button>
-              <button class="btn btn-primary" id="save_edit_flight"><%= __('FormSave') %></button>
-          </div>
-      </div>
+<div id="flightModal" class="modal modal-lg hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times</button>
+        <h3 id="myModalFlightLabel"><%= __('Create Flight') %></h3>
+    </div>
+    <div class="modal-body modal-body-overflow" id="edit_flight_body">
+        
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" id="flightchangecancel" aria-hidden="true"><%= __('FormCancel') %></button>
+        <button class="btn btn-danger" id="delete_edit_flight"><%= __('FormDelete') %></button>
+        <button class="btn btn-primary" id="save_edit_flight"><%= __('FormSave') %></button>
+    </div>
+</div>
+
+<div id="boardingPassModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times</button>
+        <h3 id="myModalBoardingPassLabel"><%= __('Boarding Pass') %></h3>
+    </div>
+    <div class="modal-body modal-body-overflow" id="boarding_pass_body">
+        <div id="boarding_pass_details"></div>
+        <div id="boarding_pass_manifest_id" class="pull-right"></div>
+        <img id="board_pass_js_barcode">
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" id="boardingpasscancel" aria-hidden="true"><%= __('Close') %></button>
+        <button class="btn btn-primary" id="print_boarding_pass"><%= __('Print') %></button>
+    </div>
+</div>
 
 <script type="text/javascript">
 
@@ -363,7 +422,11 @@
 	        
 		});
 		
-		$('#flightModal').modal({backdrop:'static',show:false})
+	        		
+		$('#boardingPassModal').modal({show:false}); //backdrop:'static',
+		$('#board_pass_js_barcode').JsBarcode('1823902140121');
+		
+		$('#flightModal').modal({backdrop:'static',show:false});
         $('#flightModal').on('shown',function(e){
         	fixModals();
         });
@@ -715,10 +778,93 @@
                 
             },
             passengersDatatable:null,
+            bindDatatablesRow:function(row,data){
+            
+            	if(data['boarded']){
+            		$(row).addClass('boarded');
+            	}
+            
+            	var manifestDetailsId = data['id'];
+            	$(row).attr('manifest_id',manifestDetailsId);
+				$(row).find('.checked-in').unbind('click');
+	        	$(row).find('.checked-in').click(_.partial(function(self){
+	        		self.passengers.get(manifestDetailsId).set('checked_in',($(this).is(':checked')?1:0));
+	        		socket.get('/manifests/updaterow',{flight_ID:self.model.get('id'),row:self.passengers.get(manifestDetailsId).toJSON()},function(result){
+		        		if(result.error != undefined){
+                            location.reload();
+                        }
+	        		});
+	        	},this));
+	        	
+	        	$(row).find('.remove-pax').unbind('click');
+	        	$(row).find('.remove-pax').click(_.partial(function(self){
+	        		//alert('hjere');
+	        		self.passengers.get(manifestDetailsId).set('deleted',1);
+	        		socket.get('/manifests/updaterow',{flight_ID:self.model.get('id'),row:self.passengers.get(manifestDetailsId).toJSON()},function(result){
+		        		if(result.error != undefined){
+                            location.reload();
+                        }
+	        		});
+	        		
+	        		var paxData = editFlightView.passengersDatatable.api().data();
+            		for(var i=0;i<paxData.length;i++){
+            			if(paxData[i].id==manifestDetailsId){
+	        				editFlightView.passengersDatatable.api().row(i).remove().draw();
+            				break;
+            			}
+            		}
+	        		
+	        	},this));
+	        	
+	        	$(row).find('.print-pass').unbind('click');
+	        	$(row).find('.print-pass').click(_.partial(function(self){
+	        	
+	        		
+	        		$('#boardingPassModal').modal('show');
+	        		
+	        		$('#boarding_pass_details').empty();
+	        		$('#boarding_pass_details').append($(this).closest('tr').children()[0].innerHTML);
+	        		
+	        		
+	        		$('#boarding_pass_manifest_id').empty();
+	        		$('#boarding_pass_manifest_id').append($(this).closest('tr').attr('manifest_id'));
+	        		
+	        		
+	        		//$('#board_pass_js_barcode').empty();
+	        		
+	        	},this));
+            },
             initManifest : function(){
             
+            	$('#search_contact').isnajaxfield({
+            		results:$('#search_contact_results'),
+	            	ajax:function(search,cb){
+	            		socket.get('/contacts/getcontactsbyname',{search:search},function(result){
+	            			if(result.error != undefined){  // result
+	                            location.reload(); // result
+	                        }
+	                        cb(result);
+	            		});
+	            	},
+	            	template:_.template($('#contacts-search-row-template').html()),
+	            	click:_.bind(function($row){
+	            		socket.get('/manifests/addmanifestdetail',{contact_ID:parseInt($row.attr('contact_id')),flight_ID:this.model.get('id')},function(result){
+	            			if(result.error != undefined){  // result
+	                            location.reload(); // result
+	                        }
+	            		});
+            		},this)
+            	});
+            	
+            	
+            	
             
 	            this.passengersDatatable = $('#passengers').dataTable( {
+		            language: {
+        				search: "",
+				        searchPlaceholder: "Filter Manifest"
+				    },
+		        	"dom":"ftipr",
 					"ajax": _.bind(function (data, callback, settings) {
 				    	callback({"data":this.passengers.toJSON()});
 					},this),
@@ -730,46 +876,14 @@
 				        	return "<input type=\"checkbox\" "+(data.checked_in?' checked="checked" ':'')+"class=\"checked-in\">"; }
 				        },{"mData":function(data,b){ 
 				        	return '<div class="btn btn-danger remove-pax">Remove</div>'; }
+				        },{"mData":function(data,b){ 
+				        	return '<div class="btn btn-success print-pass">Print Boarding Pass</div>'; }
 				        }
 			        ],
 			        "rowCallback": _.bind(function( row, data, displayIndex ) {
 			        
 			        	//this.passengers.get(data['id']).set('displayIndex',displayIndex);
-			        	
-			        	
-						$(row).attr('manifest_details_id',data['id']);
-			        	$(row).find('.checked-in').click(_.partial(function(self){
-			        		//alert('hjere');
-			        		var manifestId = $(this).closest('tr').attr('manifest_details_id');
-			        		self.passengers.get(manifestId).set('checked_in',($(this).is(':checked')?1:0));
-			        		
-			        		socket.get('/manifests/updaterow',{flight_ID:self.model.get('id'),row:self.passengers.get(manifestId).toJSON()},function(result){
-				        		if(result.error != undefined){
-		                            location.reload();
-		                        }
-			        		});
-			        	},this));
-			        	
-			        	
-			        	$(row).find('.remove-pax').click(_.partial(function(self){
-			        		//alert('hjere');
-			        		var manifestId = $(this).closest('tr').attr('manifest_details_id');
-			        		self.passengers.get(manifestId).set('deleted',1);
-			        		socket.get('/manifests/updaterow',{flight_ID:self.model.get('id'),row:self.passengers.get(manifestId).toJSON()},function(result){
-				        		if(result.error != undefined){
-		                            location.reload();
-		                        }
-			        		});
-			        		
-			        		var paxData = editFlightView.passengersDatatable.api().data();
-		            		for(var i=0;i<paxData.length;i++){
-		            			if(paxData[i].id==manifestId){
-			        				editFlightView.passengersDatatable.api().row(i).remove().draw();
-		            				break;
-		            			}
-		            		}
-			        		
-			        	},this));
+			        	this.bindDatatablesRow(row,data);
 			        	
 					},this)
 				});
@@ -786,27 +900,32 @@
             manifestEvent:function(update){
             	//alert('a');
             	var updateRow = editFlightView.passengers.get(update.id);
-            	if(!_.isEqual(updateRow.toJSON(),update)){
+            	if(typeof(updateRow)!='undefined'&&!_.isEqual(updateRow.toJSON(),update)){
             		if(update.deleted){
             			editFlightView.passengers.remove(update.id);
             			var paxData = editFlightView.passengersDatatable.api().data();
 	            		for(var i=0;i<paxData.length;i++){
 	            			if(paxData[i].id==update.id){
-		        				editFlightView.passengersDatatable.api().row(i).remove().draw();
+		        				editFlightView.passengersDatatable.api().row(i).remove().draw(); // Re-binds All checkboxes?
 	            				break;
 	            			}
 	            		}
-            			
             		}else{
 	            		updateRow.set(update);
 	            		var paxData = editFlightView.passengersDatatable.api().data();
 	            		for(var i=0;i<paxData.length;i++){
 	            			if(paxData[i].id==update.id){
-		        				editFlightView.passengersDatatable.api().row(i).data(update);
+		        				editFlightView.passengersDatatable.api().row(i).data(update); //update data
+		        				if(editFlightView.passengersDatatable.find('tr[manifest_id='+updateRow.get('id')+']').length>0){
+			        				editFlightView.bindDatatablesRow(editFlightView.passengersDatatable.find('tr[manifest_id='+updateRow.get('id')+']'),update);
+		        				}
 	            				break;
 	            			}
 	            		}
             		}
+            	}else if(typeof(updateRow)=='undefined'){  //Adding new passenger (not in list)
+            		editFlightView.passengers.add(update);
+            		editFlightView.passengersDatatable.api().row.add(editFlightView.passengers.get(update.id).toJSON()).draw();
             	}
             },
             postRender:function(){
@@ -875,6 +994,17 @@
 					$('#edit_flight_destination_datepicker').data('datetimepicker').setLocalDate(elementDate);
 					this.updateDestination(false);
 				}
+				
+				
+				$("#preview_flight_summary_collapse_handle").click(function(){
+				    $(this).children('i').toggleClass("icon-collapse-alt icon-expand-alt");
+				    
+				    if($(this).children('i').hasClass('icon-collapse-alt')){
+				    	$('#flightModal').find('.modal-header').css('border-bottom','1px solid #eee');
+			    	}else{
+				    	$('#flightModal').find('.modal-header').css('border-bottom','none');
+			    	}
+				});
             }
         });
         editFlightView  = new EditFlightView({model:editFlightModel});

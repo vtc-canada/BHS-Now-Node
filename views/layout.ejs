@@ -47,6 +47,9 @@
 		<script src="//cdn.jsdelivr.net/mobile-detect.js/0.4.2/mobile-detect.min.js"></script>
 		<script type="text/javascript" src="/js/bootstrap-combobox.js"></script>
 		<script type="text/javascript" src="/js/bootstrap.js"></script>
+		<script type="text/javascript">
+			$.fn.modal.Constructor.prototype.enforceFocus = function () {};
+		</script>
 		<script type="text/javascript" src="/js/jquery-ui-1.10.3.custom.min.js"></script>
 		<script type="text/javascript" src="/js/jquery.ui.chatbox.js"></script>
 		<script type="text/javascript" src="/js/jquery.ui.chatboxManager.js"></script>
@@ -218,8 +221,14 @@
     <script src="/js/backbone-min.js"></script>
     <script src="/js/bootstrap-datetimepicker.min.js"></script>
     <script src="/js/isn-prototypes.js"></script>
+    <script src="/js/isnajaxfield.js"></script>
     <script src="/js/geolib.min.js"></script>
     <script src="/js/autoNumeric.js"></script>
+    <script src="/js/CODE128.js"></script>
+    <script src="/js/EAN_UPC.js"></script>
+    <script src="/js/JsBarcode.js"></script>
+    
+    
     <script type="text/javascript" src="/js/jquery.dataTables.js"></script>
     <script type="text/javascript" src="/js/jquery.sparkline.min.js"></script>
     <script type="text/javascript" src="/js/raphael.2.1.0.min.js"></script>
@@ -285,7 +294,7 @@
 	    
 	    function fixModals(){
 	    	$('.modal-lg').each(function(){
-	    		$(this).children('.modal-body').height($(window).height()-$(this).children('.modal-header').outerHeight() - ($(this).children('.modal-header').height()==0?30:0) - $(this).children('.modal-footer').outerHeight()- ($(this).children('.modal-footer').height()==0?30:0)  - 40 - 30);
+	    		$(this).children('.modal-body').height($(window).height()-$(this).children('.modal-header').outerHeight() - ($(this).children('.modal-header').height()==0?30:0) - $(this).children('.modal-footer').outerHeight()- ($(this).children('.modal-footer').height()==0?30:0)  - 20);
 	    	});
 	    }
 	    

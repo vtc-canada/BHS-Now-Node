@@ -1,8 +1,8 @@
-DROP PROCEDURE if EXISTS `FMS_MANIFEST_GetManifestDetails` ;
+DROP PROCEDURE if EXISTS `FMS_MANIFEST_GetManifestDetail` ;
 
 DELIMITER $$
 
-CREATE PROCEDURE `FMS_MANIFEST_GetManifestDetails`(IN manifestId INT)
+CREATE PROCEDURE `FMS_MANIFEST_GetManifestDetail`(IN paramManifest_Details_ID INT)
 BEGIN
 SELECT
 	cur_manifest_details.id,
@@ -18,6 +18,6 @@ SELECT
 FROM cur_manifest_details
 INNER JOIN cur_contacts ON (cur_contacts.id = cur_manifest_details.contact_ID)
 WHERE 
-	cur_manifest_details.manifest_ID = manifestId;
+	cur_manifest_details.id = paramManifest_Details_ID;
 END$$
 DELIMITER ;

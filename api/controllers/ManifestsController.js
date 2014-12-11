@@ -22,6 +22,53 @@ module.exports = {
     index : function(req, res) {
 	res.view('',{});
     },
+    board:function(req,res){	
+	Database.dataSproc('FMS_MANIFEST_UpdateManifestDetail',[req.params.id,null,1],function(err,result){
+	    if(err)
+		return res.json({error:'Error:'+err},500);
+	    Database.dataSproc('FMS_MANIFEST_GetManifestDetail',[req.params.id],function(err,details){
+		if(err||typeof(details[0][0])=='undefined')
+		    return res.json({error:'Database Error'+err},500);
+		
+		Database.dataSproc('FMS_MANIFEST_GetManifest',[details[0][0].manifest_ID],function(err, manifest){
+			if(err||typeof(manifest[0][0])=='undefined')
+			    return res.json({error:'Database Error'+err},500);
+			
+			sails.io.sockets.emit('manifest_' + manifest[0][0].flight_ID, details[0][0]);
+			res.json({success:details[0][0]});
+		   });
+	    });
+	});
+	
+    },
+    addmanifestdetail:function(req,res){
+	
+	Database.dataSproc('FMS_MANIFEST_GetManifestByFlightId',[req.body.flight_ID],function(err,response){
+		if(err)
+		    return res.json({error:'Error:'+err});
+		if(response[0].length==0){  // returns blank if no results
+		    console.log('No such manifest exists under flight ID:'+req.body.flight_ID);
+		    return res.json([]);
+		}
+		manifestDetailsId = '@out' + Math.floor((Math.random() * 1000000) + 1);
+		Database.dataSproc('FMS_MANIFEST_CreateManifestDetail',[response[0][0].id, req.body.contact_ID,manifestDetailsId],function(err,manifestdetail){
+		    if(err){
+			return console.log('Error:'+err);
+		    }
+		    Database.dataSproc('FMS_MANIFEST_GetManifestDetail',[manifestdetail[1][manifestDetailsId]],function(err,details){
+			if(err||typeof(details[0][0])=='undefined')
+			    return res.json({error:'Database Error'+err},500);
+			    
+			sails.io.sockets.emit('manifest_'+req.body.flight_ID, details[0][0]);
+			res.json({success:details[0][0]});
+		    });
+		});
+	    });
+	
+	
+	
+	
+    },
     getmanifestdetails : function(req,res){
 	if (typeof (req.params.id) == 'undefined' || isNaN(parseInt(req.params.id))) {
 	    return console.log('Missing Manifest Id');
@@ -36,12 +83,12 @@ module.exports = {
     },
     getmanifest : function(req,res){
 	if (typeof (req.params.id) != 'undefined' && !isNaN(parseInt(req.params.id))) {
-	   Database.dataSproc('GetManifest',[parseInt(req.params.id)],function(err, contact){
+	    Database.dataSproc('GetManifest',[parseInt(req.params.id)],function(err, contact){
 		if(err||typeof(contact[0][0])=='undefined')
 		    return res.json({error:'Database Error'+err},500);
 		
 		res.json(contact[0][0]);
-	    });
+	   });
 	}
     },
     updaterow : function(req,res){
@@ -54,7 +101,7 @@ module.exports = {
 		    sails.io.sockets.emit('manifest_'+req.body.flight_ID, req.body.row);
 		});
 	    }else{
-		Database.dataSproc('FMS_MANIFEST_UpdateManifestDetails',[req.body.row.id,req.body.row.checked_in],function(err,result){
+		Database.dataSproc('FMS_MANIFEST_UpdateManifestDetail',[req.body.row.id,req.body.row.checked_in,null],function(err,result){
 		    if(err)
 			return res.json({error:'Error:'+err},500);
 		    sails.io.sockets.emit('manifest_'+req.body.flight_ID, req.body.row);
@@ -91,7 +138,7 @@ module.exports = {
 	    if(err||typeof(response[0][0])=='undefined')
 		    return cb(err);
 	    var manifestId = response[0][0].id; 
-	    Database.dataSproc('FMS_MANIFEST_DeleteManifestDetailsByManifest',[manifestId],function(err,response){
+	    Database.dataSproc('FMS_MANIFEST_DeleteManifestDetailsByManifestID',[manifestId],function(err,response){
 		if(err)
 		    return cb(err);
 	    
@@ -103,7 +150,15 @@ module.exports = {
 	    });
 	});
     },
-    
+    subscribetomanifest:function(req,res,flightId,cb){
+	for(room in sails.io.roomClients[req.socket.id]){
+	    if(room.indexOf('/manifest_')==0){
+		req.socket.leave(room);
+	    }
+	}
+	req.socket.join('manifest_'+flightId);
+	cb(null);
+    },
     
     
     
@@ -119,15 +174,12 @@ module.exports = {
     
     
 
-    subscribetomanifest:function(req,res,flightId,cb){
-	for(room in sails.io.roomClients[req.socket.id]){
-	    if(room.indexOf('/manifest_')==0){
-		req.socket.leave(room);
-	    }
-	}
-	req.socket.join('manifest_'+flightId);
-	cb(null);
-    },
+    
+    
+    
+    
+    
+    
     getcontactsbyname : function(req,res){
 	Database.dataSproc('GetContactsByName',[typeof (req.body.search) != 'undefined' ?  req.body.search  : null],function(err, contacts){
 	    if(err||typeof(contacts[0])=='undefined')
@@ -237,7 +289,7 @@ module.exports = {
 		   return res.json({error:'Database Error:'+err},500);
 		}
 		cb(responseContacts,responseContactsCount);
-	    })
+	    });
 	});
 	
     },
