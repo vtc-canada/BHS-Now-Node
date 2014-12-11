@@ -107,12 +107,6 @@ module.exports.views = {
 		icon:'icon-calendar',
 		footer:true
 	    },
-	    '/manifests':{
-		enabled:true,
-		banner:true,
-		icon:'icon-list-ol',
-		footer:true
-		},
 	    '/reports':{
 		enabled:true,
 		banner:true,
