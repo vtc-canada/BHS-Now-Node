@@ -453,7 +453,42 @@
 	            };
 	        }() );
 	    }
-	    
+		
+		if (!Date.prototype.toYearMonthDay) {
+			  (function() {
+
+			    function pad(number) {
+			      if (number < 10) {
+			        return '0' + number;
+			      }
+			      return number;
+			    }
+
+			    Date.prototype.toYearMonthDay = function() {
+			      return this.getFullYear() 
+			      + '-' + pad( this.getUTCMonth() +1)
+                  + '-' + pad( this.getUTCDate() );
+			    };
+
+			  }());
+			}
+		
+		
+		/**
+		 * Format Date data type to string
+		 */
+		Date.prototype.toDateOnly = function(){
+			  return this.getDate;
+			}
+		/*if ( !Date.prototype.toDateOnly ) {
+	        ( function() {     	
+            Date.prototype.toDateOnly = function() {
+                return 1
+                      
+            	};
+        	}() ); 
+		}*/
+		
 	    $(document).ready(function(){
 	    	fixheight();
 	    });
