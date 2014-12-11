@@ -56,7 +56,7 @@
 <script type="text/template" id="contacts-search-row-template">
 	<div class="contacts-search-row row-fluid" contact_id="{{=contact_id}}">
 		<div class="span1 contacts-search-row-id"></div> <!--{{=contact_id}}-->
-		<div class="span3 contacts-search-row-name">{{=first_name+' ' +last_name}}</div>
+		<div class="span3 contacts-search-row-name">{{=contact_name}}</div>
 		<div class="span3 contacts-search-row-company">{{=company}}</div>
 	</div>
 </script>
@@ -236,7 +236,7 @@
 		        <thead>
 		            <tr>
 		            	<th>Id<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
-		                <th>Name</th>
+		                <th>Passenger</th>
 		                <th>Checked In</th>
 		                <th></th>
 		                <th></th>
@@ -871,7 +871,7 @@
 					"aoColumns":[
 			        	{"mData":"manifest_ID","visible":false}
 			         	,{"mData":function(data,b){ 
-			         		return data.first_name + ' ' + data.last_name; }
+			         		return data.contact_name; }
 				        },{"mData":function(data,b){ 
 				        	return "<input type=\"checkbox\" "+(data.checked_in?' checked="checked" ':'')+"class=\"checked-in\">"; }
 				        },{"mData":function(data,b){ 
