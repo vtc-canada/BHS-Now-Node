@@ -12,10 +12,14 @@ SELECT
 	,cur_contacts.last_name AS 'contact_name'
 	,cur_contacts.email
 	,cur_contacts.phone_number
+	,cur_company.name as 'company'
 FROM cur_contacts
+	LEFT JOIN cur_contact_company_mapping ON (cur_contact_company_mapping.cur_contacts_id = cur_contacts.id)
+	LEFT JOIN cur_company ON (cur_company.id = cur_contact_company_mapping.cur_company_id and cur_company.is_deleted = 0)
 WHERE 
 	cur_contacts.is_deleted = 0
-AND (contactSearchTerms IS NULL OR cur_contacts.last_name LIKE CONCAT('%', contactSearchTerms, '%') OR cur_contacts.first_name LIKE CONCAT('%', contactSearchTerms, '%'))
+	AND (contactSearchTerms IS NULL OR MATCH (cur_contacts.first_name,cur_contacts.last_name,cur_contacts.middle_name
+				,cur_contacts.email, cur_contacts.phone_number,cur_contacts.nationality, cur_contacts.gender) AGAINST (contactSearchTerms IN BOOLEAN MODE))
 LIMIT 10;
 END$$
 DELIMITER ;
