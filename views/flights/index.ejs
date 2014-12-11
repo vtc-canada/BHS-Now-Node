@@ -661,6 +661,7 @@
             	this.flightPathChanged();
             },
             flightPathChanged:function(event){
+            	$(this.map).css('min-height',$(this.map).height()+'px');
                 $(this.map).empty();
                 
                 this.paths = [{
@@ -669,6 +670,7 @@
                 	}];
                 	
                 $(this.map).append(this.staticMapTemplate({paths:this.paths}));
+            	setTimeout(function(){$(this.map).css('min-height','')},1000);
                 this.updateFlightStats();
             },
             updateFlightStats:function(){
