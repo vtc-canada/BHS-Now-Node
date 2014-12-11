@@ -24,8 +24,6 @@ BEGIN
 		AND (contactSearchTerms IS NULL OR MATCH (cur_contacts.first_name,cur_contacts.last_name,cur_contacts.middle_name
 				,cur_contacts.email, cur_contacts.phone_number,cur_contacts.nationality, cur_contacts.gender) AGAINST (contactSearchTerms IN BOOLEAN MODE))
 		AND (companySearchTerms IS NULL OR MATCH (cur_company.name) AGAINST (companySearchTerms IN BOOLEAN MODE))
-
-#OR (contactSearchTerms IS NULL OR cur_company.name LIKE CONCAT('%', unconditionedTerm, '%')))	
 	GROUP BY cur_contacts.id
 ORDER BY
 	CASE WHEN orderBy='contact_name_asc' THEN last_name END ASC,
