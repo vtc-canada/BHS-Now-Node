@@ -32,9 +32,9 @@ module.exports = {
 	     });  
 	}
     },
-    getcontact : function(req,res){
+    getairplane : function(req,res){
 	if (typeof (req.params.id) != 'undefined' && !isNaN(parseInt(req.params.id))) {
-	   Database.dataSproc('GetContact',[parseInt(req.params.id)],function(err, contact){
+	   Database.dataSproc('GetAirplane',[parseInt(req.params.id)],function(err, contact){
 		if(err||typeof(contact[0][0])=='undefined')
 		    return res.json({error:'Database Error'+err},500);
 		
@@ -102,7 +102,7 @@ module.exports = {
 	req.query = req.body;
 	req.query.length = 999999;
 	req.query.start = 0;
-	sails.controllers.contacts.querycontacts(req,res,function(responseContacts){
+	sails.controllers.airplanes.querycontacts(req,res,function(responseContacts){
 	    if(typeof(responseContacts[0])!='undefined'){
 		results = responseContacts[0];
 	    }
@@ -140,8 +140,8 @@ module.exports = {
 	     });
 	});
     },
-    searchcontacts: function(req,res){
-	sails.controllers.contacts.querycontacts(req,res,function(responseContacts,responseContactsCount){
+    searchairplanes: function(req,res){
+	sails.controllers.airplanes.querycontacts(req,res,function(responseContacts,responseContactsCount){
 	    if(typeof(responseContacts[0])=='undefined'){
 		return res.json({error:'Database err'});
 	    }
@@ -154,25 +154,43 @@ module.exports = {
 	});
     },
     querycontacts:function(req,res,cb){
-	var contact_search = null;
-	var phone_search = null;
-	if (req.query.contact_search != '') {
-	    phone_search = req.query.contact_search;
-	    contact_search = req.query.contact_search.trim().split(" ");
-	    adr = req.query.contact_search.trim().split(" ");
-	    contact_search = '';
-	    for(var i=0;i<adr.length;i++){
-		adr[i] = adr[i].trim().replace(/[~@%*()\-+<>"]/g, "");
-		if(adr[i].trim()!=''){
-		    contact_search=contact_search+ "+"+adr[i]+"* ";
+	var airplane_search = null;
+	var company_search = null;
+    /** Parse Contact Search **/
+	if (req.query.airplane_search != '') {
+	    airplane_search = req.query.airplane_search.trim().split(" ");
+	    airplane = req.query.airplane_search.trim().split(" ");
+	    airplane_search = '';
+	
+	    for(var i=0;i<airplane.length;i++){
+	    	airplane[i] = airplane[i].trim().replace(/[~@%*()\-+<>"]/g, "");
+		if(airplane[i].trim()!=''){
+		    airplane_search=airplane_search+ "+"+airplane[i]+"* ";
 		}
 	    }
-	    contact_search = contact_search.trim();
-	    if(contact_search==''){
-		contact_search = null;
+	    airplane_search = airplane_search.trim();
+	    if(airplane_search==''){
+		airplane_search = null;
 	    }
 	}
 	
+	/** Parse Company - TODO - this is pretty much the same as function above, should be cleaned up **/
+	if (req.query.company_search != '') {
+	    company_search = req.query.company_search.trim().split(" ");
+	    company = req.query.company_search.trim().split(" ");
+	    company_search = '';
+	
+	    for(var i=0;i<company.length;i++){
+	    	company[i] = company[i].trim().replace(/[~@%*()\-+<>"]/g, "");
+		if(company[i].trim()!=''){
+			company_search=company_search+ "+"+company[i]+"* ";
+		}
+	    }
+	    company_search = company_search.trim();
+	    if(company_search==''){
+	    	company_search = null;
+	    }
+	}
 	var orderstring = null;
 	if(typeof(req.query.order)!='undefined'){	  
 	    	if(req.query.order[0].column==0){
@@ -186,7 +204,7 @@ module.exports = {
         	}
 	}
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
-	Database.dataSproc('SearchContacts',[contact_search,phone_search,req.query.start, req.query.length, orderstring,filteredCount],function(err,responseContacts){
+	Database.dataSproc('SearchAirplanes',[airplane_search,company_search,req.query.start, req.query.length, orderstring,filteredCount],function(err,responseContacts){
 	    if(err){
 		return res.json({error:'Database Error:'+err},500);
 	    }
@@ -218,7 +236,7 @@ module.exports = {
 	notes = req.body.notes;
 	function updateContact(contact,cb){
 	    if(contact.contact_id != 'new'&&typeof(contact.modified)!='undefined'){
-		Database.dataSproc('UpdateContact',[contact.contact_id,contact.first_name,contact.last_name,contact.email,contact.phone_number],function(err,resContact){
+		Database.dataSproc('UpdateContact',[contact.contact_id,contact.first_name,contact.middle_name,contact.last_name,contact.email,contact.phone_number,contact.date_of_birth,contact.drivers_license,contact.passport_no,contact.nationality, contact.gender],function(err,resContact){
 		    if(err){
 		    	return res.json({error:err},500);
 		    }
@@ -226,9 +244,10 @@ module.exports = {
 		});
 	    }else if(contact.contact_id == 'new'){
 		var outcontactId = '@out' + Math.floor((Math.random() * 1000000) + 1);
-		Database.dataSproc('CreateContact',[contact.first_name, contact.last_name,contact.email,contact.phone_number,outcontactId],function(err, responseCreateContact){
+		Database.dataSproc('CreateContact',[contact.first_name,contact.middle_name,contact.last_name,contact.email,contact.phone_number,contact.date_of_birth,contact.drivers_license,contact.passport_no,contact.nationality,contact.gender,outcontactId],function(err, responseCreateContact){
 		    if(err)
     			return res.json({error:err.toString()},500);
+		    contact.contact_id = responseCreateContact[1][outcontactId];
 		    cb(); 
 		});
 	    }else{
