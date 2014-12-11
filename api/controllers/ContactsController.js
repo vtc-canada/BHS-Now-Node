@@ -155,16 +155,17 @@ module.exports = {
     },
     querycontacts:function(req,res,cb){
 	var contact_search = null;
-	var phone_search = null;
+	var company_search = null;
+    /** Parse Contact Search **/
 	if (req.query.contact_search != '') {
-	    phone_search = req.query.contact_search;
 	    contact_search = req.query.contact_search.trim().split(" ");
-	    adr = req.query.contact_search.trim().split(" ");
+	    contact = req.query.contact_search.trim().split(" ");
 	    contact_search = '';
-	    for(var i=0;i<adr.length;i++){
-		adr[i] = adr[i].trim().replace(/[~@%*()\-+<>"]/g, "");
-		if(adr[i].trim()!=''){
-		    contact_search=contact_search+ "+"+adr[i]+"* ";
+	
+	    for(var i=0;i<contact.length;i++){
+	    	contact[i] = contact[i].trim().replace(/[~@%*()\-+<>"]/g, "");
+		if(contact[i].trim()!=''){
+		    contact_search=contact_search+ "+"+contact[i]+"* ";
 		}
 	    }
 	    contact_search = contact_search.trim();
@@ -173,6 +174,23 @@ module.exports = {
 	    }
 	}
 	
+	/** Parse Company - TODO - this is pretty much the same as function above, should be cleaned up **/
+	if (req.query.company_search != '') {
+	    company_search = req.query.company_search.trim().split(" ");
+	    company = req.query.company_search.trim().split(" ");
+	    company_search = '';
+	
+	    for(var i=0;i<company.length;i++){
+	    	company[i] = company[i].trim().replace(/[~@%*()\-+<>"]/g, "");
+		if(company[i].trim()!=''){
+			company_search=company_search+ "+"+company[i]+"* ";
+		}
+	    }
+	    company_search = company_search.trim();
+	    if(company_search==''){
+	    	company_search = null;
+	    }
+	}
 	var orderstring = null;
 	if(typeof(req.query.order)!='undefined'){	  
 	    	if(req.query.order[0].column==0){
@@ -186,7 +204,7 @@ module.exports = {
         	}
 	}
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
-	Database.dataSproc('SearchContacts',[contact_search,phone_search,req.query.start, req.query.length, orderstring,filteredCount],function(err,responseContacts){
+	Database.dataSproc('SearchContacts',[contact_search,company_search,req.query.start, req.query.length, orderstring,filteredCount],function(err,responseContacts){
 	    if(err){
 		return res.json({error:'Database Error:'+err},500);
 	    }
@@ -218,7 +236,7 @@ module.exports = {
 	notes = req.body.notes;
 	function updateContact(contact,cb){
 	    if(contact.contact_id != 'new'&&typeof(contact.modified)!='undefined'){
-		Database.dataSproc('UpdateContact',[contact.contact_id,contact.first_name,contact.last_name,contact.email,contact.phone_number],function(err,resContact){
+		Database.dataSproc('UpdateContact',[contact.contact_id,contact.first_name,contact.middle_name,contact.last_name,contact.email,contact.phone_number,contact.date_of_birth,contact.drivers_license,contact.passport_no,contact.nationality, contact.gender],function(err,resContact){
 		    if(err){
 		    	return res.json({error:err},500);
 		    }
@@ -226,9 +244,10 @@ module.exports = {
 		});
 	    }else if(contact.contact_id == 'new'){
 		var outcontactId = '@out' + Math.floor((Math.random() * 1000000) + 1);
-		Database.dataSproc('CreateContact',[contact.first_name, contact.last_name,contact.email,contact.phone_number,outcontactId],function(err, responseCreateContact){
+		Database.dataSproc('CreateContact',[contact.first_name,contact.middle_name,contact.last_name,contact.email,contact.phone_number,contact.date_of_birth,contact.drivers_license,contact.passport_no,contact.nationality,contact.gender,outcontactId],function(err, responseCreateContact){
 		    if(err)
     			return res.json({error:err.toString()},500);
+		    contact.contact_id = responseCreateContact[1][outcontactId];
 		    cb(); 
 		});
 	    }else{
