@@ -57,7 +57,7 @@
 	<div class="contacts-search-row row-fluid" contact_id="{{=contact_id}}">
 		<div class="span1 contacts-search-row-id"></div> <!--{{=contact_id}}-->
 		<div class="span3 contacts-search-row-name">{{=first_name+' ' +last_name}}</div>
-		<div class="span3 contacts-search-row-company">{{=email}}</div>
+		<div class="span3 contacts-search-row-company">{{=company}}</div>
 	</div>
 </script>
 
@@ -839,7 +839,7 @@
             	$('#search_contact').isnajaxfield({
             		results:$('#search_contact_results'),
 	            	ajax:function(search,cb){
-	            		socket.get('/contacts/getcontactsbyname',{search:search},function(result){
+	            		socket.get('/manifests/getcontactsbyname',{search:search},function(result){
 	            			if(result.error != undefined){  // result
 	                            location.reload(); // result
 	                        }
