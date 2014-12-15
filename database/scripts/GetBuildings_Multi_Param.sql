@@ -3,7 +3,7 @@ DROP procedure IF EXISTS `GetBuildings`;
 
 DELIMITER $$
 USE `cred`$$
-CREATE PROCEDURE `GetBuildings`(IN contactSearchTerms VARCHAR(128),IN addressSearchTerms VARCHAR(128),IN ownerSearchTerms VARCHAR(128), IN propertySearchTerms VARCHAR(128),IN mortgageCompanySearchTerms VARCHAR(64),
+CREATE PROCEDURE `GetBuildings`(IN keywordSearchTerms VARCHAR(128),IN contactSearchTerms VARCHAR(128),IN addressSearchTerms VARCHAR(128),IN ownerSearchTerms VARCHAR(128), IN propertySearchTerms VARCHAR(128),IN mortgageCompanySearchTerms VARCHAR(64),
 		IN sellerSearchTerms VARCHAR(128), IN agentSearchTerms VARCHAR(128), IN ownerCompanySearchTerms VARCHAR(128), IN sellerCompanySearchTerms VARCHAR(128), IN agentCompanySearchTerms VARCHAR(128),
 		IN unitQuantityMin int, IN unitQuantityMax int, IN unitPriceMin INT, IN unitPriceMax INT, 
 		IN saleDateRangeStart datetime, IN saleDateRangeEnd datetime,
@@ -19,7 +19,7 @@ CREATE PROCEDURE `GetBuildings`(IN contactSearchTerms VARCHAR(128),IN addressSea
 		IN lastSalesPriceMin INT, IN lastSalesPriceMax INT,
 		IN numOfBachelorMin INT, IN numOfBachelorMax INT, IN numOf1BedroomMin INT, IN numOf1BedroomMax INT, IN numOf2BedroomMin INT, IN numOf2BedroomMax INT, 
 		IN numOf3BedroomMin INT, IN numOf3BedroomMax INT,
-		 IN priceOfBachelorMin INT, IN priceOfBachelorMax INT, IN priceOf1BedroomMin INT, IN priceOf1BedroomMax INT, IN priceOf2BedroomMin INT, IN priceOf2BedroomMax INT, 
+		IN priceOfBachelorMin INT, IN priceOfBachelorMax INT, IN priceOf1BedroomMin INT, IN priceOf1BedroomMax INT, IN priceOf2BedroomMin INT, IN priceOf2BedroomMax INT, 
 		IN priceOf3BedroomMin INT, IN priceOf3BedroomMax INT,
 		IN windowInstallYearMin INT, IN windowInstallYearMax INT,  
 		IN cableProvider VARCHAR(128),
@@ -81,6 +81,7 @@ SELECT
 	,cur_buildings.cap_rate
 	,cur_buildings.sale_date
 	,cur_buildings.last_sale_price
+	
 FROM cur_buildings
 	INNER JOIN cur_address ON (cur_address.id = cur_buildings.cur_address_id)
 	LEFT JOIN cur_owner_seller_property_mapping AS owner_mapping ON (owner_mapping.property_address_id = cur_address.id AND owner_mapping.contact_type_id = 1)
@@ -100,12 +101,37 @@ FROM cur_buildings
 	LEFT JOIN cur_address AS agent_company_address ON (agent_company_address.id = agent_company_address_mapping.cur_address_id)
 	LEFT JOIN ref_building_type ON (ref_building_type.id = cur_buildings.ref_building_type_id)
 	LEFT JOIN ref_heat_system_type ON (ref_heat_system_type.id = cur_buildings.heat_system_type_id)
+	LEFT JOIN cur_note_mapping ON (cur_note_mapping.entity_id = cur_address.id )
+	LEFT JOIN cur_notes ON (cur_notes.id = cur_note_mapping.cur_notes_id)
 	LEFT JOIN (SELECT COUNT(DISTINCT cur_sales_record_history_id) AS 'num_of_records'
 				,cur_buildings_id  
 				FROM cur_sales_history_contact_mapping 
 				GROUP BY cur_buildings_id) AS sales_count ON (sales_count.cur_buildings_id = cur_buildings.id)
 WHERE
-	(propertySearchTerms IS NULL OR MATCH(cur_address.street_name,cur_address.postal_code,cur_address.city,cur_address.province,cur_address.street_number_begin) AGAINST (propertySearchTerms IN BOOLEAN MODE))
+	#Keyword
+	 ((keywordSearchTerms IS NULL OR MATCH(cur_address.street_name,cur_address.postal_code,cur_address.city,cur_address.province,
+			cur_address.street_number_begin) AGAINST (keywordSearchTerms IN BOOLEAN MODE)  #Building Keyword
+			OR (keywordSearchTerms IS NULL OR MATCH (owner_contact.name, owner_contact.email) AGAINST (keywordSearchTerms IN BOOLEAN MODE))  #Owner Keyword
+			OR (keywordSearchTerms IS NULL OR MATCH (seller_contact.name, seller_contact.email) AGAINST (keywordSearchTerms IN BOOLEAN MODE)) #Seller Keyword
+			OR (keywordSearchTerms IS NULL OR MATCH (agent_contact.name, agent_contact.email) AGAINST (keywordSearchTerms IN BOOLEAN MODE))  #Agent Keyword
+			OR (keywordSearchTerms IS NULL OR MATCH (mortgage_company) AGAINST (keywordSearchTerms IN BOOLEAN MODE)) #Mortgage Keyword
+			OR (keywordSearchTerms IS NULL OR MATCH (owner_company.name) AGAINST (keywordSearchTerms IN BOOLEAN MODE)) #Owner Company Keyword
+			OR (keywordSearchTerms IS NULL OR MATCH (seller_company.name) AGAINST (keywordSearchTerms IN BOOLEAN MODE)) #Seller Company Keyword
+			OR (keywordSearchTerms IS NULL OR MATCH (agent_company.name) AGAINST (keywordSearchTerms IN BOOLEAN MODE))) #Agent Company Keyword
+			OR (keywordSearchTerms IS NULL OR MATCH(cur_address.street_name,cur_address.postal_code,cur_address.city,
+					cur_address.province,cur_address.street_number_begin) AGAINST (keywordSearchTerms IN BOOLEAN MODE))
+			OR (keywordSearchTerms IS NULL OR MATCH(owner_company_address.street_name,owner_company_address.postal_code,owner_company_address.city,
+					owner_company_address.province,owner_company_address.street_number_begin) AGAINST (keywordSearchTerms IN BOOLEAN MODE)) #Owner Company Keyword
+			OR (keywordSearchTerms IS NULL OR MATCH(seller_company_address.street_name,seller_company_address.postal_code,seller_company_address.city,
+					seller_company_address.province,seller_company_address.street_number_begin) AGAINST (keywordSearchTerms IN BOOLEAN MODE)) #Seller Company Keyword
+			OR (keywordSearchTerms IS NULL OR MATCH(agent_company_address.street_name,agent_company_address.postal_code,agent_company_address.city,
+					agent_company_address.province,agent_company_address.street_number_begin) AGAINST (keywordSearchTerms IN BOOLEAN MODE)) #Agent Company Keyword
+			OR (keywordSearchTerms IS NULL OR MATCH(ref_building_type.type) AGAINST (keywordSearchTerms IN BOOLEAN MODE))
+			OR (keywordSearchTerms IS NULL OR MATCH(ref_heat_system_type.type) AGAINST (keywordSearchTerms IN BOOLEAN MODE))
+			OR (keywordSearchTerms IS NULL OR MATCH(cur_notes.note) AGAINST (keywordSearchTerms IN BOOLEAN MODE))
+			) #Building Type Keyword
+	#End Keyword
+	AND (propertySearchTerms IS NULL OR MATCH(cur_address.street_name,cur_address.postal_code,cur_address.city,cur_address.province,cur_address.street_number_begin) AGAINST (propertySearchTerms IN BOOLEAN MODE))
 	AND ((contactSearchTerms IS NULL OR MATCH (owner_contact.name, owner_contact.email) AGAINST (contactSearchTerms IN BOOLEAN MODE))
 			OR (contactSearchTerms IS NULL OR MATCH (seller_contact.name, seller_contact.email) AGAINST (contactSearchTerms IN BOOLEAN MODE))
 			OR (contactSearchTerms IS NULL OR MATCH (agent_contact.name, agent_contact.email) AGAINST (contactSearchTerms IN BOOLEAN MODE))
