@@ -756,7 +756,7 @@ module.exports = {
     },
     querybuildings:function(req,res,cb){
 	var search_unconditioned = req.query.search_keyword ==''?null:req.query.search_keyword;
-	var search_keyword = sails.controllers.utilities.prepfulltext(req.query.search_keyword);
+	var search_keyword = sails.controllers.utilities.prepfulltextOR(req.query.search_keyword);
 	var full_contact_search = sails.controllers.utilities.prepfulltext(req.query.full_contact_search);
 	var full_address_search = sails.controllers.utilities.prepfulltext(req.query.full_address_search);
 	var address_search = sails.controllers.utilities.prepfulltext(req.query.address_search);

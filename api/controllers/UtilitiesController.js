@@ -30,6 +30,31 @@ module.exports = {
 	}else{
 	    return null;
 	}
+    },
+    prepfulltextOR : function(searchterms) {
+	if (searchterms != null && searchterms != '') {
+
+	    adr = searchterms.trim();
+	    adr = adr.replace(/-/g, ' ').split(" ");
+	    
+	    var result_search = '';
+	    for(var i=0;i<adr.length;i++){
+		
+		//adr[i] = replaceAll(replaceAll(adr[i].trim(),'(',''),')','');
+		adr[i] = adr[i].trim().replace(/[~@%*()\-+<>"]/g, "");//replace(/[|&;$%@"<>()+,]/g, "");
+		
+		if(adr[i]!=''){
+		    result_search=result_search+ ""+adr[i]+"* ";
+		}
+	    }
+	    result_search = result_search.trim();
+	    if(result_search==''){
+		result_search = null;
+	    }
+	    return result_search;
+	}else{
+	    return null;
+	}
     }
 };
 
