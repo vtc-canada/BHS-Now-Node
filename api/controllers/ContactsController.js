@@ -43,6 +43,7 @@ module.exports = {
 	}
     },
     getcontactsbyname : function(req,res){
+	req.body.search = sails.controllers.utilities.prepfulltext(req.body.search);
 	Database.dataSproc('GetContactsByName',[typeof (req.body.search) != 'undefined' ?  req.body.search  : null],function(err, contacts){
 	    if(err||typeof(contacts[0])=='undefined')
 		return res.json({error:'Database Error'+err},500);
@@ -213,7 +214,7 @@ module.exports = {
 		   return res.json({error:'Database Error:'+err},500);
 		}
 		cb(responseContacts,responseContactsCount);
-	    })
+	    });
 	});
 	
     },

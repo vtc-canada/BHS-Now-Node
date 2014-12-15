@@ -56,8 +56,8 @@
 <script type="text/template" id="contacts-search-row-template">
 	<div class="contacts-search-row row-fluid" contact_id="{{=contact_id}}">
 		<div class="span1 contacts-search-row-id"></div> <!--{{=contact_id}}-->
-		<div class="span3 contacts-search-row-name">{{=first_name+' ' +last_name}}</div>
-		<div class="span3 contacts-search-row-company">{{=email}}</div>
+		<div class="span3 contacts-search-row-name">{{=contact_name}}</div>
+		<div class="span3 contacts-search-row-company">{{=company}}</div>
 	</div>
 </script>
 
@@ -236,7 +236,7 @@
 		        <thead>
 		            <tr>
 		            	<th>Id<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
-		                <th>Name</th>
+		                <th>Passenger</th>
 		                <th>Checked In</th>
 		                <th></th>
 		                <th></th>
@@ -661,6 +661,7 @@
             	this.flightPathChanged();
             },
             flightPathChanged:function(event){
+            	$(this.map).css('min-height',$(this.map).height()+'px');
                 $(this.map).empty();
                 
                 this.paths = [{
@@ -669,6 +670,7 @@
                 	}];
                 	
                 $(this.map).append(this.staticMapTemplate({paths:this.paths}));
+            	setTimeout(function(){$(this.map).css('min-height','')},1000);
                 this.updateFlightStats();
             },
             updateFlightStats:function(){
@@ -839,7 +841,7 @@
             	$('#search_contact').isnajaxfield({
             		results:$('#search_contact_results'),
 	            	ajax:function(search,cb){
-	            		socket.get('/contacts/getcontactsbyname',{search:search},function(result){
+	            		socket.get('/manifests/getcontactsbyname',{search:search},function(result){
 	            			if(result.error != undefined){  // result
 	                            location.reload(); // result
 	                        }
@@ -871,7 +873,7 @@
 					"aoColumns":[
 			        	{"mData":"manifest_ID","visible":false}
 			         	,{"mData":function(data,b){ 
-			         		return data.first_name + ' ' + data.last_name; }
+			         		return data.contact_name; }
 				        },{"mData":function(data,b){ 
 				        	return "<input type=\"checkbox\" "+(data.checked_in?' checked="checked" ':'')+"class=\"checked-in\">"; }
 				        },{"mData":function(data,b){ 
