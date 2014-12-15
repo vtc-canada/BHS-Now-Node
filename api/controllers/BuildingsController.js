@@ -791,7 +791,7 @@ module.exports = {
 	
 	totalCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
-	sails.controllers.database.credSproc('GetBuildings', [search_keyword, search_unconditioned, full_contact_search,full_address_search, owner_search, address_search, mortgage_search,
+	sails.controllers.database.credSproc('GetBuildings', [search_keyword, full_contact_search,full_address_search, owner_search, address_search, mortgage_search,
 	        seller_search, agent_search, owner_company_search, seller_company_search, agent_company_search,                     
 		(req.query.unitQuantityMin == ''||req.query.unitQuantityMin==null) ? null : parseInt(req.query.unitQuantityMin),
 		(req.query.unitQuantityMax == ''||req.query.unitQuantityMax==null) ? null : parseInt(req.query.unitQuantityMax),
@@ -900,7 +900,7 @@ module.exports = {
 				error : err.toString()
 			    }, 500);
 
-			for ( var element in responseSale[0][0]) {
+			for ( var element in responseSale[0][0]) {   //overwrites all sales attributes.
 			    // console.log(element.toString());
 			    if (element != 'id' && typeof (building[0][0]) != 'undefined'&&typeof (building[0][0][element]) != 'undefined') {
 				if(element == 'building_income'){
@@ -910,13 +910,31 @@ module.exports = {
 				}
 			    }
 			}
+			
+			
 			building[0][0].sale_id = parseInt(req.body.sale_id);
-			res.json(building[0][0]);
+			sails.controllers.database.credSproc('GetBuildingSaleContacts', [ parseInt(req.param('id')), parseInt(req.body.sale_id) ], function(err,
+				buildingContacts) {
+			    if (err)
+				return res.json({
+				    error : err.toString()
+				}, 500);
+			    building[0][0].contacts = buildingContacts[0];
+			    res.json(building[0][0]);
+			});
 		    });
 
 		} else {
 		    building[0][0]['building_income'] = parseFloat(building[0][0]['building_income']);
-		    res.json(building[0][0]);
+		    sails.controllers.database.credSproc('GetBuildingContacts', [ parseInt(req.params.id) ], function(err, buildingContacts) {
+			if (err)
+			    return res.json({
+				error : err.toString()
+			    }, 500);
+
+			building[0][0].contacts = buildingContacts[0];
+			res.json(building[0][0]);
+		    });
 		}
 	    }
 	});
