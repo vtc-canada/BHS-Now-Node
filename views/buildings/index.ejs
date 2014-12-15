@@ -133,9 +133,14 @@
     	<div class="row-fluid">
 	        <div class="span10 offset2 create-report-controls" style="padding-top: 20px;">
 	           <div class="row-fluid">
-	           
 	               <div class="row">
-	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_full_contact">Contacts:</label></div>
+	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_keyword">Keyword:</label></div>
+	                   <div class="span8 report-control-right-control">
+	                       <input type="text" id="search_keyword" value="">
+	                   </div>
+	               </div>
+	               <div class="row">
+	                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_full_contact">Contact:</label></div>
 	                   <div class="span8 report-control-right-control">
 	                       <input type="text" id="search_full_contact" value="">
 	                   </div>
@@ -789,6 +794,10 @@
 				</div>
 				
 			</div>
+			<div class="row-fluid constrain-contact-checkbox-wrapper">
+				<input type="checkbox" id="constrain_contact_checkbox" checked="checked">
+				<label for="constrain_contact_checkbox" id="constrain_contact_checkbox_label">Constrain to Contact Company Mappings</label>
+			</div>
 		</div>
         
     </div>
@@ -930,7 +939,7 @@
 				<div class="row-category">
 					<i class="icon-certificate"></i> &nbsp&nbsp<b>Owners</b>
 					
-					{{if(typeof(sale_id)=='undefined'){ }}
+					{{if(true||typeof(sale_id)=='undefined'){ }}
 					<% if(req.session.user.policy[req.route.path].update==1){ %>
 					<div class="pull-right" style="height:40px;">
 						<span class="row-category-button-wrapper">
@@ -959,7 +968,7 @@
 				<div class="row-category">
 					<i class="icon-legal"></i> &nbsp&nbsp<b>Sellers</b>
 					
-					{{if(typeof(sale_id)=='undefined'){ }}
+					{{if(true||typeof(sale_id)=='undefined'){ }}
 					<% if(req.session.user.policy[req.route.path].update==1){ %>
 					<div class="pull-right" style="height:40px;">
 						<span class="row-category-button-wrapper">
@@ -985,7 +994,7 @@
 			<div class="row-fluid">
 				<div class="row-category">
 					<i class="icon-tag"></i> &nbsp&nbsp<b>Agents</b>
-					{{if(typeof(sale_id)=='undefined'){ }}
+					{{if(true||typeof(sale_id)=='undefined'){ }}
 					<% if(req.session.user.policy[req.route.path].update==1){ %>
 					<div class="pull-right" style="height:40px;">
 						<span class="row-category-button-wrapper">
@@ -1290,7 +1299,7 @@
 			<div class="span7 segment-label-value"><span class="mobilelabel">Email:</span>{{=email}}</div>
 		</div>
 		
-		{{if(typeof(sale_id)=='undefined'){ }}
+		{{if(true||typeof(sale_id)=='undefined'){ }}
 		<% if(req.session.user.policy[req.route.path].update==1){ %>
 		<div class="row-fluid">
 			<div class="span12 "><a class="btn btn-danger pull-right remove-building-contact">Delete</a></div>
@@ -1967,7 +1976,7 @@
             
 			socket.get('/buildings/export',
 				{timezoneoffset : new Date().getTimezoneOffset()
-				
+				,search_keyword : $('#search_keyword').val()
 				,full_contact_search : $('#search_full_contact').val()
 				,full_address_search : $('#search_full_address').val()
 				,address_search : $("#search_address").val()
@@ -2036,8 +2045,9 @@
 				
 			});
 		});
-		$('#create_building').click(function(){
 		
+		$('#create_building').click(function(){
+			selectedBuilding = null;
 			$('.edit-item-section').css('display','none');
 			$('#clear_selected').css('display','none');
 			$('#delete_building').css('display','none');
@@ -2154,7 +2164,7 @@
 		        			d.length = $('#building_length_select').length==0?50:$('#building_length_select').val();
 		        			
 		        			if(filtersEnabled){
-		        			
+		        				d.search_keyword = $('#search_keyword').val();
 								d.full_contact_search = $('#search_full_contact').val();
 								d.full_address_search = $('#search_full_address').val();
 			        			d.address_search = $("#search_address").val();
@@ -2664,6 +2674,10 @@
 				datatable.api().ajax.reload(); // Searching
 			},200);
 		}
+		
+		$('#search_keyword').keydown(function(){
+			changedSearchParameter();
+		});
 
 		$('#search_full_contact').keydown(function(){
 			changedSearchParameter();
@@ -3337,7 +3351,7 @@
 	        if(!isNaN(parseInt(building.get('unit_quantity')))&&!isNaN(parseInt($('#sale_price').autoNumeric('get')))){
 	        	priceperunit = (parseInt($('#sale_price').autoNumeric('get')) / parseInt(building.get('unit_quantity'))).toFixed(2);			        	
 	        }
-        	$('#new_unit_price_calculated_radio_label').html('$'+ commaSeparateNumber(priceperunit));//.formatMoney(2,'.',','));
+        	$('#new_unit_price_calculated_radio_label').html('$'+ commaSeparateNumber(priceperunit==0?'0.00':priceperunit));//.formatMoney(2,'.',','));
     	});
     	
     	$('#confirmaddsale').click(function(){
@@ -3628,6 +3642,9 @@
     		var sendobj = {building:building, buildingnotes : buildingnotes, buildingcontacts:buildingcontacts};
     		socket.get('/buildings/savebuilding',sendobj,function(response){
     			if(typeof(response.success)!='undefined'){
+    				if(wasnew){
+    					selectedBuilding = response.building_id;
+    				}
 	                $('.alert-success').remove();
 	                $('.page-banner').after('<div class="alert alert-success fade in" style="border-radius:0px;">'+
 	                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
@@ -3647,7 +3664,7 @@
 							$('.edit-item-section').css('display','none');
 							$('#delete_building').css('display','none');
 	                	}else{
-			                if(typeof(building.get('sale_id'))!='undefined'){
+			                if(typeof(building.get('sale_id'))!='undefined'){  //||typeof(response.sale_id)!='undefined'
 			                	building.fetch({id:response.building_id, sale_id: building.get('sale_id')=='new'?response.sale_id:parseInt(building.get('sale_id'))});  
 			                }else{
 			                	building.fetch({id:response.building_id});  
@@ -4413,7 +4430,7 @@
 	    function updateContactsCombobox(){
     		clearTimeout(contactssearchtimer);
     		contactssearchtimer = setTimeout(function(){
-    			socket.get('/buildings/getcontactsbycompanyid',{search:curcontactsval,companyId:newCompanyId},function(res){
+    			socket.get('/buildings/getcontactsbycompanyid',{search:curcontactsval,companyId:$('#constrain_contact_checkbox').is(':checked')?newCompanyId:null},function(res){
     				var tempval = $('input.contactscombobox').val();
         			$('select.contactscombobox').empty();
 		        	for(var i=0;i<res.length;i++){
@@ -4429,7 +4446,7 @@
 	    function updateCompaniesCombobox(){
 	    	clearTimeout(contactssearchtimer);
     		contactssearchtimer = setTimeout(function(){		        	
-    			socket.get('/buildings/getcompaniesbycontactid',{search:curcompaniesval,contactId:newContactId},function(res){
+    			socket.get('/buildings/getcompaniesbycontactid',{search:curcompaniesval,contactId:$('#constrain_contact_checkbox').is(':checked')?newContactId:null},function(res){
         			var tempval = $('input.companiescombobox').val();
         			$('select.companiescombobox').empty();
 		        	for(var i=0;i<res.length;i++){

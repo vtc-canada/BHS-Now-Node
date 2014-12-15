@@ -1035,6 +1035,19 @@ table.dataTable > thead > tr > th.sorting_disabled {
 cursor: default;
 }
 
+.constrain-contact-checkbox-wrapper{
+	
+}
+
+#constrain_contact_checkbox_label{
+	float:left;
+}
+
+#constrain_contact_checkbox{
+	float: left;
+	margin-right:6px;
+}
+
 @media (min-width:768px){
 	
 	.only-mobile{

@@ -184,7 +184,7 @@ module.exports = {
 				buildingcontacts[i].company_id, tempOutVar ], function(err, responseSalesMapping) {
 			    i++;
 			    if (i < buildingcontacts.length) {
-				loop(i)
+				loop(i);
 			    } else {
 				checkAndUpdateBuildingLastSale(building,function(){
 				    res.json({
@@ -231,13 +231,20 @@ module.exports = {
 			building.bedroom1_price, building.bedroom2_price, building.bedroom3_price,  building.property_mgmt_company, building.prev_property_mgmt_company, isNaN(building.cap_rate)?0:building.cap_rate, building.building_type, building.last_boiler_upgrade_year, building.mortgage_company,  toUTCDateTimeString(building.mortgage_due_date) ,building.parking_spots], function(err,
 			responseUpdateSale) {
 
-		    // TODO : Update building..
-		    checkAndUpdateBuildingLastSale(building,function(){
-			    res.json({
-				success : true,
-				sale_id : building.sale_id,
-				building_id : building.building_id
-			    });
+		    
+		    
+		  //  
+		//	
+		    
+		    
+		    processSalesContacts(function() {
+    		    	checkAndUpdateBuildingLastSale(building,function(){
+    			    res.json({
+    				success : true,
+    				sale_id : building.sale_id,
+    				building_id : building.building_id
+    			    });
+    		    	});
 		    });
 		});
 
@@ -396,6 +403,9 @@ module.exports = {
 		cb();
 	    }
 	}
+	
+	
+	
 	
 	function processNotes(cb){
 	    function loopNotes(i){
@@ -556,6 +566,53 @@ module.exports = {
 	    }
 	    
 	}
+	
+	function processSalesContacts(cb) { // inline process contacts // loops,
+	    // creates / deletes mappings
+	    function loopSalesContacts(i) {
+	        if (typeof(buildingcontacts[i].dodelete) != 'undefined') { // delete
+	            sails.controllers.database.credSproc('DeleteSalePropertyContactMapping', [buildingcontacts[i].mapping_id], function(err, responseMapping) {
+	                if (err)
+	                    res.json({
+	                        error: err.toString()
+	                    }, 500);
+	                i++;
+	                if (i < buildingcontacts.length) {
+	                    loopSalesContacts(i);
+	                } else {
+	                    cb();
+	                }
+	            });
+	        } else if (typeof(buildingcontacts[i].dosync) != 'undefined') {
+	            
+	            var tempOutVar = '@out' + Math.floor((Math.random() * 1000000) + 1);
+	            sails.controllers.database.credSproc('CreateSalesContactMapping', [ building.sale_id,
+			buildingcontacts[i].contact_id, building.building_id, buildingcontacts[i].contact_type == 'owner' ? 1 : (buildingcontacts[i].contact_type == 'seller')?2:3,
+			buildingcontacts[i].company_id, tempOutVar ], function(err, responseSalesMapping) {
+			i++;
+	                if(i < buildingcontacts.length) {
+	                    loopSalesContacts(i);
+	                }else{
+	                    cb();
+	                }
+	            });
+	        } else {
+	            i++;
+	            if (i < buildingcontacts.length) {
+	        	loopSalesContacts(i);
+	            } else {
+	                cb();
+	            }
+	        }
+	    }
+	    if (buildingcontacts.length > 0) {
+		loopSalesContacts(0);
+	    } else {
+	        cb();
+	    }
+	}
+	
+	
     },
     export:function(req,res){
 	req.query = req.body;
@@ -698,6 +755,7 @@ module.exports = {
 
     },
     querybuildings:function(req,res,cb){
+	var search_keyword = sails.controllers.utilities.prepfulltext(req.query.search_keyword);
 	var full_contact_search = sails.controllers.utilities.prepfulltext(req.query.full_contact_search);
 	var full_address_search = sails.controllers.utilities.prepfulltext(req.query.full_address_search);
 	var address_search = sails.controllers.utilities.prepfulltext(req.query.address_search);
@@ -732,7 +790,7 @@ module.exports = {
 	
 	totalCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
-	sails.controllers.database.credSproc('GetBuildings', [ full_contact_search,full_address_search, owner_search, address_search, mortgage_search,
+	sails.controllers.database.credSproc('GetBuildingsKeyword', [search_keyword, full_contact_search,full_address_search, owner_search, address_search, mortgage_search,
 	        seller_search, agent_search, owner_company_search, seller_company_search, agent_company_search,                     
 		(req.query.unitQuantityMin == ''||req.query.unitQuantityMin==null) ? null : parseInt(req.query.unitQuantityMin),
 		(req.query.unitQuantityMax == ''||req.query.unitQuantityMax==null) ? null : parseInt(req.query.unitQuantityMax),
