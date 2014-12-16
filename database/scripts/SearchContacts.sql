@@ -28,8 +28,8 @@ BEGIN
 ORDER BY
 	CASE WHEN orderBy='contact_name_asc' THEN contact_name END ASC,
 	CASE WHEN orderBy='contact_name_desc' THEN contact_name END DESC,
-	CASE WHEN orderBy='phone_asc' THEN phone_number END ASC,
-	CASE WHEN orderBy='phone_desc' THEN phone_number END DESC,
+	CASE WHEN orderBy='phone_asc' THEN cur_phone_numbers.phone_number END ASC,
+	CASE WHEN orderBy='phone_desc' THEN cur_phone_numbers.phone_number END DESC,
 	CASE WHEN orderBy='email_asc' THEN email END ASC,
 	CASE WHEN orderBy='email_desc' THEN email END DESC,
 	CASE WHEN orderBy='' THEN contact_name END ASC
