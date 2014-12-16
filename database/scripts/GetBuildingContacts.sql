@@ -8,6 +8,7 @@ SELECT
 	cur_contacts.id as 'contact_id'
 	,mapping.id as 'mapping_id'
 	,cur_company.id as 'company_id'
+	,cur_company.phone_number as 'company_phone_number'
 	,cur_company.name as 'cur_company_name'
 	,ref_contact_type.type as 'contact_type'
 	,cur_contacts.name as 'contact_name'	
@@ -19,11 +20,19 @@ SELECT
 	,company_address.postal_code
 	,company_address.city
 	,company_address.province
+	,contact_address.street_number_begin as contact_street_number_begin
+	,contact_address.street_number_end as contact_street_number_end
+	,contact_address.street_name as contact_street_name
+	,contact_address.postal_code as contact_postal_code
+	,contact_address.city as contact_city
+	,contact_address.province as contact_province
 FROM 
 	cur_buildings
 	INNER JOIN cur_address ON (cur_address.id = cur_buildings.cur_address_id)
 	INNER JOIN cur_owner_seller_property_mapping AS mapping ON (mapping.property_address_id = cur_address.id)
 	LEFT JOIN cur_contacts  ON (cur_contacts.id = mapping.contact_id)
+	LEFT JOIN cur_company_address_mapping AS cur_contact_address_mapping ON (cur_contact_address_mapping.cur_contact_id = cur_contacts.id)
+	LEFT JOIN cur_address AS contact_address ON (contact_address.id = cur_contact_address_mapping.cur_address_id)
 	LEFT JOIN cur_company AS cur_company ON (cur_company.id = mapping.company_id)
 	LEFT JOIN cur_company_address_mapping ON (cur_company_address_mapping.cur_company_id = cur_company.id)
 	LEFT JOIN cur_address AS company_address ON (company_address.id = cur_company_address_mapping.cur_address_id)
