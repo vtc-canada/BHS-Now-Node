@@ -524,6 +524,23 @@
 					$(row).attr('company_id',data['company_id']);
 					$(row).attr('address_id',data['address_id']);
 					$(row).click(function(){
+						if(isChangesPending()){
+							if(!confirm(unsavedMessage)){
+								if($('body').width()>979){
+									$('.main-content').animate({
+								        scrollTop: $('.main-content').scrollTop() + $('.edit-item-section').position().top
+								    }, 500);
+								}else{
+									$('html, body').animate({
+								        scrollTop: $(".edit-item-section").offset().top
+								    }, 500);
+								}
+								return;
+							}
+						}
+			        	$(row).siblings().removeClass('selected');
+			        	$(row).removeClass('selected').addClass('selected');
+			        	
 						$('.edit-item-section').css('display','');
 						$('#delete_company').css('display','');
     					contacts.fetch({id:parseInt($(row).attr('company_id'))});
@@ -538,10 +555,6 @@
 	    $('select[name=companies_length]').css('margin-top','10px');
 	    $('#companies_length label').css('margin-bottom','0px');
 	    
-        $('#companies tbody').on('click', 'tr', function () {
-        	$(this).siblings().removeClass('selected');
-        	$(this).removeClass('selected').addClass('selected');
-	    });
 	    $('#companies').on('draw.dt',function(event,datatable){
 	     	if(!isNaN(parseInt(company.get('company_id')))){
 	     		$('#companies tbody tr[company_id='+company.get('company_id')+']').addClass('selected');
@@ -571,6 +584,20 @@
 		});
 		
 		$('#create_company').click(function(){
+			if(isChangesPending()){
+				if(!confirm(unsavedMessage)){
+					if($('body').width()>979){
+						$('.main-content').animate({
+					        scrollTop: $('.main-content').scrollTop() + $('.edit-item-section').position().top
+					    }, 500);
+					}else{
+						$('html, body').animate({
+					        scrollTop: $(".edit-item-section").offset().top
+					    }, 500);
+					}
+					return;
+				}
+			}
 			$('#companies tbody tr').removeClass('selected');
 			$('#delete_company').css('display','none');
 			$('.edit-item-section').css('display','');
@@ -599,6 +626,24 @@
 		});
 		
 		$('#cancel_company').click(function(){
+			if(isChangesPending()){
+				if(!confirm(unsavedMessage)){
+					if($('body').width()>979){
+						$('.main-content').animate({
+					        scrollTop: $('.main-content').scrollTop() + $('.edit-item-section').position().top
+					    }, 500);
+					}else{
+						$('html, body').animate({
+					        scrollTop: $(".edit-item-section").offset().top
+					    }, 500);
+					}
+					return;
+				}
+			}
+			notes.reset();	
+			company = new CompanyModel({});
+			contacts.reset();
+			
 			$('#delete_company').css('display','none');
 			$('.edit-item-section').css('display','none');	
 			$('#companies tbody tr').removeClass('selected');
@@ -693,6 +738,12 @@
 		$('#export_companies').click(function(){
 			$('#exportModal .modal-body').html('<div style="font-size: 16px; font-weight:400; text-align:right;" class="pull-right"><span class=""><i class="icon icon-cog icon-spin"></i></span>&nbsp;&nbsp;Generating Report...&nbsp;</div>');
             $('#exportModal').modal('show');
+            blockUnload = true;
+            $('#exportModal').unbind('hidden');
+            $('#exportModal').on('hidden', function () {
+			    blockUnload = false;
+			});
+			
 			socket.get('/companies/export',
 				{timezoneoffset : new Date().getTimezoneOffset()
 				,address_search  : $("#search_address").val()
@@ -729,7 +780,11 @@
 	    				if(wasnew){
 							$('.edit-item-section').css('display','none');
 							$('#delete_building').css('display','none');
-							company.set('company_id','new'); // blocks table highlighted
+							//company.set('company_id','new'); // blocks table highlighted
+							notes.reset();	
+							company = new CompanyModel();
+							contacts.reset();
+							
 	                	}else{
 			                contacts.fetch({id:parseInt(company.get('company_id'))}); 
 		    				company.fetch({company_id:parseInt(company.get('company_id'))}); 
@@ -759,6 +814,28 @@
     			}
     		});
     	});
+    	
+    	$(window).on("beforeunload", function() {
+    		if(!blockUnload&&isChangesPending())
+    		{
+		    	return unloadMessage;
+    		}else{
+    			blockUnload = false;
+			}
+		});
+		
+    	function isChangesPending(){
+    		var change = false;
+	    	if(typeof(company.get('modified'))!='undefined'){
+	    		change = true;
+	    	}
+	    	contacts.each(function(contact){
+	    		if(typeof(contact.get('dodelete'))!='undefined'||typeof(contact.get('new'))!='undefined'){
+	    			change = true;
+	    		}
+	    	});
+	    	return change;
+    	}
     	
     	
 	    	 // just shows the changes are pending, by scanning through the collection to see if that's the case.

@@ -168,59 +168,44 @@ module.exports = {
 	contacts = req.body.contacts;
 	notes = req.body.notes;
 	
+	
+	function updateAddress(company,cb){
+	    sails.controllers.database.credSproc('GetAddressOnlyByCompanyId',[company.company_id],function(err,resAddress){
+        	if(err)
+        	    return res.json({error:'Database Error:'+err},500);
+        	if(resAddress[0].length==0){
+        	    var outaddressId = '@out' + Math.floor((Math.random() * 1000000) + 1);
+		    sails.controllers.database.credSproc('CreateAddress',[company.street_number_begin ,company.street_number_end,company.street_name,company.postal_code,company.city,2,company.province,company.lat, company.lng, null,outaddressId],function(err,resAddress){
+		        if(err)
+  			    cb(err);
+		        sails.controllers.database.credSproc('CreateCompanyAddressMapping',[company.company_id,resAddress[1][outaddressId],'@paramout'],function(err,resMapping){
+		            if(err)
+		        	cb(err);
+		            cb(); 
+		        });
+		   });	    
+        	}else{
+        	    sails.controllers.database.credSproc('UpdateAddressByCompanyId',[company.company_id,company.street_number_begin ,company.street_number_end,company.street_name,company.postal_code,company.city,company.province,company.lat, company.lng],function(err,resAddress){
+        		if(err)
+        		    cb(err);
+        		cb(); 
+        	    });	    
+        	} 
+	    });
+	}
+	
 	function updateCompany(contact,cb){
 	    if(company.company_id != 'new'&&typeof(company.modified)!='undefined'){
 		sails.controllers.database.credSproc('UpdateCompany',[company.company_id,company.company_name],function(err,resContact){
 		    if(err)
 			return res.json({error:'Database Error:'+err},500);
 		
-		    var street_number_end = (company.street_number_end == null || company.street_number_end == 0) ? '' : ' ' + company.street_number_end;
-		    var addressSearch = company.street_number_begin + " " + street_number_end + " " + company.street_name + ', ' + company.city + ', '
-			    + company.province + ', Canada, ' + company.postal_code;
-
-		    var geocoderProvider = 'google';
-		    var httpAdapter = 'http';
-		    // optionnal
-		    var extra = {
-			// apiKey: 'YOUR_API_KEY', // for map quest
-			formatter : null
-		    // 'gpx', 'string', ...
-		    };
-
-		    var geocoder = require('node-geocoder').getGeocoder(geocoderProvider, httpAdapter, extra);
-
-		    geocoder.geocode(addressSearch, function(err, responseGeocode) {
-			var lat = null;
-			var lng = null;
-			if (typeof (responseGeocode) != 'undefined' && responseGeocode.length > 0) {
-			    lat = responseGeocode[0].latitude;
-			    lng = responseGeocode[0].longitude;
-			}
+		    updateAddress(company,function(err){
+			if(err)
+			    cb(err);
+			cb();
+		    });
 			
-			sails.controllers.database.credSproc('GetAddressOnlyByCompanyId',[company.company_id],function(err,resAddress){
-		        	if(err)
-		        	    return res.json({error:'Database Error:'+err},500);
-		        	if(resAddress[0].length==0){
-		        	    var outaddressId = '@out' + Math.floor((Math.random() * 1000000) + 1);
-	        		    sails.controllers.database.credSproc('CreateAddress',[company.street_number_begin ,company.street_number_end,company.street_name,company.postal_code,company.city,2,company.province,lat, lng,null,outaddressId],function(err,resAddress){
-	        		        if(err)
-	          			    return res.json({error:'Database Error:'+err},500);
-	        		        
-	        		        sails.controllers.database.credSproc('CreateCompanyAddressMapping',[company.company_id,resAddress[1][outaddressId],'@paramout'],function(err,resMapping){
-	        			        if(err)
-	        	  			    return res.json({error:'Database Error:'+err},500);		            
-	        	  			cb(); 	            
-	        		        });
-	        		   });	    
-		        	}else{
-		        	    sails.controllers.database.credSproc('UpdateAddressByCompanyId',[company.company_id,company.street_number_begin ,company.street_number_end,company.street_name,company.postal_code,company.city,company.province,lat, lng],function(err,resAddress){
-	    		        	if(err)
-	    		        	    return res.json({error:'Database Error:'+err},500);
-	      				cb(); 
-		        	    });	    
-		        	} 
-			});
-     		   });
 		});
 	    }else if(company.company_id == 'new'){
 		var outcompanyId = '@out' + Math.floor((Math.random() * 1000000) + 1);
@@ -229,42 +214,10 @@ module.exports = {
   			return res.json({error:'Database Error:'+err},500);
 		    company.company_id = responseCreateCompany[1][outcompanyId];
 		    
-		    
-		    var street_number_end = (company.street_number_end == null || company.street_number_end == 0) ? '' : ' ' + company.street_number_end;
-		    var addressSearch = company.street_number_begin + " " + street_number_end + " " + company.street_name + ', ' + company.city + ', '
-			    + company.province + ', Canada, ' + company.postal_code;
-
-		    var geocoderProvider = 'google';
-		    var httpAdapter = 'http';
-		    // optionnal
-		    var extra = {
-			// apiKey: 'YOUR_API_KEY', // for map quest
-			formatter : null
-		    // 'gpx', 'string', ...
-		    };
-
-		    var geocoder = require('node-geocoder').getGeocoder(geocoderProvider, httpAdapter, extra);
-
-		    geocoder.geocode(addressSearch, function(err, responseGeocode) {
-			var lat = null;
-			var lng = null;
-			if (typeof (responseGeocode) != 'undefined' && responseGeocode.length > 0) {
-			    lat = responseGeocode[0].latitude;
-			    lng = responseGeocode[0].longitude;
-			}
-        		    var outaddressId = '@out' + Math.floor((Math.random() * 1000000) + 1);
-        		    sails.controllers.database.credSproc('CreateAddress',[company.street_number_begin ,company.street_number_end,company.street_name,company.postal_code,company.city,2,company.province,lat, lng,null,outaddressId],function(err,resAddress){
-        		        if(err)
-          			    return res.json({error:'Database Error:'+err},500);
-        		        
-        		        sails.controllers.database.credSproc('CreateCompanyAddressMapping',[company.company_id,resAddress[1][outaddressId],'@paramout'],function(err,resMapping){
-        			        if(err)
-        	  			    return res.json({error:'Database Error:'+err},500);		            
-        	  			cb(); 	            
-        		        });
-        		   });
-			
-			
+		    updateAddress(company,function(err){
+			if(err)
+			    cb(err);
+			cb();
 		    });
 		});
 	    }else{
@@ -436,7 +389,10 @@ module.exports = {
 		    });
 	    });
 	}else{
-        	updateCompany(company,function(){
+        	updateCompany(company,function(err){
+        	    if(err)
+			return res.json({error:err.toString()},500);
+        	    
         	    processNotes(function(){
                 	    function loopContacts(i)
                 	    {

@@ -222,27 +222,38 @@ module.exports = {
 	contact = req.body.contact;
 	companies = req.body.companies;
 	notes = req.body.notes;
+	
+	
+	function updatePhoneNumber(contact,cb){
+	    sails.controllers.database.credSproc('GetPhoneNumberByContactId',[contact.contact_id],function(err,resPhone){
+	        if(err)
+	            return res.json({error:'Database Error:'+err.toString()},500);
+	        if(resPhone[0].length==0){
+	            sails.controllers.database.credSproc('CreatePhoneNumber',[contact.phone_number,contact.contact_id,'@outparamphone'],function(err,resPhone){
+		        if(err)
+    			    cb(err);
+    			cb();
+	            });
+	        }else{
+	            sails.controllers.database.credSproc('UpdatePhoneNumberByContactId',[contact.contact_id,contact.phone_number],function(err,resPhone){
+			if(err)
+    			    cb(err);
+			cb();
+	            });
+	        }
+	    });
+	}
+	
+	
 	function updateContact(contact,cb){
 	    if(contact.contact_id != 'new'&&typeof(contact.modified)!='undefined'){
 		sails.controllers.database.credSproc('UpdateContact',[contact.contact_id,contact.contact_name,contact.email],function(err,resContact){
 		    if(err)
 			return res.json({error:err.toString()},500);
-		    sails.controllers.database.credSproc('GetPhoneNumberByContactId',[contact.contact_id],function(err,resPhone){
-		        if(err)
-    			    return res.json({error:'Database Error:'+err.toString()},500);
-		        if(resPhone[0].length==0){
-		            sails.controllers.database.credSproc('CreatePhoneNumber',[contact.phone_number,contact.contact_id,'@outparamphone'],function(err,resPhone){
-			        if(err)
-	    			    return res.json({error:err.toString()},500);
-	    			cb();
-		            });
-		        }else{
-		            sails.controllers.database.credSproc('UpdatePhoneNumberByContactId',[contact.contact_id,contact.phone_number],function(err,resPhone){
-				if(err)
-				    return res.json({error:'Database Error:'+err.toString()},500);
-				cb();
-		            });
-		        }
+		    updatePhoneNumber(contact,function(err){
+			if(err)
+			    cb(err);
+			cb();
 		    });
 		});
 	    }else if(contact.contact_id == 'new'){
@@ -415,13 +426,15 @@ module.exports = {
 	}
 	if(req.session.user.policy[req.route.path].update==0){  // readonly account Notes update.
 	    processReadOnlyNotes(function(){
-		    return res.json({
-			success : 'success',
-			contact_id : contact.contact_id
-		    });
+		return res.json({
+		    success : 'success',
+		    contact_id : contact.contact_id
+		});
 	    });
 	}else{
-        	updateContact(contact,function(){
+        	updateContact(contact,function(err){
+        	    if(err)
+			return res.json({error:err.toString()},500);
         	    
         	    console.log('updatecontactcall');
         	    

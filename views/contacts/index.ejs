@@ -506,6 +506,23 @@
 		        "rowCallback": function( row, data, displayIndex ) {
 					$(row).attr('contact_id',data['contact_id']);
 					$(row).click(function(){
+						if(isChangesPending()){
+							if(!confirm(unsavedMessage)){
+								if($('body').width()>979){
+									$('.main-content').animate({
+								        scrollTop: $('.main-content').scrollTop() + $('.edit-item-section').position().top
+								    }, 500);
+								}else{
+									$('html, body').animate({
+								        scrollTop: $(".edit-item-section").offset().top
+								    }, 500);
+								}
+								return;
+							}
+						}
+			        	$(row).siblings().removeClass('selected');
+			        	$(row).removeClass('selected').addClass('selected');
+						
 						//alert('i like to click rows');
 						$('.edit-item-section').css('display','');
 						$('#delete_contact').css('display','');
@@ -522,8 +539,6 @@
 	    $('#contacts_length label').css('margin-bottom','0px');
 	    
         $('#contacts tbody').on('click', 'tr', function () {
-        	$(this).siblings().removeClass('selected');
-        	$(this).removeClass('selected').addClass('selected');
 	    });
 	    $('#contacts').on('draw.dt',function(event,datatable){
 	     	if(!isNaN(parseInt(contact.get('contact_id')))){
@@ -542,17 +557,39 @@
 			$('#exportModal .modal-body').html(
 	        '<div style="font-size: 16px; font-weight:400; text-align:right;" class="pull-right"><span class=""><i class="icon icon-cog icon-spin"></i></span>&nbsp;&nbsp;Generating Report...&nbsp;</div>');
             $('#exportModal').modal('show');
+            blockUnload = true;
+            $('#exportModal').unbind('hidden');
+            $('#exportModal').on('hidden', function () {
+			    blockUnload = false;
+			});
+            
 			socket.get('/contacts/export',
 				{timezoneoffset : new Date().getTimezoneOffset()
 				,contact_search : $("#search_contact").val()
 				},function(url){
-					$('#exportModal .modal-body').html('<a class="pull-right btn btn-success" href="'+url.url+'">Download</a>');
-				
+					$('#exportModal .modal-body').html('<a class="pull-right btn btn-success"  href="'+url.url+'">Download</a>');
 				
 			});
 		
 		});
+		
 		$('#create_contact').click(function(){
+			if(isChangesPending()){
+				if(!confirm(unsavedMessage)){
+					if($('body').width()>979){
+						$('.main-content').animate({
+					        scrollTop: $('.main-content').scrollTop() + $('.edit-item-section').position().top
+					    }, 500);
+					}else{
+						$('html, body').animate({
+					        scrollTop: $(".edit-item-section").offset().top
+					    }, 500);
+					}
+					return;
+				}
+			}
+		
+		
 			$('#delete_contact').css('display','none');
 			$('.edit-item-section').css('display','');			
 			notes.reset();
@@ -579,10 +616,25 @@
 		});
 		
 		$('#cancel_contact').click(function(){
+			if(isChangesPending()){
+				if(!confirm(unsavedMessage)){
+					if($('body').width()>979){
+						$('.main-content').animate({
+					        scrollTop: $('.main-content').scrollTop() + $('.edit-item-section').position().top
+					    }, 500);
+					}else{
+						$('html, body').animate({
+					        scrollTop: $(".edit-item-section").offset().top
+					    }, 500);
+					}
+					return;
+				}
+			}
 			$('#delete_contact').css('display','none');
 			$('.edit-item-section').css('display','none');	
      		$('#contacts tbody tr').removeClass('selected');
-			
+			contact = new ContactModel({});
+			companies.reset();
 		});
 		
 		$('#delete_contact').click(function(){
@@ -651,7 +703,10 @@
 	                	if(wasnew){
 							$('.edit-item-section').css('display','none');
 							$('#delete_contact').css('display','none');
-							contact.set('contact_id','new');
+							contact = new ContactModel();
+							companies.reset();
+							notes.reset();
+							
 	                	}else{
 		                	contact.fetch({id:parseInt(contact.get('contact_id'))}); 
 		    				companies.fetch({contact_id:parseInt(contact.get('contact_id'))});  
@@ -735,7 +790,27 @@
     		});
     	});
     	
-    	
+    	$(window).on("beforeunload", function() {
+    		if(!blockUnload&&isChangesPending())
+    		{
+		    	return unloadMessage;
+    		}else{
+    			blockUnload = false;
+			}
+		});
+		
+    	function isChangesPending(){
+    		var change = false;
+	    	if(typeof(contact.get('modified'))!='undefined'){
+	    		change = true;
+	    	}
+	    	companies.each(function(company){
+	    		if(typeof(company.get('dodelete'))!='undefined'||typeof(company.get('new'))!='undefined'){
+	    			change = true;
+	    		}
+	    	});
+	    	return change;
+    	}
 	    	 // just shows the changes are pending, by scanning through the collection to see if that's the case.
 	    function setChangesPending(){
 	    	var change = false;
