@@ -1019,36 +1019,6 @@
 		<div class="span12">
 			<div class="row-fluid">
 				<div class="row-category">
-					<i class="icon-folder-close"></i> &nbsp&nbsp<b>Property Managers</b>
-					{{if(true||typeof(sale_id)=='undefined'){ }}
-					<% if(req.session.user.policy[req.route.path].update==1){ %>
-					<div class="pull-right" style="height:40px;">
-						<span class="row-category-button-wrapper">
-							<span id="add_propert_manager" class="btn btn-success">
-			                    <i class="glyphicon glyphicon-plus"></i>
-			                    <span>Add Property Manager</span>
-			                </span>
-						</span>
-					</div>
-					<% } %>
-					{{ } }}
-				</div>
-			</div>
-		</div>
-	
-	</div>
-	
-	<div class="row-fluid" id="building-property-manager-wrapper">
-	
-	</div>
-	
-	
-	
-	
-	<div class="row-fluid">
-		<div class="span12">
-			<div class="row-fluid">
-				<div class="row-category">
 					<i class="icon-building"></i> &nbsp&nbsp<b>Building Details</b>
 				</div>
 			</div>
@@ -1504,8 +1474,8 @@
     var filtersEnabled = true;
     var sliders = [];
     
-    
-    
+    var selectedBuildingId = null;
+    var selectedBuildingSaleId = null;
     
     $(document).ready(function(){
     
@@ -1627,110 +1597,6 @@
     	var blockNoteSave = false;
     	
     	
-    	
-    	function buildingSelected(building_id,pan){
-    		//$('#building_slideup_wrapper').empty();
-    		selectedBuilding = building_id;
-			setMapSize();
-    		socket.get('/buildings/getbuilding/'+building_id,{},function(responseBuilding){
-    			socket.get('/buildings/getcontacts/'+building_id,{},function(responseContacts){
-    				if(typeof(responseContacts[0])!='undefined'){
-    					responseBuilding.contacts = responseContacts[0];
-    				}else{
-    					responseBuilding.contacts = [];
-    				}
-    				$('#building_slideup_wrapper').empty();
-    				responseBuilding.address_1=buildStreetString(responseBuilding.street_number_begin,responseBuilding.street_number_end,responseBuilding.street_name);
-	    			responseBuilding.address_2=buildCityProvincePostalCodeString(responseBuilding.city,responseBuilding.province,responseBuilding.postal_code);
-	    			responseBuilding.sale_date=toSaleDateTimeString(responseBuilding.sale_date);
-	    			
-    				responseBuilding.unit_price = responseBuilding.unit_price==null?'$0':'$'+commaSeparateNumber(responseBuilding.unit_price.toFixed(0));
-    				responseBuilding.last_sale_price = responseBuilding.last_sale_price==null?'$0':'$'+commaSeparateNumber(parseInt(responseBuilding.last_sale_price).toFixed(0));
-    				responseBuilding.bachelor_price = responseBuilding.bachelor_price==null?'$0':'$'+commaSeparateNumber(parseInt(responseBuilding.bachelor_price).toFixed(0));
-    				responseBuilding.bedroom1_price = responseBuilding.bedroom1_price==null?'$0':'$'+commaSeparateNumber(parseInt(responseBuilding.bedroom1_price).toFixed(0));
-    				responseBuilding.bedroom2_price = responseBuilding.bedroom2_price==null?'$0':'$'+commaSeparateNumber(parseInt(responseBuilding.bedroom2_price).toFixed(0));
-    				responseBuilding.bedroom3_price = responseBuilding.bedroom3_price==null?'$0':'$'+commaSeparateNumber(parseInt(responseBuilding.bedroom3_price).toFixed(0));
-    				
-    				$('#clear_selected').css('display','');
-	    			$('#building_slideup_wrapper').append(buildingtemplate(responseBuilding));
-	    			
-	    			$('#clear_selected').unbind();
-	    			$('#clear_selected').click(function(){
-		    			if(isChangesPending()){
-							if(!confirm(unsavedMessage)){
-								if($('body').width()>979){
-									$('.main-content').animate({
-								        scrollTop: $('.main-content').scrollTop() + $('.edit-item-section').position().top
-								    }, 500);
-								}else{
-									$('html, body').animate({
-								        scrollTop: $(".edit-item-section").offset().top
-								    }, 500);
-								}
-								return;
-							}
-						}
-	    				$('.building-map-details').remove();
-						setMapSize();
-						markers.clearSelected();
-						$('.edit-item-section').css('display','none');
-						$('#delete_building').css('display','none');
-						$('#clear_selected').css('display','none');
-						selectedBuilding = null;
-	    			});
-	    			
-	    			$('#view_history').unbind();
-	    			$('#view_history').click(function(){
-	    				$('#search_toggler').click();
-	    				$('#buildings tbody tr[building_id='+$(this).closest('.building-map-details').attr('building_id')+']').click();
-	    				
-	    			});
-	    			$('.close-building-map-details').click(function(){
-	    				if(isChangesPending()){
-							if(!confirm(unsavedMessage)){
-								$('#search_toggler').click();
-								if($('body').width()>979){
-									$('.main-content').animate({
-								        scrollTop: $('.main-content').scrollTop() + $('.edit-item-section').position().top
-								    }, 500);
-								}else{
-									$('html, body').animate({
-								        scrollTop: $(".edit-item-section").offset().top
-								    }, 500);
-								}
-								return;
-							}
-						}
-	    			
-	    				$(this).parents('.building-map-details').remove();
-	    				setMapSize();
-	    				markers.clearSelected();
-						$('.edit-item-section').css('display','none');
-						$('#delete_building').css('display','none');
-						$('#clear_selected').css('display','none');
-						//building.unset('building_id');// = null;
-						selectedBuilding = null;
-	    			});
-	    			setTimeout(function(){
-						setMapSize();
-	    			},500);
-					setMapSize();
-					
-					
-					if(pan){
-						markers.blockIdleEvent = true;
-						map.panTo(markers.getPosition(building_id));
-					}
-    			});
-    			
-    		});
-    	
-    		// if it's being filled for the first time:
-    		//if($('#building_slideup_wrapper').html()!=''){
-    		//	$('#map_wrapper').height($('#map_wrapper').height()-$('#building_slideup_wrapper').height()); //shrink the map height
-    		//}
-    	}
-    	
     	$('#search_toggler').click(function(){
 			if($('#map_pane_wrapper').height()==50){
 				$('#map_pane_wrapper').animate({
@@ -1749,9 +1615,6 @@
 					$('#search_toggler').attr('scrollstate','top');
 				});
 			}
-			
-			
-			
     	});
     
     
@@ -1762,36 +1625,29 @@
     		this.blockIdleEvent = true;
     		this.collection = {};
     		
-    		this.clearMarkers = function (newmarkers){
+    		this.clearMarkers = function (newmarkers){  //Updates the markers to reflect the datatables data.
     			for(marker in self.collection){
-    				if(typeof(newmarkers[marker])=='undefined'){
-    					self.collection[marker].destroy();
-    					delete self.collection[marker];
-    				}else if(selectedBuilding==marker&&(newmarkers[marker].latitude != self.collection[marker].latitude||newmarkers[marker].longitude != self.collection[marker].longitude)){
-    					self.collection[marker].destroy();
-    					delete self.collection[marker];
+    				if(selectedBuildingId != marker){    // Collection marker that is NOT the selected One.
+    				
+	    				if(typeof(newmarkers[marker])=='undefined'){  //kills ones that should be removed.  (or also if latitude/longitude were modified)
+	    					self.collection[marker].destroy();
+	    					delete self.collection[marker];
+	    				}
+    				}else{  
+    					// If there's a new one, with a replaced latitude and longitude..
+    					if(Math.abs(newmarkers[marker].latitude - self.collection[marker].googleMarker.getPosition().lat())>0.00001|| Math.abs(newmarkers[marker].longitude - self.collection[marker].googleMarker.getPosition().lng())>0.00001){
+	    					self.collection[marker].destroy();
+	    					delete self.collection[marker];
+	    				}
     				}
-    				
-    				//else if(selectedBuilding == marker){ //the SELECTED ONE!
-    				
-    				//}
-    				
-    				
     			}
-    			//self.collection = {};
     		}
     		
     		this.addMarker = function(building)
     		{
-    			if(building.latitude !=null)
-    			{
-    				if(typeof(self.collection[building.building_id])=='undefined'){
-    					self.collection[building.building_id] = (new ActiveMarker(building,map));
-    				}
+				if(typeof(self.collection[building.building_id])=='undefined'){     //Already Cleared removed changed ones.
+					self.collection[building.building_id] = (new ActiveMarker(building,map));
 				}
-    			//if(!constrainGPS&&!map.getBounds().contains(self.collection[building.building_id].googleMarker.getPosition())){
-    				
-    			//}
     		}
     		
     		this.checkMarkersBounded = function(){
@@ -1809,7 +1665,7 @@
 				//  Create a new viewpoint bound
 				if(!self.constrainGPS&&!self.checkMarkersBounded()){  // only attempting to check and correct position if we're not in lat/lng mode
     				self.blockIdleEvent = true;
-    				var bounds = new google.maps.LatLngBounds ();
+    				var bounds = new google.maps.LatLngBounds();
 	    			for(marker in self.collection){
 	    				if(typeof(self.collection[marker].googleMarker)!='undefined'){
 	    					bounds.extend(self.collection[marker].googleMarker.getPosition());
@@ -1826,34 +1682,29 @@
 			}
     		
     		this.toggle = function(building_id,pan){
-    			
-    			if(isChangesPending()){
-    				if(!confirm(unsavedMessage)){
-						if($('body').width()>979){
-							$('.main-content').animate({
-						        scrollTop: $('.main-content').scrollTop() + $('.edit-item-section').position().top
-						    }, 500);
-						}else{
-							$('html, body').animate({
-						        scrollTop: $(".edit-item-section").offset().top
-						    }, 500);
-						}
-						return;
-					}
-				}
-				
+    		
+
     			if(typeof(self.collection[building_id])!='undefined'){
     				self.collection[building_id].toggle(pan);
-    			}else if(typeof(building.get('sale_id'))=='undefined'){
-    			
+    			}
+    			/*else if(typeof(building.get('sale_id'))=='undefined'){
 					building.fetch({id:parseInt(building_id)});
 					$('#buildings tbody tr').removeClass('selected');
 					$('#buildings tbody tr[building_id='+building_id+']').removeClass('selected').addClass('selected');    			
-    			}
+    			}*/
     		}
     		
     		this.getPosition = function(building_id){
     			return self.collection[building_id].getPosition();
+    		}
+    		
+    		this.updateMapAndHockeyCard = function(){
+    			for(marker in self.collection){
+    				if(self.collection[marker].selected){
+    					self.collection[marker].updateMapAndHockeyCard();
+    					return;
+    				}
+    			}
     		}
     		
     	} 
@@ -1888,7 +1739,7 @@
     			self.googleMarker = new google.maps.Marker({
 				    position: new google.maps.LatLng(self.building.latitude,self.building.longitude),
 				    map: map,
-				    icon:this.redImage,
+				    icon:((self.building.building_id==selectedBuildingId)?this.blueImage:this.redImage),
 				    opacity:0.25,
 				    title:((typeof(self.building.street_number_begin)!='undefined'&&self.building.street_number_begin!=null)?self.building.street_number_begin:'')+((typeof(self.building.street_number_end)!='undefined'&&self.building.street_number_end!=null)?'-'+self.building.street_number_end:'')+(typeof(self.building.street_name)!='undefined'?' '+self.building.street_name:'')
 				}); //(typeof(self.building.maporder)!='undefined'?('maporder:'+self.building.maporder):'')+
@@ -1899,21 +1750,6 @@
 					}
 				},100);
 				google.maps.event.addListener(self.googleMarker,'click',function(){
-					if(isChangesPending()){
-						if(!confirm(unsavedMessage)){
-							$('#search_toggler').click();
-							if($('body').width()>979){
-								$('.main-content').animate({
-							        scrollTop: $('.main-content').scrollTop() + $('.edit-item-section').position().top
-							    }, 500);
-							}else{
-								$('html, body').animate({
-							        scrollTop: $(".edit-item-section").offset().top
-							    }, 500);
-							}
-							return;
-						}
-					}
 					self.toggle(true);
 				});
 			}
@@ -1925,18 +1761,20 @@
 			this.toggle = function(pan){
 				self.selected = !self.selected;
 				if(self.selected){
-					if(typeof(building.get('sale_id'))=='undefined'|| self.building.building_id !=parseInt(building.get('sale_id'))){
-						building.fetch({id:parseInt(self.building.building_id)});
-					}
-					$('#buildings tbody tr').removeClass('selected');
-					$('#buildings tbody tr[building_id='+self.building.building_id+']').removeClass('selected').addClass('selected'); 
+					//if(typeof(building.get('sale_id'))=='undefined'|| self.building.building_id !=parseInt(building.get('sale_id'))){
+					building.fetch({id:parseInt(self.building.building_id)});
+					//} 
 					markers.clearSelected();
 					$('#buildings > tbody > tr[building_id='+self.building.building_id+']').addClass('selected');
 					self.googleMarker.setIcon(self.blueImage);
-					buildingSelected(self.building.building_id,pan);
-					if($('#buildings tbody tr.hidden.selected').length>0){
-						datatable.api().draw();
-					}
+					self.selected = true;
+					//buildingSelected(self.building.building_id,pan);
+					
+					//buildContactCard(building.toJSON());
+					
+					//if($('#buildings tbody tr.hidden.selected').length>0){
+					//	datatable.api().draw();
+					//}
 				}else{
 					$('#buildings > tbody > tr[building_id='+self.building.building_id+']').removeClass('selected');
 					self.googleMarker.setIcon(self.redImage);
@@ -1956,6 +1794,67 @@
     				
     				//self.googleMarker.setMap(null);
     				//self.googleMarker = null;
+			}
+			
+			this.updateMapAndHockeyCard = function(){
+				markers.blockIdleEvent = true;
+				map.panTo(self.getPosition());
+				this.updateHockeyCard();
+			}
+			
+			this.updateHockeyCard = function(){
+				socket.get('/buildings/getbuilding/'+building.get('building_id'),{},function(responseBuilding){
+					$('#building_slideup_wrapper').empty();
+					responseBuilding.address_1=buildStreetString(responseBuilding.street_number_begin,responseBuilding.street_number_end,responseBuilding.street_name);
+	    			responseBuilding.address_2=buildCityProvincePostalCodeString(responseBuilding.city,responseBuilding.province,responseBuilding.postal_code);
+	    			responseBuilding.sale_date=toSaleDateTimeString(responseBuilding.sale_date);
+	    			
+					responseBuilding.unit_price = responseBuilding.unit_price==null?'$0':'$'+commaSeparateNumber(responseBuilding.unit_price.toFixed(0));
+					responseBuilding.last_sale_price = responseBuilding.last_sale_price==null?'$0':'$'+commaSeparateNumber(parseInt(responseBuilding.last_sale_price).toFixed(0));
+					responseBuilding.bachelor_price = responseBuilding.bachelor_price==null?'$0':'$'+commaSeparateNumber(parseInt(responseBuilding.bachelor_price).toFixed(0));
+					responseBuilding.bedroom1_price = responseBuilding.bedroom1_price==null?'$0':'$'+commaSeparateNumber(parseInt(responseBuilding.bedroom1_price).toFixed(0));
+					responseBuilding.bedroom2_price = responseBuilding.bedroom2_price==null?'$0':'$'+commaSeparateNumber(parseInt(responseBuilding.bedroom2_price).toFixed(0));
+					responseBuilding.bedroom3_price = responseBuilding.bedroom3_price==null?'$0':'$'+commaSeparateNumber(parseInt(responseBuilding.bedroom3_price).toFixed(0));
+					
+					$('#clear_selected').css('display','');
+	    			$('#building_slideup_wrapper').append(buildingtemplate(responseBuilding));
+	    			
+	    			$('#clear_selected').unbind();
+	    			$('#clear_selected').click(function(){
+	    				$('.building-map-details').remove();
+						setMapSize();
+						markers.clearSelected();
+						$('.edit-item-section').css('display','none');
+						$('#delete_building').css('display','none');
+						$('#clear_selected').css('display','none');
+						selectedBuildingId = null;
+	    			});
+	    			
+	    			$('#view_history').unbind();
+	    			$('#view_history').click(function(){
+	    				$('#search_toggler').click();
+	    				$('#buildings tbody tr[building_id='+$(this).closest('.building-map-details').attr('building_id')+']').click();
+	    				
+	    			});
+	    			$('.close-building-map-details').click(function(){
+	    				$(this).parents('.building-map-details').remove();
+	    				setMapSize();
+	    				markers.clearSelected();
+						$('.edit-item-section').css('display','none');
+						$('#delete_building').css('display','none');
+						$('#clear_selected').css('display','none');
+						//building.unset('building_id');// = null;
+						selectedBuildingId = null;
+	    			});
+					setMapSize();
+					
+					
+					//if(pan){
+					//	markers.blockIdleEvent = true;
+					//	map.panTo(markers.getPosition(building_id));
+					//}
+	    			
+	    		});
 			}
     	}
     
@@ -2022,23 +1921,6 @@
 	        google.maps.event.addListener(map, 'idle', function() {  
 	        	if(typeof(datatable)!='undefined'){
 	        		if($('#map_pane_wrapper').height()!=50&&!markers.blockIdleEvent){
-		        		if(isChangesPending()){
-		    				if(!confirm(unsavedMessage)){
-								if($('#map_pane_wrapper').height()!=50){
-									$('#search_toggler').click();
-								}
-								if($('body').width()>979){
-									$('.main-content').animate({
-								        scrollTop: $('.main-content').scrollTop() + $('.edit-item-section').position().top
-								    }, 500);
-								}else{
-									$('html, body').animate({
-								        scrollTop: $(".edit-item-section").offset().top
-								    }, 500);
-								}
-								return;
-							}
-						}
         				markers.constrainGPS = true;
         				$('#constrain_gps').prop('checked',true);
 						datatable.api().ajax.reload(); // INITIAL/IDLE/PAN/ZOOM
@@ -2058,11 +1940,7 @@
 		$('#export_building').click(function(){
 			$('#exportModal .modal-body').html('<div style="font-size: 16px; font-weight:400; text-align:right;" class="pull-right"><span class=""><i class="icon icon-cog icon-spin"></i></span>&nbsp;&nbsp;Generating Report...&nbsp;</div>');
             $('#exportModal').modal('show');
-            blockUnload = true;
-            $('#exportModal').unbind('hidden');
-            $('#exportModal').on('hidden', function () {
-			    blockUnload = false;
-			});
+            
             
             var checkbox_building_types = '';
 			var checkbox_heating_types = '';
@@ -2160,20 +2038,6 @@
 		});
 		
 		$('#create_building').click(function(){
-			if(isChangesPending()){
-				if(!confirm(unsavedMessage)){
-					if($('body').width()>979){
-						$('.main-content').animate({
-					        scrollTop: $('.main-content').scrollTop() + $('.edit-item-section').position().top
-					    }, 500);
-					}else{
-						$('html, body').animate({
-					        scrollTop: $(".edit-item-section").offset().top
-					    }, 500);
-					}
-					return;
-				}
-			}
 			selectedBuilding = null;
 			$('.edit-item-section').css('display','none');
 			$('#clear_selected').css('display','none');
@@ -2262,20 +2126,7 @@
 			//$('.edit-item-section').css('display','none');
 			//$('#delete_building').css('display','none');
 			//$('#buildings tbody tr').removeClass('selected');
-			if(isChangesPending()){
-				if(!confirm(unsavedMessage)){
-					if($('body').width()>979){
-						$('.main-content').animate({
-					        scrollTop: $('.main-content').scrollTop() + $('.edit-item-section').position().top
-					    }, 500);
-					}else{
-						$('html, body').animate({
-					        scrollTop: $(".edit-item-section").offset().top
-					    }, 500);
-					}
-					return;
-				}
-			}
+			
 			$('.building-map-details').remove();
 			setMapSize();
 			markers.clearSelected();
@@ -2417,8 +2268,8 @@
 			        			}
 			        			d.checkbox_heating_types = checkbox_heating_types;
 		        			}
-		        			if(selectedBuilding!=null){
-		        				d.includeBuilding = selectedBuilding;
+		        			if(selectedBuildingId!=null){
+		        				d.includeBuilding = selectedBuildingId;
 		        			}
 		        			
 		        			if(markers.constrainGPS)
@@ -2519,6 +2370,13 @@
 							},100);
 	    					
 	               		});
+	               		
+	               		if(selectedBuildingId!=null&&selectedBuildingId==data['building_id']){
+	               			$(row).addClass('selected');
+	               		}
+	               		
+	               		//if(selectedBuildingId!=null
+	               		
 	               		//$(row).dblclick(function(){
 							/*$('#delete_building').css('display','');
 	    					building.fetch({id:parseInt($(row).attr('building_id'))});
@@ -2530,8 +2388,6 @@
 		               
 			        }
 		    });
-		    //$('select[name=buildings_length]').css('margin-top','10px');
-		    //$('#buildings_length label').css('margin-bottom','0px');
 		    
 		     $('#buildings').on('draw.dt',function(event,datatable){
 		     	if(init_id){
@@ -2552,6 +2408,8 @@
 		    		}
 		    	}
 	    		markers.clearMarkers(newmarkers);
+	    		
+	    		
 		    	if(datatable.json.data instanceof Array)
 		    	{
 		    		for(var i=0; i< datatable.json.data.length; i++){
@@ -2559,12 +2417,9 @@
 		    		}
 		    	}
 		    	markers.verifyBounds();
-		    	if(selectedBuilding!=null){
-		    		//setTimeout(function(){
-		    			markers.toggle(selectedBuilding,false);
-		    			//buildingSelected(selectedBuilding,false);
-	    			//},10);
-		    	}
+		    	//if(selectedBuilding!=null){
+		    	//	markers.toggle(selectedBuilding,false);
+		    	//}
 	    	});
 	    	
 	    	//$('#buildings_length select').attr('id','building_length_select');
@@ -2582,41 +2437,9 @@
 		    });
 		    
 		    $('#building_length_select').change(function(){
-		    	if(isChangesPending()){
-    				if(!confirm(unsavedMessage)){
-						if($('body').width()>979){
-							$('.main-content').animate({
-						        scrollTop: $('.main-content').scrollTop() + $('.edit-item-section').position().top
-						    }, 500);
-						}else{
-							$('html, body').animate({
-						        scrollTop: $(".edit-item-section").offset().top
-						    }, 500);
-						}
-						return;
-					}
-				}
 		    	datatable.api().ajax.reload();
 	    	});
     	}
-    	/*
-    	$('#buildings').on('draw.dt',function(event,datatable){
-	    		//if($('#building_slideup_wrapper').html()!='')
-	    		//{
-	    		
-	    		//}
-	    		$('#building_slideup_wrapper').empty();
-				setMapSize();
-				setMapTableSize();
-	    		markers.clearMarkers();
-		    	if(datatable.json.data instanceof Array)
-		    	{
-		    		for(var i=0; i< datatable.json.data.length; i++){
-		    			markers.addMarker(datatable.json.data[i]);
-		    		}
-		    	}
-		    	markers.verifyBounds();
-    	});*/
     	function FiltersToggleControl(filterDiv,map){
     		filterDiv.style.padding = '5px 3px 5px 0px';
     		var filterButton = document.createElement('div');
@@ -2629,20 +2452,6 @@
 			});
     	}
     	function toggleFilters(){
-    		if(typeof(datatable)!='undefined'&&isChangesPending()){
-				if(!confirm(unsavedMessage)){
-					if($('body').width()>979){
-						$('.main-content').animate({
-					        scrollTop: $('.main-content').scrollTop() + $('.edit-item-section').position().top
-					    }, 500);
-					}else{
-						$('html, body').animate({
-					        scrollTop: $(".edit-item-section").offset().top
-					    }, 500);
-					}
-					return;
-				}
-			}
     		filtersEnabled = !filtersEnabled;
     		if(filtersEnabled){
     			$('.filter-button').addClass('btn-primary');
@@ -2820,23 +2629,6 @@
 				}
 			});
 			google.maps.event.addDomListener(constrainGPSCheckbox, 'click', function() {
-				if(isChangesPending()){
-    				if(!confirm(unsavedMessage)){
-						if($('body').width()>979){
-							$('.main-content').animate({
-						        scrollTop: $('.main-content').scrollTop() + $('.edit-item-section').position().top
-						    }, 500);
-						}else{
-							$('html, body').animate({
-						        scrollTop: $(".edit-item-section").offset().top
-						    }, 500);
-						}
-						return;
-					}
-				}
-			
-			
-			
 				markers.constrainGPS = $('#constrain_gps').is(':checked');
 				if(markers.constrainGPS&&!markers.checkMarkersBounded()) //markers aren't bounded correct.
 				{
@@ -2848,20 +2640,6 @@
 		}
 		
 		function changedSearchParameter(){
-			if(isChangesPending()){
-				if(!confirm(unsavedMessage)){
-					if($('body').width()>979){
-						$('.main-content').animate({
-					        scrollTop: $('.main-content').scrollTop() + $('.edit-item-section').position().top
-					    }, 500);
-					}else{
-						$('html, body').animate({
-					        scrollTop: $(".edit-item-section").offset().top
-					    }, 500);
-					}
-					return;
-				}
-			}
 			if(markers.constrainGPS){
 				markers.constrainGPS = false;
 				$('#constrain_gps').prop('checked',false);
@@ -3788,34 +3566,12 @@
 		    return new Blob([new Uint8Array(array)], {type: 'image/jpeg'});
 		}
     	
-    	$(window).on("beforeunload", function() {
-    		if(!blockUnload&&isChangesPending())
-    		{
-		    	return unloadMessage;
-    		}else{
-    			blockUnload = false;
-			}
-		});
-		
-		function isChangesPending(){
-			if(selectedBuilding==null){
-				return false
-			}
-			var change = false;
-            if(typeof(building.get('dosync'))!='undefined'){
-               change= true;
-            }
-            buildingcontacts.each(function(bcontact){
-            	if(typeof(bcontact.get('dodelete'))!='undefined'||typeof(bcontact.get('dosync'))!='undefined')
-            	{
-            		change = true;
-            	}
-            });
-            return change;
-		}
+    	
     	
 	    	 // just shows the changes are pending, by scanning through the collection to see if that's the case.
 	    function setChangesPending(){
+	    	
+	    	
 	        var change = false;
             if(typeof(building.get('dosync'))!='undefined'){
                change= true;
@@ -3826,6 +3582,11 @@
             		change = true;
             	}
             });
+            if(change){
+            	saveBuilding();
+            }
+            
+            /*
             if(typeof($('#save_building')[0])!='undefined'){
 	        	$('#save_building')[0].disabled = !change;
 	        	if($('#save_note_admin').size()>0){
@@ -3848,7 +3609,7 @@
 	            $('#changes_pending').css('display','none');
 	            $('#changes_pending_notes').css('display','none');
 	            $('#create_sale').removeClass('disabled');
-	        }
+	        }*/
 	    }
     	
     	function parseBuildingImages(){
@@ -3866,7 +3627,7 @@
     		socket.get('/buildings/savebuilding',sendobj,function(response){
     			if(typeof(response.success)!='undefined'){
     				if(wasnew){
-    					selectedBuilding = response.building_id;
+    					selectedBuildingId = response.building_id;
     				}
 	                $('.alert-success').remove();
 	                $('.page-banner').after('<div class="alert alert-success fade in" style="border-radius:0px;">'+
@@ -3885,17 +3646,19 @@
 	                setTimeout(function(){ // wait for database to be ready
 	                	if(wasnew){
 							$('.edit-item-section').css('display','none');
-							$('#delete_building').css('display','');
-							building.unset('dosync');
-							buildingcontacts.reset();
+							$('#delete_building').css('display','none');
 	                	}else{
-			                if(typeof(building.get('sale_id'))!='undefined'){  //||typeof(response.sale_id)!='undefined'
-			                	building.fetch({id:response.building_id, sale_id: building.get('sale_id')=='new'?response.sale_id:parseInt(building.get('sale_id'))});  
-			                }else{
-			                	building.fetch({id:response.building_id});  
-			                }
+			                //if(typeof(building.get('sale_id'))!='undefined'){  //||typeof(response.sale_id)!='undefined'
+			                //	building.fetch({id:response.building_id, sale_id: building.get('sale_id')=='new'?response.sale_id:parseInt(building.get('sale_id'))});  
+			                //}else{
+			                	//building.fetch({id:response.building_id});  
+			                //}
+			                
+			                // For updating existing building record.
+			                
+			                
 	                	}
-		                datatable.api().ajax.reload(function(){},false); //saving building
+		                //datatable.api().ajax.reload(function(){},false); //saving building
 	                },100);
                         
 	                setTimeout(function(){
@@ -3934,6 +3697,7 @@
 	    	
 	    	
 		var BuildingModel = Backbone.Model.extend({
+		
 	        urlRoot: '/buildings/getbuilding',
 	        socket:null,
 	        sync:function(method,model,options){
@@ -4111,6 +3875,11 @@
 	        template: _.template($('#building-details-template').html()),
 	        render: function () {
 	        
+	        	selectedBuildingId = building.get('building_id');
+	        	selectedBuildingSaleId = typeof(building.get('sale_id'))=='undefined'?null:building.get('sale_id');
+	        	markers.updateMapAndHockeyCard();
+	        	
+	        	
 	        	if($("#last_sale_date_gen").data('datetimepicker')!=null){
 	        		$("#last_sale_date_gen").data('datetimepicker').destroy();
         		}
@@ -4155,7 +3924,6 @@
 							    }, 500);
 							}
 							building.fetch({id:response.building_id});
-			                        
 			                setTimeout(function(){
 			                    setTimeout(function(){
 			                        $('.alert-success').remove();
@@ -4210,13 +3978,21 @@
 					triggerScroll = false;
 				}
 	            
+	            buildingcontacts.set(building.get('contacts'));
+                if(buildingcontactsView==null)
+                {
+                	buildingcontactsView = new BuildingContactsBackboneView({collection: buildingcontacts});
+            	}
+            	else
+            	{
+            		buildingcontactsView.render();
+            	}
+                	
 	            
 	            if(typeof(building.get('sale_id'))=='undefined'){
 					buildingnotes.fetch({id:building.get('building_id')});
-					buildingcontacts.fetch({id:building.get('building_id')});
 					$('.fileinput-button').removeAttr('disabled');
 	            }else{
-					buildingcontacts.fetch({id:building.get('building_id'),sale_id:building.get('sale_id')});
 					$('.fileinput-button').attr('disabled','disabled');
 	            }
 				buildingsales.fetch({id:building.get('building_id')});
@@ -4459,47 +4235,6 @@
 							,dosync : true
 							,contact_name: $('#mapping_new_contact_name').html()
 							, contact_type:'agent'
-							, cur_company_name:$('#mapping_new_company_name').html()
-							, company_id : newCompanyId
-							, email: $('#mapping_new_email').html()
-							, phone_number: $('#mapping_new_phone').html()
-							, street_number_begin:$('#mapping_address').attr('mapping_street_number_begin')
-							, street_number_end:$('#mapping_address').attr('mapping_street_number_end')
-							, street_name:$('#mapping_address').attr('mapping_street_name')
-							, city:$('#mapping_address').attr('mapping_city')
-							, province: $('#mapping_address').attr('mapping_province')
-							, postal_code: $('#mapping_address').attr('mapping_postal_code')
-						});
-						buildingcontactsView.render();
-            			$('#addContactModal').modal('hide');
-						
-					});
-		        });
-		        $('#add_propert_manager').click(function(){
-			        $('#addContactModal div.alert-error').remove();
-			        $('.create-contact-message').html('To create a new property manager, select the contact and/or company associated with this building.');
-			        $('#addContactModal').modal('show');
-			        $('#addContactModal #myModalLabelAdd').html('Add Property Manager to Building');
-			        $('#confirmaddbuildingcontact').unbind();
-			        
-			        bindAddBuildingContactModal();
-			        
-			        $('#confirmaddbuildingcontact').click(function(){
-	        	        $('#addContactModal div.alert-error').remove();
-						if(newContactId==null&&newCompanyId==null)
-						{
-							$('#addContactModal div.modal-header').after(
-	                    '<div class="alert alert-error fade in" style="margin-bottom:0px;" style="border-radius:0px;"><button type="button" class="close" data-dismiss="alert">×</button><strong>Error:&nbsp;</strong>Please select a Contact, Company or both.</div>');
-	            			return;
-						}
-						
-					
-						buildingcontacts.add({
-							mapping_id: 'new_'+Math.floor((Math.random() * 1000000) + 1)
-							,contact_id: newContactId
-							,dosync : true
-							,contact_name: $('#mapping_new_contact_name').html()
-							, contact_type:'property_manager'
 							, cur_company_name:$('#mapping_new_company_name').html()
 							, company_id : newCompanyId
 							, email: $('#mapping_new_email').html()
@@ -4945,7 +4680,6 @@
 	        elowners: '#building-owners-wrapper',
 	        elsellers: '#building-sellers-wrapper',
 	        elagents: '#building-agents-wrapper',
-	        elpropertymanagers: '#building-property-manager-wrapper',
 	        events: {
 	            //"change select.securityselect"   : "changeSecurity",
 	            //"click a.remove-building-contact" : "deleteContact"
@@ -4958,7 +4692,6 @@
 	            $(this.elowners).html("");
 	            $(this.elsellers).html("");
 	            $(this.elagents).html("");
-	            $(this.elpropertymanagers).html("");
 	            
 	            var tcollection = this.collection.sortBy(function(contacts){
 	                return contacts.get("contact_name")!=null?contacts.get("contact_name").toString().toUpperCase():0;
@@ -4973,8 +4706,6 @@
 	                   $(this.elsellers).append(this.template(tcollection[i].toJSON()));
 	                }else if(tcollection[i].get('contact_type')=='agent'){
 	                   $(this.elagents).append(this.template(tcollection[i].toJSON()));
-	                }else if(tcollection[i].get('contact_type')=='property_manager'){
-	                   $(this.elpropertymanagers).append(this.template(tcollection[i].toJSON()));
 	                }
 	            }
 	            

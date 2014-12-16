@@ -358,7 +358,11 @@
       <!-- MAIN LAYOUT Script-->
       <!-- This Section contains the messaging scripts, socket calls, and many other utility functions for all the pages -->
       <script>
-
+	  var unsavedMessage = 'You have unsaved changes pending.  Are you sure you want to discard these changes? Press Cancel to go back and save your changes.';
+	  var unloadMessage = 'You have unsaved changes pending.';
+	  var blockUnload = false;
+	  
+		
       // Client-side wide Configuration Values and variables.
       // these variables are accessable and used within the other view
       var alert_fadeout_time = 7000;
