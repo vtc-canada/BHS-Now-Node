@@ -7,6 +7,7 @@ BEGIN
 SELECT 
 		cur_company.id AS 'company_id'
 		,cur_company.name AS 'company_name'
+		,cur_company.phone_number
 		,cur_address.id
 		,cur_address.street_number_begin
 		,cur_address.street_name
