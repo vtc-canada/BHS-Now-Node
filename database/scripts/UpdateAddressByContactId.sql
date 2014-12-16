@@ -1,8 +1,8 @@
 USE cred;
-DROP PROCEDURE if EXISTS `UpdateAddressByCompanyId` ;
+DROP PROCEDURE if EXISTS `UpdateAddressByContactId` ;
 
 DELIMITER $$
-CREATE PROCEDURE `UpdateAddressByCompanyId`(IN contactID INT, IN streetNumberBegin VARCHAR(64), IN streetNumberEnd VARCHAR(64), IN streetName VARCHAR(256)
+CREATE PROCEDURE `UpdateAddressByContactId`(IN contactID INT, IN streetNumberBegin VARCHAR(64), IN streetNumberEnd VARCHAR(64), IN streetName VARCHAR(256)
 		,IN postalCode VARCHAR(32), IN city VARCHAR(64), IN province VARCHAR(45), IN latitude FLOAT, IN longitude FLOAT)
 BEGIN
 UPDATE cur_address AS c

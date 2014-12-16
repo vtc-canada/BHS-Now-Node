@@ -14,10 +14,10 @@ BEGIN
 		,province
 		,latitude
 		,longitude
-	FROM cur_contact
-	INNER JOIN cur_company_address_mapping ON (cur_contact.id = cur_company_address_mapping.cur_contact_id)
+	FROM cur_contacts
+	INNER JOIN cur_company_address_mapping ON (cur_contacts.id = cur_company_address_mapping.cur_contact_id)
 	INNER JOIN cur_address ON (cur_address.id = cur_company_address_mapping.cur_address_id)
-	WHERE cur_contact.id = contactId
+	WHERE cur_contacts.id = contactId
 	ORDER BY cur_company_address_mapping.id DESC
 LIMIT 1;
 END$$
