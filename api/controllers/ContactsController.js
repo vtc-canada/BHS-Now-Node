@@ -244,16 +244,45 @@ module.exports = {
 	    });
 	}
 	
+	function updateAddress(contact,cb){
+	    sails.controllers.database.credSproc('GetAddressOnlyByContactId',[contact.contact_id],function(err,resAddress){
+        	if(err)
+        	    return res.json({error:'Database Error:'+err},500);
+        	if(resAddress[0].length==0){
+        	    var outaddressId = '@out' + Math.floor((Math.random() * 1000000) + 1);
+		    sails.controllers.database.credSproc('CreateAddress',[contact.street_number_begin ,contact.street_number_end,contact.street_name,contact.postal_code,contact.city,3,contact.province,contact.lat, contact.lng, null,outaddressId],function(err,resAddress){
+		        if(err)
+  			    cb(err);
+		        sails.controllers.database.credSproc('CreateContactAddressMapping',[contact.contact_id,resAddress[1][outaddressId],'@paramout'],function(err,resMapping){
+		            if(err)
+		        	cb(err);
+		            cb();
+		        });
+		   });	    
+        	}else{
+        	    sails.controllers.database.credSproc('UpdateAddressByContactId',[contact.contact_id,contact.street_number_begin ,contact.street_number_end,contact.street_name,contact.postal_code,contact.city,contact.province,contact.lat, contact.lng],function(err,resAddress){
+        		if(err)
+        		    cb(err);
+        		cb(); 
+        	    });	    
+        	} 
+	    });
+	}
+	
 	
 	function updateContact(contact,cb){
 	    if(contact.contact_id != 'new'&&typeof(contact.modified)!='undefined'){
 		sails.controllers.database.credSproc('UpdateContact',[contact.contact_id,contact.contact_name,contact.email],function(err,resContact){
 		    if(err)
 			return res.json({error:err.toString()},500);
-		    updatePhoneNumber(contact,function(err){
+		    updateAddress(contact,function(err){
 			if(err)
 			    cb(err);
-			cb();
+			updatePhoneNumber(contact,function(err){
+			    if(err)
+				cb(err);
+			    cb();
+			});
 		    });
 		});
 	    }else if(contact.contact_id == 'new'){

@@ -183,6 +183,10 @@
 			<div class="span7" ><input type="text" id="company_name" class="company_name address-input"  maxlength="60" value="{{=company_name}}"></div>
 		</div>
 		<div class="row-fluid building-segment-wrapper">
+			<div class="span5 segment-label" >Phone Number:</div>
+			<div class="span7" ><input type="text" id="phone_number" class="phone_number address-input"  maxlength="60" value="{{=phone_number}}"></div>
+		</div>
+		<div class="row-fluid building-segment-wrapper">
 			<div class="span5 segment-label">Street Number Begin:</div>
 			<div class="span7"><input type="text" id="street_number_begin" class="address-input"  maxlength="60" value="{{=street_number_begin}}"></div>
 		</div>
@@ -602,7 +606,7 @@
 			$('#delete_company').css('display','none');
 			$('.edit-item-section').css('display','');
 			notes.reset();	
-			company = new CompanyModel({company_id:'new',company_name:'',street_number_begin:'',street_number_end:'',street_name:'',postal_code:'',city:'',province:'',latitude:'',longitude:''});
+			company = new CompanyModel({company_id:'new',company_name:'', phone_number:'',street_number_begin:'',street_number_end:'',street_name:'',postal_code:'',city:'',province:'',latitude:'',longitude:''});
 			companyView.render();
 			contacts.reset();
 			contactsView.render();
@@ -669,6 +673,7 @@
 					$('#delete_company').css('display','none');
 					$('.edit-item-section').css('display','');			
 					company = new CompanyModel({company_id:'new',company_name:''
+												,phone_number:''
 												,street_number_begin:''
 												,street_number_end:''
 												,street_name:''

@@ -194,9 +194,9 @@ module.exports = {
 	    });
 	}
 	
-	function updateCompany(contact,cb){
+	function updateCompany(company,cb){
 	    if(company.company_id != 'new'&&typeof(company.modified)!='undefined'){
-		sails.controllers.database.credSproc('UpdateCompany',[company.company_id,company.company_name],function(err,resContact){
+		sails.controllers.database.credSproc('UpdateCompany',[company.company_id, company.company_name, company.phone_number],function(err,resCompany){
 		    if(err)
 			return res.json({error:'Database Error:'+err},500);
 		
@@ -209,7 +209,7 @@ module.exports = {
 		});
 	    }else if(company.company_id == 'new'){
 		var outcompanyId = '@out' + Math.floor((Math.random() * 1000000) + 1);
-		sails.controllers.database.credSproc('CreateCompany',[company.company_name,outcompanyId],function(err, responseCreateCompany){
+		sails.controllers.database.credSproc('CreateCompany',[company.company_name, company.phone_number, outcompanyId],function(err, responseCreateCompany){
 		    if(err)
   			return res.json({error:'Database Error:'+err},500);
 		    company.company_id = responseCreateCompany[1][outcompanyId];
