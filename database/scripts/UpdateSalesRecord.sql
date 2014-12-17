@@ -10,7 +10,7 @@ CREATE PROCEDURE `UpdateSalesRecord`(IN recordID INT,IN salePrice DECIMAL(13,2),
 		,IN unitPrice INT, IN unit_price_manual_mode BOOLEAN, IN building_income DECIMAL(13,2), IN building_income_manual_mode BOOLEAN
 		,IN bachelor_units INT, IN bedroom1_units INT, IN bedroom2_units INT, IN bedroom3_units INT
 		,IN bachelor_price FLOAT, IN bedroom1_price FLOAT, IN bedroom2_price FLOAT, IN bedroom3_price FLOAT
-		,IN propertyMgmtCompany VARCHAR(45), IN prev_property_mgmt_company VARCHAR(45), IN cap_rate INT, IN building_type INT, IN last_boiler_upgrade_year INT
+		,IN propertyMgmtCompany VARCHAR(512), IN prev_property_mgmt_company VARCHAR(512), IN cap_rate INT, IN building_type INT, IN last_boiler_upgrade_year INT
 		,IN mortgageCompany VARCHAR(64), IN mortgageDueDate TIMESTAMP, IN parkingSpots FLOAT)
 BEGIN
 	UPDATE cur_sales_record_history

@@ -5,7 +5,7 @@ DELIMITER $$
 CREATE PROCEDURE `CreateBuilding`(IN addressID INT, IN buildingTypeID INT,IN heatSystemAge INT, IN windowsInstalledYear INT,IN elevatorInstalledYear INT
 		,IN boilerInstalledYear INT, IN cableInternetProvider VARCHAR(45), IN assessedValue Varchar(1024)
 		,IN heatSystemTypeID INT, IN unitQuantity INT, IN saleDate DATETIME,IN pricePerUnit float
-		,IN propertyMgmtCompany VARCHAR(45), IN prevPropertyMgmtCompany VARCHAR(45), IN lastSalePrice VARCHAR(45), IN images VARCHAR(1024)
+		,IN propertyMgmtCompany VARCHAR(512), IN prevPropertyMgmtCompany VARCHAR(512), IN lastSalePrice VARCHAR(45), IN images VARCHAR(1024)
 		,IN bachelorPrice FLOAT, IN bedroom1Price FLOAT, IN bedroom2Price FLOAT, IN bedroom3Price FLOAT, IN bachelorUnits INT, IN bedroom1Units INT
 		,IN bedroom2Units INT, IN bedroom3Units INT, IN buildingIncome DECIMAL(13,2), IN hasElevator BOOLEAN, IN lastElevatorUpgradeYear INT, IN lastBoilerUpgradeYear INT
 		,IN mortgageCompany VARCHAR(64), IN mortgageDueDate TIMESTAMP, IN parkingSpots FLOAT, IN capRate FLOAT

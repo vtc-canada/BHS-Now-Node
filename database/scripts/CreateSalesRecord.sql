@@ -6,7 +6,7 @@ CREATE PROCEDURE `CreateSalesRecord`(IN salePrice DECIMAL(13,2),IN saleDate DATE
 		IN elevatorInstalledYear INT, IN elevatorUpgradeYear INT, IN has_elevator BOOLEAN, IN boilerInstalledYear INT, IN cableInternetProvider VARCHAR(45), IN assessedValue VARCHAR(1024), 
 		IN heatSystemType VARCHAR(45),IN unitQuantity INT, IN unitPrice FLOAT, IN unit_price_manual_mode BOOLEAN, IN building_income DECIMAL(13,2), IN building_income_manual_mode BOOLEAN
 , IN bachelorPrice FLOAT, IN bedroom1Price FLOAT, IN bedroom2Price FLOAT, IN bedroom3Price FLOAT, IN bachelorUnits INT, IN bedroom1Units INT
-		,IN bedroom2Units INT, IN bedroom3Units INT, IN propertyMgmtCompany VARCHAR(45), IN prev_property_mgmt_company VARCHAR(45)
+		,IN bedroom2Units INT, IN bedroom3Units INT, IN propertyMgmtCompany VARCHAR(512), IN prev_property_mgmt_company VARCHAR(512)
 , IN cap_rate INT, IN building_type INT, IN last_boiler_upgrade_year INT
 		,IN mortgage_company VARCHAR(64), IN mortgage_due_date TIMESTAMP, IN parkingSpots FLOAT
 ,OUT id INT)
