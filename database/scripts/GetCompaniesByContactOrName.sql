@@ -8,6 +8,7 @@ SELECT
 		DISTINCT
 		cur_company.id as 'company_id'
 		,cur_company.name as 'company_name'
+		,cur_company.phone_number
 		,cur_address.street_number_begin
 		,cur_address.street_number_end
 		,cur_address.street_name	

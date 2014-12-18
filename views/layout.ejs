@@ -568,7 +568,14 @@
     		postal_code = postal_code==''||postal_code==null||postal_code=='null'?'':(((city==''||city==null||city=='null')&&(province==''||province==null||province=='null'))?'':', ')+postal_code;
     		return city + province + postal_code;
 	}
-	
+	function isFloat(n) {
+	    return n === +n && n !== (n|0);
+	}
+	function capitaliseFirstLetter(string)
+	{
+	    return string.charAt(0).toUpperCase() + string.slice(1);
+	}
+
 	function buildCityProvinceString(city,province){
     		city = city==''||city==null||city=='null'?'':city;
     		province = province==''||province==null||province=='null'?'':(city==''||city==null||city=='null'?'':', ')+province;

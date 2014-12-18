@@ -182,6 +182,9 @@ module.exports = {
 			sails.controllers.database.credSproc('CreateSalesContactMapping', [ responseSalesRecord[1][new_sale_id],
 				buildingcontacts[i].contact_id, building.building_id, buildingcontacts[i].contact_type == 'owner' ? 1 : (buildingcontacts[i].contact_type == 'seller')?2:((buildingcontacts[i].contact_type == 'agent')?3:4),
 				buildingcontacts[i].company_id, tempOutVar ], function(err, responseSalesMapping) {
+			    
+			    
+			    
 			    i++;
 			    if (i < buildingcontacts.length){
 				loop(i);
@@ -357,6 +360,29 @@ module.exports = {
 	    
 	    
 	}
+	
+	
+	function checkAndAddContactCompanyMapping(tempContactId, tempCompanyId, cb){
+	    if(tempContactId==null||tempCompanyId==null){
+		return cb();
+	    }
+	    
+	    sails.controllers.database.credSproc('GetContactCompanyMapping',[tempContactId,tempCompanyId],function(err,resMapping){
+		    if(err)
+			cb(err);
+		    if(resMapping[0].length==0){  //mapping missing!
+			sails.controllers.database.credSproc('CreateContactCompanyMapping',[tempContactId,tempCompanyId,'@outval'],function(err,resMapping){
+			    if(err)
+				return res.json({error:'Database Error:'+err.toString()},500);
+			    cb();
+			    
+			});
+		    }else{
+			cb();
+		    }
+	    });
+	    
+	}
 
 	function processContacts(cb) { // inline process contacts // loops,
 					// creates / deletes mappings
@@ -375,19 +401,28 @@ module.exports = {
 			}
 		    });
 		} else if (typeof (buildingcontacts[i].dosync) != 'undefined') {
-		    sails.controllers.database.credSproc('CreatePropertyContactMapping', [ buildingcontacts[i].contact_id, buildingcontacts[i].company_id,
-			    building.address_id, buildingcontacts[i].contact_type == 'owner' ? 1 : (buildingcontacts[i].contact_type == 'seller')?2:((buildingcontacts[i].contact_type == 'agent')?3:4), '@outId' ], function(err, responseMapping) {
-			if (err)
+		    
+		    checkAndAddContactCompanyMapping(buildingcontacts[i].contact_id, buildingcontacts[i].company_id,function(err){
+			if(err)
 			    res.json({
 				error : err.toString()
 			    }, 500);
-			i++;
-			if (i < buildingcontacts.length) {
-			    loopContacts(i);
-			} else {
-			    cb();
-			}
+			sails.controllers.database.credSproc('CreatePropertyContactMapping', [ buildingcontacts[i].contact_id, buildingcontacts[i].company_id,
+			                                                                       building.address_id, buildingcontacts[i].contact_type == 'owner' ? 1 : (buildingcontacts[i].contact_type == 'seller')?2:((buildingcontacts[i].contact_type == 'agent')?3:4), '@outId' ], function(err, responseMapping) {
+			    if (err)
+				res.json({
+				    error : err.toString()
+			        }, 500);
+			    i++;
+			    if (i < buildingcontacts.length) {
+				loopContacts(i);
+			    } else {
+				cb();
+			    }
+			});
 		    });
+		    
+		    
 		} else {
 		    i++;
 		    if (i < buildingcontacts.length) {

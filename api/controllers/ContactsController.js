@@ -291,11 +291,15 @@ module.exports = {
 		    if(err)
     			return res.json({error:err.toString()},500);
 		    contact.contact_id = responseCreateContact[1][outcontactId];
-		    sails.controllers.database.credSproc('CreatePhoneNumber',[contact.phone_number,contact.contact_id,'@outparamphone'],function(err,resPhone){
-		        if(err)
-    			    return res.json({error:err.toString()},500);
-    			cb();
-		   });
+		    updateAddress(contact,function(err){
+			if(err)
+			    cb(err);
+			sails.controllers.database.credSproc('CreatePhoneNumber',[contact.phone_number,contact.contact_id,'@outparamphone'],function(err,resPhone){
+			    if(err)
+    			    	return res.json({error:err.toString()},500);
+    				cb();
+			});
+		    });
 		});
 	    }else{
 		cb();
