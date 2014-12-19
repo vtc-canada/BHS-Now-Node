@@ -8,6 +8,7 @@ BEGIN
 	SELECT
 		SQL_CALC_FOUND_ROWS cur_company_address_mapping.id AS 'mapping_id'
 		,cur_company.name as 'company_name'
+		,cur_company.phone_number
 		,cur_company.id as 'company_id'
 		,cur_address.id as 'address_id'
 		,cur_address.street_number_begin
@@ -22,7 +23,7 @@ BEGIN
 	WHERE 
 		cur_company.is_deleted = 0
 		AND (addressSearchTerms IS NULL OR MATCH(street_name,postal_code,city,province,street_number_begin) AGAINST (addressSearchTerms IN BOOLEAN MODE))	
-		AND (companySearchTerms IS NULL OR MATCH (cur_company.name) AGAINST (companySearchTerms IN BOOLEAN MODE))
+		AND (companySearchTerms IS NULL OR MATCH (cur_company.name, cur_company.phone_number) AGAINST (companySearchTerms IN BOOLEAN MODE))
 	ORDER BY
 		CASE WHEN orderBy='company_name_asc' THEN company_name END ASC,
 		CASE WHEN orderBy='company_name_desc' THEN company_name END DESC,
