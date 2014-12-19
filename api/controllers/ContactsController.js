@@ -111,11 +111,12 @@ module.exports = {
 	    if(typeof(responseContacts[0])!='undefined'){
 		results = responseContacts[0];
 	    }
-	    var bodystring = 'Contact Name,Phone Number,Email,Associated Companies\r\n';
+	    var bodystring = 'Contact Name,Phone Number,Email,Address,Associated Companies\r\n';
 	    for(var i=0;i<results.length;i++){
 		bodystring+='"'+(results[i].contact_name==null?'':results[i].contact_name)+'"';
 		bodystring+=',"'+(results[i].phone==null?'':results[i].phone)+'"';
 		bodystring+=',"'+(results[i].email==null?'':results[i].email)+'"';
+		bodystring+=',"'+buildAddressString(results[i])+'"';
 		bodystring+=',"'+(results[i].company==null?'':results[i].company) + '"';
 		bodystring+='\r\n';
 	    }
@@ -161,6 +162,8 @@ module.exports = {
     querycontacts:function(req,res,cb){
 	var contact_search = null;
 	var phone_search = null;
+	var address_search = sails.controllers.utilities.prepfulltext(req.query.address_search);
+	
 	if (req.query.contact_search != '') {
 	    phone_search = req.query.contact_search;
 	    contact_search = req.query.contact_search.trim();
@@ -186,13 +189,13 @@ module.exports = {
 	    	}else if(req.query.order[0].column==1){  //Address column
         	    orderstring = 'contact_name' +'_'+req.query.order[0].dir;
         	}else if(req.query.order[0].column==4){
-        	    orderstring = 'invalid';
+        	    orderstring = 'street_number_begin'+'_'+req.query.order[0].dir;
         	}else{
         	    orderstring = req.query.columns[req.query.order[0].column].data +'_'+req.query.order[0].dir;
         	}
 	}
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
-	sails.controllers.database.credSproc('SearchContacts',[contact_search,phone_search,req.query.start, req.query.length, orderstring,filteredCount],function(err,responseContacts){
+	sails.controllers.database.credSproc('SearchContacts',[contact_search, address_search, phone_search, req.query.start, req.query.length, orderstring,filteredCount],function(err,responseContacts){
 	    if(err){
 		return res.json({error:'Database Error:'+err.toString()},500);
 	    }
@@ -563,17 +566,17 @@ function buildAddressString(data){
 	}
 	if(data.city != null && data.city != '')
 	{
-		city = data.city==null||data.city=='null'?'':data.city;
+		city = data.city==null||data.city=='null'?'':','+data.city;
 	}
 	if(data.province != null && data.province != '')
 	{
-		province = data.province==null||data.province=='null'?'':data.province;
+		province = data.province==null||data.province=='null'?'':','+data.province;
 	}
 	if(data.postal_code != null && data.postal_code != '')
 	{
-		postal_code =  data.postal_code==null||data.postal_code=='null'?'':data.postal_code; 
+		postal_code =  data.postal_code==null||data.postal_code=='null'?'':','+data.postal_code; 
 	}
-	return street_number_begin+street_number_end+','+street_name+','+city+','+province+','+postal_code; 
+	return street_number_begin+street_number_end+street_name+city+province+postal_code; 
 
 }
   

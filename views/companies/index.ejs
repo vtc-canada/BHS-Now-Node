@@ -150,6 +150,7 @@
 			            <tr>
 			            	<th>Id<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
 			                <th>Company<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+			                <th>Phone Number<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
 			                <th>Address<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
 			            </tr>
 			        </thead>
@@ -518,6 +519,7 @@
 			        	return "<b>"+data.company_name.toString()+"</b>";
 			        }
 			        }
+			        ,{"mData":"phone_number"}
 			        ,{"mData":function(data,b){ 
 			        	return buildAddressString(data);
 			        }

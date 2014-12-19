@@ -93,9 +93,10 @@ module.exports = {
 	    if(typeof(responseCompanies[0])!='undefined'){
 		results = responseCompanies[0];
 	    }
-	    var bodystring = 'Company,Address\r\n';
+	    var bodystring = 'Company,Phone Number,Address\r\n';
 	    for(var i=0;i<results.length;i++){
 		bodystring+='"'+(results[i].company_name==null?'':results[i].company_name) + '"';
+		bodystring+=',"'+(results[i].phone_number==null?'':results[i].phone_number) + '"';
 		bodystring+=',"'+buildAddressString(results[i])+'"';
 		bodystring+='\r\n';
 	    }
@@ -147,11 +148,13 @@ module.exports = {
 		if(req.query.order[0].column==1){  //Address column
 		    orderstring = 'company_name';
 		}else if(req.query.order[0].column==2){
+		    orderstring = 'phone_number';
+		}else if(req.query.order[0].column==3){
 		    orderstring = 'street_name';
 		}else{
 		    orderstring = req.query.columns[req.query.order[0].column].data;
 		}
-		orderstring = orderstring+'_'+req.query.order[0].dir
+		orderstring = orderstring+'_'+req.query.order[0].dir;
 	};
 	
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
@@ -477,17 +480,17 @@ function buildAddressString(data){
 	}
 	if(data.city != null && data.city != '')
 	{
-		city = data.city==null||data.city=='null'?'':data.city;
+		city = data.city==null||data.city=='null'?'':','+data.city;
 	}
 	if(data.province != null && data.province != '')
 	{
-		province = data.province==null||data.province=='null'?'':data.province;
+		province = data.province==null||data.province=='null'?'':','+data.province;
 	}
 	if(data.postal_code != null && data.postal_code != '')
 	{
-		postal_code =  data.postal_code==null||data.postal_code=='null'?'':data.postal_code; 
+		postal_code =  data.postal_code==null||data.postal_code=='null'?'':','+data.postal_code; 
 	}
-	return street_number_begin+street_number_end+street_name+','+city+','+province+','+postal_code; 
+	return street_number_begin+street_number_end+street_name+city+province+postal_code; 
 
 }
   

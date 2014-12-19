@@ -619,17 +619,22 @@ module.exports = {
 	                }
 	            });
 	        } else if (typeof(buildingcontacts[i].dosync) != 'undefined') {
-	            
-	            var tempOutVar = '@out' + Math.floor((Math.random() * 1000000) + 1);
-	            sails.controllers.database.credSproc('CreateSalesContactMapping', [ building.sale_id,
-			buildingcontacts[i].contact_id, building.building_id, buildingcontacts[i].contact_type == 'owner' ? 1 : (buildingcontacts[i].contact_type == 'seller')?2:((buildingcontacts[i].contact_type == 'agent')?3:4),
-			buildingcontacts[i].company_id, tempOutVar ], function(err, responseSalesMapping) {
-			i++;
-	                if(i < buildingcontacts.length) {
-	                    loopSalesContacts(i);
-	                }else{
-	                    cb();
-	                }
+	            checkAndAddContactCompanyMapping(buildingcontacts[i].contact_id, buildingcontacts[i].company_id,function(err){
+			if(err)
+			    res.json({
+				error : err.toString()
+			    }, 500);
+    	            	var tempOutVar = '@out' + Math.floor((Math.random() * 1000000) + 1);
+    	            	sails.controllers.database.credSproc('CreateSalesContactMapping', [ building.sale_id,
+    	            	                                                                    buildingcontacts[i].contact_id, building.building_id, buildingcontacts[i].contact_type == 'owner' ? 1 : (buildingcontacts[i].contact_type == 'seller')?2:((buildingcontacts[i].contact_type == 'agent')?3:4),
+    	            	                                                                	    buildingcontacts[i].company_id, tempOutVar ], function(err, responseSalesMapping) {
+    	            	    i++;
+    	            	    if(i < buildingcontacts.length) {
+    	            		loopSalesContacts(i);
+    	            	    }else{
+    	            		cb();
+    	            	    }
+    	            	});
 	            });
 	        } else {
 	            i++;

@@ -125,6 +125,12 @@
                        <input type="text" id="search_contact" value="">
                    </div>
                </div>
+               <div class="row">
+                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_address">Address:</label></div>
+                   <div class="span8 report-control-right-control">
+                       <input type="text" id="search_address" value="">
+                   </div>
+               </div>
            </div>
         </div>
     </div>
@@ -146,6 +152,7 @@
 			                <th>Contact<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
 			                <th>Phone<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
 			                <th>Email<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+			                <th>Address<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
 			            </tr>
 			        </thead>
 			 
@@ -512,6 +519,7 @@
 		        	"url":"/contacts/searchcontacts",
 	        		"data":function(d){
 	        			d.contact_search = $("#search_contact").val();
+	        			d.address_search = $('#search_address').val();
 	        		},
 	        		error: function(xhr, error, thrown){
 	        			if(error.toString()=='parsererror'){
@@ -542,6 +550,9 @@
 					}
 			        ,{"mData":"phone"}
 			        ,{"mData":"email"}
+			        ,{"mData":function(data,b){
+			        	return buildAddressString(data);
+			        }}
 		        ],
 		        "rowCallback": function( row, data, displayIndex ) {
 					$(row).attr('contact_id',data['contact_id']);
@@ -593,6 +604,12 @@
 				datatable.api().ajax.reload();
 			},10);
 		});
+		$('#search_address').keydown(function(){
+			setTimeout(function(){
+				datatable.api().ajax.reload();
+			},10);
+		});
+		
 		$('#export_contacts').click(function(){
 			$('#exportModal .modal-body').html(
 	        '<div style="font-size: 16px; font-weight:400; text-align:right;" class="pull-right"><span class=""><i class="icon icon-cog icon-spin"></i></span>&nbsp;&nbsp;Generating Report...&nbsp;</div>');
@@ -606,6 +623,7 @@
 			socket.get('/contacts/export',
 				{timezoneoffset : new Date().getTimezoneOffset()
 				,contact_search : $("#search_contact").val()
+				,address_search : $('#search_address').val()
 				},function(url){
 					$('#exportModal .modal-body').html('<a class="pull-right btn btn-success"  href="'+url.url+'">Download</a>');
 				

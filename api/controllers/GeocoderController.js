@@ -37,6 +37,11 @@ module.exports = {
 	
     },
     updatemaporder : function(req, res) {
+	
+	if(req.params.id!=13378083245431){//simple security to stop crawlers from driving it.
+	    return res.json({error:'Invalid code'});
+	}   
+	
 	var delayer = 5;
 	res.json('running');
 	var geolib = require('geolib');
@@ -44,11 +49,11 @@ module.exports = {
 	var series = ['first',10000];
 	var recentsize = 5;
 	if (typeof (req.params.id) != 'undefined') {
-	    recentsize = parseInt(req.params.id);
+	    //recentsize = parseInt(req.params.id);
 	    recentsize = 5;
-	    delayer = parseInt(req.params.id);
+	    delayer = 10; //parseInt(req.params.id);
 	}
-	for(var i=1;i<11;i++){
+	for(var i=1;i<10;i++){
 	    series.push(series[i]/2.32);
 	}
 	async.eachSeries(

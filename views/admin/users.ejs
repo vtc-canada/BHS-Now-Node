@@ -645,6 +645,23 @@ $(document).ready(function(){
 
     });
 
+	$(window).on("beforeunload", function() {
+		if(isChangesPending())
+		{
+	    	return unloadMessage;
+		}
+	});
+
+	function isChangesPending(){
+        var change = false;
+        $.each(adminusers.models,function(key,model){
+            if(model.isNew()||typeof(model.get('dodelete'))!='undefined'||typeof(model.get('dosync'))!='undefined'){
+               change= true;
+               return;
+            }
+        });
+		return change;
+	}
 
     // just shows the changes are pending, by scanning through the collection to see if that's the case.
     function setChangesPending(){

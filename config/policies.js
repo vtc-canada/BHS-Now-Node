@@ -75,8 +75,13 @@ module.exports.policies = {
 	'*':'isAuthenticated',
 	'index':'RoutePolicy'
     },
-    'upload':true,
-    'datautility':true,
+    'geocoder':{
+	'*':'isAuthenticated',
+	'updatemaporder':true, //open access- security is handled seperately for this one endpoint
+	'nullorder':true
+    },
+    'upload':'isAuthenticated',
+    'datautility':'isAuthenticated',
     'public' : true,
     'main' : {
         'index' : true,  // just redirects here anyways... will pass through these policies again. detects/sets up 1st user.  the '/'  Route!
