@@ -30,8 +30,9 @@ BEGIN
 		CASE WHEN orderBy='street_name_asc' THEN street_name END ASC,
 		CASE WHEN orderBy='street_name_desc' THEN street_name END DESC,
 		CASE WHEN orderBy='street_number_begin_asc' THEN street_number_begin END ASC,
-		CASE WHEN orderBy='street_number_begin_desc' THEN street_number_begin END DESC
-
+		CASE WHEN orderBy='street_number_begin_desc' THEN street_number_begin END DESC,
+		CASE WHEN orderBy='phone_number_asc' THEN phone_number END ASC,
+		CASE WHEN orderBy='phone_number_desc' THEN phone_number END DESC
 	LIMIT recordCount OFFSET offsetIndex;
 	SET filteredCount = FOUND_ROWS();
 
