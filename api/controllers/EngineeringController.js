@@ -81,7 +81,7 @@ module.exports = {
     resetregisters : function(req, res) {
 
 	var net = require('net');
-	var connection = net.connect(sails.config.ECMConn.Port, sails.config.ECMConn.Host);// , function() {
+	var connection = net.connect(sails.config.connections.ECMConn.Port, sails.config.connections.ECMConn.Host);// , function() {
 	connection.on('error', function(err) {
 	    console.log("ECM Client Connection failed." + err.toString());
 	});
