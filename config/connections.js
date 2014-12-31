@@ -34,9 +34,9 @@ module.exports.connections = {
      **************************************************************************/
     nowManagementBaseMysql : {
 	adapter : 'sails-mysql',
-	host : '10.1.1.60',
+	host : 'localhost',
 	user : 'root',
-	password : 'Glasgow931',
+	password : '.bhsMHK',
 	database : 'now_management_base',
 	timezone : 'utc'
     },
@@ -50,9 +50,9 @@ module.exports.connections = {
     },
     nowManagementBaseMysqlProduction : {
 	adapter : 'sails-mysql',
-	host : '10.1.1.60',
+	host : 'localhost',
 	user : 'root',
-	password : 'Glasgow931',
+	password : '.bhsMHK',
 	database : 'bhs_scada_mhk',
 	timezone : 'utc'
     },
