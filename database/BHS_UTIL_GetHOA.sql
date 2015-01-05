@@ -5,6 +5,7 @@ CREATE PROCEDURE `BHS_UTIL_GetHOA`()
 BEGIN
 	SELECT oos.eqp_ID
 		,oos.id AS 'oos_id'
+		,eqp_name_table.name AS 'eqp_name'
 		,oos.name
 		,hmioverride.name
 		,oos.value AS 'oos_value'
@@ -77,6 +78,8 @@ BEGIN
 		FROM cfg_tag_id 
 		INNER JOIN cfg_plc_id ON (cfg_tag_id.plc_ID = cfg_plc_id.id)
 		WHERE cfg_tag_id.ctrl_type = 13 ) AS autoreq
-	ON oos.eqp_ID = autoreq.eqp_ID;
+	ON oos.eqp_ID = autoreq.eqp_ID
+	INNER JOIN (SELECT * FROM cfg_eqp_id ) AS eqp_name_table
+	ON oos.eqp_ID = eqp_name_table.id;
 END$$
 DELIMITER ;

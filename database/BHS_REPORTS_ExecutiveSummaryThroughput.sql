@@ -15,8 +15,8 @@ BEGIN
 	WHERE cfg_count_id.counts_group = 1 
 	GROUP BY cfg_count_id.name;
 	SET locale = '{"columns":[
-			{"locale":{"en":"Count","es":"Count"}},
-			{"locale":{"en":"Throughput # of Bags","es":"Throughput # of Bags"}}
+			{"locale":{"en":"Area","es":"Area"}},
+			{"locale":{"en":"Throughput","es":"Throughput"}}
 			]}';
 
 END $$
