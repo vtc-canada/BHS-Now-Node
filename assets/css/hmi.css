@@ -45,8 +45,8 @@
 
 .conveyor_turn_wall{
 	position: absolute;
-	bottom: 0px;
-	left: 0px;
+	bottom: -1px;
+	left: -1px;
 	width: 50%;
 	height: 50%;
 	background: white;
@@ -107,7 +107,7 @@
 .alarm-legend{ 
 	position: absolute;
 	right: 0px;
-	width: 260px;
+	width: 265px;
 	bottom: 0px;
 	border: 1px solid grey;
 	padding: 2px;

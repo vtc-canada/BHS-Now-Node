@@ -20,7 +20,7 @@
 <script type="text/template" id="alarm_legend_row">
 
 	<div class="alarm-legend-row-wrapper">
-		<div class="legend-color-box" style="background-color:#{{=background_color}};"></div>
+		<div class="legend-color-box" style="background-color:#{{=background_color}}; {{if(background_color=='FFFFFF'){ }}border:1px solid #696969;{{ }else{  }}border:1px solid #FFFFFF;{{ } }}"></div>
 		<div class="legend-color-text">{{=name}}</div>
 	</div>
 </script>
@@ -137,12 +137,12 @@
     	overview.append(conveyor_straight({tagname:'G_OB1_01_STATUS',length:8, rotation:0, left:0, top:88.4}));
     	
     	
-    	overview.append(conveyor_label({tagname:'G_OB1_07_STATUS', text:'OB1-07', rotation:0, left:40.4, top:4.8}));
-    	overview.append(conveyor_label({tagname:'G_OB1_02_STATUS', text:'OB1-02', rotation:0, left:40.2, top:88.8}));
-    	overview.append(conveyor_label({tagname:'G_OB1_08_STATUS',text:'OB1-08', rotation:0, left:1.5, top:2.5}));
-    	overview.append(conveyor_label({tagname:'G_OB1_06_STATUS',text:'OB1<br>-06', rotation:0, left:46.7, top:25}));
-    	overview.append(conveyor_label({tagname:'G_OB1_03_STATUS',text:'OB1<br>-03', rotation:0, left:46.7, top:63.4}));
-    	overview.append(conveyor_label({tagname:'G_OB1_01_STATUS',text:'OB1-01',  rotation:0, left:1.4, top:90.7}));
+    	overview.append(conveyor_label({tagname:'G_OB1_07_STATUS', text:'-07', rotation:0, left:44.2, top:5.7}));
+    	overview.append(conveyor_label({tagname:'G_OB1_02_STATUS', text:'-02', rotation:0, left:44.0, top:83.7}));
+    	overview.append(conveyor_label({tagname:'G_OB1_08_STATUS',text:'OB1-08', rotation:0, left:15.5, top:1.5}));
+    	overview.append(conveyor_label({tagname:'G_OB1_06_STATUS',text:'-06', rotation:0, left:46.7, top:26.5}));
+    	overview.append(conveyor_label({tagname:'G_OB1_03_STATUS',text:'-03', rotation:0, left:46.7, top:64.4}));
+    	overview.append(conveyor_label({tagname:'G_OB1_01_STATUS',text:'OB1-01',  rotation:0, left:15.4, top:89.3}));
     	
     	
     	

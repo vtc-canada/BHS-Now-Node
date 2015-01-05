@@ -10,7 +10,7 @@ function timeoutService() {
 	  return console.log('error iterating graphics');
       
       sails.io.sockets.emit('overview', graphics[0]);
-      setTimeout(timeoutService, 1000);
+      setTimeout(timeoutService, 2000);
   });
 };
-setTimeout(timeoutService, 1000);
+setTimeout(timeoutService, 50000);
