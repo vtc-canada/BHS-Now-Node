@@ -42,7 +42,7 @@ module.exports = {
 		return res.json({
 		    error : 'Database Error:' + err
 		});
-	    if (typeof (sails.io.rooms['/hoa']) == 'undefined' || sails.io.rooms['hoa'].length <= 0) {
+	    if (typeof (sails.io.rooms['/hoa']) == 'undefined' || sails.io.rooms['/hoa'].length <= 0) {
 		res.json('none updated');
 		return;
 	    }
