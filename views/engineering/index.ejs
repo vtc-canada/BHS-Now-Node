@@ -9,7 +9,7 @@
             <div class="row-fluid">
                 <div class="row-fluid sort-destination-plan-titles airline-config-titles">
 
-                        <div class="btn btn-primary" id="resetregisters">RESET REGISTERS</div>
+                        <div class="btn btn-primary" id="resetregisters">Counts Reset</div>
 
                               <br/><br/><br/>
                           <div id="hoadiv">
@@ -46,7 +46,7 @@
 <!-- Default Destination Row Template -->
 <script type="text/template" id="hoa-template">
     <div class="row-fluid section-config-wrapper hoa-wrapper" eqp_id="{{=eqp_ID}}" style="color:black">
-    {{=eqp_ID}}
+    {{=eqp_name}}
         <div class="btn-group hoa-group">
 		  <button class="hoa-hand btn btn-primary" {{ if(hmioverride_value==1){ }}style="background:black;"{{ } }}">HAND</button>
 		  <button class="hoa-off btn btn-primary" {{ if(oos_value==1){ }}style="background:black"{{ } }}">OFF</button>
