@@ -738,6 +738,23 @@ function buildReportData(report, phantom_bool, cb) {
 		    var jsonData = JSON.parse(resultThroughputs[1][outThroughput]);
 		    resultThroughputs = resultThroughputs[0];
 		    
+		    var foundinput = false;
+		    var foundoutput = false;
+		    for(var i=0;i<resultThroughputs.length;i++){
+		    	if(resultThroughputs[i].count == "INPUT THROUGHPUT COUNT"){
+		    		foundinput = true;
+		    	}
+		    	if(resultThroughputs[i].count == "OUTPUT THROUGHPUT COUNT"){
+		    		foundoutput = true;
+		    	}
+		    }
+		    if(!foundinput){
+		    	resultThroughputs.splice(0,0,{count:"INPUT THROUGHPUT COUNT",throughput:0});
+		    }
+		    if(!foundoutput){
+		    	resultThroughputs.splice(1,0,{count:"OUTPUT THROUGHPUT COUNT",throughput:0});
+		    }
+		    
 		    if (resultThroughputs.length > 0) {
 			
 			var section = new Object();
@@ -749,7 +766,7 @@ function buildReportData(report, phantom_bool, cb) {
 
 			section.groupheading[0] = new Array();
 			section.groupheading[0][0] = new Object();
-			section.groupheading[0][0].val = 'Total Counts';
+			section.groupheading[0][0].val = 'System Throughput';
 			section.groupheading[0][0].bold = true;
 
 			section.data = new Array();
@@ -798,7 +815,7 @@ function buildReportData(report, phantom_bool, cb) {
 
 			section.groupheading[0] = new Array();
 			section.groupheading[0][0] = new Object();
-			section.groupheading[0][0].val = 'Result Faults';
+			section.groupheading[0][0].val = 'System Faults';
 			section.groupheading[0][0].bold = true;
 
 			section.data = new Array();
@@ -936,27 +953,58 @@ function buildReportData(report, phantom_bool, cb) {
 			section.data[4][1].val = secondsToString(parseInt(resultFaults[0]['motor_disconnect_downtime']));
 			section.data[4][1].bold = false;
 			section.data[4][1].bordertop = false;
+			
+			data[data.length] = section;
+			
+			var section = new Object();
+			section.startrow = true;
+			section.endrow = true;
 
-			section.data[5] = new Array();
-			section.data[5][0] = new Object();
-			section.data[5][0].val = 'System Downtime';
-			section.data[5][0].bold = false;
-			section.data[5][0].bordertop = false;
-			section.data[5][1] = new Object();
-			section.data[5][1].val = secondsToString(parseInt(resultFaults[0]['system_downtime']));
-			section.data[5][1].bold = false;
-			section.data[5][1].bordertop = false;
+			section.groupheading = new Array();
+			section.groupheading.spantype = 'row-fluid';
+
+			section.groupheading[0] = new Array();
+			section.groupheading[0][0] = new Object();
+			section.groupheading[0][0].val = 'System Availability';
+			section.groupheading[0][0].bold = true;
+
+			section.data = new Array();
+			section.data.topborder = true;
+			section.data.bottomborder = true;
+			section.data.spantype = 'span6';
+			section.data.toprowtableheader = false;
+			section.data.searchenabled = false;
+			section.data.sorting = false;
+
+			section.data[0] = new Array();
+			section.data[0][0] = new Object();
+			section.data[0][0].val = '';
+			section.data[0][0].width='75'
+			section.data[0][1] = new Object();
+			section.data[0][1].val = '';
+			section.data[0][1].width='25'
 			
-			section.data[6] = new Array();
-			section.data[6][0] = new Object();
-			section.data[6][0].val = 'System Availabilitiy';
-			section.data[6][0].bold = false;
-			section.data[6][0].bordertop = false;
-			section.data[6][1] = new Object();
-			section.data[6][1].val = parseFloat(resultFaults[0]['system_availability']).toFixed(2)+'%';
-			section.data[6][1].bold = false;
-			section.data[6][1].bordertop = false;
+
+			section.data[1] = new Array();
+			section.data[1][0] = new Object();
+			section.data[1][0].val = 'System Downtime';
+			section.data[1][0].bold = false;
+			section.data[1][0].bordertop = false;
+			section.data[1][1] = new Object();
+			section.data[1][1].val = secondsToString(parseInt(resultFaults[0]['system_downtime']));
+			section.data[1][1].bold = false;
+			section.data[1][1].bordertop = false;
 			
+			section.data[2] = new Array();
+			section.data[2][0] = new Object();
+			section.data[2][0].val = 'System Availabilitiy';
+			section.data[2][0].bold = false;
+			section.data[2][0].bordertop = false;
+			section.data[2][1] = new Object();
+			section.data[2][1].val = parseFloat(resultFaults[0]['system_availability']).toFixed(2)+'%';
+			section.data[2][1].bold = false;
+			section.data[2][1].bordertop = false;
+		
 			data[data.length] = section;
 		    }
 		    callback(null);
