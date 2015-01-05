@@ -138,7 +138,7 @@ function BuildSproc(data) {
 	    
 		if(data[curArg] instanceof Date ||(data[curArg].toString().length == 24 && data[curArg].toString().indexOf('T')==10 && data[curArg].toString().indexOf('Z')==23)){
 
-    			sprocArgs += '"'+data[curArg].toString().substring(0,10) + " "+data[curArg].toString().substring(12,19)+'"';
+    			sprocArgs += '"'+data[curArg].toString().substring(0,10) + " "+data[curArg].toString().substring(11,19)+'"';
 		}
 	    else if(typeof(data[curArg])=='string'&&data[curArg].substring(0, 1) != '@'&&data[curArg]!='NOW()'&&data[curArg]!='true'&&data[curArg]!='false'){  //puts very necessary quotes around strings  
 		sprocArgs += '"'+replaceAll(replaceAll(data[curArg],'\\','\\\\'),'"','\\"')+'"';
