@@ -1,8 +1,9 @@
-
+USE `bhs_scada_mhk`;
 DROP procedure IF EXISTS `BHS_REPORTS_ThroughputIntervalReport`;
 
 DELIMITER $$
-CREATE PROCEDURE `BHS_REPORTS_ThroughputIntervalReport`(IN `startTime` DATETIME, 
+USE `bhs_scada_mhk`$$
+CREATE DEFINER=`root`@`%` PROCEDURE `BHS_REPORTS_ThroughputIntervalReport`(IN `startTime` DATETIME, 
 	IN `endTime` DATETIME, 
 		IN `intervalTime` INT(11),
 	OUT `locale` VARCHAR(4096)
@@ -36,12 +37,12 @@ CREATE TEMPORARY TABLE throughput (
 INSERT INTO throughput(count, `value`, `interval`)
 	SELECT
 		cfg_count_id.name AS 'count'
-		,cur_counts_history.value 
+		,SUM(cur_counts_history.value) as 'value'
+		#,cur_counts_history.timestamp
 		,FROM_UNIXTIME(FLOOR(UNIX_TIMESTAMP(cur_counts_history.timestamp)/intervalTime)*intervalTime) as 'Interval'
 	FROM cfg_count_id	
 	INNER JOIN cur_counts_history ON (cfg_count_id.id = cur_counts_history.count_ID 
 			AND cur_counts_history.timestamp > startTime AND cur_counts_history.timestamp < endTime)
-	CROSS JOIN time_range
 	WHERE cfg_count_id.counts_group = 1
 	GROUP BY FROM_UNIXTIME(FLOOR(UNIX_TIMESTAMP(cur_counts_history.timestamp)/intervalTime)*intervalTime),cfg_count_id.name
 	ORDER BY cfg_count_id.name;
@@ -62,4 +63,6 @@ SET locale = '{"columns":[
 			{"locale":{"en":"Value","es":"Value"}}
 		]}';
 END$$
+
 DELIMITER ;
+

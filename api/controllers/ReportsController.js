@@ -140,7 +140,7 @@ module.exports = {
         			    console.log('Page Rendered in ' + (end - start).toString() + 'ms.');
         			    ph.exit();
         
-        			    buildReportData(report, true, function(data) {
+        			    sails.controllers.reports.buildReportData(report, true, function(data) {
         				if (typeof (data) == 'undefined' || data == null) {
         				    res.json({
         					failure : 'Unable to Generate Report'
@@ -325,7 +325,7 @@ module.exports = {
 	    phantom_bool = false;
 	}
 
-	buildReportData(report, phantom_bool, function(data) {
+	sails.controllers.reports.buildReportData(report, phantom_bool, function(data) {
 	    if (typeof (data) == 'undefined' || data == null) {
 		res.view('reports/failure.ejs', {
 		    layout : false,
@@ -352,6 +352,614 @@ module.exports = {
 		});
 	    }
 	});
+    },
+    buildReportData:function(report, phantom_bool, cb) {
+        // Generating report stuff
+        // safety checks
+        if (typeof (report) == 'undefined' || typeof (report.parameters) == 'undefined') {
+    	cb(null);
+    	return;
+        }
+        if (typeof (report.parameters.start_time) == 'undefined' || typeof (report.parameters.start_time.value) == 'undefined'
+    	    || report.parameters.start_time.value == '') {
+    	cb(null);
+    	return;
+        }
+        if (typeof (report.parameters.end_time) == 'undefined' || typeof (report.parameters.end_time.value) == 'undefined'
+    	    || report.parameters.end_time.value == '') {
+    	cb(null);
+    	return;
+        }
+        var data = new Array();
+        data.timezoneoffset = report.timezoneoffset;
+        var start_datetime = new Date(report.parameters.start_time.value);
+        var start_label = report.parameters.start_time.locale_label[report.locale];
+        var end_datetime = new Date(report.parameters.end_time.value);
+        var end_label = report.parameters.end_time.locale_label[report.locale];
+        var system_name = report.system_name;
+        
+        var header = new Object();
+        header.url =  '/reports/title/' + report.title.logo;
+        
+        if (report.id == 1) { // / TYPE Alarm History Report
+
+    	var line = [];
+    	line.push(system_name);
+    	line.push(report.name.locale_label[report.locale]);
+    	line.push(start_label + ': ' + toClientDateTimeString(start_datetime, report.timezoneoffset));
+    	line.push(end_label + ': ' + toClientDateTimeString(end_datetime, report.timezoneoffset));
+
+    	var fault_type = null;
+    	if (typeof (report.parameters.fault_type.text) != 'undefined') {
+    	    line.push(report.parameters.fault_type.locale_label[report.locale] + ': ' + report.parameters.fault_type.text);
+    	    fault_type = report.parameters.fault_type.value;
+    	}
+
+    	var eqp_ID = null;
+    	if (typeof (report.parameters.eqp_id.text) != 'undefined') {
+    	    line.push(report.parameters.eqp_id.locale_label[report.locale] + ': ' + report.parameters.eqp_id.text);
+    	    eqp_ID = report.parameters.eqp_id.value;
+    	}
+    	var dev_ID = null;
+    	if (typeof (report.parameters.dev_id.text) != 'undefined') {
+    	    line.push(report.parameters.dev_id.locale_label[report.locale] + ': ' + report.parameters.dev_id.text);
+    	    dev_ID = report.parameters.dev_id.value;
+    	}
+    	header.line = line;
+
+    	data.header = header;
+    	data.css = "isystemsnowreports.css";
+    	data.landscape = false;
+
+    	addAlarmFaultHistory(start_datetime, end_datetime, fault_type, eqp_ID, dev_ID, report.locale, report.timezoneoffset, function(section) {
+    	    if (section != null) {
+    		data[data.length] = section;
+    	    }
+    	    cb(data);
+    	});
+
+        } // END OF REPORT 1
+
+        else if (report.id == 2) { //Equipment Summary
+
+    	
+    	var line = [];
+    	line.push(system_name);
+    	line.push(report.name.locale_label[report.locale]);
+    	line.push(start_label + ': ' + toClientDateTimeString(start_datetime, report.timezoneoffset));
+    	line.push(end_label + ': ' + toClientDateTimeString(end_datetime, report.timezoneoffset));
+
+    	var eqp_ID = null;
+    	if (typeof (report.parameters.eqp_id.text) != 'undefined') {
+    	    line.push(report.parameters.eqp_id.locale_label[report.locale] + ': ' + report.parameters.eqp_id.text);
+    	    eqp_ID = report.parameters.eqp_id.value;
+    	}
+
+    	var dev_ID = null;
+    	if (typeof (report.parameters.dev_id.text) != 'undefined') {
+    	    line.push(report.parameters.dev_id.locale_label[report.locale] + ': ' + report.parameters.dev_id.text);
+    	    dev_ID = report.parameters.dev_id.value;
+    	}
+
+    	if (typeof (report.parameters.sections) == 'undefined' || typeof (report.parameters.sections.checkboxes) == 'undefined') {
+    	    cb(null);
+    	    return;
+    	}
+    	header.line = line;
+
+    	data.header = header;
+    	data.css = "isystemsnowreports.css";
+    	data.landscape = false;
+    	// var report2query = function(){/*STRING*/}.toString().slice(14,-3);
+    	addTrackingPhotoEyes(parseInt(report.parameters.sections.checkboxes.tracking_photo_eyes.value), start_datetime, end_datetime, eqp_ID, dev_ID,
+    		report.locale, report.timezoneoffset, function(section) {
+    		    if (section != null) {
+    			data[data.length] = section;
+    		    }
+
+    		    addJamPhotoEyes(parseInt(report.parameters.sections.checkboxes.jam_photo_eyes.value), start_datetime, end_datetime, eqp_ID, dev_ID,
+    			    report.locale, report.timezoneoffset, function(section) {
+    				if (section != null) {
+    				    data[data.length] = section;
+    				}
+
+    				addDiverterCounts(parseInt(report.parameters.sections.checkboxes.diverters.value), start_datetime, end_datetime, eqp_ID,
+    					dev_ID, report.locale, report.timezoneoffset, function(section) {
+    					    if (section != null) {
+    						data[data.length] = section;
+    					    }
+    					    cb(data);
+    					});
+    			    });
+    		});
+        } else if (report.id == 3) { // Equipment Interval
+
+    	
+    	var line = [];
+    	line.push(system_name);
+    	line.push(report.name.locale_label[report.locale]);
+    	line.push(start_label + ': ' + toClientDateTimeString(start_datetime, report.timezoneoffset));
+    	line.push(end_label + ': ' + toClientDateTimeString(end_datetime, report.timezoneoffset));
+
+    	var eqp_ID = null;
+    	if (typeof (report.parameters.eqp_id.text) != 'undefined') {
+    	    line.push(report.parameters.eqp_id.locale_label[report.locale] + ': ' + report.parameters.eqp_id.text);
+    	    eqp_ID = report.parameters.eqp_id.value;
+    	}
+
+    	var dev_ID = null;
+    	if (typeof (report.parameters.dev_id.text) != 'undefined') {
+    	    line.push(report.parameters.dev_id.locale_label[report.locale] + ': ' + report.parameters.dev_id.text);
+    	    dev_ID = report.parameters.dev_id.value;
+    	}
+    	var interval = 900;
+    	if (typeof (report.parameters.interval) != 'undefined') {
+    	    interval = report.parameters.interval.value;
+    	}
+
+    	if (typeof (report.parameters.sections) == 'undefined' || typeof (report.parameters.sections.checkboxes) == 'undefined') {
+    	    cb(null);
+    	    return;
+    	}
+    	header.line = line;
+
+    	data.header = header;
+    	data.css = "isystemsnowreports.css";
+    	data.landscape = false;
+    	// var report2query = function(){/*STRING*/}.toString().slice(14,-3);
+    	addIntervalTrackingPhotoEyes(parseInt(report.parameters.sections.checkboxes.tracking_photo_eyes.value), start_datetime, end_datetime, eqp_ID, dev_ID,
+    		interval, report.locale, report.timezoneoffset, function(section) {
+    		    if (section != null) {
+    			data[data.length] = section;
+    		    }
+
+    		    addIntervalJamPhotoEyes(parseInt(report.parameters.sections.checkboxes.jam_photo_eyes.value), start_datetime, end_datetime, eqp_ID, dev_ID,
+    			    interval, report.locale, report.timezoneoffset, function(section) {
+    				if (section != null) {
+    				    data[data.length] = section;
+    				}
+
+    				addDiverterCounts(parseInt(report.parameters.sections.checkboxes.diverters.value), start_datetime, end_datetime, eqp_ID,
+    					dev_ID, report.locale, report.timezoneoffset, function(section) {
+    					    if (section != null) {
+    						data[data.length] = section;
+    					    }
+    					    cb(data);
+    					});
+    			    });
+    		});
+        } else if (report.id == 4) { // Bag Search
+
+    	
+    	var line = [];
+    	line.push(system_name);
+    	line.push(report.name.locale_label[report.locale]);
+    	line.push(start_label + ': ' + toClientDateTimeString(start_datetime, report.timezoneoffset));
+    	line.push(end_label + ': ' + toClientDateTimeString(end_datetime, report.timezoneoffset));
+
+    	var search = null;
+    	if (typeof (report.parameters.search_field.value) != 'undefined' && report.parameters.search_field.value != '') {
+    	    line.push(report.parameters.search_field.locale_label[report.locale] + ': ' + report.parameters.search_field.value);
+    	    search = parseInt(report.parameters.search_field.value);
+    	    if (isNaN(search)) {
+    		search = null;
+    	    }
+    	}
+
+    	header.line = line;
+
+    	if (phantom_bool) {
+    	    data.header = header;
+    	}
+
+    	data.css = "isystemsnowreports.css";
+    	data.landscape = false;
+
+    	Database.dataSproc("BHS_REPORTS_SearchBags", [ start_datetime.toISOString(), end_datetime.toISOString(), search ], function(err, bags) {
+    	    if (err) {
+    		cb(data);
+    		return;
+    	    }
+    	    bags = bags[0];
+    	    if (bags.length < 1) {
+    		cb(data);
+    		return;
+    	    }
+    	    var section = new Object();
+    	    section.startrow = true;
+    	    section.endrow = true;
+
+    	    section.data = new Array();
+    	    section.data.topborder = true;
+    	    section.data.bottomborder = true;
+    	    section.data.spantype = 'row-fluid';
+    	    section.data.toprowtableheader = false;
+    	    section.data.searchenabled = false;
+    	    section.data.bagsearch = true;
+
+    	    for (var i = 0; i < bags.length; i++) {
+    		section.data[i] = new Object();
+    		var k = 0;
+    		for ( var key in bags[i]) {
+    		    if (bags[i].hasOwnProperty(key)) {
+    			section.data[i][key] = bags[i][key];
+    		    }
+    		}
+    	    }
+    	    data[0] = section;
+    	    cb(data);
+
+    	});
+
+        }else if(report.id == 5) { // Throughput Interval Report
+
+    	
+    	var line = [];
+    	line.push(system_name);
+    	line.push(report.name.locale_label[report.locale]);
+    	line.push(start_label + ': ' + toClientDateTimeString(start_datetime, report.timezoneoffset));
+    	line.push(end_label + ': ' + toClientDateTimeString(end_datetime, report.timezoneoffset));
+
+    	var interval = 900;
+    	if (typeof (report.parameters.interval) != 'undefined') {
+    	    interval = report.parameters.interval.value;
+    	}
+    	header.line = line;
+
+    	//if (phantom_bool) {
+    	    data.header = header;
+    	//}
+    	data.css = "isystemsnowreports.css";
+    	data.landscape = false;
+    	var outThroughput = '@out' + Math.floor((Math.random() * 1000000) + 1);
+    	Database.dataSproc("BHS_REPORTS_ThroughputIntervalReport", [ start_datetime.toISOString(), end_datetime.toISOString(), interval, outThroughput ], function(err, throughputs) {
+    	    if (err) {
+    		cb(data);
+    		return;
+    	    }
+    	    
+    	    var jsonData = JSON.parse(throughputs[1][outThroughput]);
+    	    throughputs = throughputs[0];
+    	    if (throughputs.length < 1) {
+    		cb(data);
+    		return;
+    	    }
+    	    var section = new Object();
+    	    section.startrow = true;
+    	    section.endrow = true;
+
+    	    section.data = new Array();
+    	    section.data.topborder = true;
+    	    section.data.bottomborder = true;
+    	    section.data.spantype = 'row-fluid';
+    	    section.data.toprowtableheader = true;
+    	    section.data.searchenabled = false;
+    	    section.data.bagsearch = false;
+    	    section.data.sorting = false;
+    	    
+    	    section.data[0] = new Array();
+    	    
+    	    // Makes Headings
+    	    for (var i = 0; i < jsonData.columns.length; i++) {
+    		section.data[0][i] = new Object();
+    		section.data[0][i].val = jsonData.columns[i].locale[report.locale];
+    		section.data[0][i].bold = true;
+    		section.data[0][i].bordertop = false;
+    		section.data[0][i].width = jsonData.columns[i].width;
+    		section.data[0][i].lastrow = jsonData.columns[i].lastrow;
+    		section.data[0][i].hidden = jsonData.columns[i].hidden;
+    	    }
+    		// Fills Data
+    	    data[data.length] = addSectionData(section, throughputs, report.timezoneoffset, jsonData);
+
+    	    cb(data);
+
+    	});
+
+        }else if(report.id == 6) { // Executive Summary Report
+    	
+    	var line = [];
+    	line.push(system_name);
+    	line.push(report.name.locale_label[report.locale]);
+    	line.push(start_label + ': ' + toClientDateTimeString(start_datetime, report.timezoneoffset));
+    	line.push(end_label + ': ' + toClientDateTimeString(end_datetime, report.timezoneoffset));
+    	header.line = line;
+    	
+    	//if (phantom_bool) {
+    	    data.header = header;
+    	//}
+    	data.css = "isystemsnowreports.css";
+    	data.landscape = false;
+    	
+    	async.series([
+    	function(callback){
+    	    var outThroughput = '@out' + Math.floor((Math.random() * 1000000) + 1);
+    	    Database.dataSproc("BHS_REPORTS_ExecutiveSummaryThroughput", [start_datetime.toISOString(), end_datetime.toISOString(), outThroughput],function(err,resultThroughputs){
+    		    if (err) {
+    			callback(err);
+    			return;
+    		    }
+    		    var jsonData = JSON.parse(resultThroughputs[1][outThroughput]);
+    		    resultThroughputs = resultThroughputs[0];
+    		    
+    		    var foundinput = false;
+    		    var foundoutput = false;
+    		    for(var i=0;i<resultThroughputs.length;i++){
+    		    	if(resultThroughputs[i].count == "INPUT THROUGHPUT COUNT"){
+    		    		foundinput = true;
+    		    	}
+    		    	if(resultThroughputs[i].count == "OUTPUT THROUGHPUT COUNT"){
+    		    		foundoutput = true;
+    		    	}
+    		    }
+    		    if(!foundinput){
+    		    	resultThroughputs.splice(0,0,{count:"INPUT THROUGHPUT COUNT",throughput:0});
+    		    }
+    		    if(!foundoutput){
+    		    	resultThroughputs.splice(1,0,{count:"OUTPUT THROUGHPUT COUNT",throughput:0});
+    		    }
+    		    
+    		    if (resultThroughputs.length > 0) {
+    			
+    			var section = new Object();
+    			section.startrow = true;
+    			section.endrow = true;
+
+    			section.groupheading = new Array();
+    			section.groupheading.spantype = 'row-fluid';
+
+    			section.groupheading[0] = new Array();
+    			section.groupheading[0][0] = new Object();
+    			section.groupheading[0][0].val = 'System Throughput';
+    			section.groupheading[0][0].bold = true;
+
+    			section.data = new Array();
+    			section.data.topborder = true;
+    			section.data.bottomborder = true;
+    			section.data.spantype = 'span6';
+    			section.data.toprowtableheader = true;
+    			section.data.searchenabled = false;
+    			section.data.sorting = false;
+
+    			section.data[0] = new Array();
+
+    			// Makes Headings
+    			for (var i = 0; i < jsonData.columns.length; i++) {
+    			    section.data[0][i] = new Object();
+    			    section.data[0][i].val = jsonData.columns[i].locale[report.locale];
+    			    section.data[0][i].bold = true;
+    			    section.data[0][i].bordertop = false;
+    			    section.data[0][i].width = jsonData.columns[i].width;
+    			    section.data[0][i].lastrow = jsonData.columns[i].lastrow;
+    			    section.data[0][i].hidden = jsonData.columns[i].hidden;
+    			}
+    			// Fills Data
+    			data[data.length] = addSectionData(section, resultThroughputs, report.timezoneoffset, jsonData);
+    		    }
+    		    callback(null);
+    		}); 
+    	},
+    	function(callback){
+    	    var outFaults = '@out' + Math.floor((Math.random() * 1000000) + 1);
+    	    Database.dataSproc("BHS_REPORTS_ExecutiveSummaryFaults", [start_datetime.toISOString(), end_datetime.toISOString(), outFaults],function(err,resultFaults){
+    		    if (err) {
+    			callback(err);
+    			return;
+    		    }
+    		    resultFaults = resultFaults[0];
+
+    		    if (resultFaults.length > 0) {
+    			
+    			var section = new Object();
+    			section.startrow = true;
+    			section.endrow = false;
+
+    			section.groupheading = new Array();
+    			section.groupheading.spantype = 'row-fluid';
+
+    			section.groupheading[0] = new Array();
+    			section.groupheading[0][0] = new Object();
+    			section.groupheading[0][0].val = 'System Faults';
+    			section.groupheading[0][0].bold = true;
+
+    			section.data = new Array();
+    			section.data.topborder = true;
+    			section.data.bottomborder = true;
+    			section.data.spantype = 'span5';
+    			section.data.toprowtableheader = false;
+    			section.data.searchenabled = false;
+    			section.data.sorting = false;
+
+    			section.data[0] = new Array();
+    			section.data[0][0] = new Object();
+    			section.data[0][0].val = '';
+    			section.data[0][0].width='75'
+    			section.data[0][1] = new Object();
+    			section.data[0][1].val = '';
+    			section.data[0][1].width='25'
+    			
+    			// Fills Data
+    			section.data[1] = new Array();
+    			section.data[1][0] = new Object();
+    			section.data[1][0].val = 'Jams';
+    			section.data[1][0].bold = false;
+    			section.data[1][0].bordertop = false;
+    			section.data[1][1] = new Object();
+    			section.data[1][1].val = resultFaults[0]['jams'];
+    			section.data[1][1].bold = false;
+    			section.data[1][1].bordertop = false;
+
+    			section.data[2] = new Array();
+    			section.data[2][0] = new Object();
+    			section.data[2][0].val = 'E-Stop';
+    			section.data[2][0].bold = false;
+    			section.data[2][0].bordertop = false;
+    			section.data[2][1] = new Object();
+    			section.data[2][1].val = resultFaults[0]['e_stop'];
+    			section.data[2][1].bold = false;
+    			section.data[2][1].bordertop = false;
+
+    			section.data[3] = new Array();
+    			section.data[3][0] = new Object();
+    			section.data[3][0].val = 'Motor Faults';
+    			section.data[3][0].bold = false;
+    			section.data[3][0].bordertop = false;
+    			section.data[3][1] = new Object();
+    			section.data[3][1].val = resultFaults[0]['motor_faults'];
+    			section.data[3][1].bold = false;
+    			section.data[3][1].bordertop = false;
+    			
+    			section.data[4] = new Array();
+    			section.data[4][0] = new Object();
+    			section.data[4][0].val = 'Motor Disconnect';
+    			section.data[4][0].bold = false;
+    			section.data[4][0].bordertop = false;
+    			section.data[4][1] = new Object();
+    			section.data[4][1].val = resultFaults[0]['motor_disconnect'];
+    			section.data[4][1].bold = false;
+    			section.data[4][1].bordertop = false;
+    			
+    			
+    			data[data.length] = section;
+    		    }
+    		    callback(null);
+    		}); 
+    	},
+    	function(callback){
+    	    var outFaults = '@out' + Math.floor((Math.random() * 1000000) + 1);
+    	    Database.dataSproc("BHS_REPORTS_ExecutiveSummaryDowntime", [start_datetime.toISOString(), end_datetime.toISOString(), outFaults],function(err,resultFaults){
+    		    if (err) {
+    			callback(err);
+    			return;
+    		    }
+    		    resultFaults = resultFaults[0];
+
+    		    if (resultFaults.length > 0) {
+    			
+    			var section = new Object();
+    			section.startrow = false;
+    			section.endrow = true;
+
+
+    			section.data = new Array();
+    			section.data.topborder = true;
+    			section.data.bottomborder = true;
+    			section.data.spantype = 'span5 offset1';
+    			section.data.toprowtableheader = false;
+    			section.data.searchenabled = false;
+    			section.data.sorting = false;
+
+    			section.data[0] = new Array();
+    			section.data[0][0] = new Object();
+    			section.data[0][0].val = '';
+    			section.data[0][0].width='75'
+    			section.data[0][1] = new Object();
+    			section.data[0][1].val = '';
+    			section.data[0][1].width='25'
+    			
+    			// Fills Data
+    			section.data[1] = new Array();
+    			section.data[1][0] = new Object();
+    			section.data[1][0].val = 'Jams Downtime';
+    			section.data[1][0].bold = false;
+    			section.data[1][0].bordertop = false;
+    			section.data[1][1] = new Object();
+    			section.data[1][1].val = secondsToString(parseInt(resultFaults[0]['jams_downtime']));
+    			section.data[1][1].bold = false;
+    			section.data[1][1].bordertop = false;
+
+    			section.data[2] = new Array();
+    			section.data[2][0] = new Object();
+    			section.data[2][0].val = 'E-Stop Downtime';
+    			section.data[2][0].bold = false;
+    			section.data[2][0].bordertop = false;
+    			section.data[2][1] = new Object();
+    			section.data[2][1].val = secondsToString(parseInt(resultFaults[0]['estop_downtime']));
+    			section.data[2][1].bold = false;
+    			section.data[2][1].bordertop = false;
+
+    			section.data[3] = new Array();
+    			section.data[3][0] = new Object();
+    			section.data[3][0].val = 'Motor Faults Downtime';
+    			section.data[3][0].bold = false;
+    			section.data[3][0].bordertop = false;
+    			section.data[3][1] = new Object();
+    			section.data[3][1].val = secondsToString(parseInt(resultFaults[0]['motor_faults_downtime']));
+    			section.data[3][1].bold = false;
+    			section.data[3][1].bordertop = false;
+    			
+    			section.data[4] = new Array();
+    			section.data[4][0] = new Object();
+    			section.data[4][0].val = 'Motor Disconnect Downtime';
+    			section.data[4][0].bold = false;
+    			section.data[4][0].bordertop = false;
+    			section.data[4][1] = new Object();
+    			section.data[4][1].val = secondsToString(parseInt(resultFaults[0]['motor_disconnect_downtime']));
+    			section.data[4][1].bold = false;
+    			section.data[4][1].bordertop = false;
+    			
+    			data[data.length] = section;
+    			
+    			var section = new Object();
+    			section.startrow = true;
+    			section.endrow = true;
+
+    			section.groupheading = new Array();
+    			section.groupheading.spantype = 'row-fluid';
+
+    			section.groupheading[0] = new Array();
+    			section.groupheading[0][0] = new Object();
+    			section.groupheading[0][0].val = 'System Availability';
+    			section.groupheading[0][0].bold = true;
+
+    			section.data = new Array();
+    			section.data.topborder = true;
+    			section.data.bottomborder = true;
+    			section.data.spantype = 'span6';
+    			section.data.toprowtableheader = false;
+    			section.data.searchenabled = false;
+    			section.data.sorting = false;
+
+    			section.data[0] = new Array();
+    			section.data[0][0] = new Object();
+    			section.data[0][0].val = '';
+    			section.data[0][0].width='75'
+    			section.data[0][1] = new Object();
+    			section.data[0][1].val = '';
+    			section.data[0][1].width='25'
+    			
+
+    			section.data[1] = new Array();
+    			section.data[1][0] = new Object();
+    			section.data[1][0].val = 'System Downtime';
+    			section.data[1][0].bold = false;
+    			section.data[1][0].bordertop = false;
+    			section.data[1][1] = new Object();
+    			section.data[1][1].val = secondsToString(parseInt(resultFaults[0]['system_downtime']));
+    			section.data[1][1].bold = false;
+    			section.data[1][1].bordertop = false;
+    			
+    			section.data[2] = new Array();
+    			section.data[2][0] = new Object();
+    			section.data[2][0].val = 'System Availabilitiy';
+    			section.data[2][0].bold = false;
+    			section.data[2][0].bordertop = false;
+    			section.data[2][1] = new Object();
+    			section.data[2][1].val = parseFloat(resultFaults[0]['system_availability']).toFixed(2)+'%';
+    			section.data[2][1].bold = false;
+    			section.data[2][1].bordertop = false;
+    		
+    			data[data.length] = section;
+    		    }
+    		    callback(null);
+    		}); 
+    	}],	
+    	function(err,results){
+    	    cb(data);
+    	});
+    	
+    	
+        }
     }
 };
 
@@ -409,614 +1017,7 @@ var serialiseObject = function(obj) {
     return pairs.join('&');
 }
 
-function buildReportData(report, phantom_bool, cb) {
-    // Generating report stuff
-    // safety checks
-    if (typeof (report) == 'undefined' || typeof (report.parameters) == 'undefined') {
-	cb(null);
-	return;
-    }
-    if (typeof (report.parameters.start_time) == 'undefined' || typeof (report.parameters.start_time.value) == 'undefined'
-	    || report.parameters.start_time.value == '') {
-	cb(null);
-	return;
-    }
-    if (typeof (report.parameters.end_time) == 'undefined' || typeof (report.parameters.end_time.value) == 'undefined'
-	    || report.parameters.end_time.value == '') {
-	cb(null);
-	return;
-    }
-    var data = new Array();
-    data.timezoneoffset = report.timezoneoffset;
-    var start_datetime = new Date(report.parameters.start_time.value);
-    var start_label = report.parameters.start_time.locale_label[report.locale];
-    var end_datetime = new Date(report.parameters.end_time.value);
-    var end_label = report.parameters.end_time.locale_label[report.locale];
-    var system_name = report.system_name;
-    
-    var header = new Object();
-    header.url =  '/reports/title/' + report.title.logo;
-    
-    if (report.id == 1) { // / TYPE Alarm History Report
 
-	var line = [];
-	line.push(system_name);
-	line.push(report.name.locale_label[report.locale]);
-	line.push(start_label + ': ' + toClientDateTimeString(start_datetime, report.timezoneoffset));
-	line.push(end_label + ': ' + toClientDateTimeString(end_datetime, report.timezoneoffset));
-
-	var fault_type = null;
-	if (typeof (report.parameters.fault_type.text) != 'undefined') {
-	    line.push(report.parameters.fault_type.locale_label[report.locale] + ': ' + report.parameters.fault_type.text);
-	    fault_type = report.parameters.fault_type.value;
-	}
-
-	var eqp_ID = null;
-	if (typeof (report.parameters.eqp_id.text) != 'undefined') {
-	    line.push(report.parameters.eqp_id.locale_label[report.locale] + ': ' + report.parameters.eqp_id.text);
-	    eqp_ID = report.parameters.eqp_id.value;
-	}
-	var dev_ID = null;
-	if (typeof (report.parameters.dev_id.text) != 'undefined') {
-	    line.push(report.parameters.dev_id.locale_label[report.locale] + ': ' + report.parameters.dev_id.text);
-	    dev_ID = report.parameters.dev_id.value;
-	}
-	header.line = line;
-
-	data.header = header;
-	data.css = "isystemsnowreports.css";
-	data.landscape = false;
-
-	addAlarmFaultHistory(start_datetime, end_datetime, fault_type, eqp_ID, dev_ID, report.locale, report.timezoneoffset, function(section) {
-	    if (section != null) {
-		data[data.length] = section;
-	    }
-	    cb(data);
-	});
-
-    } // END OF REPORT 1
-
-    else if (report.id == 2) { //Equipment Summary
-
-	
-	var line = [];
-	line.push(system_name);
-	line.push(report.name.locale_label[report.locale]);
-	line.push(start_label + ': ' + toClientDateTimeString(start_datetime, report.timezoneoffset));
-	line.push(end_label + ': ' + toClientDateTimeString(end_datetime, report.timezoneoffset));
-
-	var eqp_ID = null;
-	if (typeof (report.parameters.eqp_id.text) != 'undefined') {
-	    line.push(report.parameters.eqp_id.locale_label[report.locale] + ': ' + report.parameters.eqp_id.text);
-	    eqp_ID = report.parameters.eqp_id.value;
-	}
-
-	var dev_ID = null;
-	if (typeof (report.parameters.dev_id.text) != 'undefined') {
-	    line.push(report.parameters.dev_id.locale_label[report.locale] + ': ' + report.parameters.dev_id.text);
-	    dev_ID = report.parameters.dev_id.value;
-	}
-
-	if (typeof (report.parameters.sections) == 'undefined' || typeof (report.parameters.sections.checkboxes) == 'undefined') {
-	    cb(null);
-	    return;
-	}
-	header.line = line;
-
-	data.header = header;
-	data.css = "isystemsnowreports.css";
-	data.landscape = false;
-	// var report2query = function(){/*STRING*/}.toString().slice(14,-3);
-	addTrackingPhotoEyes(parseInt(report.parameters.sections.checkboxes.tracking_photo_eyes.value), start_datetime, end_datetime, eqp_ID, dev_ID,
-		report.locale, report.timezoneoffset, function(section) {
-		    if (section != null) {
-			data[data.length] = section;
-		    }
-
-		    addJamPhotoEyes(parseInt(report.parameters.sections.checkboxes.jam_photo_eyes.value), start_datetime, end_datetime, eqp_ID, dev_ID,
-			    report.locale, report.timezoneoffset, function(section) {
-				if (section != null) {
-				    data[data.length] = section;
-				}
-
-				addDiverterCounts(parseInt(report.parameters.sections.checkboxes.diverters.value), start_datetime, end_datetime, eqp_ID,
-					dev_ID, report.locale, report.timezoneoffset, function(section) {
-					    if (section != null) {
-						data[data.length] = section;
-					    }
-					    cb(data);
-					});
-			    });
-		});
-    } else if (report.id == 3) { // Equipment Interval
-
-	
-	var line = [];
-	line.push(system_name);
-	line.push(report.name.locale_label[report.locale]);
-	line.push(start_label + ': ' + toClientDateTimeString(start_datetime, report.timezoneoffset));
-	line.push(end_label + ': ' + toClientDateTimeString(end_datetime, report.timezoneoffset));
-
-	var eqp_ID = null;
-	if (typeof (report.parameters.eqp_id.text) != 'undefined') {
-	    line.push(report.parameters.eqp_id.locale_label[report.locale] + ': ' + report.parameters.eqp_id.text);
-	    eqp_ID = report.parameters.eqp_id.value;
-	}
-
-	var dev_ID = null;
-	if (typeof (report.parameters.dev_id.text) != 'undefined') {
-	    line.push(report.parameters.dev_id.locale_label[report.locale] + ': ' + report.parameters.dev_id.text);
-	    dev_ID = report.parameters.dev_id.value;
-	}
-	var interval = 900;
-	if (typeof (report.parameters.interval) != 'undefined') {
-	    interval = report.parameters.interval.value;
-	}
-
-	if (typeof (report.parameters.sections) == 'undefined' || typeof (report.parameters.sections.checkboxes) == 'undefined') {
-	    cb(null);
-	    return;
-	}
-	header.line = line;
-
-	data.header = header;
-	data.css = "isystemsnowreports.css";
-	data.landscape = false;
-	// var report2query = function(){/*STRING*/}.toString().slice(14,-3);
-	addIntervalTrackingPhotoEyes(parseInt(report.parameters.sections.checkboxes.tracking_photo_eyes.value), start_datetime, end_datetime, eqp_ID, dev_ID,
-		interval, report.locale, report.timezoneoffset, function(section) {
-		    if (section != null) {
-			data[data.length] = section;
-		    }
-
-		    addIntervalJamPhotoEyes(parseInt(report.parameters.sections.checkboxes.jam_photo_eyes.value), start_datetime, end_datetime, eqp_ID, dev_ID,
-			    interval, report.locale, report.timezoneoffset, function(section) {
-				if (section != null) {
-				    data[data.length] = section;
-				}
-
-				addDiverterCounts(parseInt(report.parameters.sections.checkboxes.diverters.value), start_datetime, end_datetime, eqp_ID,
-					dev_ID, report.locale, report.timezoneoffset, function(section) {
-					    if (section != null) {
-						data[data.length] = section;
-					    }
-					    cb(data);
-					});
-			    });
-		});
-    } else if (report.id == 4) { // Bag Search
-
-	
-	var line = [];
-	line.push(system_name);
-	line.push(report.name.locale_label[report.locale]);
-	line.push(start_label + ': ' + toClientDateTimeString(start_datetime, report.timezoneoffset));
-	line.push(end_label + ': ' + toClientDateTimeString(end_datetime, report.timezoneoffset));
-
-	var search = null;
-	if (typeof (report.parameters.search_field.value) != 'undefined' && report.parameters.search_field.value != '') {
-	    line.push(report.parameters.search_field.locale_label[report.locale] + ': ' + report.parameters.search_field.value);
-	    search = parseInt(report.parameters.search_field.value);
-	    if (isNaN(search)) {
-		search = null;
-	    }
-	}
-
-	header.line = line;
-
-	if (phantom_bool) {
-	    data.header = header;
-	}
-
-	data.css = "isystemsnowreports.css";
-	data.landscape = false;
-
-	Database.dataSproc("BHS_REPORTS_SearchBags", [ start_datetime.toISOString(), end_datetime.toISOString(), search ], function(err, bags) {
-	    if (err) {
-		cb(data);
-		return;
-	    }
-	    bags = bags[0];
-	    if (bags.length < 1) {
-		cb(data);
-		return;
-	    }
-	    var section = new Object();
-	    section.startrow = true;
-	    section.endrow = true;
-
-	    section.data = new Array();
-	    section.data.topborder = true;
-	    section.data.bottomborder = true;
-	    section.data.spantype = 'row-fluid';
-	    section.data.toprowtableheader = false;
-	    section.data.searchenabled = false;
-	    section.data.bagsearch = true;
-
-	    for (var i = 0; i < bags.length; i++) {
-		section.data[i] = new Object();
-		var k = 0;
-		for ( var key in bags[i]) {
-		    if (bags[i].hasOwnProperty(key)) {
-			section.data[i][key] = bags[i][key];
-		    }
-		}
-	    }
-	    data[0] = section;
-	    cb(data);
-
-	});
-
-    }else if(report.id == 5) { // Throughput Interval Report
-
-	
-	var line = [];
-	line.push(system_name);
-	line.push(report.name.locale_label[report.locale]);
-	line.push(start_label + ': ' + toClientDateTimeString(start_datetime, report.timezoneoffset));
-	line.push(end_label + ': ' + toClientDateTimeString(end_datetime, report.timezoneoffset));
-
-	var interval = 900;
-	if (typeof (report.parameters.interval) != 'undefined') {
-	    interval = report.parameters.interval.value;
-	}
-	header.line = line;
-
-	//if (phantom_bool) {
-	    data.header = header;
-	//}
-	data.css = "isystemsnowreports.css";
-	data.landscape = false;
-	var outThroughput = '@out' + Math.floor((Math.random() * 1000000) + 1);
-	Database.dataSproc("BHS_REPORTS_ThroughputIntervalReport", [ start_datetime.toISOString(), end_datetime.toISOString(), interval, outThroughput ], function(err, throughputs) {
-	    if (err) {
-		cb(data);
-		return;
-	    }
-	    
-	    var jsonData = JSON.parse(throughputs[1][outThroughput]);
-	    throughputs = throughputs[0];
-	    if (throughputs.length < 1) {
-		cb(data);
-		return;
-	    }
-	    var section = new Object();
-	    section.startrow = true;
-	    section.endrow = true;
-
-	    section.data = new Array();
-	    section.data.topborder = true;
-	    section.data.bottomborder = true;
-	    section.data.spantype = 'row-fluid';
-	    section.data.toprowtableheader = true;
-	    section.data.searchenabled = false;
-	    section.data.bagsearch = false;
-	    section.data.sorting = false;
-	    
-	    section.data[0] = new Array();
-	    
-	    // Makes Headings
-	    for (var i = 0; i < jsonData.columns.length; i++) {
-		section.data[0][i] = new Object();
-		section.data[0][i].val = jsonData.columns[i].locale[report.locale];
-		section.data[0][i].bold = true;
-		section.data[0][i].bordertop = false;
-		section.data[0][i].width = jsonData.columns[i].width;
-		section.data[0][i].lastrow = jsonData.columns[i].lastrow;
-		section.data[0][i].hidden = jsonData.columns[i].hidden;
-	    }
-		// Fills Data
-	    data[data.length] = addSectionData(section, throughputs, report.timezoneoffset, jsonData);
-
-	    cb(data);
-
-	});
-
-    }else if(report.id == 6) { // Executive Summary Report
-	
-	var line = [];
-	line.push(system_name);
-	line.push(report.name.locale_label[report.locale]);
-	line.push(start_label + ': ' + toClientDateTimeString(start_datetime, report.timezoneoffset));
-	line.push(end_label + ': ' + toClientDateTimeString(end_datetime, report.timezoneoffset));
-	header.line = line;
-	
-	//if (phantom_bool) {
-	    data.header = header;
-	//}
-	data.css = "isystemsnowreports.css";
-	data.landscape = false;
-	
-	async.series([
-	function(callback){
-	    var outThroughput = '@out' + Math.floor((Math.random() * 1000000) + 1);
-	    Database.dataSproc("BHS_REPORTS_ExecutiveSummaryThroughput", [start_datetime.toISOString(), end_datetime.toISOString(), outThroughput],function(err,resultThroughputs){
-		    if (err) {
-			callback(err);
-			return;
-		    }
-		    var jsonData = JSON.parse(resultThroughputs[1][outThroughput]);
-		    resultThroughputs = resultThroughputs[0];
-		    
-		    var foundinput = false;
-		    var foundoutput = false;
-		    for(var i=0;i<resultThroughputs.length;i++){
-		    	if(resultThroughputs[i].count == "INPUT THROUGHPUT COUNT"){
-		    		foundinput = true;
-		    	}
-		    	if(resultThroughputs[i].count == "OUTPUT THROUGHPUT COUNT"){
-		    		foundoutput = true;
-		    	}
-		    }
-		    if(!foundinput){
-		    	resultThroughputs.splice(0,0,{count:"INPUT THROUGHPUT COUNT",throughput:0});
-		    }
-		    if(!foundoutput){
-		    	resultThroughputs.splice(1,0,{count:"OUTPUT THROUGHPUT COUNT",throughput:0});
-		    }
-		    
-		    if (resultThroughputs.length > 0) {
-			
-			var section = new Object();
-			section.startrow = true;
-			section.endrow = true;
-
-			section.groupheading = new Array();
-			section.groupheading.spantype = 'row-fluid';
-
-			section.groupheading[0] = new Array();
-			section.groupheading[0][0] = new Object();
-			section.groupheading[0][0].val = 'System Throughput';
-			section.groupheading[0][0].bold = true;
-
-			section.data = new Array();
-			section.data.topborder = true;
-			section.data.bottomborder = true;
-			section.data.spantype = 'span6';
-			section.data.toprowtableheader = true;
-			section.data.searchenabled = false;
-			section.data.sorting = false;
-
-			section.data[0] = new Array();
-
-			// Makes Headings
-			for (var i = 0; i < jsonData.columns.length; i++) {
-			    section.data[0][i] = new Object();
-			    section.data[0][i].val = jsonData.columns[i].locale[report.locale];
-			    section.data[0][i].bold = true;
-			    section.data[0][i].bordertop = false;
-			    section.data[0][i].width = jsonData.columns[i].width;
-			    section.data[0][i].lastrow = jsonData.columns[i].lastrow;
-			    section.data[0][i].hidden = jsonData.columns[i].hidden;
-			}
-			// Fills Data
-			data[data.length] = addSectionData(section, resultThroughputs, report.timezoneoffset, jsonData);
-		    }
-		    callback(null);
-		}); 
-	},
-	function(callback){
-	    var outFaults = '@out' + Math.floor((Math.random() * 1000000) + 1);
-	    Database.dataSproc("BHS_REPORTS_ExecutiveSummaryFaults", [start_datetime.toISOString(), end_datetime.toISOString(), outFaults],function(err,resultFaults){
-		    if (err) {
-			callback(err);
-			return;
-		    }
-		    resultFaults = resultFaults[0];
-
-		    if (resultFaults.length > 0) {
-			
-			var section = new Object();
-			section.startrow = true;
-			section.endrow = false;
-
-			section.groupheading = new Array();
-			section.groupheading.spantype = 'row-fluid';
-
-			section.groupheading[0] = new Array();
-			section.groupheading[0][0] = new Object();
-			section.groupheading[0][0].val = 'System Faults';
-			section.groupheading[0][0].bold = true;
-
-			section.data = new Array();
-			section.data.topborder = true;
-			section.data.bottomborder = true;
-			section.data.spantype = 'span5';
-			section.data.toprowtableheader = false;
-			section.data.searchenabled = false;
-			section.data.sorting = false;
-
-			section.data[0] = new Array();
-			section.data[0][0] = new Object();
-			section.data[0][0].val = '';
-			section.data[0][0].width='75'
-			section.data[0][1] = new Object();
-			section.data[0][1].val = '';
-			section.data[0][1].width='25'
-			
-			// Fills Data
-			section.data[1] = new Array();
-			section.data[1][0] = new Object();
-			section.data[1][0].val = 'Jams';
-			section.data[1][0].bold = false;
-			section.data[1][0].bordertop = false;
-			section.data[1][1] = new Object();
-			section.data[1][1].val = resultFaults[0]['jams'];
-			section.data[1][1].bold = false;
-			section.data[1][1].bordertop = false;
-
-			section.data[2] = new Array();
-			section.data[2][0] = new Object();
-			section.data[2][0].val = 'E-Stop';
-			section.data[2][0].bold = false;
-			section.data[2][0].bordertop = false;
-			section.data[2][1] = new Object();
-			section.data[2][1].val = resultFaults[0]['e_stop'];
-			section.data[2][1].bold = false;
-			section.data[2][1].bordertop = false;
-
-			section.data[3] = new Array();
-			section.data[3][0] = new Object();
-			section.data[3][0].val = 'Motor Faults';
-			section.data[3][0].bold = false;
-			section.data[3][0].bordertop = false;
-			section.data[3][1] = new Object();
-			section.data[3][1].val = resultFaults[0]['motor_faults'];
-			section.data[3][1].bold = false;
-			section.data[3][1].bordertop = false;
-			
-			section.data[4] = new Array();
-			section.data[4][0] = new Object();
-			section.data[4][0].val = 'Motor Disconnect';
-			section.data[4][0].bold = false;
-			section.data[4][0].bordertop = false;
-			section.data[4][1] = new Object();
-			section.data[4][1].val = resultFaults[0]['motor_disconnect'];
-			section.data[4][1].bold = false;
-			section.data[4][1].bordertop = false;
-			
-			
-			data[data.length] = section;
-		    }
-		    callback(null);
-		}); 
-	},
-	function(callback){
-	    var outFaults = '@out' + Math.floor((Math.random() * 1000000) + 1);
-	    Database.dataSproc("BHS_REPORTS_ExecutiveSummaryDowntime", [start_datetime.toISOString(), end_datetime.toISOString(), outFaults],function(err,resultFaults){
-		    if (err) {
-			callback(err);
-			return;
-		    }
-		    resultFaults = resultFaults[0];
-
-		    if (resultFaults.length > 0) {
-			
-			var section = new Object();
-			section.startrow = false;
-			section.endrow = true;
-
-
-			section.data = new Array();
-			section.data.topborder = true;
-			section.data.bottomborder = true;
-			section.data.spantype = 'span5 offset1';
-			section.data.toprowtableheader = false;
-			section.data.searchenabled = false;
-			section.data.sorting = false;
-
-			section.data[0] = new Array();
-			section.data[0][0] = new Object();
-			section.data[0][0].val = '';
-			section.data[0][0].width='75'
-			section.data[0][1] = new Object();
-			section.data[0][1].val = '';
-			section.data[0][1].width='25'
-			
-			// Fills Data
-			section.data[1] = new Array();
-			section.data[1][0] = new Object();
-			section.data[1][0].val = 'Jams Downtime';
-			section.data[1][0].bold = false;
-			section.data[1][0].bordertop = false;
-			section.data[1][1] = new Object();
-			section.data[1][1].val = secondsToString(parseInt(resultFaults[0]['jams_downtime']));
-			section.data[1][1].bold = false;
-			section.data[1][1].bordertop = false;
-
-			section.data[2] = new Array();
-			section.data[2][0] = new Object();
-			section.data[2][0].val = 'E-Stop Downtime';
-			section.data[2][0].bold = false;
-			section.data[2][0].bordertop = false;
-			section.data[2][1] = new Object();
-			section.data[2][1].val = secondsToString(parseInt(resultFaults[0]['estop_downtime']));
-			section.data[2][1].bold = false;
-			section.data[2][1].bordertop = false;
-
-			section.data[3] = new Array();
-			section.data[3][0] = new Object();
-			section.data[3][0].val = 'Motor Faults Downtime';
-			section.data[3][0].bold = false;
-			section.data[3][0].bordertop = false;
-			section.data[3][1] = new Object();
-			section.data[3][1].val = secondsToString(parseInt(resultFaults[0]['motor_faults_downtime']));
-			section.data[3][1].bold = false;
-			section.data[3][1].bordertop = false;
-			
-			section.data[4] = new Array();
-			section.data[4][0] = new Object();
-			section.data[4][0].val = 'Motor Disconnect Downtime';
-			section.data[4][0].bold = false;
-			section.data[4][0].bordertop = false;
-			section.data[4][1] = new Object();
-			section.data[4][1].val = secondsToString(parseInt(resultFaults[0]['motor_disconnect_downtime']));
-			section.data[4][1].bold = false;
-			section.data[4][1].bordertop = false;
-			
-			data[data.length] = section;
-			
-			var section = new Object();
-			section.startrow = true;
-			section.endrow = true;
-
-			section.groupheading = new Array();
-			section.groupheading.spantype = 'row-fluid';
-
-			section.groupheading[0] = new Array();
-			section.groupheading[0][0] = new Object();
-			section.groupheading[0][0].val = 'System Availability';
-			section.groupheading[0][0].bold = true;
-
-			section.data = new Array();
-			section.data.topborder = true;
-			section.data.bottomborder = true;
-			section.data.spantype = 'span6';
-			section.data.toprowtableheader = false;
-			section.data.searchenabled = false;
-			section.data.sorting = false;
-
-			section.data[0] = new Array();
-			section.data[0][0] = new Object();
-			section.data[0][0].val = '';
-			section.data[0][0].width='75'
-			section.data[0][1] = new Object();
-			section.data[0][1].val = '';
-			section.data[0][1].width='25'
-			
-
-			section.data[1] = new Array();
-			section.data[1][0] = new Object();
-			section.data[1][0].val = 'System Downtime';
-			section.data[1][0].bold = false;
-			section.data[1][0].bordertop = false;
-			section.data[1][1] = new Object();
-			section.data[1][1].val = secondsToString(parseInt(resultFaults[0]['system_downtime']));
-			section.data[1][1].bold = false;
-			section.data[1][1].bordertop = false;
-			
-			section.data[2] = new Array();
-			section.data[2][0] = new Object();
-			section.data[2][0].val = 'System Availabilitiy';
-			section.data[2][0].bold = false;
-			section.data[2][0].bordertop = false;
-			section.data[2][1] = new Object();
-			section.data[2][1].val = parseFloat(resultFaults[0]['system_availability']).toFixed(2)+'%';
-			section.data[2][1].bold = false;
-			section.data[2][1].bordertop = false;
-		
-			data[data.length] = section;
-		    }
-		    callback(null);
-		}); 
-	}],	
-	function(err,results){
-	    cb(data);
-	});
-	
-	
-    }
-}
 
 function addAlarmFaultHistory(start_datetime, end_datetime, fault_type, eqp_ID, dev_ID, locale, timezoneoffset, cb) {
 

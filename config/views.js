@@ -57,13 +57,13 @@ module.exports.views = {
 	    desktop:'/img/BHS-Now-MHK-Logo-Desktop.png',
 	    mobile:'/img/BHS-Now-MHK-Logo-Mobile.png'
 	},
-	messaging : true,
+	messaging : false,
 	search:{
-	    enabled:true,
+	    enabled:false,
 	    url:'/search'
 	},
-	i18nEnabled:true,
-	alertDuration:300,
+	i18nEnabled:false,
+	alertDuration:500,
 	navpages : {
 	    '/dashboard':{
 		enabled:false,

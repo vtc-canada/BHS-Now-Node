@@ -1,7 +1,9 @@
-DROP PROCEDURE if EXISTS `BHS_REPORTS_EquipmentIntervalSummaryReportJamPE` ;
+USE `bhs_scada_mhk`;
+DROP procedure IF EXISTS `BHS_REPORTS_EquipmentIntervalSummaryReportJamPE`;
 
 DELIMITER $$
-CREATE PROCEDURE `BHS_REPORTS_EquipmentIntervalSummaryReportJamPE`(IN `startTime` DATETIME, 
+USE `bhs_scada_mhk`$$
+CREATE DEFINER=`root`@`%` PROCEDURE `BHS_REPORTS_EquipmentIntervalSummaryReportJamPE`(IN `startTime` DATETIME, 
 	IN `endTime` DATETIME, 
 	IN `eqpID` INT(11), 
 	IN `devID` INT(11), 
@@ -45,7 +47,9 @@ INSERT INTO bags_count(dev_ID, device, total_bags_counts, `interval`)
 SELECT cfg_dev_id.id AS dev_ID 
 		,cfg_dev_id.name AS device	
 		,IF(SUM(cur_counts_history.value) IS NULL,0,SUM(cur_counts_history.value)) AS total_bags_counts
-		,FROM_UNIXTIME(FLOOR(UNIX_TIMESTAMP(cur_counts_history.timestamp)/intervalTime)*intervalTime) as 'interval'
+		#,FROM_UNIXTIME(FLOOR(UNIX_TIMESTAMP(cur_counts_history.timestamp)/intervalTime)*intervalTime) as 'interval'
+		#,startTime +  (  FLOOR((cur_counts_history.timestamp - startTime)/intervalTime)*intervalTime) as 'interval'
+		,Date_ADD(startTime,INTERVAL (FLOOR((TIMEDIFF(cur_counts_history.timestamp,@startTime))/@intervalTime)*@intervalTime) SECOND) as 'interval'
 	FROM cfg_dev_id
 	INNER JOIN cfg_tag_id ON (cfg_tag_id.dev_ID = cfg_dev_id.id)
 	INNER JOIN cfg_count_id ON cfg_count_id.id = cfg_tag_id.count_ID 
@@ -54,7 +58,9 @@ SELECT cfg_dev_id.id AS dev_ID
 	WHERE cfg_dev_id.type = 11 
 		AND (devID is NULL OR cfg_dev_id.id = devID )
 		AND (eqpID IS NULL OR cfg_dev_id.eqp_ID = eqpID)
-	GROUP BY FROM_UNIXTIME(FLOOR(UNIX_TIMESTAMP(cur_counts_history.timestamp)/intervalTime)*intervalTime),cfg_dev_id.id;
+	GROUP BY 
+		Date_ADD(startTime,INTERVAL (FLOOR((TIMEDIFF(cur_counts_history.timestamp,@startTime))/@intervalTime)*@intervalTime) SECOND),cfg_dev_id.id;
+ 
 
 #Create temporary table to contain the jam count for the time range
 DROP TEMPORARY TABLE if EXISTS jam_counts;
@@ -70,7 +76,8 @@ INSERT INTO jam_counts(dev_ID, device, jams, `interval`)
 SELECT cfg_dev_id.id AS dev_ID 
 		,cfg_dev_id.name AS device	
 		,IF(SUM(cur_counts_history.value) IS NULL,0,SUM(cur_counts_history.value)) AS jams
-		,FROM_UNIXTIME(FLOOR(UNIX_TIMESTAMP(cur_counts_history.timestamp)/intervalTime)*intervalTime) as 'Interval'
+		,Date_ADD(startTime,INTERVAL (FLOOR((TIMEDIFF(cur_counts_history.timestamp,@startTime))/@intervalTime)*@intervalTime) SECOND) as 'Interval'
+		#,FROM_UNIXTIME(FLOOR(UNIX_TIMESTAMP(cur_counts_history.timestamp)/intervalTime)*intervalTime) as 'Interval'
 	FROM cfg_dev_id
 	INNER JOIN cfg_tag_id ON (cfg_tag_id.dev_ID = cfg_dev_id.id)
 	INNER JOIN cur_counts_history ON (cur_counts_history.count_ID = cfg_tag_id.count_ID AND cfg_tag_id.alarm_type = 11
@@ -78,7 +85,9 @@ SELECT cfg_dev_id.id AS dev_ID
 	WHERE cfg_dev_id.type = 11 
 		AND (devID is NULL OR cfg_dev_id.id = devID )
 		AND (eqpID IS NULL OR cfg_dev_id.eqp_ID = eqpID)
-	GROUP BY FROM_UNIXTIME(FLOOR(UNIX_TIMESTAMP(cur_counts_history.timestamp)/intervalTime)*intervalTime) ,cfg_dev_id.id;
+	GROUP BY 
+		Date_ADD(startTime,INTERVAL (FLOOR((TIMEDIFF(cur_counts_history.timestamp,@startTime))/@intervalTime)*@intervalTime) SECOND),cfg_dev_id.id;
+#FROM_UNIXTIME(FLOOR(UNIX_TIMESTAMP(cur_counts_history.timestamp)/intervalTime)*intervalTime) ,cfg_dev_id.id;
 
 #Joining results with entire time range
 SELECT DISTINCT devices.dev_ID
@@ -99,4 +108,6 @@ SET locale = '{"columns":[
 			{"width":"25","locale":{"en":"Total","es":"Total"},"lastrow":{"type":"max","bold":true,"bordertop":true,"decimalplaces":2}}
 		]}';
 END$$
+
 DELIMITER ;
+
