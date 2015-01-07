@@ -21,7 +21,7 @@ LEFT JOIN cur_contact_company_mapping ON (cur_contact_company_mapping.cur_compan
 LEFT JOIN cur_contacts ON (cur_contact_company_mapping.cur_contacts_id = cur_contacts.id)
 LEFT JOIN cur_address ON (cur_address.id = mapping.cur_address_id)
 WHERE (cur_contacts.id = contactID OR contactID IS NULL)
-	AND (companySearchTerms IS NULL OR MATCH(cur_company.name) AGAINST (companySearchTerms IN BOOLEAN MODE))
+	AND (companySearchTerms IS NULL OR MATCH(cur_company.name, cur_company.phone_number) AGAINST (companySearchTerms IN BOOLEAN MODE))
 	AND (CASE WHEN cur_contacts.id IS NOT NULL AND contactID IS NOT NULL THEN cur_contacts.is_deleted = 0 ELSE 1 END)
 	AND cur_company.is_deleted = 0
 ORDER BY cur_company.name

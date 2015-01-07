@@ -608,7 +608,9 @@ input.segment-form-radio{
 	line-height: 30px;
 	text-align: left;
 }
-
+.constrain-btn{
+	width:9px;
+}
 div.tableheader{
 	border-bottom: 1px solid #828282;
 	line-height: 30px;
@@ -1035,7 +1037,9 @@ div.language-flag.chile{
 #cancel_edit_contact{
 	margin-right:8px;	
 }
-
+#cancel_edit_company{
+	margin-right:8px;
+}
 .edit-contact-pane-template-wrapper{
 	position:absolute;
 	bottom:0px;
@@ -1043,6 +1047,26 @@ div.language-flag.chile{
 	overflow-y: auto;
 	padding: 3%;
 	width: 94%;
+}
+
+#addContactModal .combobox-container {
+	max-width:50%;	
+	margin-left: 38px;
+}
+
+#addContactModal .combobox-container .contactscombobox {
+	max-width:75%;
+}
+
+#addContactModal .combobox-container .companiescombobox {
+	max-width:75%;
+}
+
+#addContactModal .building-contact-wrapper{
+	padding-left:3%;
+	padding-right:3%;
+	width:94%;
+	padding-bottom:8px;	
 }
 
 .edit-company-pane-template-wrapper{
@@ -1294,6 +1318,9 @@ cursor: default;
     }
     .company-div{
 		line-height: 20px;
+	}
+	.edit-building-contact{
+		margin:10px;	
 	}
 	
 	.delete-company-mapping{

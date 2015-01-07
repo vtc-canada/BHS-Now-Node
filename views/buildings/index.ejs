@@ -810,6 +810,7 @@
 			        <select class="contactscombobox">
 					  <option></option>
 					</select>
+					<div class="btn constrain-btn"><i class="icon-lock"></i></div>
 					<div class="pull-right">
 						<button class="btn btn-success" id="create_new_contact">Create Contact</button>
 					</div>
@@ -830,6 +831,7 @@
 			        <select class="companiescombobox">
 					  <option></option>
 					</select>
+					<div class="btn constrain-btn"><i class="icon-lock"></i></div>
 					<div class="pull-right">
 						<button class="btn btn-success" id="create_new_company">Create Company</button>
 					</div>
@@ -841,10 +843,6 @@
         	
 		</div>
         
-		<div class="row-fluid constrain-contact-checkbox-wrapper">
-			<input type="checkbox" id="constrain_contact_checkbox" checked="checked">
-			<label for="constrain_contact_checkbox" id="constrain_contact_checkbox_label">Constrain to Contact Company Mappings</label>
-		</div>
     </div>
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal" id="canceladdbuildingcontact" aria-hidden="true"><%= translate[locale]['Cancel'] %></button>
@@ -880,8 +878,8 @@
 
 <script type="text/template" id="edit-contact-pane-template">
 	<div class="row-fluid edit-contact-pane-template-wrapper" style="cursor:default;" id="contact_ajax_contact_id" contact_id="{{=contact_id}}">
-	
-		<h4>
+		<br/>
+		<h4 style="margin-top:0px;">
 			Modify Contact
 		</h4>
 		<div class="row-fluid building-segment-wrapper">
@@ -942,7 +940,7 @@
 				<button class="btn btn-primary" id="save_edit_contact">Save</button>
 			</div>
 		</div>
-		<div class="row-fluid">
+		<div class="row-fluid" style="margin-top:10px;">
 			* Changes will take effect immediately when you click Save.
 		</div>
 		
@@ -951,7 +949,8 @@
 
 <script type="text/template" id="edit-company-pane-template">
 	<div class="row-fluid edit-company-pane-template-wrapper" style="cursor:default;" id="company_ajax_company_id" company_id="{{=company_id}}">
-		<h4>
+		<br/>
+		<h4 style="margin-top:0px;">
 			Modify Company
 		</h4>
 		<div class="row-fluid building-segment-wrapper">
@@ -1005,10 +1004,10 @@
 		<div class="row-fluid">
 			<div class="pull-right">
 				<button class="btn" id="cancel_edit_company">Cancel</button>
-				<button class="btn btn-success" id="save_edit_company">Save</button>
+				<button class="btn btn-primary" id="save_edit_company">Save</button>
 			</div>
 		</div>
-		<div class="row-fluid">
+		<div class="row-fluid" style="margin-top:10px;">
 			* Changes will take effect immediately when you click Save.
 		</div>
 	</div>
@@ -4826,6 +4825,14 @@
 	        			}
         				doEditCompanyDetails(newCompany);
     				});
+    				
+    				$('.constrain-btn').click(function(){
+    					if($(this).find('i').hasClass('icon-lock')){
+    						$('.constrain-btn i').removeClass('icon-lock').addClass('icon-unlock');
+    					}else{
+    						$('.constrain-btn i').removeClass('icon-unlock').addClass('icon-lock');
+    					}
+    				});
 		        }else{
 					//if(typeof(editBuildingContact)=='undefined'||editBuildingContact.contact_id==null){
 		        	//newContact=null;
@@ -5096,7 +5103,7 @@
 	    function updateContactsCombobox(){
     		clearTimeout(contactssearchtimer);
     		contactssearchtimer = setTimeout(function(){
-    			socket.get('/buildings/getcontactsbycompanyid',{search:curcontactsval,companyId:$('#constrain_contact_checkbox').is(':checked')?(newCompany==null?null:newCompany.company_id):null},function(res){
+    			socket.get('/buildings/getcontactsbycompanyid',{search:curcontactsval,companyId:$('.constrain-btn i').hasClass('icon-lock')?(newCompany==null?null:newCompany.company_id):null},function(res){
     				var tempval = $('input.contactscombobox').val();
         			$('select.contactscombobox').empty();
 		        	for(var i=0;i<res.length;i++){
@@ -5125,7 +5132,7 @@
 	    function updateCompaniesCombobox(){
 	    	clearTimeout(contactssearchtimer);
     		contactssearchtimer = setTimeout(function(){		        	
-    			socket.get('/buildings/getcompaniesbycontactid',{search:curcompaniesval,contactId:$('#constrain_contact_checkbox').is(':checked')?(newContact==null?null:newContact.contact_id):null},function(res){
+    			socket.get('/buildings/getcompaniesbycontactid',{search:curcompaniesval,contactId:$('.constrain-btn i').hasClass('icon-lock')?(newContact==null?null:newContact.contact_id):null},function(res){
         			var tempval = $('input.companiescombobox').val();
         			$('select.companiescombobox').empty();
 		        	for(var i=0;i<res.length;i++){
@@ -5557,7 +5564,7 @@
 	        	}
 	        	
 	        	var tcollection = this.collection.sortBy(function(sales){
-	                return sales.get("sale_date").toString().toUpperCase();
+	                return sales.get("sale_date")==null?null:sales.get("sale_date").toString().toUpperCase();
 	            });
 	            for(var i=0; i<tcollection.length; i++)
 	            {
@@ -5565,7 +5572,7 @@
 	            		tcollection[i].set('selected',true);
 						$('#delete_building').css('display','none')
 	            	}
-	            	tcollection[i].set('sale_datestring',new Date(tcollection[i].get('sale_date')).toDateString());
+	            	tcollection[i].set('sale_datestring',tcollection[i].get('sale_date')==null?null:(new Date(tcollection[i].get('sale_date')).toDateString()));
 	            	tcollection[i].set('formatted_sale_price','$'+commaSeparateNumber(tcollection[i].get('sale_price')));
                 	$(this.el).prepend(this.template(tcollection[i].toJSON()));
 	            }
