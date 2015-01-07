@@ -35,12 +35,12 @@
 <!-- print report Modal -->
 <div id="printModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">Ã—</button>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="myModalLabel">Print Report</h3>
     </div>
     <div class="row-fluid" style="padding: 15px; padding-bottom:0px;"><p>Please choose a printer:</p></div>
     <div class="modal-body" style="padding-top: 8px;">
-        <p>One fine bodyâ€¦</p>
+        <p>One fine body…</p>
     </div>
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
@@ -51,12 +51,12 @@
 <!-- save report Modal -->
 <div id="saveModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">Ã—</button>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="myModalLabelsave">Save Report</h3>
     </div>
     <div class="row-fluid" style="padding: 15px; padding-bottom:0px;"><p>Please choose which format you would like to save your report as:</p></div>
     <div class="modal-body" style="padding-top: 8px;">
-        <p>One fine bodyâ€¦</p>
+        <p>One fine body…</p>
     </div>
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
@@ -70,7 +70,7 @@
          <div class="row-fluid">
              <div id="reportheader" class="span12 iframe-header report-heading-pad">
                  <span id="report-header-name"><%= __('Report Header') %></span>
-                 <!-- <a href="#printModal" role="button" data-toggle="modal" id="promptprint" class="pull-right btn btn-primary" style="display:none; font-weight:400; margin-right:10px;">Print&nbsp<i class="icon icon-print"></i></a> -->
+                 <!--<a href="#printModal" role="button" data-toggle="modal" id="promptprint" class="pull-right btn btn-primary" style="display:none; font-weight:400; margin-right:10px;">Print&nbsp<i class="icon icon-print"></i></a>-->
                  <a href="#saveModal" role="button" data-toggle="modal" id="savemodalbtn" class="pull-right btn btn-primary" style="display:none; font-weight:400; margin-right:10px;">Save&nbsp<i class="icon icon-save"></i></a>
              </div>
              <div id="iframediv" style="visibility:hidden;" class=" row-span12" src=""></div>
@@ -84,7 +84,7 @@
     
     var reportsets={};
 	reportsets['eqp_ids']= <%- typeof(eqp_ids)=='undefined'?'[]':JSON.stringify(eqp_ids) %>;
-    reportsets['intervals'] = [{id:86400,name:'<%=__('1 Day')%>'},{id:14400,name:'<%=__('4 Hour')%>'},{id:3600,name:'<%=__('1 Hour')%>'},{id:1800,name:'<%=__('30 Minutes')%>'},{id:900,name:'<%=__('15 Minutes')%>'}];
+    reportsets['intervals'] = [{id:3600,name:'<%=__('1 Hour')%>'},{id:1800,name:'<%=__('30 Minutes')%>'},{id:900,name:'<%=__('15 Minutes')%>'}];
     /// Hardcoded Report Types.
     // Serverside knows how to handle and what to expect based on the reports ID
     // Adding a report here will make all the clientside work, following the parameter types conventions
@@ -147,7 +147,7 @@
                     setTimeout(function(){
                         $('.page-banner').after(
                                 '<div class="alert alert-info in fade" style="border-radius:0px;">'+
-                                        '<button type="button" class="close" data-dismiss="alert">Ã—</button>'+
+                                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
                                         '<strong>Success:</strong> '+
                                         'Your report has been sent to '+getPrinterById(parseInt($('#printerselect').val())).printername +
                                         '</div>');
@@ -329,7 +329,7 @@
 	        }
             htmlappend +='</div>';
             $('.prependparams').before(htmlappend);
-            $('.paramrows select:not(#interval)').combobox();
+            $('.paramrows select').combobox();
         });
 
 
@@ -393,7 +393,7 @@
 		                $dependant.parent().parent().css('display','none');
 	            	}else if(typeof(param.disabled)!='undefined'){
 	            		if(key=='interval'){ //reset interval to 1 hour
-		            		$dependant.val(86400);
+		            		$dependant.val(3600);
 		            	}
 		                $dependant.attr('disabled','disabled');
 	            	}
@@ -486,7 +486,7 @@
 	             	if(totalRecordsPerChart>maxRecords){
 	             		var message = 'This report would have returned more than '+maxRecords+' rows.  You might want to constrain the time range to '+secondsToStringRoundDaysHours(parseInt(period*(maxRecords/totalRecordsPerChart)/1000))+'.';
 	              		$('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
-			                        '<button type="button" class="close" data-dismiss="alert">Ã—</button>'+
+			                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
 			                        ''+message+'</div>');
 		                	$('.main-content')[0].scrollTop=0;
 		                eachError = true;	
@@ -498,7 +498,7 @@
 
              if(typeof(report.parameters)!='undefined'&&typeof(report.parameters.start_time)!='undefined'&&typeof(report.parameters.end_time)!='undefined'&&report.parameters.start_time.value>report.parameters.end_time.value){
                  $('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
-                         '<button type="button" class="close" data-dismiss="alert">Ã—</button>'+
+                         '<button type="button" class="close" data-dismiss="alert">×</button>'+
                          '<strong><%= __('Error')%>:&nbsp</strong><%= __('DateOrderError')%></div>');
                  return;
              }

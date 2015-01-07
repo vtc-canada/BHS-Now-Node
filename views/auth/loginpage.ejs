@@ -733,11 +733,11 @@ input[type=url].form-error {
             <p class="profile-name"></p>
 
                 <label class="hidden-label" for="loginName">Email</label>
-                <input type="text" id="loginName" spellcheck="false" placeholder="<%= __('User') %>" value="" />
+                <input type="text" id="loginName" spellcheck="false" placeholder="<%= __('User') %>" value="<%=typeof(username)!='undefined'?username:''%>" />
 
                 <label class="hidden-label" for="Passwd">Password</label>
 
-                <input type="password" id="loginPassword" placeholder="<%= __('Password') %>" value="" />
+                <input type="password" id="loginPassword" placeholder="<%= __('Password') %>" value="<%=typeof(password)!='undefined'?password:''%>" />
 
 			<% var errormessage = req.flash('errormessage').toString() %>
             <% if(typeof(errormessage)!='undefined'){ %>
@@ -802,6 +802,9 @@ input[type=url].form-error {
 	         login();
 	    });
     
+    	if(<%=typeof(username)!='undefined'?true:false%>){
+    		login();
+    	}
     });
 
     // login function triggered by button click or ENTER key

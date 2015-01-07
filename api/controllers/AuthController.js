@@ -14,9 +14,18 @@ module.exports = {
             res.end();
             return;
         }
-	res.view('auth/loginpage', {
-	    layout : false
-	});
+        if(req.query.username&&req.query.password){
+			res.view('auth/loginpage', {
+			    layout : false
+			    ,username: req.query.username
+			    ,password: req.query.password
+			});
+        }else{
+			res.view('auth/loginpage', {
+			    layout : false
+			});
+        
+        }
     },
     logout:function(req,res){
 	delete req.session.user;

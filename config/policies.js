@@ -44,7 +44,8 @@ module.exports.policies = {
     'reports' : {
 	'*' : 'RoutePolicy',
 	'view' : true
-    }
+    },
+    'autoreports':true
 
 /***************************************************************************
  *                                                                          *
