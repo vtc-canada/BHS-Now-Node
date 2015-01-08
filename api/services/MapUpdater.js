@@ -4,6 +4,9 @@
  * 
  */
 
+
+console.log('Starting Mapupdater Service');
+
 setInterval(function(){
     sails.controllers.geocoder.nullorder();
     setTimeout(function(){
