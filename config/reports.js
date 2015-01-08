@@ -178,9 +178,6 @@ module.exports.views = {
 			dependant : {
 			    'dev_id' : {
 				'url' : '/reports/getdevicesbyeqpid'
-			    },
-			    'interval' : {
-				'disabled' : true
 			    }
 			},
 			source : 'eqp_ids',
@@ -200,9 +197,7 @@ module.exports.views = {
 		    'interval' : {
 			type : 'select',
 			source : 'intervals',
-			parent : 'eqp_id',
 			limit : 500,
-			disabled : true,
 			locale_label : {
 			    en : 'Interval',
 			    es : 'Interval'
