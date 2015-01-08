@@ -13,12 +13,24 @@ BEGIN
 		,COALESCE((SUM(CASE WHEN cfg_tag_id.alarm_type IN (1,2,3) THEN  IF (timeoff>timeon, TIME_TO_SEC(TIMEDIFF(timeoff,timeon)), TIME_TO_SEC(TIMEDIFF(UTC_TIMESTAMP(),timeon)))END)),0) AS 'motor_faults_downtime'
 		,COALESCE((SUM(CASE WHEN cfg_tag_id.alarm_type IN (5)  THEN IF (timeoff>timeon, TIME_TO_SEC(TIMEDIFF(timeoff,timeon)), TIME_TO_SEC(TIMEDIFF(UTC_TIMESTAMP(),timeon)))END)),0) AS 'motor_disconnect downtime'
 		,COALESCE((SUM(CASE WHEN cfg_tag_id.alarm_type IN (1,2,3,5,11,12,13,14)  THEN IF (timeoff>timeon, TIME_TO_SEC(TIMEDIFF(timeoff,timeon)), TIME_TO_SEC(TIMEDIFF(UTC_TIMESTAMP(),timeon)))END)),0) AS 'system_downtime'
-		,((TIME_TO_SEC(TIMEDIFF(NOW(),startTime)) - 
+		, 
+IF (((TIME_TO_SEC(TIMEDIFF( IF(endTime>UTC_TIMESTAMP(),UTC_TIMESTAMP(),endTime),startTime)) - 
 			(SUM(CASE WHEN cfg_tag_id.alarm_type IN (1,2,3,5,11,12,13,14)  
 				THEN IF (timeoff>timeon, TIME_TO_SEC(TIMEDIFF(timeoff,timeon)), 
-				TIME_TO_SEC(TIMEDIFF(UTC_TIMESTAMP(),timeon)))END))
+				TIME_TO_SEC(TIMEDIFF(IF(endTime>UTC_TIMESTAMP(),UTC_TIMESTAMP(),endTime),timeon)))END))
 			) 
+<<<<<<< HEAD
 			/ TIME_TO_SEC(TIMEDIFF(NOW(),startTime))) * 100 AS 'system_availablity'  #Time elapsed in Day minus system_downtime divided by Time in Day
+=======
+			/ TIME_TO_SEC(TIMEDIFF(IF(endTime>UTC_TIMESTAMP(),UTC_TIMESTAMP(),endTime),startTime))) IS NULL, 100,
+((TIME_TO_SEC(TIMEDIFF( IF(endTime>UTC_TIMESTAMP(),UTC_TIMESTAMP(),endTime),startTime)) - 
+			(SUM(CASE WHEN cfg_tag_id.alarm_type IN (1,2,3,5,11,12,13,14)  
+				THEN IF (timeoff>timeon, TIME_TO_SEC(TIMEDIFF(timeoff,timeon)), 
+				TIME_TO_SEC(TIMEDIFF(IF(endTime>UTC_TIMESTAMP(),UTC_TIMESTAMP(),endTime),timeon)))END))
+			) 
+			/ TIME_TO_SEC(TIMEDIFF(IF(endTime>UTC_TIMESTAMP(),UTC_TIMESTAMP(),endTime),startTime))) * 100) AS 'system_availability'  #Time elapsed in Day minus system_downtime divided by Time in Day
+#)
+>>>>>>> 41a8c0a... styling fixes, downtime sproc fix.\
 	FROM cur_alarm_history
 	INNER JOIN cfg_tag_id ON (cfg_tag_id.id = cur_alarm_history.tag_ID
 				AND cur_alarm_history.timeon > startTime);
