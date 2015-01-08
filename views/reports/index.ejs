@@ -78,7 +78,11 @@
          <div class="row-fluid">
              <div id="reportheader" class="span12 iframe-header report-heading-pad">
                  <span id="report-header-name"><%= __('Report Header') %></span>
+<<<<<<< HEAD
                  <a href="#printModal" role="button" data-toggle="modal" id="promptprint" class="pull-right btn btn-primary" style="display:none; font-weight:400; margin-right:10px;">Print&nbsp<i class="icon icon-print"></i></a>
+=======
+                 <!-- <a href="#printModal" role="button" data-toggle="modal" id="promptprint" class="pull-right btn btn-primary" style="display:none; font-weight:400; margin-right:10px;">Print&nbsp<i class="icon icon-print"></i></a> -->
+>>>>>>> 5de46df... Fixed Reporting Again to add 4 and 24 hours. Fixed Sprocs for reports.
                  <a href="#saveModal" role="button" data-toggle="modal" id="savemodalbtn" class="pull-right btn btn-primary" style="display:none; font-weight:400; margin-right:10px;">Save&nbsp<i class="icon icon-save"></i></a>
              </div>
              <div id="iframediv" style="visibility:hidden;" class=" row-span12" src=""></div>
@@ -92,7 +96,7 @@
     
     var reportsets={};
 	reportsets['eqp_ids']= <%- typeof(eqp_ids)=='undefined'?'[]':JSON.stringify(eqp_ids) %>;
-    reportsets['intervals'] = [{id:3600,name:'<%=__('1 Hour')%>'},{id:1800,name:'<%=__('30 Minutes')%>'},{id:900,name:'<%=__('15 Minutes')%>'}];
+    reportsets['intervals'] = [{id:86400,name:'<%=__('1 Day')%>'},{id:14400,name:'<%=__('4 Hours')%>'},{id:3600,name:'<%=__('1 Hour')%>'},{id:1800,name:'<%=__('30 Minutes')%>'},{id:900,name:'<%=__('15 Minutes')%>'}];
     /// Hardcoded Report Types.
     // Serverside knows how to handle and what to expect based on the reports ID
     // Adding a report here will make all the clientside work, following the parameter types conventions
@@ -336,6 +340,10 @@
 	        }
             htmlappend +='</div>';
             $('.prependparams').before(htmlappend);
+<<<<<<< HEAD
+=======
+            $('.paramrows select:not(#interval)').combobox();
+>>>>>>> 5de46df... Fixed Reporting Again to add 4 and 24 hours. Fixed Sprocs for reports.
         });
 
 
@@ -399,7 +407,7 @@
 		                $dependant.parent().parent().css('display','none');
 	            	}else if(typeof(param.disabled)!='undefined'){
 	            		if(key=='interval'){ //reset interval to 1 hour
-		            		$dependant.val(3600);
+		            		$dependant.val(86400);
 		            	}
 		                $dependant.attr('disabled','disabled');
 	            	}
