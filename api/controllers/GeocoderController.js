@@ -27,9 +27,10 @@ module.exports = {
     nullorder : function(req, res) {
 	sails.controllers.database.credQuery('UPDATE cur_address set maporder = NULL', function(err, resposne) {
 	    if (err)
-		return res.json({
-		    error : 'error blanking' + err
-		});
+		return err;
+	    //res.json({
+		//    error : 'error blanking' + err
+		//});
 
 	});
     },
@@ -43,7 +44,7 @@ module.exports = {
 	}   
 	
 	var delayer = 5;
-	res.json('running');
+	//res.json('running');
 	var geolib = require('geolib');
 	var countupdated;
 	var series = ['first',10000];
@@ -69,9 +70,10 @@ module.exports = {
 					    'SELECT cur_address.id, latitude, longitude, maporder FROM cur_buildings INNER JOIN cur_address ON cur_address.id = cur_buildings.cur_address_id WHERE latitude IS NOT NULL AND maporder IS NOT NULL ORDER BY ID DESC',
 					    function(err, paramOrdered) {
 						if (err)
-						    return res.json({
-							error : 'error getting coords' + err
-						    });
+						    return err;
+						//res.json({
+						//	error : 'error getting coords' + err
+						//    });
 						ordered = paramOrdered;
 						for (var i = 0; i < ordered.length; i++) {
 						    if (ordered[i].maporder > orderindex) {
@@ -83,9 +85,10 @@ module.exports = {
 								'SELECT cur_address.id, latitude, longitude, maporder FROM cur_buildings INNER JOIN cur_address ON cur_address.id = cur_buildings.cur_address_id WHERE latitude IS NOT NULL AND maporder IS NULL ORDER BY ID DESC',
 								function(err, paramCoords) {
 								    if (err)
-									return res.json({
-									    error : 'error getting coords' + err
-									});
+									return err;
+									//return res.json({
+									//    error : 'error getting coords' + err
+									//});
 								    coords = paramCoords;
 
 								    function loopCoords(i) {
@@ -124,7 +127,7 @@ module.exports = {
 									    });
 									    updateOrder(coords[i].id, orderindex, function(err) {
 										if (err) {
-										    return res.json('err' + err);
+										    return err;//res.json('err' + err);
 										}
 										i++;
 										if (i < coords.length) {
