@@ -20,7 +20,14 @@
 <script type="text/template" id="alarm_legend_row">
 
 	<div class="alarm-legend-row-wrapper">
-		<div class="legend-color-box" style="background-color:#{{=background_color}}; {{if(background_color=='FFFFFF'){ }}border:1px solid #696969;{{ }else{  }}border:1px solid #FFFFFF;{{ } }}"></div>
+	{{ if(is_flashing){ }}
+	
+		<div class="legend-color-box" style="padding-right: 0px; margin-right: 0px; width: 8px; background-color:#{{=background_color}}; {{if(background_color=='FFFFFF'){ }}border:1px solid #696969;{{ }else{  }}border:1px solid #FFFFFF;{{ } }}"></div>
+		<div class="legend-color-box" style="padding-left: 0px; margin-left: 0px; width: 8px; background-color:#{{=flash_background_color}}; {{if(flash_background_color=='FFFFFF'){ }}border:1px solid #696969;{{ }else{  }}border:1px solid #FFFFFF;{{ } }}"></div>
+	{{ }else{ }}
+		<div class="legend-color-box" style="width:20px; background-color:#{{=background_color}}; {{if(background_color=='FFFFFF'){ }}border:1px solid #696969;{{ }else{  }}border:1px solid #FFFFFF;{{ } }}"></div>
+	{{ } }}	
+		
 		<div class="legend-color-text">{{=name}}</div>
 	</div>
 </script>
