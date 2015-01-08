@@ -1,6 +1,9 @@
-DROP PROCEDURE IF EXISTS `BHS_REPORTS_EquipmentIntervalSummaryReportTrackPE`;
+USE `bhs_scada_mhk`;
+DROP procedure IF EXISTS `BHS_REPORTS_EquipmentIntervalSummaryReportTrackPE`;
+
 DELIMITER $$
-CREATE PROCEDURE `BHS_REPORTS_EquipmentIntervalSummaryReportTrackPE`(IN `startTime` DATETIME, 
+USE `bhs_scada_mhk`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `BHS_REPORTS_EquipmentIntervalSummaryReportTrackPE`(IN `startTime` DATETIME, 
 	IN `endTime` DATETIME, 
 	IN `eqpID` INT(11), 
 	IN `devID` INT(11), 
@@ -9,7 +12,7 @@ CREATE PROCEDURE `BHS_REPORTS_EquipmentIntervalSummaryReportTrackPE`(IN `startTi
 )
 BEGIN
 #####################################################
-#CREATE TEMP Time Interval Table
+#CREATE TEMP Time Interval Table 
 #####################################################
 CALL `BHS_UTIL_CreateTimeInterval`(startTime,endTime, intervalTime);
 
@@ -157,5 +160,7 @@ ORDER BY devices.dev_ID, devices.interval;
 			{"locale":{"en":"Total Bags","es":"Total de Bolsas"},"lastrow":{"type":"max","bold":true,"bordertop":true,"decimalplaces":2}}
 			]
 		}';
-END $$
+END$$
+
 DELIMITER ;
+

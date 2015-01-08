@@ -14,6 +14,7 @@ BEGIN
 #CREATE TEMP Time Interval Table
 CALL `BHS_UTIL_CreateTimeInterval`(startTime,endTime, intervalTime);
 
+
 #Creat a temporary table to contain all devices and a record per every time range value
 DROP TEMPORARY TABLE if EXISTS devices;
 CREATE TEMPORARY TABLE devices (
@@ -49,7 +50,7 @@ SELECT cfg_dev_id.id AS dev_ID
 		,IF(SUM(cur_counts_history.value) IS NULL,0,SUM(cur_counts_history.value)) AS total_bags_counts
 		#,FROM_UNIXTIME(FLOOR(UNIX_TIMESTAMP(cur_counts_history.timestamp)/intervalTime)*intervalTime) as 'interval'
 		#,startTime +  (  FLOOR((cur_counts_history.timestamp - startTime)/intervalTime)*intervalTime) as 'interval'
-		,Date_ADD(startTime,INTERVAL (FLOOR((TIMEDIFF(cur_counts_history.timestamp,@startTime))/@intervalTime)*@intervalTime) SECOND) as 'interval'
+		,Date_ADD(startTime,INTERVAL (FLOOR((TIME_TO_SEC(TIMEDIFF(cur_counts_history.timestamp,startTime)))/intervalTime)*intervalTime) SECOND) as 'interval'
 	FROM cfg_dev_id
 	INNER JOIN cfg_tag_id ON (cfg_tag_id.dev_ID = cfg_dev_id.id)
 	INNER JOIN cfg_count_id ON cfg_count_id.id = cfg_tag_id.count_ID 
@@ -59,7 +60,9 @@ SELECT cfg_dev_id.id AS dev_ID
 		AND (devID is NULL OR cfg_dev_id.id = devID )
 		AND (eqpID IS NULL OR cfg_dev_id.eqp_ID = eqpID)
 	GROUP BY 
-		Date_ADD(startTime,INTERVAL (FLOOR((TIMEDIFF(cur_counts_history.timestamp,@startTime))/@intervalTime)*@intervalTime) SECOND),cfg_dev_id.id;
+		#FROM_UNIXTIME(FLOOR(UNIX_TIMESTAMP(cur_counts_history.timestamp)/intervalTime)*intervalTime)
+		Date_ADD(startTime,INTERVAL (FLOOR((TIME_TO_SEC(TIMEDIFF(cur_counts_history.timestamp,startTime)))/intervalTime)*intervalTime) SECOND)
+		,cfg_dev_id.id;
  
 
 #Create temporary table to contain the jam count for the time range
@@ -76,7 +79,7 @@ INSERT INTO jam_counts(dev_ID, device, jams, `interval`)
 SELECT cfg_dev_id.id AS dev_ID 
 		,cfg_dev_id.name AS device	
 		,IF(SUM(cur_counts_history.value) IS NULL,0,SUM(cur_counts_history.value)) AS jams
-		,Date_ADD(startTime,INTERVAL (FLOOR((TIMEDIFF(cur_counts_history.timestamp,@startTime))/@intervalTime)*@intervalTime) SECOND) as 'Interval'
+		,Date_ADD(startTime,INTERVAL (FLOOR((TIME_TO_SEC(TIMEDIFF(cur_counts_history.timestamp,startTime)))/intervalTime)*intervalTime) SECOND) as 'Interval'
 		#,FROM_UNIXTIME(FLOOR(UNIX_TIMESTAMP(cur_counts_history.timestamp)/intervalTime)*intervalTime) as 'Interval'
 	FROM cfg_dev_id
 	INNER JOIN cfg_tag_id ON (cfg_tag_id.dev_ID = cfg_dev_id.id)
@@ -86,7 +89,7 @@ SELECT cfg_dev_id.id AS dev_ID
 		AND (devID is NULL OR cfg_dev_id.id = devID )
 		AND (eqpID IS NULL OR cfg_dev_id.eqp_ID = eqpID)
 	GROUP BY 
-		Date_ADD(startTime,INTERVAL (FLOOR((TIMEDIFF(cur_counts_history.timestamp,@startTime))/@intervalTime)*@intervalTime) SECOND),cfg_dev_id.id;
+Date_ADD(startTime,INTERVAL (FLOOR((TIME_TO_SEC(TIMEDIFF(cur_counts_history.timestamp,startTime)))/intervalTime)*intervalTime) SECOND),cfg_dev_id.id;
 #FROM_UNIXTIME(FLOOR(UNIX_TIMESTAMP(cur_counts_history.timestamp)/intervalTime)*intervalTime) ,cfg_dev_id.id;
 
 #Joining results with entire time range

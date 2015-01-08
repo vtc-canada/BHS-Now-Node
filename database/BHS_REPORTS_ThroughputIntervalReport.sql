@@ -8,7 +8,7 @@ CREATE DEFINER=`root`@`%` PROCEDURE `BHS_REPORTS_ThroughputIntervalReport`(IN `s
 		IN `intervalTime` INT(11),
 	OUT `locale` VARCHAR(4096)
 )
-BEGIN
+BEGIN 
 #CREATE TEMP Time Interval Table
 CALL `BHS_UTIL_CreateTimeInterval`(startTime,endTime, intervalTime);
 
@@ -39,12 +39,14 @@ INSERT INTO throughput(count, `value`, `interval`)
 		cfg_count_id.name AS 'count'
 		,SUM(cur_counts_history.value) as 'value'
 		#,cur_counts_history.timestamp
-		,FROM_UNIXTIME(FLOOR(UNIX_TIMESTAMP(cur_counts_history.timestamp)/intervalTime)*intervalTime) as 'Interval'
+		#,FROM_UNIXTIME(FLOOR(UNIX_TIMESTAMP(cur_counts_history.timestamp)/intervalTime)*intervalTime) as 'Interval'
+		,Date_ADD(startTime,INTERVAL (FLOOR((TIME_TO_SEC(TIMEDIFF(cur_counts_history.timestamp,startTime)))/intervalTime)*intervalTime) SECOND) as 'Interval'
 	FROM cfg_count_id	
 	INNER JOIN cur_counts_history ON (cfg_count_id.id = cur_counts_history.count_ID 
 			AND cur_counts_history.timestamp > startTime AND cur_counts_history.timestamp < endTime)
 	WHERE cfg_count_id.counts_group = 1
-	GROUP BY FROM_UNIXTIME(FLOOR(UNIX_TIMESTAMP(cur_counts_history.timestamp)/intervalTime)*intervalTime),cfg_count_id.name
+	#GROUP BY FROM_UNIXTIME(FLOOR(UNIX_TIMESTAMP(cur_counts_history.timestamp)/intervalTime)*intervalTime),cfg_count_id.name
+	GROUP BY Date_ADD(startTime,INTERVAL (FLOOR((TIME_TO_SEC(TIMEDIFF(cur_counts_history.timestamp,startTime)))/intervalTime)*intervalTime) SECOND),cfg_count_id.name
 	ORDER BY cfg_count_id.name;
 
 #Joining results with entire time range
