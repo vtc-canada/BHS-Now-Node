@@ -228,6 +228,12 @@
 <!-- MAIN LAYOUT Script-->
 <!-- This Section contains the messaging scripts, socket calls, and many other utility functions for all the pages -->
 	<script>
+	
+		$('div.primary-sidebar > ul.nav-collapse-primary > li.dark-nav').each(function(){
+			if($(this).children('ul').children().length==0){
+				$(this).remove();
+			}
+		});
 		
 		if(typeof(io)=='undefined'||typeof(_)=='undefined'){ // failed to load scripts properly
 			location.reload();

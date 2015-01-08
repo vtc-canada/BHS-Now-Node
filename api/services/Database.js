@@ -74,7 +74,7 @@ module.exports = {
 	    if (err) {
 		cb(err);
 	    } else {
-		console.log("call " + sprocName + sprocArgs);
+		//console.log("call " + sprocName + sprocArgs);
 		connection.query("call " + sprocName + sprocArgs, function(err, results) {
 		    if (err) {
 			cb(err);

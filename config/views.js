@@ -104,7 +104,7 @@ module.exports.views = {
 	    return (policy.create>=requestAccess.create&&policy.read>=requestAccess.read&&policy.update>=requestAccess.update&&policy.delete>=requestAccess.delete);
 	},
 	templateHelper:{
-	    hasChildPage:function(navpage,url){
+	    hasChildPage:function(navpage,url){ //checks URL against child pages to see if it is an active parent
 		if(typeof(navpage.children)!='undefined'){
 		    for(childpage in navpage.children){
 			if(childpage==url){

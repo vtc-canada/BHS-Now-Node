@@ -1,12 +1,4 @@
 
-<script>
-
-
-</script>
-<div class="row-fluid page-banner">
-    <div class="banner-div"><i class="icon-copy icon-1x banner-icon-top"></i><div class="banner-div-text"> <%= translate[req.session.user.locale]['Reports'] %></div></div>
-</div>
-
 <!-- Page Parameters Section -->
 <div class="row-fluid create-report-controls-wrapper">
     <div class="row-fluid">
@@ -43,12 +35,12 @@
 <!-- print report Modal -->
 <div id="printModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">ï¿½</button>
         <h3 id="myModalLabel">Print Report</h3>
     </div>
     <div class="row-fluid" style="padding: 15px; padding-bottom:0px;"><p>Please choose a printer:</p></div>
     <div class="modal-body" style="padding-top: 8px;">
-        <p>One fine body…</p>
+        <p>One fine bodyï¿½</p>
     </div>
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
@@ -59,12 +51,12 @@
 <!-- save report Modal -->
 <div id="saveModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times</button>
         <h3 id="myModalLabelsave">Save Report</h3>
     </div>
     <div class="row-fluid" style="padding: 15px; padding-bottom:0px;"><p>Please choose which format you would like to save your report as:</p></div>
     <div class="modal-body" style="padding-top: 8px;">
-        <p>One fine body…</p>
+        <p>One fine bodyï¿½</p>
     </div>
     <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
@@ -78,11 +70,7 @@
          <div class="row-fluid">
              <div id="reportheader" class="span12 iframe-header report-heading-pad">
                  <span id="report-header-name"><%= __('Report Header') %></span>
-<<<<<<< HEAD
-                 <a href="#printModal" role="button" data-toggle="modal" id="promptprint" class="pull-right btn btn-primary" style="display:none; font-weight:400; margin-right:10px;">Print&nbsp<i class="icon icon-print"></i></a>
-=======
                  <!-- <a href="#printModal" role="button" data-toggle="modal" id="promptprint" class="pull-right btn btn-primary" style="display:none; font-weight:400; margin-right:10px;">Print&nbsp<i class="icon icon-print"></i></a> -->
->>>>>>> 5de46df... Fixed Reporting Again to add 4 and 24 hours. Fixed Sprocs for reports.
                  <a href="#saveModal" role="button" data-toggle="modal" id="savemodalbtn" class="pull-right btn btn-primary" style="display:none; font-weight:400; margin-right:10px;">Save&nbsp<i class="icon icon-save"></i></a>
              </div>
              <div id="iframediv" style="visibility:hidden;" class=" row-span12" src=""></div>
@@ -159,7 +147,7 @@
                     setTimeout(function(){
                         $('.page-banner').after(
                                 '<div class="alert alert-info in fade" style="border-radius:0px;">'+
-                                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+                                        '<button type="button" class="close" data-dismiss="alert">ï¿½</button>'+
                                         '<strong>Success:</strong> '+
                                         'Your report has been sent to '+getPrinterById(parseInt($('#printerselect').val())).printername +
                                         '</div>');
@@ -230,7 +218,7 @@
                     location.reload(); // Will boot back to login screen
                 }
                 $('#saveModal .modal-body').empty();
-                $('#saveModal .modal-body').append('<a href="'+response.pdfurl+'" class="saveformat btn btn-success pull-right" style="margin-right:10px;" download>PDF&nbsp&nbsp</a><a href="'+response.csvurl+'" class="saveformat btn btn-success pull-right"  style="margin-right:10px;" download>CSV&nbsp&nbsp</a>');
+                $('#saveModal .modal-body').append('<a href="'+response.pdfurl+'" class="saveformat btn btn-success pull-right" style="margin-right:10px;" download>PDF</a><a href="'+response.csvurl+'" class="saveformat btn btn-success pull-right"  style="margin-right:10px;" download>CSV</a>');
 
                 $('.saveformat').click(function(){
                     $('#saveModal > div.modal-header > button.close').trigger('click');
@@ -340,10 +328,7 @@
 	        }
             htmlappend +='</div>';
             $('.prependparams').before(htmlappend);
-<<<<<<< HEAD
-=======
             $('.paramrows select:not(#interval)').combobox();
->>>>>>> 5de46df... Fixed Reporting Again to add 4 and 24 hours. Fixed Sprocs for reports.
         });
 
 
@@ -426,7 +411,7 @@
 		                        htmlappend += '<option value="'+dependant_data_set[i].id+'" >'+dependant_data_set[i].name+'</option>'
 		                    }
 		                    $dependant.append(htmlappend);
-		
+		                    $dependant.data('combobox').refresh();
 		                });
 	            	}else{// if(typeof(param.source)!='undefined'){
 		            	if(typeof(param.disabled)=='undefined'){
@@ -500,7 +485,7 @@
 	             	if(totalRecordsPerChart>maxRecords){
 	             		var message = 'This report would have returned more than '+maxRecords+' rows.  You might want to constrain the time range to '+secondsToStringRoundDaysHours(parseInt(period*(maxRecords/totalRecordsPerChart)/1000))+'.';
 	              		$('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
-			                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
+			                        '<button type="button" class="close" data-dismiss="alert">ï¿½</button>'+
 			                        ''+message+'</div>');
 		                	$('.main-content')[0].scrollTop=0;
 		                eachError = true;	
@@ -512,7 +497,7 @@
 
              if(typeof(report.parameters)!='undefined'&&typeof(report.parameters.start_time)!='undefined'&&typeof(report.parameters.end_time)!='undefined'&&report.parameters.start_time.value>report.parameters.end_time.value){
                  $('.page-banner').after('<div class="alert alert-error" style="border-radius:0px;">'+
-                         '<button type="button" class="close" data-dismiss="alert">×</button>'+
+                         '<button type="button" class="close" data-dismiss="alert">ï¿½</button>'+
                          '<strong><%= __('Error')%>:&nbsp</strong><%= __('DateOrderError')%></div>');
                  return;
              }
