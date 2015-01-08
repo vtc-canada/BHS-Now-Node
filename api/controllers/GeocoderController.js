@@ -52,7 +52,7 @@ module.exports = {
 	if (typeof (req.params.id) != 'undefined') {
 	    //recentsize = parseInt(req.params.id);
 	    recentsize = 5;
-	    delayer = 10; //parseInt(req.params.id);
+	    delayer = 15; //parseInt(req.params.id);
 	}
 	for(var i=1;i<10;i++){
 	    series.push(series[i]/2.32);
