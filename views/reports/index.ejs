@@ -51,7 +51,7 @@
 <!-- save report Modal -->
 <div id="saveModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times</button>
         <h3 id="myModalLabelsave">Save Report</h3>
     </div>
     <div class="row-fluid" style="padding: 15px; padding-bottom:0px;"><p>Please choose which format you would like to save your report as:</p></div>
@@ -218,7 +218,7 @@
                     location.reload(); // Will boot back to login screen
                 }
                 $('#saveModal .modal-body').empty();
-                $('#saveModal .modal-body').append('<a href="'+response.pdfurl+'" class="saveformat btn btn-success pull-right" style="margin-right:10px;" download>PDF&nbsp&nbsp</a><a href="'+response.csvurl+'" class="saveformat btn btn-success pull-right"  style="margin-right:10px;" download>CSV&nbsp&nbsp</a>');
+                $('#saveModal .modal-body').append('<a href="'+response.pdfurl+'" class="saveformat btn btn-success pull-right" style="margin-right:10px;" download>PDF</a><a href="'+response.csvurl+'" class="saveformat btn btn-success pull-right"  style="margin-right:10px;" download>CSV</a>');
 
                 $('.saveformat').click(function(){
                     $('#saveModal > div.modal-header > button.close').trigger('click');
