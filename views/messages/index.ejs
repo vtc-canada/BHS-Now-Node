@@ -1,5 +1,5 @@
 <div class="row-fluid page-banner">
-    <div class="banner-div"><i class="icon-envelope-alt icon-1x banner-icon-top"></i><div class="banner-div-text"><%= translate[req.session.user.locale]['Messaging'] %></div></div>
+    <div class="banner-div"><i class="icon-envelope-alt icon-1x banner-icon-top"></i><div class="banner-div-text"><%= __('Messaging') %></div></div>
 </div>
 
 <div class="row-fluid">
@@ -103,7 +103,7 @@
     // notifies server the conversation has been read
     function fillautocompletebox(){
         users.each(function(user){
-            if(user.get('username')!=username){
+            if(user.get('username')!='<%= req.session.user.username %>'){
                 $('#type_names_combo').append('<option value="'+user.get('id')+'">'+user.get('username')+'</option>');
             }
         },this);
@@ -124,18 +124,44 @@
                     loadpreviousID = 0;
 
                     var numIdt = parseInt($('input.type-names-combo').prev().val());
-                    if($.inArray(numIdt,unreadnames)!=-1){  // if it has the name in it.
+                    /*if($.inArray(numIdt,unreadnames)!=-1){  // if it has the name in it.
                         unreadnames = $.grep(unreadnames,function(value){
                             return value!=numIdt;
                         });
-                    }
+                    }*/
                     updateBadge();
-                    socket.request("/readmessage",{readfromid:$('input.type-names-combo').prev().val()},function(msg){
+                    /*socket.request("/readmessage",{readfromid:$('input.type-names-combo').prev().val()},function(msg){
+                        if(msg.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
+                            location.reload(); // Will boot back to login screen
+                        }
+                    });*/
+                    socket.request("/chat/seenmessage",{fromUserId:numIdt},function(msg){
                         if(msg.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
                             location.reload(); // Will boot back to login screen
                         }
                     });
-                    messagesfull.fetch();
+                    messagesfull.fetch({otherUserId:numIdt});
+                    
+                    
+                    
+                    /*
+                    $('#messagesListWrapper li').removeClass('selected');
+                    $(this).parent().addClass('selected');
+                    fulluserIDselected =  $(this).parent().attr('otheruserId');
+                    loadpreviousID = 0;
+
+                    var numIdt = parseInt($(this).parent().attr('otheruserId'));
+                    users.get(numIdt).unset('unreadmessages');
+                    updateBadge();
+                    socket.request("/chat/seenmessage",{fromUserId:numIdt},function(msg){
+                        if(msg.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
+                            location.reload(); // Will boot back to login screen
+                        }
+                    });
+                    messagesfull.fetch({otherUserId:numIdt});
+                    $('.messageinputwrapper').css('display','block');
+                    $('input.type-names-combo').css('display','none');
+                    $('span.dropdown-toggle').css('display','none');*/
                 }
             },20);
         });
