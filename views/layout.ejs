@@ -163,7 +163,7 @@
   				  <span class="glow"></span>   
 	              <a <% if(typeof(navpages[navpage].children)!='undefined'){ %>class="accordion-toggle" data-toggle="collapse" href="#navmenu<%=templateHelper.replaceAll(navpage,'/','_')%>"<% }else{ %> href="<%=navpage%>" <% } %>>
 	                  <i class="<%=navpages[navpage].icon%> icon-2x"></i>
-	                  <span><%= translate[req.session.user.locale]['pages'][navpage] %>
+	                  <span><%= __('pages')[navpage] %>
 	                  <% if(typeof(navpages[navpage].children)!='undefined'){ %>
                       <i class="icon-caret-down"></i>
 	                  <% } %>
@@ -179,7 +179,7 @@
 			  				<li class="<% if(req.url==childpage){ %>active<% } %>">
 				              <a href="<%=childpage%>">
 				                  <i class="<%=navpages[navpage].children[childpage].icon%>"></i>
-				                  <%= translate[req.session.user.locale]['pages'][childpage] %>
+				                  <%= __('pages')[childpage] %>
 				              </a>
 			  				</li>
 			  				
