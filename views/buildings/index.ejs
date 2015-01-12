@@ -4649,16 +4649,19 @@
 	        			if(selectedoption.length==1)
 	        			{
 	        				newContact = selectedoption.data();
-	        				
+	        				curcontactsval = $('input.contactscombobox').val();
 	        				$('#edit-contact-details-section').empty();
 	        				$('#edit-contact-details-section').append(edit_contact_details_section_template(newContact));
 	        				
 	        				bindEditContactDetailsMappingButton();
-	        				
+	        				if(newCompany==null&&curcompaniesval==''){
+	        					updateCompaniesCombobox(true);
+	        				}
 	        				
 	        				
 	        			}else{
 	        				newContact = null;
+	        				curcontactsval = '';
 	        				updateContactsCombobox();
 	        				$('#edit-contact-details-section').empty();
 	        			}
@@ -4783,11 +4786,14 @@
 	        			if(selectedoption.length==1)
 	        			{
 	        				newCompany = selectedoption.data();
-	        				
+	        				curcompaniesval = $('input.companiescombobox').val();
 	        				
 	        				$('#edit-company-details-section').empty();
 	        				$('#edit-company-details-section').append(edit_company_details_section_template(newCompany));
 	        				bindEditCompanyDetailsMappingButton();
+	        				if(newContact==null&&curcontactsval==''){
+	        					updateContactsCombobox(true);
+	        				}
 	        			}else{
         					newCompany = null;
         					curcompaniesval = '';
@@ -5100,7 +5106,7 @@
         	});
         }
 	    	
-	    function updateContactsCombobox(){
+	    function updateContactsCombobox(blocklookup){
     		clearTimeout(contactssearchtimer);
     		contactssearchtimer = setTimeout(function(){
     			socket.get('/buildings/getcontactsbycompanyid',{search:curcontactsval,companyId:$('.constrain-btn i').hasClass('icon-lock')?(newCompany==null?null:newCompany.company_id):null},function(res){
@@ -5124,12 +5130,14 @@
 		        	
         			contactscombobox.data('combobox').refresh(); 
         			$('input.contactscombobox').val(tempval);
-        			contactscombobox.data('combobox').lookup();
+        			if(typeof(blocklookup)=='undefined'||!blocklookup){
+        				contactscombobox.data('combobox').lookup();
+        			}
     			});
     		},100);
 	    }
 	    	
-	    function updateCompaniesCombobox(){
+	    function updateCompaniesCombobox(blocklookup){
 	    	clearTimeout(contactssearchtimer);
     		contactssearchtimer = setTimeout(function(){		        	
     			socket.get('/buildings/getcompaniesbycontactid',{search:curcompaniesval,contactId:$('.constrain-btn i').hasClass('icon-lock')?(newContact==null?null:newContact.contact_id):null},function(res){
@@ -5159,7 +5167,10 @@
 		        	}
         			companiescombobox.data('combobox').refresh(); 
         			$('input.companiescombobox').val(tempval);
-        			companiescombobox.data('combobox').lookup();
+        			if(typeof(blocklookup)=='undefined'||!blocklookup){
+        				companiescombobox.data('combobox').lookup();
+        			
+        			}
     			});
 			},100);
 		}

@@ -241,13 +241,16 @@ module.exports = {
 		    
 		    
 		    processSalesContacts(function() {
-    		    	checkAndUpdateBuildingLastSale(building,function(){
-    			    res.json({
-    				success : true,
-    				sale_id : building.sale_id,
-    				building_id : building.building_id
-    			    });
-    		    	});
+			checkAndCreateEmptySaleMapping(building,function(){
+			    
+        		    	checkAndUpdateBuildingLastSale(building,function(){
+        			    res.json({
+        				success : true,
+        				sale_id : building.sale_id,
+        				building_id : building.building_id
+        			    });
+        		    	});
+			});
 		    });
 		});
 
@@ -1075,6 +1078,31 @@ function buildAddressString(data){
 	}
 	return street_number_begin+street_number_end+street_name+city+province+postal_code; 
 
+}
+
+function checkAndCreateEmptySaleMapping(buildingsale,cb){
+    sails.controllers.database.credSproc('GetBuildingSaleContactMappingCount',[buildingsale.sale_id, buildingsale.building_id],function(err,resz){
+	if(err)
+	    cb(err);
+	if(resz[0].length==0){
+	    var tempOutVar = '@out' + Math.floor((Math.random() * 1000000) + 1);
+		sails.controllers.database.credSproc('CreateSalesContactMapping', [ buildingsale.sale_id,
+			null, buildingsale.building_id, 1, null, tempOutVar ], function(err, responseSalesMapping) {
+			/*checkAndUpdateBuildingLastSale(building,function(){
+				res.json({
+				    	success : true,
+				    	sale_id : responseSalesRecord[1][new_sale_id],
+			    		building_id : building.building_id
+				});
+			});*/
+		    if(err)
+			cb(err);
+		    cb(null);
+		});
+	}else{
+	    cb(null);
+	}
+    });
 }
 
 function checkAndUpdateBuildingLastSale(buildingsale,cb){
