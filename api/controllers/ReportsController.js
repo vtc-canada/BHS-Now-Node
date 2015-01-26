@@ -95,7 +95,7 @@ module.exports = {
 	var footnotes_pass = [];
 	if (report.id == 1) {
 	    orientation = 'portrait';
-	    footnotes_pass = [ 'First Footer Content line here *', 'second footer content line here *', 'down down down downer' ];
+	    //footnotes_pass = [ 'First Footer Content line here *', 'second footer content line here *', 'down down down downer' ];
 	}
 
 	phantom.create(function(err, ph) {
@@ -221,7 +221,7 @@ module.exports = {
 	var footnotes_pass = [];
 	if (report.id == 1) {
 	    orientation = 'portrait';
-	    footnotes_pass = [ 'First Footer Content line here *', 'second footer content line here *', 'down down down downer' ];
+	    //footnotes_pass = [ 'First Footer Content line here *', 'second footer content line here *', 'down down down downer' ];
 	}
 
 	phantom.create(function(err, ph) {
