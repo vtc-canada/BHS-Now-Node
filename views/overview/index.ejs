@@ -250,11 +250,11 @@
             render: function () {
                 this.$el.html("");
                 var tcollection = this.collection.sortBy(function(message){
-                    return message.get("severity");
+                    return new Date(message.get("timestamp")).getTime();
                 });
                 for(var i=0; i<tcollection.length; i++)
                 {
-                    this.$el.append(this.template(tcollection[i].toJSON()));
+                    this.$el.prepend(this.template(tcollection[i].toJSON()));
                 }
             }
         });
