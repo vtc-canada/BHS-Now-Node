@@ -310,7 +310,7 @@
     		if(!fullscreenAlarm){
     			 $('#iframediv').fadeIn();
     			 $('#reportheader').fadeIn();
-    			var maxHeight = ($('.main-content').height()*(2/3)) -  $('.overview-header').height()-100;
+    			var maxHeight = ($('.main-content').height()*(2/3)) -  $('.overview-header').height()-115;
 	    		var overViewParentWidth = $('#overview').parent().width();
 	    		if(maxHeight < (overViewParentWidth/aspectRatio)){
 	    			 $('#overview').animate({height:maxHeight});
@@ -335,9 +335,9 @@
     		}else{
     			 $('#overview').animate({height:0});
     			 $('#reportheader').fadeOut();
-    			 $('#iframediv').fadeOut();
-    			 $('#alarmsdiv').height($('.main-content').height()*(0.94) - ($('.sort-destination-plan-titles').css('display')=='none'?0:$('.sort-destination-plan-titles').height())  - $('.alarms-header').height() - 78);
-    			
+    			 $('#iframediv').fadeOut();    			 
+    			 $('#alarmsdiv').height($('.main-content').height()*(0.90) - ($('.sort-destination-plan-titles').css('display')=='none'?0:$('.sort-destination-plan-titles').height())  - $('.alarms-header').height() - 78);
+
     		}
     		
     	}
