@@ -9,23 +9,23 @@ module.exports = {
 	
 	alarmhistoryreport : function(req,res){
 		var report = {"id":1,"name":{"locale_label":{"en":"Alarm History Report","es":"Informe del historial de alarmas"}},"title":{"logo":"iSystemsNow-Logo-RGB-Black.png"},"footer":{"logo":"default.png"},"parameters":{"start_time":{"type":"datetime","locale_label":{"en":"Start Time","es":"Start Timesss"},"value":''},"end_time":{"type":"datetime","locale_label":{"en":"End Time","es":"Hora de Inicio"},"value":''},"fault_type":{"type":"fault","locale_label":{"en":"Fault","es":"Fault"},"value":""},"eqp_id":{"type":"select","source":"eqp_ids","dependant":{"dev_id":{"url":"/reports/getdevicesbyeqpid"}},"locale_label":{"en":"Equipment","es":"Equipo"},"value":""},"dev_id":{"type":"select","parent":"eqp_id","locale_label":{"en":"Device","es":"Dispositivo"},"value":""}},"system_name":"MHK International Airport","timezoneoffset":300};
-		sails.controllers.autoreports.generate(req,res,report, 'Alarm_History_Report');
+		sails.controllers.autoreports.generate(req,res,report, 'Alarm History Report');
 	},
 	equipmentsummaryreport:function(req,res){
 		var report = {"id":"2","name":{"locale_label":{"en":"Equipment Summary Report","es":"Informe resumido Equipo"}},"title":{"logo":"iSystemsNow-Logo-RGB-Black.png"},"footer":{"logo":"default.png"},"parameters":{"start_time":{"type":"datetime","locale_label":{"en":"Start Time","es":"Hora de Inicio"},"value":"2015-01-06T05:00:00.000Z"},"end_time":{"type":"datetime","locale_label":{"en":"End Time","es":"Hora de Finalización"},"value":"2015-01-06T17:05:43.054Z"},"eqp_id":{"type":"select","dependant":{"dev_id":{"url":"/reports/getdevicesbyeqpid"}},"source":"eqp_ids","locale_label":{"en":"Equipment","es":"Equipo"},"value":""},"dev_id":{"type":"select","parent":"eqp_id","locale_label":{"en":"Device","es":"Dispositivo"},"value":""},"sections":{"type":"checkboxes","locale_label":{"en":"Device Types","es":"Secciones"},"checkboxes":{"tracking_photo_eyes":{"locale_label":{"[en]":"Tracking Photo Eyes","[es]":"Seguimiento de Fotos Eyes"},"value":"1"},"jam_photo_eyes":{"locale_label":{"[en]":"Jam Photo Eyes","[es]":"Jam Fotos Eyes"},"value":"1"},"diverters":{"locale_label":{"[en]":"Diverters","[es]":"Desviadores"},"value":"1"},"vertical_sorters_mergers":{"locale_label":{"[en]":"Vertical Sorters / Mergers","[es]":"Clasificadores / Fusiones verticales"},"value":"1"}}}},"system_name":"MHK International Airport","timezoneoffset":"300","locale":"en"};
-		sails.controllers.autoreports.generate(req,res,report, 'Equipment_Summary_Report');
+		sails.controllers.autoreports.generate(req,res,report, 'Equipment Summary Report');
 	},
 	equipmentintervalreport:function(req,res){
 		var report = {"id":"3","name":{"locale_label":{"en":"Equipment Interval Report","es":"Informe resumido Equipo"}},"title":{"logo":"iSystemsNow-Logo-RGB-Black.png"},"footer":{"logo":"default.png"},"parameters":{"start_time":{"type":"datetime","locale_label":{"en":"Start Time","es":"Hora de Inicio"},"value":"2015-01-06T05:00:00.000Z"},"end_time":{"type":"datetime","locale_label":{"en":"End Time","es":"Hora de Finalización"},"value":"2015-01-06T17:07:25.679Z"},"eqp_id":{"type":"select","dependant":{"dev_id":{"url":"/reports/getdevicesbyeqpid"},"interval":{"disabled":"true"}},"source":"eqp_ids","locale_label":{"en":"Equipment","es":"Equipo"},"value":""},"dev_id":{"type":"select","parent":"eqp_id","locale_label":{"en":"Device","es":"Dispositivo"},"value":""},"interval":{"type":"select","source":"intervals","parent":"eqp_id","limit":"1000","disabled":"true","locale_label":{"en":"Interval","es":"Interval"},"value":"86400","text":"1 Day"},"sections":{"type":"checkboxes","locale_label":{"en":"Device Types","es":"Secciones"},"checkboxes":{"tracking_photo_eyes":{"locale_label":{"[en]":"Tracking Photo Eyes","[es]":"Seguimiento de Fotos Eyes"},"value":"1"},"jam_photo_eyes":{"locale_label":{"[en]":"Jam Photo Eyes","[es]":"Jam Fotos Eyes"},"value":"1"},"diverters":{"locale_label":{"[en]":"Diverters","[es]":"Desviadores"},"value":"1"},"vertical_sorters_mergers":{"locale_label":{"[en]":"Vertical Sorters / Mergers","[es]":"Clasificadores / Fusiones verticales"},"value":"1"}}}},"system_name":"MHK International Airport","timezoneoffset":"300","locale":"en"};
-		sails.controllers.autoreports.generate(req,res,report, 'Equipment_Interval_Report');
+		sails.controllers.autoreports.generate(req,res,report, 'Equipment Interval Report');
 	},
 	throughputreport:function(req,res){
 		var report = {"id":"5","name":{"locale_label":{"en":"Throughput Report","es":"Throughput Report"}},"title":{"logo":"iSystemsNow-Logo-RGB-Black.png"},"footer":{"logo":"default.png"},"parameters":{"start_time":{"type":"datetime","locale_label":{"en":"Start Time","es":"Hora de Inicio"},"value":"2015-01-06T05:00:00.000Z"},"end_time":{"type":"datetime","locale_label":{"en":"End Time","es":"Hora de Finalización"},"value":"2015-01-06T17:08:52.253Z"},"interval":{"type":"select","source":"intervals","limit":"1000","locale_label":{"en":"Interval","es":"Interval"},"value":"3600","text":"1 Hour"}},"system_name":"MHK International Airport","timezoneoffset":"300","locale":"en"};
-		sails.controllers.autoreports.generate(req,res,report, 'Throughput_Report');
+		sails.controllers.autoreports.generate(req,res,report, 'Throughput Report');
 	},
 	executivesummaryreport:function(req,res){
 		var report = {"id":"6","name":{"locale_label":{"en":"Executive Summary Report","es":"Executive Summary Report"}},"title":{"logo":"iSystemsNow-Logo-RGB-Black.png"},"footer":{"logo":"default.png"},"parameters":{"start_time":{"type":"datetime","locale_label":{"en":"Start Time","es":"Hora de Inicio"},"value":"2015-01-06T05:00:00.000Z"},"end_time":{"type":"datetime","locale_label":{"en":"End Time","es":"Hora de Finalización"},"value":"2015-01-06T17:08:52.253Z"}},"system_name":"MHK International Airport","timezoneoffset":"300","locale":"en"};
-		sails.controllers.autoreports.generate(req,res,report, 'Executive_Summary_Report');
+		sails.controllers.autoreports.generate(req,res,report, 'Executive Summary Report');
 	},
     generate : function(req,res,report, prefilename) {
     	var endDateTime = new Date();
@@ -45,10 +45,7 @@ module.exports = {
     	
     	report.parameters.start_time.value = startDateTime;
     	report.parameters.end_time.value = endDateTime;
-    	
-    	//console.log(JSON.stringify(report));
-    	
-    	
+
     	var phantom = require('node-phantom');
 		var fs = require("fs");
 	
@@ -92,10 +89,8 @@ module.exports = {
 	        			var timestampstring = startDateTime.substring(0,10)+'_'+Math.floor((Math.random() * 1000) + 1); 
 	        			
 	        			
-	        			var filename = 'C:\\iSystemsNow\\BHSArchivedReports\\' + prefilename + '_'+ timestampstring + '.pdf';
-	        			var filenamecsv = 'C:\\iSystemsNow\\BHSArchivedReports\\' + prefilename + '_'+ timestampstring + '.csv';
-	        			//var url = '/data/report_' + timestampstring + '.pdf'; // sails.config.siteurl+
-	        			//var urlcsv = '/data/report_' + timestampstring + '.csv'; // sails.config.siteurl+
+	        			var filename = 'C:\\iSystemsNow\\BHSArchivedReports\\' + prefilename + ' '+ timestampstring + '.pdf';
+	        			var filenamecsv = 'C:\\iSystemsNow\\BHSArchivedReports\\' + prefilename + ' '+ timestampstring + '.csv';
 	        
 	        			page.render(filename, function() {
 	        			    var end = new Date().getTime();
