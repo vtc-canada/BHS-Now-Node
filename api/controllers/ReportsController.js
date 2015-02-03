@@ -128,12 +128,12 @@ module.exports = {
         		    var start = new Date().getTime();
         		    report.locale = req.session.user.locale;
         		    page.open(sails.getBaseurl()+'/reports/view?report_parameters=' + encodeURIComponent(JSON.stringify(report)), function() {
-        			var timestampstring = new Date().getTime();
-        
-        			var filename = '.tmp\\public\\data\\report_' + timestampstring + '.pdf';
-        			var filenamecsv = '.tmp\\public\\data\\report_' + timestampstring + '.csv';
-        			var url = '/data/report_' + timestampstring + '.pdf'; // sails.config.siteurl+
-        			var urlcsv = '/data/report_' + timestampstring + '.csv'; // sails.config.siteurl+
+          			var reportName = report.name.locale_label.en + ' ' + new Date().getTime();
+          
+        			var filename = '.tmp\\public\\data\\'+ reportName +'.pdf';
+        			var filenamecsv = '.tmp\\public\\data\\'+ reportName +'.csv';
+        			var url = '/data/'+ reportName +'.pdf'; // sails.config.siteurl+
+        			var urlcsv = '/data/'+ reportName +'.csv'; // sails.config.siteurl+
         
         			page.render(filename, function() {
         			    var end = new Date().getTime();
