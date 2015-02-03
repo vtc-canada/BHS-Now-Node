@@ -118,7 +118,7 @@
     var aspectRatio = 16/9;
     var offsetLeft = 10;
     var offsetTop = 0;
-    var elementScale = 5; //(belth width as percent of screen width)
+    var elementScale = 5; //(belt width as percent of screen width)
     var beltWidth = 2; // Depends on elementScale
     $(document).ready(function(){
     	socket.on('connect',initialize);
@@ -189,15 +189,8 @@
 	    			setTimeout(function(){
 	    				setBackground($('div[tagname='+message.tag_name+']'),'#'+message.flash_color_code);
 	    				setColor($('div[labeltagname='+message.tag_name+']'),'#'+message.flash_text_color_code);
-	    			},500);
+	    			},1000);
     			}
-    			
-    			/*if(message.value=='on'){
-    				setBackground($('#'+message.id),'#ff4400');
-    			}else if(message.value=='off'){
-    				setBackground($('#'+message.id),'#22ee11');
-    			
-    			}*/
     		});
     	});
     	
