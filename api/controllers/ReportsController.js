@@ -90,13 +90,13 @@ module.exports = {
 	var report = req.param('report');
 	var phantom = require('node-phantom');
 	var fs = require("fs");
-
+	var locale = req.session.user.locale;
 	var orientation = 'portrait';
 	var footnotes_pass = [];
 	if (report.id == 1) {
 	    orientation = 'portrait';
-	    //footnotes_pass = [ 'First Footer Content line here *', 'second footer content line here *', 'down down down downer' ];
 	}
+    footnotes_pass = [ report.footnote1.locale_label[locale], report.footnote2.locale_label[locale], report.footnote3.locale_label[locale]];
 
 	phantom.create(function(err, ph) {
 	    ph.createPage(function(err, page) {
@@ -128,7 +128,7 @@ module.exports = {
         		    var start = new Date().getTime();
         		    report.locale = req.session.user.locale;
         		    page.open(sails.getBaseurl()+'/reports/view?report_parameters=' + encodeURIComponent(JSON.stringify(report)), function() {
-          			var reportName = report.name.locale_label.en + ' ' + new Date().getTime();
+          			var reportName = report.name.locale_label[report.locale] + ' ' + new Date().getTime();
           
         			var filename = '.tmp\\public\\data\\'+ reportName +'.pdf';
         			var filenamecsv = '.tmp\\public\\data\\'+ reportName +'.csv';
