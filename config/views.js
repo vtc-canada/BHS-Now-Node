@@ -57,6 +57,15 @@ module.exports.views = {
 	    desktop:'/img/BHS-Now-MHK-Logo-Desktop.png',
 	    mobile:'/img/BHS-Now-MHK-Logo-Mobile.png'
 	},
+	about:{
+	    software:'Now Management Studio : 1.0<br>\
+	 			MySQL Server : 5.6<br>\
+	    		node.js : 0.10.26 <br>\
+    			Sails  : 0.10.5',
+	    support:'Technical Support : 1-519-279-6485<br>\
+		 		Email : support@isystemsnow.com<br>\
+	    		Website : <a href="http://www.isystemsnow.com">www.isystemsnow.com</a>'
+	},
 	messaging : false,
 	search:{
 	    enabled:false,
