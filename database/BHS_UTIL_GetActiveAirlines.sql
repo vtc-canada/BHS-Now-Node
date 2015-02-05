@@ -1,5 +1,5 @@
 DROP PROCEDURE if EXISTS `BHS_UTIL_GetActiveAirlines` ;
-
+DELIMITER $$
 CREATE PROCEDURE `BHS_UTIL_GetActiveAirlines`()
 BEGIN
 	SELECT ref_airline_code.id
@@ -9,4 +9,5 @@ BEGIN
 	FROM ref_airline_code 
 	INNER JOIN cfg_active_airlines ON cfg_active_airlines.id = ref_airline_code.id 
 	WHERE cfg_active_airlines.active = 1;
-END
+END $$
+DELIMITER ;

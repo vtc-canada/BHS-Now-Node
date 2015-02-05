@@ -1,5 +1,5 @@
 DROP PROCEDURE if EXISTS `BHS_FLIGHTS_InsertCurFlightSortPlan` ;
-
+DELIMITER $$
 CREATE PROCEDURE `BHS_FLIGHTS_InsertCurFlightSortPlan`(IN v_airline INT(11),
 	IN v_flight INT(11),
 	IN v_dep_date DATE,
@@ -24,4 +24,5 @@ BEGIN
 		v_on_time,
 		v_late,
 		v_locked_out);
-END
+END $$
+DELIMITER ;

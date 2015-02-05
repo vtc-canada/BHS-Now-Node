@@ -1,5 +1,5 @@
 DROP PROCEDURE if EXISTS `BHS_FLIGHTS_UpdateCurFlightSortPlan` ;
-
+DELIMITER $$
 CREATE PROCEDURE `BHS_FLIGHTS_UpdateCurFlightSortPlan`(IN v_early INT(11), 
 	IN v_on_time INT(11), 
 	IN v_late INT(11),
@@ -15,4 +15,5 @@ BEGIN
 		,virtual_locked_out_dest = v_locked 
 	WHERE flight_number = v_flight 
 		AND departure_date = v_date;
-END
+END $$
+DELIMITER ;

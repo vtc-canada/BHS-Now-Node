@@ -1,9 +1,7 @@
-USE `bhs_scada_mhk`;
 DROP procedure IF EXISTS `BHS_REPORTS_EquipmentIntervalSummaryReportTrackPE`;
 
 DELIMITER $$
-USE `bhs_scada_mhk`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `BHS_REPORTS_EquipmentIntervalSummaryReportTrackPE`(IN `startTime` DATETIME, 
+CREATE PROCEDURE `BHS_REPORTS_EquipmentIntervalSummaryReportTrackPE`(IN `startTime` DATETIME, 
 	IN `endTime` DATETIME, 
 	IN `eqpID` INT(11), 
 	IN `devID` INT(11), 

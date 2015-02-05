@@ -10,3 +10,4 @@ BEGIN
 	INNER JOIN cur_counts ON (cfg_count_id.id = cur_counts.id)
 	WHERE cfg_count_id.counts_group = 1;
 END $$
+DELIMITER ;

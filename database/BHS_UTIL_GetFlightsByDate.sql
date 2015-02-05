@@ -1,5 +1,5 @@
 DROP PROCEDURE if EXISTS `BHS_UTIL_GetFlightsByDate` ;
-
+DELIMITER $$
 CREATE PROCEDURE `BHS_UTIL_GetFlightsByDate`(IN `v_date` DATE)
 BEGIN
 	SELECT FALSE AS deleted
@@ -16,4 +16,5 @@ BEGIN
 		,virtual_locked_out_dest  
 	FROM cur_offline_sort_plan 
 	WHERE departure_date = v_date;
-END
+END $$
+DELIMITER ;

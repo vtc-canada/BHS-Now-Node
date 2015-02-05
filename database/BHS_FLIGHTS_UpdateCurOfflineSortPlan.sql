@@ -1,5 +1,5 @@
 DROP PROCEDURE if EXISTS `BHS_FLIGHTS_UpdateCurOfflineSortPlan` ;
-
+DELIMITER $$
 CREATE PROCEDURE `BHS_FLIGHTS_UpdateCurOfflineSortPlan`(IN v_time DATETIME,
 	IN t_open INT(11),
 	IN t_late INT(11),
@@ -21,4 +21,5 @@ BEGIN
 		,virtual_late_dest = v_late
 		,virtual_locked_out_dest = v_locked 
 	WHERE id = t_id;
-END
+END $$
+DELIMITER ;

@@ -1,9 +1,7 @@
-USE `bhs_scada_mhk`;
 DROP procedure IF EXISTS `BHS_UTIL_CreateTimeInterval`;
 
 DELIMITER $$
-USE `bhs_scada_mhk`$$
-CREATE DEFINER=`root`@`%` PROCEDURE `BHS_UTIL_CreateTimeInterval`(IN startDate DateTime,IN endDate DateTime, IN `intervalSeconds` INT)
+CREATE  PROCEDURE `BHS_UTIL_CreateTimeInterval`(IN startDate DateTime,IN endDate DateTime, IN `intervalSeconds` INT)
 BEGIN
 	#Sproc creates temporary table 'time_range' which will contain a record for every interval in the time range
 	DROP TEMPORARY TABLE if EXISTS time_range;

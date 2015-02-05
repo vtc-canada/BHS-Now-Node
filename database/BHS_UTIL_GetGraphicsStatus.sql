@@ -35,3 +35,4 @@ BEGIN
 			AND cfg_tag_id.count_ID IS NULL;
 
 END $$
+DELIMITER ;

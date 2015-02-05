@@ -12,3 +12,4 @@ SET @startTime = (SELECT datetime_val FROM cfg_global_settings WHERE id = 1002);
 	WHERE cfg_dev_id.id IN (110041, 110051, 110061, 110071, 110081, 110091) 	
 	GROUP BY cfg_dev_id.id;
 END $$
+DELIMITER ;
