@@ -12,3 +12,4 @@ SELECT IF(SUM(cur_counts_history.value)IS NULL,0,SUM(cur_counts_history.value))/
 			AND cur_counts_history.timestamp > @startTime);
 		#WHERE cfg_dev_id.type = 11;
 END $$
+DELIMITER ;

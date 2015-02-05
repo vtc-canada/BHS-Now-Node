@@ -1,9 +1,7 @@
-USE `bhs_scada_mhk`;
 DROP procedure IF EXISTS `BHS_REPORTS_AlarmHistoryReport`;
 
 DELIMITER $$
-USE `bhs_scada_mhk`$$
-CREATE DEFINER=`root`@`%` PROCEDURE `BHS_REPORTS_AlarmHistoryReport`(IN `startTime` DATETIME,
+CREATE PROCEDURE `BHS_REPORTS_AlarmHistoryReport`(IN `startTime` DATETIME,
 		IN `endTime` DATETIME, 
 		IN `faultType` INT(11), 
 		IN `eqpId` INT(11), 

@@ -1,5 +1,5 @@
 DROP PROCEDURE if EXISTS `BHS_FLIGHTS_UpdateCurFlightOpenTimes` ;
-
+DELIMITER $$
 CREATE PROCEDURE `BHS_FLIGHTS_UpdateCurFlightOpenTimes`(IN v_time DATETIME, 
 	IN t_on_time INT(11), 
 	IN t_late INT(11), 
@@ -15,4 +15,5 @@ BEGIN
 		, locked_out_open_offset = t_locked 
 	WHERE flight_number = v_flight 
 		AND departure_date = v_date;
-END
+END $$
+DELIMITER ;

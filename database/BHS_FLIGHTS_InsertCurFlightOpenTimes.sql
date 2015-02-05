@@ -1,5 +1,5 @@
 DROP PROCEDURE if EXISTS `BHS_FLIGHTS_InsertCurFlightOpenTimes` ;
-
+DELIMITER $$
 CREATE PROCEDURE `BHS_FLIGHTS_InsertCurFlightOpenTimes`(IN v_flight INT(11),
 	IN v_dep_date DATE,
 	IN v_date DATETIME,
@@ -20,4 +20,5 @@ BEGIN
 		,t_open
 		,t_late
 		,t_locked);
-END
+END $$
+DELIMITER ;

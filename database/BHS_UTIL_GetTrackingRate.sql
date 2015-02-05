@@ -13,3 +13,4 @@ SELECT
 			AND cur_counts_history.timestamp > @startTime)
 	WHERE cfg_dev_id.type = 12;
 END $$
+DELIMITER ;

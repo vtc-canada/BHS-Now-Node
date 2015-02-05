@@ -1,8 +1,6 @@
-USE `bhs_scada_mhk`;
 DROP procedure IF EXISTS `sp_database_cleanup`;
 
 DELIMITER $$
-USE `bhs_scada_mhk`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_database_cleanup`()
 BEGIN
 

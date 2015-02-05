@@ -9,3 +9,4 @@ TIME_FORMAT(SEC_TO_TIME(AVG(sec_active)),'%i:%s') AS 'time'
 FROM cur_bag_time_active
 WHERE cur_bag_time_active.time_out > @last_reset ; 
 END $$
+DELIMITER ;

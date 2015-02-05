@@ -20,3 +20,4 @@ BEGIN
 	LEFT OUTER JOIN cfg_dev_id ON cfg_dev_id.id = cfg_tag_id.dev_ID 
 	LEFT OUTER JOIN cfg_eqp_id ON cfg_eqp_id.id = cfg_tag_id.eqp_ID;
 END $$
+DELIMITER ;

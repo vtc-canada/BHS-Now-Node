@@ -1,5 +1,5 @@
 DROP PROCEDURE if EXISTS `BHS_REPORTS_SearchBags` ;
-
+DELIMITER $$
 CREATE PROCEDURE `BHS_REPORTS_SearchBags`(IN `start_time` DATETIME,
  IN `end_time` DATETIME,
  IN `search_field` INT(11)
@@ -19,4 +19,5 @@ BEGIN
   LEFT OUTER JOIN cfg_dev_id AS DIV_DEV ON DIV_DEV.id = cur_bag_summary_history.diverter_ID
   WHERE lastmodified > start_time AND lastmodified < end_time AND ((search_field IS NULL) OR (IATA_tag = search_field OR security_ID = search_field));
 
-END
+END $$
+DELIMITER ;

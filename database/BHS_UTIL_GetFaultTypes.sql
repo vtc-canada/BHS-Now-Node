@@ -1,8 +1,9 @@
 DROP PROCEDURE if EXISTS `BHS_UTIL_GetFaultTypes` ;
-
+DELIMITER $$
 CREATE PROCEDURE `BHS_UTIL_GetFaultTypes`()
 BEGIN
 	SELECT * 
 	FROM ref_alarms_def 
 	ORDER BY text;
-END
+END $$
+DELIMITER ;

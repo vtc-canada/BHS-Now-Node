@@ -1,9 +1,7 @@
-USE `bhs_scada_mhk`;
 DROP procedure IF EXISTS `BHS_REPORTS_ThroughputIntervalReport`;
 
 DELIMITER $$
-USE `bhs_scada_mhk`$$
-CREATE DEFINER=`root`@`%` PROCEDURE `BHS_REPORTS_ThroughputIntervalReport`(IN `startTime` DATETIME, 
+CREATE  PROCEDURE `BHS_REPORTS_ThroughputIntervalReport`(IN `startTime` DATETIME, 
 	IN `endTime` DATETIME, 
 		IN `intervalTime` INT(11),
 	OUT `locale` VARCHAR(4096)
