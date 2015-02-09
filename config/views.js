@@ -54,8 +54,8 @@ module.exports.views = {
      **************************************************************************/
     locals : {
 	logo:{
-	    desktop:'/img/BHS-Now-MHK-Logo-Desktop.png',
-	    mobile:'/img/BHS-Now-MHK-Logo-Mobile.png'
+	    desktop:'/img/BHS-Now-LSE-Logo-Desktop.png',
+	    mobile:'/img/BHS-Now-LSE-Logo-Mobile.png'
 	},
 	about:{
 	    software:'Now Management Studio : 1.0<br>\
