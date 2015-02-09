@@ -6,6 +6,14 @@
 		<div class="conveyor_straight_wall4"></div>
 	</div>
 </script>
+<script type="text/template" id="roller_conveyor_straight">
+<div class="hmi-element {{if(!msieversion()||msieversion()>8){ }}borders{{ }else{ }}ie-element-border{{ } }}" top="{{=top+offsetTop}}" left="{{=left+offsetLeft}}" rotation="{{=rotation}}" style="background-image: url(../img/rollerconveyor.png)	; position:absolute; width:{{=length*elementScale}}%; height:{{=beltWidth*elementScale}}%;">
+	<div class="roller_conveyor_wall1"></div>
+	<div class="roller_conveyor_wall2"></div>		
+	<div class="roller_conveyor_wall3"></div>
+	<div class="roller_conveyor_wall4"></div>
+</div>
+</script>
 <script type="text/template" id="conveyor_turn">
 	<div class="hmi-element conveyor-turn{{if(!msieversion()||msieversion()>8){ }} borders{{ } }}" tagname="{{=tagname}}" top="{{=top+offsetTop}}" left="{{=left+offsetLeft}}" rotation="{{=rotation}}" style="background-color:lightgrey; position:absolute; height:{{=beltWidth*elementScale*2}}%;">
 		<div class="{{if(msieversion()&&msieversion()<=8){ }}{{=rotation==0?'iebotleft':''}}{{=rotation==90?'ietopleft':''}}{{=rotation==180?'iebotright':''}}{{=rotation==270?'ietopright':''}}{{ }else{ }}conveyor_turn_wall{{ } }}"></div>
@@ -15,6 +23,11 @@
 	<div class="hmi-element {{if(!msieversion()||msieversion()>8){ }} borders{{ } }}" labeltagname="{{=tagname}}" top="{{=top+offsetTop}}" left="{{=left+offsetLeft}}" rotation="{{=rotation}}" style="position:absolute; color:black; ">
 		{{=text}}
 	</div>
+</script>
+<script type="text/template" id="roller_conveyor_label">
+<div class="hmi-element {{if(!msieversion()||msieversion()>8){ }} borders{{ } }}" top="{{=top+offsetTop}}" left="{{=left+offsetLeft}}" rotation="{{=rotation}}" style="position:absolute; color:black;background-color:lightgrey; ">
+	{{=text}}
+</div>
 </script>
 <script type="text/template" id="firedoor">
 <div class="hmi-element {{if(!msieversion()||msieversion()>8){ }}borders{{ }else{ }}ie-element-border{{ } }}" tagname="{{=tagname}}" top="{{=top+offsetTop}}" left="{{=left+offsetLeft}}" rotation="{{=rotation}}" style="background-color:lightgrey; position:absolute; width:{{=length*elementScale}}%; height:{{=beltWidth*elementScale*0.33}}%;">
@@ -153,25 +166,27 @@
     	var overview = $('#overview');
     
     	var conveyor_straight = _.template($('#conveyor_straight').html());	
+    	var roller_conveyor_straight = _.template($('#roller_conveyor_straight').html());	
     	var firedoor = _.template($('#firedoor').html());
     	var estop = _.template($('#estop').html());
     	var estop_label = _.template($('#estop_label').html());
     	var conveyor_turn = _.template($('#conveyor_turn').html());	
     	var alarm_legend_row = _.template($('#alarm_legend_row').html());
     	var conveyor_label = _.template($('#conveyor_label').html());
+    	var roller_conveyor_label = _.template($('#roller_conveyor_label').html());
     	
     	
     	
 
-    	overview.append(conveyor_straight({tagname:'G_OB1_01_STATUS',length:2.3, rotation:0, left:0.3, top:10}));
-    	overview.append(conveyor_straight({tagname:'G_OB1_01_STATUS',length:2.3, rotation:0, left:11.3, top:10}));
+    	overview.append(roller_conveyor_straight({length:2.3, rotation:0, left:0.3, top:10}));
+    	overview.append(roller_conveyor_straight({length:2.3, rotation:0, left:11.3, top:10}));
     	overview.append(conveyor_straight({tagname:'G_OB1_01_STATUS',length:2.3, rotation:0, left:22.3, top:10}));
     	overview.append(conveyor_straight({tagname:'G_OB1_01_STATUS',length:2.3, rotation:0, left:33.3, top:10}));
-       	overview.append(conveyor_straight({tagname:'G_OB1_01_STATUS',length:2.3, rotation:0, left:44.3, top:10}));
+       	overview.append(roller_conveyor_straight({length:2.3, rotation:0, left:44.3, top:10}));
     	overview.append(conveyor_straight({tagname:'G_OB1_01_STATUS',length:2.3, rotation:0, left:55.3, top:10}));
     	overview.append(conveyor_straight({tagname:'G_OB1_01_STATUS',length:2.3, rotation:0, left:66.3, top:10}));
-    	overview.append(conveyor_straight({tagname:'G_OB1_01_STATUS',length:2.3, rotation:0, left:77.3, top:10}));
-    	overview.append(conveyor_straight({tagname:'G_OB1_01_STATUS',length:2.3, rotation:0, left:88.3, top:10}));
+    	overview.append(roller_conveyor_straight({length:2.3, rotation:0, left:77.3, top:10}));
+    	overview.append(roller_conveyor_straight({length:2.3, rotation:0, left:88.3, top:10}));
     	overview.append(conveyor_straight({tagname:'tagname',length:2.2, rotation:90, left:42.2, top:40.8}));
     	overview.append(conveyor_straight({tagname:'G_OB1_03_STATUS',length:1.3, rotation:90, left:44.3, top:56}));
     	overview.append(conveyor_straight({tagname:'G_OB1_03_STATUS',length:1.3, rotation:90, left:44.3, top:67}));
@@ -180,15 +195,15 @@
     	overview.append(conveyor_turn({tagname:'G_OB1_02_STATUS', rotation:90, left:39.0, top:77.8}));
     	
     	overview.append(conveyor_label({tagname:'G_OB1_02_STATUS', text:'-03', rotation:0, left:44.0, top:83.7}));
-    	overview.append(conveyor_label({tagname:'G_OB1_01_STATUS',text:'MU1-05',  rotation:0, left:1.2, top:11.5}));
-    	overview.append(conveyor_label({tagname:'G_OB1_01_STATUS',text:'MU1-04',  rotation:0, left:13.0, top:11.5}));
+    	overview.append(roller_conveyor_label({text:'MU1-05',  rotation:0, left:1.2, top:11.5}));
+    	overview.append(roller_conveyor_label({text:'MU1-04',  rotation:0, left:13.0, top:11.5}));
     	overview.append(conveyor_label({tagname:'G_OB1_01_STATUS',text:'MU1-03',  rotation:0, left:23.2, top:11.5}));
     	overview.append(conveyor_label({tagname:'G_OB1_01_STATUS',text:'MU1-02',  rotation:0, left:34.4, top:11.5}));
-    	overview.append(conveyor_label({tagname:'G_OB1_01_STATUS',text:'MU1-01',  rotation:0, left:45.6, top:11.5}));
+    	overview.append(roller_conveyor_label({text:'MU1-01',  rotation:0, left:45.6, top:11.5}));
     	overview.append(conveyor_label({tagname:'G_OB1_01_STATUS',text:'MU2-01',  rotation:0, left:56.8, top:11.5}));
     	overview.append(conveyor_label({tagname:'G_OB1_01_STATUS',text:'MU2-02',  rotation:0, left:68.0, top:11.5}));
-    	overview.append(conveyor_label({tagname:'G_OB1_01_STATUS',text:'MU2-03',  rotation:0, left:79.2, top:11.5}));
-    	overview.append(conveyor_label({tagname:'G_OB1_01_STATUS',text:'MU2-04',  rotation:0, left:89.4, top:11.5}));
+    	overview.append(roller_conveyor_label({text:'MU2-03',  rotation:0, left:79.2, top:11.5}));
+    	overview.append(roller_conveyor_label({text:'MU2-04',  rotation:0, left:89.4, top:11.5}));
        	overview.append(conveyor_label({tagname:'G_OB1_03_STATUS',text:'SS1<br>-02', rotation:0, left:45.7, top:54.2}));
     	overview.append(conveyor_label({tagname:'G_OB1_03_STATUS',text:'SS1<br>-01', rotation:0, left:45.7, top:65.2}));
     	overview.append(conveyor_label({tagname:'G_OB1_01_STATUS',text:'TC1-02',  rotation:0, left:25.4, top:89.3}));
