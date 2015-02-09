@@ -16,6 +16,27 @@
 		{{=text}}
 	</div>
 </script>
+<script type="text/template" id="firedoor">
+<div class="hmi-element {{if(!msieversion()||msieversion()>8){ }}borders{{ }else{ }}ie-element-border{{ } }}" tagname="{{=tagname}}" top="{{=top+offsetTop}}" left="{{=left+offsetLeft}}" rotation="{{=rotation}}" style="background-color:lightgrey; position:absolute; width:{{=length*elementScale}}%; height:{{=beltWidth*elementScale*0.33}}%;">
+	<div class="firedoor_wall1"></div>
+	<div class="firedoor_wall2"></div>		
+	<div class="firedoor_wall3"></div>
+	<div class="firedoor_wall4"></div>
+</div>
+</script>
+<script type="text/template" id="estop">
+<div class="hmi-element {{if(!msieversion()||msieversion()>8){ }}borders{{ }else{ }}ie-element-border{{ } }}" tagname="{{=tagname}}" top="{{=top+offsetTop}}" left="{{=left+offsetLeft}}" rotation="{{=rotation}}" style="background-color:lightgrey; position:absolute; width:{{=length}}%; height:{{=length*elementScale*0.33}}%;">
+	<div class="estop_wall1"></div>
+	<div class="estop_wall2"></div>		
+	<div class="estop_wall3"></div>
+	<div class="estop_wall4"></div>
+</div>
+</script>
+<script type="text/template" id="estop_label">
+<div class="hmi-element {{if(!msieversion()||msieversion()>8){ }} borders{{ } }}" labeltagname="{{=tagname}}" top="{{=top+offsetTop}}" left="{{=left+offsetLeft}}" rotation="{{=rotation}}" style="position:absolute; color:black; ">
+	{{=text}}
+</div>
+</script>
 
 <script type="text/template" id="alarm_legend_row">
 
@@ -132,28 +153,71 @@
     	var overview = $('#overview');
     
     	var conveyor_straight = _.template($('#conveyor_straight').html());	
+    	var firedoor = _.template($('#firedoor').html());
+    	var estop = _.template($('#estop').html());
+    	var estop_label = _.template($('#estop_label').html());
     	var conveyor_turn = _.template($('#conveyor_turn').html());	
     	var alarm_legend_row = _.template($('#alarm_legend_row').html());
     	var conveyor_label = _.template($('#conveyor_label').html());
     	
     	
-    	overview.append(conveyor_turn({tagname:'G_OB1_07_STATUS', rotation:0, left:40.3, top:0}));
-    	overview.append(conveyor_turn({tagname:'G_OB1_02_STATUS', rotation:90, left:40.0, top:77.8}));
-    	overview.append(conveyor_straight({tagname:'G_OB1_08_STATUS',length:8, rotation:0, left:0.3, top:0}));
-    	overview.append(conveyor_straight({tagname:'G_OB1_06_STATUS',length:2.2, rotation:90, left:43.4, top:25}));
-    	overview.append(conveyor_straight({tagname:'tagname',length:2.2, rotation:90, left:43.4, top:44.2}));
-    	overview.append(conveyor_straight({tagname:'G_OB1_03_STATUS',length:2.2, rotation:90, left:43.4, top:63.4}));
-    	overview.append(conveyor_straight({tagname:'G_OB1_01_STATUS',length:8, rotation:0, left:0, top:88.4}));
+    	
+
+    	overview.append(conveyor_straight({tagname:'G_OB1_01_STATUS',length:2.3, rotation:0, left:0.3, top:10}));
+    	overview.append(conveyor_straight({tagname:'G_OB1_01_STATUS',length:2.3, rotation:0, left:11.3, top:10}));
+    	overview.append(conveyor_straight({tagname:'G_OB1_01_STATUS',length:2.3, rotation:0, left:22.3, top:10}));
+    	overview.append(conveyor_straight({tagname:'G_OB1_01_STATUS',length:2.3, rotation:0, left:33.3, top:10}));
+       	overview.append(conveyor_straight({tagname:'G_OB1_01_STATUS',length:2.3, rotation:0, left:44.3, top:10}));
+    	overview.append(conveyor_straight({tagname:'G_OB1_01_STATUS',length:2.3, rotation:0, left:55.3, top:10}));
+    	overview.append(conveyor_straight({tagname:'G_OB1_01_STATUS',length:2.3, rotation:0, left:66.3, top:10}));
+    	overview.append(conveyor_straight({tagname:'G_OB1_01_STATUS',length:2.3, rotation:0, left:77.3, top:10}));
+    	overview.append(conveyor_straight({tagname:'G_OB1_01_STATUS',length:2.3, rotation:0, left:88.3, top:10}));
+    	overview.append(conveyor_straight({tagname:'tagname',length:2.2, rotation:90, left:42.2, top:40.8}));
+    	overview.append(conveyor_straight({tagname:'G_OB1_03_STATUS',length:1.3, rotation:90, left:44.3, top:56}));
+    	overview.append(conveyor_straight({tagname:'G_OB1_03_STATUS',length:1.3, rotation:90, left:44.3, top:67}));
+    	overview.append(conveyor_straight({tagname:'G_OB1_01_STATUS',length:4, rotation:0, left:19, top:88.4}));
+    	overview.append(conveyor_straight({tagname:'G_OB1_01_STATUS',length:4, rotation:0, left:0, top:88.4}));
+    	overview.append(conveyor_turn({tagname:'G_OB1_02_STATUS', rotation:90, left:39.0, top:77.8}));
+    	
+    	overview.append(conveyor_label({tagname:'G_OB1_02_STATUS', text:'-03', rotation:0, left:44.0, top:83.7}));
+    	overview.append(conveyor_label({tagname:'G_OB1_01_STATUS',text:'MU1-05',  rotation:0, left:1.2, top:11.5}));
+    	overview.append(conveyor_label({tagname:'G_OB1_01_STATUS',text:'MU1-04',  rotation:0, left:13.0, top:11.5}));
+    	overview.append(conveyor_label({tagname:'G_OB1_01_STATUS',text:'MU1-03',  rotation:0, left:23.2, top:11.5}));
+    	overview.append(conveyor_label({tagname:'G_OB1_01_STATUS',text:'MU1-02',  rotation:0, left:34.4, top:11.5}));
+    	overview.append(conveyor_label({tagname:'G_OB1_01_STATUS',text:'MU1-01',  rotation:0, left:45.6, top:11.5}));
+    	overview.append(conveyor_label({tagname:'G_OB1_01_STATUS',text:'MU2-01',  rotation:0, left:56.8, top:11.5}));
+    	overview.append(conveyor_label({tagname:'G_OB1_01_STATUS',text:'MU2-02',  rotation:0, left:68.0, top:11.5}));
+    	overview.append(conveyor_label({tagname:'G_OB1_01_STATUS',text:'MU2-03',  rotation:0, left:79.2, top:11.5}));
+    	overview.append(conveyor_label({tagname:'G_OB1_01_STATUS',text:'MU2-04',  rotation:0, left:89.4, top:11.5}));
+       	overview.append(conveyor_label({tagname:'G_OB1_03_STATUS',text:'SS1<br>-02', rotation:0, left:45.7, top:54.2}));
+    	overview.append(conveyor_label({tagname:'G_OB1_03_STATUS',text:'SS1<br>-01', rotation:0, left:45.7, top:65.2}));
+    	overview.append(conveyor_label({tagname:'G_OB1_01_STATUS',text:'TC1-02',  rotation:0, left:25.4, top:89.3}));
+    	overview.append(conveyor_label({tagname:'G_OB1_01_STATUS',text:'TC1-01',  rotation:0, left:5.4, top:89.3}));
     	
     	
-    	overview.append(conveyor_label({tagname:'G_OB1_07_STATUS', text:'-07', rotation:0, left:44.2, top:5.7}));
-    	overview.append(conveyor_label({tagname:'G_OB1_02_STATUS', text:'-02', rotation:0, left:44.0, top:83.7}));
-    	overview.append(conveyor_label({tagname:'G_OB1_08_STATUS',text:'OB1-08', rotation:0, left:15.5, top:1.5}));
-    	overview.append(conveyor_label({tagname:'G_OB1_06_STATUS',text:'-06', rotation:0, left:46.7, top:26.5}));
-    	overview.append(conveyor_label({tagname:'G_OB1_03_STATUS',text:'-03', rotation:0, left:46.7, top:64.4}));
-    	overview.append(conveyor_label({tagname:'G_OB1_01_STATUS',text:'OB1-01',  rotation:0, left:15.4, top:89.3}));
+    	overview.append(firedoor({tagname:'G_OB1_05_STATUS',length:2.2, rotation:0, left:42, top:80}));
+    	overview.append(firedoor({tagname:'G_OB1_05_STATUS',length:2.2, rotation:90, left:28, top:13.5}));
+    	overview.append(firedoor({tagname:'G_OB1_05_STATUS',length:2.2, rotation:90, left:61, top:13.5}));
+    	overview.append(firedoor({tagname:'G_OB1_05_STATUS',length:2.2, rotation:90, left:61, top:13.5}));
     	
     	
+    	overview.append(estop({tagname:'G_OB1_05_STATUS',length:4, rotation:0, left:1, top:80}));
+    	overview.append(estop_label({tagname:'G_OB1_02_STATUS', text:'E', rotation:0, left:2.0, top:80}));
+     	overview.append(estop({tagname:'G_OB1_05_STATUS',length:4, rotation:0, left:40, top:72}));
+    	overview.append(estop_label({tagname:'G_OB1_02_STATUS', text:'E', rotation:0, left:41.0, top:72}));
+       	overview.append(estop({tagname:'G_OB1_05_STATUS',length:4, rotation:0, left:51, top:84}));
+    	overview.append(estop_label({tagname:'G_OB1_02_STATUS', text:'E', rotation:0, left:52.0, top:84}));  	
+       	overview.append(estop({tagname:'G_OB1_05_STATUS',length:4, rotation:0, left:51, top:68}));
+    	overview.append(estop_label({tagname:'G_OB1_02_STATUS', text:'E', rotation:0, left:52.0, top:68})); 
+      	overview.append(estop({tagname:'G_OB1_05_STATUS',length:4, rotation:0, left:24, top:2.5}));
+    	overview.append(estop_label({tagname:'G_OB1_02_STATUS', text:'E', rotation:0, left:25.0, top:2.5})); 
+      	overview.append(estop({tagname:'G_OB1_05_STATUS',length:4, rotation:0, left:35, top:20.5}));
+    	overview.append(estop_label({tagname:'G_OB1_02_STATUS', text:'E', rotation:0, left:36.0, top:20.5})); 
+    	overview.append(estop({tagname:'G_OB1_05_STATUS',length:4, rotation:0, left:61, top:20.5}));
+    	overview.append(estop_label({tagname:'G_OB1_02_STATUS', text:'E', rotation:0, left:62.0, top:20.5})); 
+    	overview.append(estop({tagname:'G_OB1_05_STATUS',length:4, rotation:0, left:72, top:2.5}));
+    	overview.append(estop_label({tagname:'G_OB1_02_STATUS', text:'E', rotation:0, left:73.0, top:2.5})); 
+      
     	
     	for(var i=0;i<alarm_legend.length;i++){
     		$('#alarm_legend').append(alarm_legend_row(alarm_legend[i]));
