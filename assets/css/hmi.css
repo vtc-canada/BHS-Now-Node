@@ -1,3 +1,6 @@
+.borders .roller_conveyor_wall1,
+.borders .firedoor_wall1,
+.borders .estop_wall1,
 .borders .conveyor_straight_wall1{
 	position: absolute;
 	top:0%;
@@ -5,7 +8,9 @@
 	background: grey;
 	height: 2px;
 }
-
+.borders .roller_conveyor_wall2,
+.borders .firedoor_wall2,
+.borders .estop_wall2,
 .borders .conveyor_straight_wall2{
 	position: absolute;
 	bottom:0%;
@@ -13,7 +18,9 @@
 	background: grey;
 	height: 2px;
 }
-
+.borders .roller_conveyor_wall3,
+.borders .firedoor_wall3,
+.borders .estop_wall3,
 .borders .conveyor_straight_wall3{
 	position: absolute;
 	left:0%;
@@ -21,7 +28,9 @@
 	background: grey;
 	width: 2px;
 }
-
+.borders .roller_conveyor_wall4,
+.borders .firedoor_wall4,
+.borders .estop_wall4,
 .borders .conveyor_straight_wall4{
 	position: absolute;
 	right:0%;
