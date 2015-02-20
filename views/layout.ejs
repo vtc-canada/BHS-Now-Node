@@ -342,6 +342,23 @@
 	        	return s;
 	        }
 	    }
+	    
+	    
+	    function getIndexById(array,id,tempId){
+	    	for(var i=0;i<array.length;i++){
+	    		if(array[i].id==id){
+	    			return i;
+	    		}
+	    	}
+	    	// couldnt find it with an ID, try tempId
+	    	for(var i=0;i<array.length;i++){
+	    		if(typeof(array[i].tempId)!='undefined'&&array[i].tempId==tempId){
+	    			return i;
+	    		}
+	    	}
+	    	
+	    }
+	    
 	    /** 
 	     * Imported from CRED for Address concatenation on companies and contacts
 	     */

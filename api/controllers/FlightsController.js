@@ -29,11 +29,8 @@ module.exports = {
 		});
 	    });
 	});
-	// Database.dataSproc('FMS_FLIGHTS_GetFlightsByDateRange',['2014-10-01
-	// 00:00:00','2015-01-01 00:00:00'],function(err,flights){
-	// });
     },
-    getCompanyResourceSharingByFlightId : function(req,res){
+    getCompanyResourceSharingByFlightId : function(req, res) {
 	Database.dataSproc('FMS_FLIGHTS_GetCompanyResourceSharingByFlightId', [ req.body.id ], function(err, companies) {
 	    if (err) {
 		console.log('FMS_FLIGHTS_GetCompanyResourceSharingByFlightId :' + err);
@@ -56,6 +53,16 @@ module.exports = {
 	});
     },
     findFlights : function(req, res) {
+
+	function getIndexById(array, id) {
+	    for (var i = 0; i < array.length; i++) {
+		if (array[i].id == id) {
+		    return i;
+		}
+	    }
+	    return -1;
+	}
+
 	Database.dataSproc('FMS_FLIGHTS_GetFlightsByDateRange', [ new Date(req.body.minDate), new Date(req.body.maxDate) ], function(err, flights) {
 	    if (err) {
 		console.log('FMS_FLIGHTS_GetFlightsByDateRange :' + err);
@@ -63,33 +70,51 @@ module.exports = {
 		    error : 'FMS_FLIGHTS_GetFlightsByDateRange :' + err
 		}, 500);
 	    }
+
 	    var flightgroups = [];
-	    var lastFlightId = null;
-	    for(var i=0;i<flights[0].length;i++){
-		if(lastFlightId != flights[0][i].flight_id){
-		    lastFlightId = flights[0][i].flight_id;
-		    flightgroups.push({id : flights[0][i].flight_id, flights:[]});
+
+	    async.each(flights[0], function(leg, cb) {
+		Database.dataSproc('FMS_FLIGHTS_GetCompanyResourceSharingByLegId', [ leg.id ], function(err, companies) {
+		    if (err)
+			return cb(err);
+		    if (getIndexById(flightgroups, leg.flight_id) == -1) { // checks and adds flightgroup
+			flightgroups.push({
+			    id : leg.flight_id,
+			    flights : []
+			});
+		    }
+		    var index = getIndexById(flightgroups, leg.flight_id); //gets the index
+		    leg.company_seats = companies
+		    flightgroups[index].flights.push(leg); // adds leg
+
+		    cb(null);
+		});
+	    }, function(err, result) {
+		if (err) {
+		    return res.json(err);
 		}
-		flightgroups[flightgroups.length-1].flights.push(flights[0][i]);
-	    }
-	    
-	    res.send(flightgroups);
+		res.send(flightgroups);
+	    });
 	});
     },
-    destroy:function(req,res){
+    destroy : function(req, res) {
 	var flight = req.body;
-	if(flight.id){
-	    sails.controllers.manifests.clearManifestByFlightId(flight.id,function(err){
+	if (flight.id) {
+	    sails.controllers.manifests.clearManifestByFlightId(flight.id, function(err) {
 		sails.controllers.flights.clearCompanyFlightMappings(null, flight.id, function(err) {
-		    if(err)
-			    return res.json({error:'Error:'+err},500);
-		    Database.dataSproc('FMS_FLIGHTS_DeleteFlight', [ flight.id],function(err){
-			if(err)
-			    return res.json({error:'Error:'+err},500);
-			
+		    if (err)
+			return res.json({
+			    error : 'Error:' + err
+			}, 500);
+		    Database.dataSproc('FMS_FLIGHTS_DeleteFlight', [ flight.id ], function(err) {
+			if (err)
+			    return res.json({
+				error : 'Error:' + err
+			    }, 500);
+
 			res.json({
 			    success : 'success'
-			}); 
+			});
 		    });
 		});
 	    });
@@ -103,49 +128,48 @@ module.exports = {
 	    sails.controllers.flights.clearCompanyFlightMappings(null, flight.id, function(err) {
 		if (err)
 		    return cb(err);
-		async.each(flight.company_mappings,function(company_mapping,callback){
-		    if(company_mapping.assigned==0){ //skip making the mapping if it's not assigned
+		async.each(flight.company_mappings, function(company_mapping, callback) {
+		    if (company_mapping.assigned == 0) { // skip making the
+			// mapping if it's
+			// not assigned
 			return callback(null);
 		    }
-		    sails.controllers.flights.createCompanyFlightMapping(company_mapping.id,flight.id,function(err){
-			if(err)
+		    sails.controllers.flights.createCompanyFlightMapping(company_mapping.id, flight.id, function(err) {
+			if (err)
 			    return callback(err);
 			callback(null);
 		    });
-		},function(err){
+		}, function(err) {
 		    if (err)
 			return cb(err);
 		    cb(null);
 		});
 	    });
 	}
-	
 
 	if (!flight.id) { // New Flight!
 	    var newFlightId = '@out' + Math.floor((Math.random() * 1000000) + 1);
-	    Database.dataSproc('FMS_FLIGHTS_CreateFlight', [ flight.airline, flight.flight_number, flight.departure_time, flight.arrival_time,
-		    flight.origin_airport_code, flight.destination_airport_code, newFlightId], function(err, response) {
+	    Database.dataSproc('FMS_FLIGHTS_CreateFlight', [ flight.airline, flight.flight_number, flight.departure_time, flight.arrival_time, flight.origin_airport_code, flight.destination_airport_code, newFlightId ], function(err, response) {
 		if (err) {
 		    console.log(err.toString());
 		    return res.json({
 			error : 'FMS_FLIGHTS_CreateFlight :' + err
 		    }, 500);
 		}
-		Database.dataSproc('FMS_MANIFEST_CreateManifest',[response[1][newFlightId]],function(err,response){
+		Database.dataSproc('FMS_MANIFEST_CreateManifest', [ response[1][newFlightId] ], function(err, response) {
 		    if (err) {
 			console.log(err.toString());
 			return res.json({
 			    error : 'FMS_MANIFEST_CreateManifest :' + err
 			}, 500);
 		    }
-			res.json({
-			    success : 'success'
-			});
+		    res.json({
+			success : 'success'
+		    });
 		});
 	    });
 	} else {
-	    Database.dataSproc('FMS_FLIGHTS_UpdateFlight', [ flight.id, flight.airline, flight.flight_number, flight.departure_time, flight.arrival_time,
-		    flight.origin_airport_code, flight.destination_airport_code ], function(err, response) {
+	    Database.dataSproc('FMS_FLIGHTS_UpdateFlight', [ flight.id, flight.airline, flight.flight_number, flight.departure_time, flight.arrival_time, flight.origin_airport_code, flight.destination_airport_code ], function(err, response) {
 		if (err) {
 		    console.log(err.toString());
 		    return res.json({
