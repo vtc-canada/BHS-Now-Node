@@ -96,7 +96,7 @@ module.exports.views = {
 		footer:true
 	    },
 	    '/flighttable':{
-		enabled:true,
+		enabled:false,
 		banner:true,
 		icon:'icon-calendar',
 		footer:true
@@ -120,7 +120,7 @@ module.exports.views = {
 		footer:true
 		},
 	    '/search':{
-		enabled:true,
+		enabled:false,
 		banner:true,
 		icon:'icon-suitcase',
 		footer:true
