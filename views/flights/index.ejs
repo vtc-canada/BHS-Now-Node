@@ -3,11 +3,7 @@
 <script type="text/template" id="ganttrows-template">
     {{ if (deleted){ return; } }}
     <div class="span12 ganttrow">
-        {{ var selectedDate = $('#flightdatepicker').data('datetimepicker').getLocalDate(); selectedDate.setHours(0,0,0,0);    var yesterday  = new Date(selectedDate); yesterday.setDate(selectedDate.getDate()-1); var yesterday9pm = new Date(yesterday).setHours(21); var tomorrow = new Date(selectedDate); tomorrow.setDate(selectedDate.getDate()+1); var tomorrow3am = new Date(tomorrow).setHours(3); var departuredatetime = dateFromISO(departure_time);  var arrivaldatetime = dateFromISO(arrival_time);      }}
-        {{ tatemp = dateFromISO(departure_time) }}
-        {{ tatemp.toString() }}
-        {{ departuredatetime }}
-        {{ arrivaldatetime }}
+        
         <div class="clockblock"><div class="gantblock" style="border-top:none;"></div></div>
         <div class="clockblock"><div class="gantblock"></div></div>
         <div class="clockblock"><div class="gantblock"></div></div>
@@ -39,17 +35,24 @@
         <div class="clockblock"><div class="gantblock"></div></div>
         <div class="clockblock"><div class="gantblock"></div></div>
 
-        {{ var lefttemp = 100*(departuredatetime.getTime() - yesterday9pm)/(tomorrow3am- yesterday9pm); }}
-        {{ var widthtemp = 100*(arrivaldatetime.getTime() - departuredatetime.getTime())/(tomorrow3am- yesterday9pm); }}
-        {{ var prewidthtemp = widthtemp; }}
-        {{ if(lefttemp < 0){ widthtemp = widthtemp + lefttemp; lefttemp =0; } }}
-        {{ if(lefttemp + widthtemp > 100){ widthtemp = 100-lefttemp; } }}
-
-        <a class="progress ganntbar"  flight_id="{{= id }}"  style="top:7px; left:{{= lefttemp }}%; width:{{= widthtemp }}%; {{ if(lefttemp==0){ }} border-radius:0px 4px 4px 0px; {{ }else if(lefttemp+prewidthtemp>100){ }} border-radius:4px 0px 0px 4px; {{ } }}">
-
-            <div flight_id="{{=id}}" class="bar progress-bar-success gantt-flightname-div" style="width:{{= 100 }}%;">{{= IATA_2_digit_ID+' '+flight_number }}</div>
-
-        </a>
+		{{ for(var i = 0; i<flights.length;i++){ }}
+	        {{ var selectedDate = $('#flightdatepicker').data('datetimepicker').getLocalDate(); selectedDate.setHours(0,0,0,0);    var yesterday  = new Date(selectedDate); yesterday.setDate(selectedDate.getDate()-1); var yesterday9pm = new Date(yesterday).setHours(21); var tomorrow = new Date(selectedDate); tomorrow.setDate(selectedDate.getDate()+1); var tomorrow3am = new Date(tomorrow).setHours(3); var departuredatetime = dateFromISO(flights[i].departure_time);  var arrivaldatetime = dateFromISO(flights[i].arrival_time);      }}
+	        {{ tatemp = dateFromISO(flights[i].departure_time) }}
+	        {{ tatemp.toString() }}
+	        {{ departuredatetime }}
+	        {{ arrivaldatetime }}
+	        {{ var lefttemp = 100*(departuredatetime.getTime() - yesterday9pm)/(tomorrow3am- yesterday9pm); }}
+	        {{ var widthtemp = 100*(arrivaldatetime.getTime() - departuredatetime.getTime())/(tomorrow3am- yesterday9pm); }}
+	        {{ var prewidthtemp = widthtemp; }}
+	        {{ if(lefttemp < 0){ widthtemp = widthtemp + lefttemp; lefttemp =0; } }}
+	        {{ if(lefttemp + widthtemp > 100){ widthtemp = 100-lefttemp; } }}
+	
+	        <a class="progress ganntbar"  leg_id="{{= flights[i].id}}" flight_id="{{= flights[i].flight_id }}"  style="top:7px; left:{{= lefttemp }}%; width:{{= widthtemp }}%; {{ if(lefttemp==0){ }} border-radius:0px 4px 4px 0px; {{ }else if(lefttemp+prewidthtemp>100){ }} border-radius:4px 0px 0px 4px; {{ } }}">
+	
+	            <div leg_id="{{= flights[i].id}}" flight_id="{{= flights[i].flight_id }}" class="bar progress-bar-success gantt-flightname-div" style="width:{{= 100 }}%;">{{= flights[i].IATA_2_digit_ID+' '+flights[i].flight_number }}</div>
+	
+	        </a>
+        {{ } }}
     </div>
 </script>
 
@@ -122,7 +125,7 @@
 	    <div class="tab-pane active" id="tab1">
 	    	<div class="row-fluid">
 		    	<div class="span4"><label for="edit_flight_number">Flight Number:</label></div>
-		    	<div class="span4"><input type="text" id="edit_flight_number" model-attribute="flight_number" value="{{=flight_number}}"/></div>
+		    	<div class="span4"><input type="text" id="edit_flight_number" model-attribute="flight_number" value="{{=flights[0].flight_number}}"/></div>
 	    	</div>
 	    	<div class="row-fluid">
 		    	<div class="span4"><label for="edit_airline">Airline:</label></div>
@@ -130,7 +133,7 @@
 		    	<select id="edit_airline">
 	      			<option IATA_code="" IATA_2_digit_ID="" value="">Choose Airline</option>
 		    		{{for(var i=0;i<airlines.length;i++){ }}
-		    			<option IATA_code="{{=airlines[i].IATA_code}}" IATA_2_digit_ID="{{=airlines[i].IATA_2_digit_ID}}" value="{{=airlines[i].id}}" {{if(airlines[i].id == airline){ }}selected="selected"{{ } }}>{{=airlines[i].IATA_2_digit_ID}} - {{=airlines[i].carrier}}</option>
+		    			<option IATA_code="{{=airlines[i].IATA_code}}" IATA_2_digit_ID="{{=airlines[i].IATA_2_digit_ID}}" value="{{=airlines[i].id}}" {{if(airlines[i].id == flights[0].airline){ }}selected="selected"{{ } }}>{{=airlines[i].IATA_2_digit_ID}} - {{=airlines[i].carrier}}</option>
 		    		{{ } }}
 		    	</select>
 		    	</div>
@@ -139,62 +142,84 @@
 	    
 	    <div class="tab-pane" id="tab2">
 	    	<div class="row-fluid">
-				<div class="row-fluid flight-leg-title">Origin:</div>
-				<div class="row-fluid">
-					<div class="span6">
-		    			<label for="edit_origin_airport">Airport:</label>
-		    		</div>
-		    		<div class="span6 input-append">
-			    		<select id="edit_origin_airport">
-			      			<option IATAFAA="" ICAO="" value="">Choose Origin</option>
-				    		{{for(var i=0;i<airports.length;i++){ }}
-				    			<option airport_code="{{=airports[i].id}}" timezone="{{=airports[i].timezone}}" latitude="{{=airports[i].latitude}}" longitude="{{=airports[i].longitude}}" IATAFAA="{{=airports[i].IATAFAA}}" ICAO="{{=airports[i].ICAO}}" value="{{=airports[i].id}}" {{if(airports[i].id == origin_airport_code){ }}selected="selected"{{ } }}>{{=airports[i].IATAFAA}} - {{=airports[i].name}}</option>
-				    		{{ } }}
-				    	</select>
-		    		</div>
+	    		<div class="span6">
+	    			Route Details
+	    		</div>
+	    		<div class="span6">
+	    			<button class="btn btn-primary pull-right" id="add_flight_leg">Add Flight Leg</button>
+	    		</div>
+	    		
+	    	</div>
+	    	
+	    	
+	    	{{ for(var flightindex=0;flightindex<flights.length;flightindex++){ }}
+	    	<div class="flight-wrapper">
+		    	<div class="row-fluid">
+					<div class="row-fluid flight-leg-title">Origin: leg {{= flights[flightindex].id }}</div>
+					<div class="row-fluid">
+						<div class="span6">
+			    			<label for="edit_origin_airport">Airport:</label>
+			    		</div>
+			    		<div class="span6 input-append">
+				    		<select class="edit_origin_airport" leg="{{= flights[flightindex].id }}">
+				      			<option IATAFAA="" ICAO="" value="">Choose Origin</option>
+					    		{{for(var i=0;i<airports.length;i++){ }}
+					    			<option airport_code="{{=airports[i].id}}" timezone="{{=airports[i].timezone}}" latitude="{{=airports[i].latitude}}" longitude="{{=airports[i].longitude}}" IATAFAA="{{=airports[i].IATAFAA}}" ICAO="{{=airports[i].ICAO}}" value="{{=airports[i].id}}" {{if(airports[i].id == flights[flightindex].origin_airport_code){ }}selected="selected"{{ } }}>{{=airports[i].IATAFAA}} - {{=airports[i].name}}</option>
+					    		{{ } }}
+					    	</select>
+			    		</div>
+					</div>
+					
+					<div class="row-fluid">
+			    		<div class="span6">
+			    			<label for="edit_flight_origin_datepicker">Scheduled Departure:<span class="origin-timezone"></span></label>
+			    		</div>
+						<div leg="{{= flights[flightindex].id }}" class="edit_flight_origin_datepicker input-append span6">
+						
+			                <input data-format="yyyy-MM-dd" class="isn-datepicker" type="text" value="">
+			                <span class="add-on">
+			                    <i data-time-icon="icon-time" data-date-icon="icon-calendar"> </i>
+			                </span>
+			            </div>
+			    	</div>
 				</div>
 				
 				<div class="row-fluid">
-		    		<div class="span6">
-		    			<label for="edit_flight_origin_datepicker">Scheduled Departure:<span class="origin-timezone"></span></label>
-		    		</div>
-					<div id="edit_flight_origin_datepicker" class="input-append span6">
-		                <input data-format="yyyy-MM-dd" class="isn-datepicker" type="text" value="">
-		                <span class="add-on">
-		                    <i data-time-icon="icon-time" data-date-icon="icon-calendar"> </i>
-		                </span>
-		            </div>
-		    	</div>
+					<div class="row-fluid flight-leg-title">Destination:</div>
+					<div class="row-fluid">
+						<div class="span6">
+			    			<label for="edit_destination_airport">Airport:</label>
+			    		</div>
+			    		<div class="span6 input-append">
+				      		<select class="edit_destination_airport" leg="{{= flights[flightindex].id }}">
+				      			<option IATAFAA="" ICAO="" value="">Choose Destination</option>
+					    		{{for(var i=0;i<airports.length;i++){ }}
+					    			<option airport_code="{{=airports[i].id}}" timezone="{{=airports[i].timezone}}" latitude="{{=airports[i].latitude}}" longitude="{{=airports[i].longitude}}" IATAFAA="{{=airports[i].IATAFAA}}" ICAO="{{=airports[i].ICAO}}" value="{{=airports[i].id}}" {{if(airports[i].id == flights[flightindex].destination_airport_code){ }}selected="selected"{{ } }}>{{=airports[i].IATAFAA}} - {{=airports[i].name}}</option>
+					    		{{ } }}
+					    	</select>
+			    		</div>
+					</div>
+					
+					<div class="row-fluid">
+			    		<div class="span6">
+			    			<label for="edit_flight_destination_datepicker">Scheduled Arrival:<span class="destination-timezone"></span></label>
+			    		</div>
+						<div leg="{{= flights[flightindex].id }}" class="edit_flight_destination_datepicker input-append span6">
+			                <input data-format="yyyy-MM-dd" class="isn-datepicker" type="text" value="">
+			                <span class="add-on">
+			                    <i data-time-icon="icon-time" data-date-icon="icon-calendar"> </i>
+			                </span>
+			            </div>
+			    	</div>
+				</div>
+				
 			</div>
+	    	{{ } }}
+	    	
+	    	
 			
-			<div class="row-fluid">
-				<div class="row-fluid flight-leg-title">Destination:</div>
-				<div class="row-fluid">
-					<div class="span6">
-		    			<label for="edit_destination_airport">Airport:</label>
-		    		</div>
-		    		<div class="span6 input-append">
-			      		<select id="edit_destination_airport">
-			      			<option IATAFAA="" ICAO="" value="">Choose Destination</option>
-				    		{{for(var i=0;i<airports.length;i++){ }}
-				    			<option airport_code="{{=airports[i].id}}" timezone="{{=airports[i].timezone}}" latitude="{{=airports[i].latitude}}" longitude="{{=airports[i].longitude}}" IATAFAA="{{=airports[i].IATAFAA}}" ICAO="{{=airports[i].ICAO}}" value="{{=airports[i].id}}" {{if(airports[i].id == destination_airport_code){ }}selected="selected"{{ } }}>{{=airports[i].IATAFAA}} - {{=airports[i].name}}</option>
-				    		{{ } }}
-				    	</select>
-		    		</div>
-				</div>
-				
-				<div class="row-fluid">
-		    		<div class="span6">
-		    			<label for="edit_flight_destination_datepicker">Scheduled Arrival:<span class="destination-timezone"></span></label>
-		    		</div>
-					<div id="edit_flight_destination_datepicker" class="input-append span6">
-		                <input data-format="yyyy-MM-dd" class="isn-datepicker" type="text" value="">
-		                <span class="add-on">
-		                    <i data-time-icon="icon-time" data-date-icon="icon-calendar"> </i>
-		                </span>
-		            </div>
-		    	</div>
-			</div>
+			
+			
 	    
 	    </div>
 	    <div class="tab-pane" id="tab3">
@@ -513,14 +538,14 @@
 				//editFlightView.model.clear();
 				editFlightView.model.set(newFlight);
 				editFlightView.render();
-				$('#myModalFlightLabel').html('<%=__('Flight')%> '+editFlightView.model.get('flight_number'));
+				$('#myModalFlightLabel').html('<%=__('Flight')%> '+editFlightView.model.get('flights')[0].flight_number);
 				$('#flightModal').modal('show');
             },
             template: _.template($('#ganttrows-template').html()),
             render: function () {
                 this.$el.html("");
                 var tcollection = this.collection.sortBy(function(message){
-                    return message.get("departure_time");
+                    return message.get('flights')[0].departure_time;
                 });
                 for(var i=0; i<tcollection.length; i++)
                 {
@@ -532,13 +557,20 @@
                         if(terms[j]==""){
                             continue;
                         }
-                        if((getPropertybyId(ref_airline_code,'IATA_2_digit_ID',tcollection[i].get('airline')).toString()+tcollection[i].get('flight_number').toString()).toLowerCase().indexOf(terms[j].toString().toLowerCase())==-1
-                                &&("mu"+tcollection[i].get('virtual_early_dest').toString()).indexOf(terms[j].toString().toLowerCase())==-1
-                                &&("mu"+tcollection[i].get('virtual_late_dest').toString()).indexOf(terms[j].toString().toLowerCase())==-1
-                                &&("mu"+tcollection[i].get('virtual_locked_out_dest').toString()).indexOf(terms[j].toString().toLowerCase())==-1
-                                &&("mu"+tcollection[i].get('virtual_on_time_dest').toString()).indexOf(terms[j].toString().toLowerCase())==-1
-                                ){
-                            passsearch = false;
+                        var inflightgroup = false;
+                        for(var k = 0; k < tcollection[i].get('flights').length;k++){
+	                        if((getPropertybyId(ref_airline_code,'IATA_2_digit_ID',tcollection[i].get('flights')[k].airline).toString()+tcollection[i].get('flights')[k].flight_number.toString()).toLowerCase().indexOf(terms[j].toString().toLowerCase())==-1
+	                                &&("mu"+tcollection[i].get('flights')[k].virtual_early_dest.toString()).indexOf(terms[j].toString().toLowerCase())==-1
+	                                &&("mu"+tcollection[i].get('flights')[k].virtual_late_dest.toString()).indexOf(terms[j].toString().toLowerCase())==-1
+	                                &&("mu"+tcollection[i].get('flights')[k].virtual_locked_out_dest.toString()).indexOf(terms[j].toString().toLowerCase())==-1
+	                                &&("mu"+tcollection[i].get('flights')[k].virtual_on_time_dest.toString()).indexOf(terms[j].toString().toLowerCase())==-1){
+	                                
+	                        }else{
+	                        	inflightgroup = true; //one of em should turn it true - found
+	                        }                        
+                        }
+                        if(!inflightgroup){  // if not found at all.. then flag as passsearch = false;
+                        	passsearch = false;
                         }
                     }
                     if(passsearch){
@@ -583,12 +615,19 @@
             	//$('.assign-company-checkbox').unbind();
             },
             events:{
-                'change #edit_origin_airport':'originPathChanged',
-                'change #edit_destination_airport':'destinationPathChanged',
+                'change .edit_origin_airport':'originPathChanged',
+                'change .edit_destination_airport':'destinationPathChanged',
                 'change input[model-attribute]':'changeAttribute',// ="flight_number" 
                 'change #edit_airline':'airlineChanged',
                 'change .assign-company-checkbox':'assignCompany',
-                'click #add_pax':'addPassenger'
+                'click #add_pax':'addPassenger',
+                'click #add_flight_leg' : 'addFlightLeg'
+            },
+            addFlightLeg : function(event){
+            	//alert('here');
+            	//this.model.set('flights',this.model.get('flights').push({flight_id:this.model.get('flights')[0].flight_id,}));
+            	
+            	
             },
             addPassenger:function(event){
             	alert('abcdefg');
@@ -611,69 +650,75 @@
             airlineChanged:function(event){
             	this.model.set('airline',$(event.target).val()==''?null:$(event.target).val());
             },
-            updateOrigin:function(updateModel){
-            	var timezone = parseInt($('#edit_origin_airport option:selected').attr('timezone'));
-            	var airportcode = parseInt($('#edit_origin_airport option:selected').attr('airport_code'));
+            updateOrigin:function($location,$datetimepicker, updateModel){ // called when origin is updated
+            	var timezone = parseInt($location.find('option:selected').attr('timezone'));
+            	var airportcode = parseInt($location.find('option:selected').attr('airport_code'));
             	if(isNaN(timezone)){
             		timezone = null;
             		airportcode = null;
             		$('.origin-timezone').html('');
-            		$('#edit_flight_origin_datepicker').data('datetimepicker').setValue(null);
-            		$('#edit_flight_origin_datepicker').data('datetimepicker').disable();
-            		$('#edit_flight_origin_datepicker').trigger('changeDate');
+            		$datetimepicker.data('datetimepicker').setValue(null);
+            		$datetimepicker.data('datetimepicker').disable();
+            		$datetimepicker.trigger('changeDate');
             	}else{
             		$('.origin-timezone').html('<b>(Local GMT '+(timezone>0?'+':'')+timezone+')</b>');
-            		$('#edit_flight_origin_datepicker').data('datetimepicker').disable();
-            		$('#edit_flight_origin_datepicker').data('datetimepicker').enable();
+            		$datetimepicker.data('datetimepicker').disable();
+            		$datetimepicker.data('datetimepicker').enable();
             	}
             	if(updateModel){
+            		return;
 	            	this.model.set('origin_airport_code',airportcode);
 	            	this.model.set('origin_timezone', timezone);
             	}
             },
             originPathChanged:function(event){
             
-            	this.updateOrigin(true);
-            	this.flightPathChanged();
+            	this.updateOrigin($(event.currentTarget),$(event.currentTarget).closest('.flight-wrapper').find('.edit_flight_origin_datepicker'),true);
+            	this.flightPathChanged($(event.currentTarget).closest('.flight-wrapper').find('.edit_origin_airport'),$(event.currentTarget).closest('.flight-wrapper').find('.edit_destination_airport'));
             },
-            updateDestination:function(updateModel){
-           		var timezone = parseInt($('#edit_destination_airport option:selected').attr('timezone'));
-            	var airportcode = parseInt($('#edit_destination_airport option:selected').attr('airport_code'));
-            	if(isNaN(timezone)){
-            		timezone = null;
-            		airportcode = null;
-            		$('.destination-timezone').html('');
-            		$('#edit_flight_destination_datepicker').data('datetimepicker').setValue(null);
-            		$('#edit_flight_destination_datepicker').data('datetimepicker').disable();
-            		$('#edit_flight_destination_datepicker').trigger('changeDate');
-            	}else{
-            		$('.destination-timezone').html('<b>(Local GMT '+(timezone>0?'+':'')+timezone+')</b>');
-            		$('#edit_flight_destination_datepicker').data('datetimepicker').disable();
-            		$('#edit_flight_destination_datepicker').data('datetimepicker').enable();
+            updateDestination:function($location, $datetimepicker, updateModel){
+            	for(var i=0;i<this.model.get('flights').length;i++){
+	            	var timezone = parseInt($location.find('option:selected').attr('timezone'));
+	            	var airportcode = parseInt($location.find('option:selected').attr('airport_code'));
+	            	if(isNaN(timezone)){
+	            		timezone = null;
+	            		airportcode = null;
+	            		$('.destination-timezone').html('');
+	            		$datetimepicker.data('datetimepicker').setValue(null);
+	            		$datetimepicker.data('datetimepicker').disable();
+	            		$datetimepicker.trigger('changeDate');
+	            	}else{
+	            		$('.destination-timezone').html('<b>(Local GMT '+(timezone>0?'+':'')+timezone+')</b>');
+	            		$datetimepicker.data('datetimepicker').disable();
+	            		$datetimepicker.data('datetimepicker').enable();
+	            	}
+	            	if(updateModel){
+	            		return;
+		            	this.model.set('destination_airport_code',airportcode);
+		            	this.model.set('destination_timezone', timezone);
+	            	}
             	}
-            	if(updateModel){
-	            	this.model.set('destination_airport_code',airportcode);
-	            	this.model.set('destination_timezone', timezone);
-            	}
+           		
             },
             destinationPathChanged:function(event){
-            	this.updateDestination(true);
-            	this.flightPathChanged();
+            	this.updateDestination($(event.currentTarget),$(event.currentTarget).closest('.flight-wrapper').find('.edit_flight_destination_datepicker'),true);
+            	this.flightPathChanged($(event.currentTarget).closest('.flight-wrapper').find('.edit_origin_airport'),$(event.currentTarget).closest('.flight-wrapper').find('.edit_destination_airport'));
             },
-            flightPathChanged:function(event){
+            flightPathChanged:function($origin, $destination){
+            
             	$(this.map).css('min-height',$(this.map).height()+'px');
                 $(this.map).empty();
                 
                 this.paths = [{
-                	origin: ($('#edit_origin_airport').val()==''?null:{latitude:$('#edit_origin_airport option:selected').attr('latitude'),longitude:$('#edit_origin_airport option:selected').attr('longitude')}), 
-                	destination :   ($('#edit_destination_airport').val()==''?null:{latitude:$('#edit_destination_airport option:selected').attr('latitude'),longitude:$('#edit_destination_airport option:selected').attr('longitude')}) 
+                	origin: ($origin.val()==''?null:{latitude:$origin.find('option:selected').attr('latitude'),longitude:$origin.find('option:selected').attr('longitude')}), 
+                	destination :   ($destination.val()==''?null:{latitude:$destination.find('option:selected').attr('latitude'),longitude:$destination.find('option:selected').attr('longitude')}) 
                 	}];
                 	
                 $(this.map).append(this.staticMapTemplate({paths:this.paths}));
             	setTimeout(function(){$(this.map).css('min-height','')},1000);
                 this.updateFlightStats();
             },
-            updateFlightStats:function(){
+            updateFlightStats:function(){ // triggered by date changes.. updates duration by calculating distance..
             	var haveOriginAndDesitnation= (this.paths.length>0&&this.paths[0].origin!=null&&this.paths[0].destination!=null);
                 var haveDepartureAndArrival = this.model.get('departure_time')!=null&&this.model.get('arrival_time')!=null;
                 
@@ -687,6 +732,8 @@
                 }
                 
                 if(haveDepartureAndArrival){
+                	//  Updates time from arrival and departure time..
+                	return 
                 	var timeDiff = new Date(this.model.get('arrival_time')).getTime()-new Date(this.model.get('departure_time')).getTime();
                 	$('#edit_flight_stats_duration').html((timeDiff<0?'<span class="fms-invalid-value">':'')+millisecondsToHoursMinutesSecondsString(timeDiff)+(timeDiff<0?'</span>':''));
                 
@@ -745,23 +792,25 @@
             
             
                 this.$el.html("");
-            	socket.get('/flights/getCfgCompanyFlightMappings/',{id:this.model.get('id')},_.bind(function(companies){
+            	socket.get('/flights/getCompanyResourceSharingByFlightId/',{id:this.model.get('id')},_.bind(function(companies){
             		if(companies.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
                     	return location.reload(); // Will boot back to login screen
                     }
                     this.model.set('company_mappings',companies);
-                    addPassengersList(this.model.get('id'),_.bind(function(err,paxs){
-	                    if(paxs!=null&&paxs.error != undefined){ // reloads with flash message or further kicking out user.
-	                    	return location.reload(); 
-	                    }
-                    	this.passengers.set(paxs);
+                    
+                    
+                    //addPassengersList(this.model.get('id'),_.bind(function(err,paxs){
+	                //    if(paxs!=null&&paxs.error != undefined){ // reloads with flash message or further kicking out user.
+	                //    	return location.reload(); 
+	                //    }
+                    //	this.passengers.set(paxs);
 	                    this.$el.append(this.template(this.model.toJSON()));
 		                this.postRender();
-		                if(paxs){
+		                if(typeof(paxs)!='undefined'&&paxs){
 		                	this.initManifest();
 		                }
-		                this.flightPathChanged();
-                    },this));
+		                this.flightPathChanged($('.edit_origin_airport')[0],$('.edit_destination_airport')[0]);
+                    //},this));
             		//this.render();
             	},this));
                 
@@ -934,68 +983,82 @@
             	this.self = this;
                 if(mobileDetect.mobile()==null){
 	                $('#edit_airline').combobox();
-	                $('#edit_origin_airport').combobox();
-               		$('#edit_destination_airport').combobox();
+	                $('.edit_origin_airport').combobox();
+               		$('.edit_destination_airport').combobox();
                 }
-                $('#edit_flight_origin_datepicker').initDateTimePicker({ 
-			        language:'<%=req.session.user.locale%>', 
-			        format:'yyyy-MM-dd hh:mm',
-			        pickTime: true,
-            		pickSeconds: false,
-			        widgetAttribute:'edit_flight_origin_datepicker'+Math.floor(Math.random()*99999),
-	        		appendTo:'#flightModal .modal-body',
-			        changeDate:$.proxy(function(e){
-			        	if(this.model.get('origin_timezone')!=null&&$('#edit_flight_origin_datepicker').data('datetimepicker').getLocalDate()!=null){
-			        		// Get UTC date and shift back and forth appropriately out of local timezone into airport timezone retreiving relative UTC string.
-				        	var elementDate = $('#edit_flight_origin_datepicker').data('datetimepicker').getLocalDate();
-				        	elementDate.setTime(elementDate.getTime()-(new Date().getTimezoneOffset()*60000));
-				        	elementDate.setTime(elementDate.getTime()-(parseInt(this.model.get('origin_timezone'))*60*60000));
-				        	this.model.set('departure_time',elementDate.toISOString());
-				        	this.updateFlightStats();
-			        	}else{
-			        		this.model.set('departure_time',null);
-		        		}
-			        },this)
-				});
-				if(this.model.get('departure_time')==null||this.model.get('origin_airport_code')==null){
-					$('#edit_flight_origin_datepicker').data('datetimepicker').disable();
-				}else{
-					var elementDate = new Date(this.model.get('departure_time'));
-		        	elementDate.setTime(elementDate.getTime()+(parseInt(this.model.get('origin_timezone'))*60*60000));
-		        	elementDate.setTime(elementDate.getTime()+(new Date().getTimezoneOffset()*60000));
-					$('#edit_flight_origin_datepicker').data('datetimepicker').setLocalDate(elementDate);
-					this.updateOrigin(false);
+                
+                
+				for(var i=0;i<this.model.get('flights').length;i++){
+					$('.edit_flight_origin_datepicker[leg='+this.model.get('flights')[i].id+']').initDateTimePicker({ 
+				        language:'<%=req.session.user.locale%>', 
+				        format:'yyyy-MM-dd hh:mm',
+				        pickTime: true,
+	            		pickSeconds: false,
+				        widgetAttribute:'edit_flight_origin_datepicker'+Math.floor(Math.random()*99999),
+		        		appendTo:'#flightModal .modal-body',
+				        changeDate:$.proxy(function(e){
+				        	if(this.model.get('origin_timezone')!=null&&$('.edit_flight_origin_datepicker[leg='+this.model.get('flights')[i].id+']').data('datetimepicker').getLocalDate()!=null){
+				        		// Get UTC date and shift back and forth appropriately out of local timezone into airport timezone retreiving relative UTC string.
+					        	var elementDate = $('.edit_flight_origin_datepicker[leg='+this.model.get('flights')[i].id+']').data('datetimepicker').getLocalDate();
+					        	elementDate.setTime(elementDate.getTime()-(new Date().getTimezoneOffset()*60000));
+					        	elementDate.setTime(elementDate.getTime()-(parseInt(this.model.get('origin_timezone'))*60*60000));
+					        	
+					        	var tflights = this.model.get('flights')[i];
+					        	tflights.departure_time = elementDate.toISOString();
+					        	this.model.set('flights',tflights);
+					        	
+					        	this.updateFlightStats();
+				        	}else{
+				        		this.model.set('departure_time',null);
+			        		}
+				        },this)
+					});
+					if(this.model.get('departure_time')==null||this.model.get('origin_airport_code')==null){
+						$('.edit_flight_origin_datepicker[leg='+this.model.get('flights')[i].id+']').data('datetimepicker').disable();
+					}else{
+						var elementDate = new Date(this.model.get('departure_time'));
+			        	elementDate.setTime(elementDate.getTime()+(parseInt(this.model.get('origin_timezone'))*60*60000));
+			        	elementDate.setTime(elementDate.getTime()+(new Date().getTimezoneOffset()*60000));
+						$('.edit_flight_origin_datepicker[leg='+this.model.get('flights')[i].id+']').data('datetimepicker').setLocalDate(elementDate);
+						this.updateOrigin($('.edit_origin_airport[leg='+this.model.get('flights')[i].id+']'),$('.edit_flight_origin_datepicker[leg='+this.model.get('flights')[i].id+']'),false);
+					}
+					$('.edit_flight_destination_datepicker[leg='+this.model.get('flights')[i].id+']').initDateTimePicker({ 
+				        language:'<%=req.session.user.locale%>', 
+				        format:'yyyy-MM-dd hh:mm',
+				        pickTime: true,
+	            		pickSeconds: false,
+				        widgetAttribute:'edit_flight_destination_datepicker'+Math.floor(Math.random()*99999),
+		        		appendTo:'#flightModal .modal-body',
+				        changeDate:$.proxy(function(e){
+				       		if(this.model.get('destination_timezone')!=null&&$('.edit_flight_destination_datepicker[leg='+this.model.get('flights')[i].id+']').data('datetimepicker').getLocalDate()!=null){
+				        		// Get UTC date and shift back and forth appropriately out of local timezone into airport timezone retreiving relative UTC string.
+					        	var elementDate = $('.edit_flight_destination_datepicker[leg='+this.model.get('flights')[i].id+']').data('datetimepicker').getLocalDate();
+					        	elementDate.setTime(elementDate.getTime()-(new Date().getTimezoneOffset()*60000));
+					        	elementDate.setTime(elementDate.getTime()-(parseInt(this.model.get('flights')[i].destination_timezone)*60*60000));
+					        	
+					        	
+					        	
+					        	var tflights = this.model.get('flights')[i];
+					        	tflights.arrival_time = elementDate.toISOString();
+					        	this.model.set('flights',tflights);
+					        	this.updateFlightStats();
+				        	}else{
+				        		this.model.set('arrival_time',null);
+			        		}
+				        },this)
+					});
+					if(this.model.get('flights')[i].departure_time==null||this.model.get('flights')[i].destination_airport_code==null){
+						$('.edit_flight_destination_datepicker[leg='+this.model.get('flights')[i].id+']').data('datetimepicker').disable();
+					}else{
+						var elementDate = new Date(this.model.get('arrival_time'));
+			        	elementDate.setTime(elementDate.getTime()+(parseInt(this.model.get('flights')[i].destination_timezone)*60*60000));
+			        	elementDate.setTime(elementDate.getTime()+(new Date().getTimezoneOffset()*60000));
+						$('.edit_flight_destination_datepicker[leg='+this.model.get('flights')[i].id+']').data('datetimepicker').setLocalDate(elementDate);
+						this.updateDestination($('.edit_flight_destination_datepicker[leg='+this.model.get('flights')[i].id+']'),false);
+					}
 				}
 				
-				$('#edit_flight_destination_datepicker').initDateTimePicker({ 
-			        language:'<%=req.session.user.locale%>', 
-			        format:'yyyy-MM-dd hh:mm',
-			        pickTime: true,
-            		pickSeconds: false,
-			        widgetAttribute:'edit_flight_destination_datepicker'+Math.floor(Math.random()*99999),
-	        		appendTo:'#flightModal .modal-body',
-			        changeDate:$.proxy(function(e){
-			       		if(this.model.get('destination_timezone')!=null&&$('#edit_flight_destination_datepicker').data('datetimepicker').getLocalDate()!=null){
-			        		// Get UTC date and shift back and forth appropriately out of local timezone into airport timezone retreiving relative UTC string.
-				        	var elementDate = $('#edit_flight_destination_datepicker').data('datetimepicker').getLocalDate();
-				        	elementDate.setTime(elementDate.getTime()-(new Date().getTimezoneOffset()*60000));
-				        	elementDate.setTime(elementDate.getTime()-(parseInt(this.model.get('destination_timezone'))*60*60000));
-				        	this.model.set('arrival_time',elementDate.toISOString());
-				        	this.updateFlightStats();
-			        	}else{
-			        		this.model.set('arrival_time',null);
-		        		}
-			        },this)
-				});
-				if(this.model.get('departure_time')==null||this.model.get('destination_airport_code')==null){
-					$('#edit_flight_destination_datepicker').data('datetimepicker').disable();
-				}else{
-					var elementDate = new Date(this.model.get('arrival_time'));
-		        	elementDate.setTime(elementDate.getTime()+(parseInt(this.model.get('destination_timezone'))*60*60000));
-		        	elementDate.setTime(elementDate.getTime()+(new Date().getTimezoneOffset()*60000));
-					$('#edit_flight_destination_datepicker').data('datetimepicker').setLocalDate(elementDate);
-					this.updateDestination(false);
-				}
+				
 				
 				
 				$("#preview_flight_summary_collapse_handle").click(function(){

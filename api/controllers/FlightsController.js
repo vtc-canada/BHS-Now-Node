@@ -33,6 +33,17 @@ module.exports = {
 	// 00:00:00','2015-01-01 00:00:00'],function(err,flights){
 	// });
     },
+    getCompanyResourceSharingByFlightId : function(req,res){
+	Database.dataSproc('FMS_FLIGHTS_GetCompanyResourceSharingByFlightId', [ req.body.id ], function(err, companies) {
+	    if (err) {
+		console.log('FMS_FLIGHTS_GetCompanyResourceSharingByFlightId :' + err);
+		return res.json({
+		    error : 'FMS_FLIGHTS_GetCompanyResourceSharingByFlightId :' + err
+		}, 500);
+	    }
+	    res.json(companies[0]);
+	});
+    },
     getCfgCompanyFlightMappings : function(req, res) {
 	Database.dataSproc('FMS_FLIGHTS_GetCfgCompanyFlightMappings', [ req.body.id ], function(err, companies) {
 	    if (err) {
@@ -52,7 +63,17 @@ module.exports = {
 		    error : 'FMS_FLIGHTS_GetFlightsByDateRange :' + err
 		}, 500);
 	    }
-	    res.send(flights[0]);
+	    var flightgroups = [];
+	    var lastFlightId = null;
+	    for(var i=0;i<flights[0].length;i++){
+		if(lastFlightId != flights[0][i].flight_id){
+		    lastFlightId = flights[0][i].flight_id;
+		    flightgroups.push({id : flights[0][i].flight_id, flights:[]});
+		}
+		flightgroups[flightgroups.length-1].flights.push(flights[0][i]);
+	    }
+	    
+	    res.send(flightgroups);
 	});
     },
     destroy:function(req,res){
