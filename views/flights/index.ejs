@@ -106,6 +106,16 @@
 				<div class="span3" id="edit_flight_stats_duration"></div>
 			</div>
 		</div>
+		<div class="span4">
+			<select id="leg_combobox">
+			
+	    	{{ for(var flightindex=0;flightindex<flights.length;flightindex++){ }}
+	    		{{ if(typeof(flights[flightindex].is_deleted)=='undefined'){ }}
+	    		<option value="{{=flights[flightindex].id}}"  {{ if(typeof(flights[flightindex].tempId)!='undefined'){ }}templeg="{{= flights[flightindex].tempId }}"{{ } }}  {{ if(selectedLeg==flights[flightindex].id || (typeof(flights[flightindex].tempId)!='undefined'&&selectedTempLeg==flights[flightindex].tempId)){ }}selected="selected"{{ } }}>{{= (flights[flightindex].origin_airport_code==null?'':getAirportById(flights[flightindex].origin_airport_code).IATAFAA) + ' to ' + (flights[flightindex].destination_airport_code==null?'':getAirportById(flights[flightindex].destination_airport_code).IATAFAA)}}</option>
+	    		{{ } }}
+	    	{{ } }}
+			</select>
+		</div>
 	</div>
 	
 	<div class="row-fluid" style="display:none;">
@@ -116,13 +126,13 @@
 		
 	<div class="tabbable"> <!-- Only required for left/right tabs -->
 	  <ul class="nav nav-tabs" style="margin-bottom:0px;">
-	    <li class="active"><a href="#tab1" data-toggle="tab">General</a></li>
-	    <li><a href="#tab2" data-toggle="tab">Route Details</a></li>
-	    <li><a href="#tab3" data-toggle="tab">Assigned Companies</a></li>
-	    <li><a href="#tab4" data-toggle="tab">Passengers</a></li>
+	    <li {{if(activeTab == null||activeTab=='#tab1'){ }}class="active"{{ } }}><a href="#tab1" data-toggle="tab">General</a></li>
+	    <li {{if(activeTab=='#tab2'){ }}class="active"{{ } }}><a href="#tab2" data-toggle="tab">Route Details</a></li>
+	    <li {{if(activeTab=='#tab3'){ }}class="active"{{ } }}><a href="#tab3" data-toggle="tab">Assigned Companies</a></li>
+	    <li {{if(activeTab=='#tab4'){ }}class="active"{{ } }}><a href="#tab4" data-toggle="tab">Passengers</a></li>
 	  </ul>
 	  <div class="tab-content">
-	    <div class="tab-pane active" id="tab1">
+	    <div class="tab-pane {{if(activeTab == null||activeTab=='#tab1'){ }}active{{ } }}" id="tab1">
 	    	<div class="row-fluid">
 		    	<div class="span4"><label for="edit_flight_number">Flight Number:</label></div>
 		    	<div class="span4"><input type="text" id="edit_flight_number" model-attribute="flight_number" value="{{=flights[0].flight_number}}"/></div>
@@ -140,7 +150,7 @@
 	    	</div>
 	    </div>
 	    
-	    <div class="tab-pane" id="tab2">
+	    <div class="tab-pane  {{if(activeTab=='#tab2'){ }}active{{ } }}" id="tab2">
 	    	<div class="row-fluid">
 	    		<div class="span6">
 	    			Route Details
@@ -153,7 +163,7 @@
 	    	
 	    	
 	    	{{ for(var flightindex=0;flightindex<flights.length;flightindex++){ }}
-	    	<div class="flight-wrapper {{ if(typeof(flights[flightindex].is_deleted)!='undefined'&&flights[flightindex].is_deleted){ }}{{ } }}">
+	    	<div class="flight-wrapper {{ if(typeof(flights[flightindex].is_deleted)!='undefined'&&flights[flightindex].is_deleted){ }}is_deleted{{ } }}" leg="{{= flights[flightindex].id }}" {{ if(typeof(flights[flightindex].tempId)!='undefined'){ }}templeg="{{= flights[flightindex].tempId }}"{{ } }}>
 		    	<div class="row-fluid">
 					<div class="row-fluid flight-leg-title">Origin: leg {{= flights[flightindex].id }}</div>
 					<div class="row-fluid">
@@ -214,7 +224,7 @@
 				</div>
 				{{ if(flightindex>0){ }}
 				<div class="row-fluid">
-					<button class="btn btn-danger pull-right delete_flight_leg" leg="{{= flights[flightindex].id }}" {{ if(typeof(flights[flightindex].tempId)!='undefined'){ }}tempLeg="{{= flights[flightindex].tempId }}"{{ } }}>Delete Flight Leg</button>
+					<button class="btn btn-danger pull-right delete_flight_leg" leg="{{= flights[flightindex].id }}" {{ if(typeof(flights[flightindex].tempId)!='undefined'){ }}templeg="{{= flights[flightindex].tempId }}"{{ } }}>Delete Flight Leg</button>
 				</div>
 				{{ } }}
 			</div>
@@ -226,7 +236,7 @@
 			
 	    
 	    </div>
-	    <div class="tab-pane" id="tab3">
+	    <div class="tab-pane  {{if(activeTab=='#tab3'){ }}active{{ } }}" id="tab3">
 	    
 	    	{{ for(var i=0;i<company_mappings.length;i++){ }}
 	    	<div class="row-fluid">
@@ -237,7 +247,7 @@
 	    	
 	    </div>
 	    
-	    <div class="tab-pane" id="tab4">
+	    <div class="tab-pane {{if(activeTab=='#tab4'){ }}active{{ } }}" id="tab4">
 	    	
 	    	<div class="row-fluid isnajaxfield-parent">
               <!-- <div class="row">
@@ -409,10 +419,21 @@
 
 	var airlines = <%-JSON.stringify(airlines)%>;
 	var airports = <%-JSON.stringify(airports)%>;
+
+	function getAirportById(airportId){
+		for(var i=0;i<airports.length;i++){
+			if(airports[i].id == airportId){
+				return airports[i];
+			}
+		}
+	
+	}
     var gantt;       // This is the collection of rows/flights
 	var editFlightView = null; // This Backbone View wraps creating/editing new flights.
 
-
+	var activeTab = null;
+	var selectedLeg = null;
+	var selectedTempLeg = null;
 		
     $(function(){
     	socket.on('connect',initialize);
@@ -534,7 +555,9 @@
             gantClick:function(event){
                 //do_popover(event,false);
                 
-				var newFlight = this.collection.get($(event.target).attr('flight_id')).toJSON();
+				var newFlight = _.clone(this.collection.get($(event.target).attr('flight_id')).toJSON());
+				
+				newFlight.flights = _.clone(newFlight.flights); // this clears the flights connection... **********  TODO- reconnect later maybe.. instead of re-calling database possibly.
 				//if(editFlightView!=null){
 				//	editFlightView.remove();
 				//}
@@ -631,21 +654,49 @@
             deleteFlightLeg:function(event){
             	
             	var tflights = this.model.get('flights');
-            	var index = getIndexById(this.model.get('flights'),parseInt($(event.currentTarget).attr('leg')),parseInt($(event.currentTarget).attr('tempLeg')));
+            	var index = getIndexById(this.model.get('flights'),parseInt($(event.currentTarget).attr('leg')),parseInt($(event.currentTarget).attr('templeg')));
+            	
+            	if(selectedLeg==tflights[index].id||selectedTempLeg==tflights[index].tempId){  // we deleted the one that is selected!!!
+            		if(this.model.get('flights').length>0){
+            			selectedLeg = this.model.get('flights')[0].id;  // select the first one..
+            			selectedTempLeg = this.model.get('flights')[0].tempId; // incase it's new.
+            		}
+            	}
             	if(tflights[index].id==null){  // remove flight leg  (was a new one)
             		tflights.splice(index,1);
             	}else{  //TODO-update deleted flight leg
             		tflights[index].is_deleted = true;
             	}
             	
+            	
+            	
             	this.model.set('flights',tflights);
             	
+            	activeTab = '#tab2'; // so it knows where to redraw to
             	this.render();
             	//TODO- redraw stuff!!!
             },
             addFlightLeg : function(event){
             	//alert('here');
-            	//this.model.set('flights',this.model.get('flights').push({flight_id:this.model.get('flights')[0].flight_id,}));
+            	
+            	// TODO-  get FlightId
+            	
+            	this.model.get('flights').push({
+            		id: null,
+            		tempId : Math.floor(Math.random()*99999),
+            		IATA_2_digit_ID : null,
+            		arrival_time : null,
+            		company_seats : [],
+            		cur_airplanes_id : 0,
+            		departure_time : null,
+            		destination_airport_code:null,
+            		destination_timezone : null,
+            		flight_id : null,
+            		flight_number:null,
+            		origin_airport_code:null,
+            		origin_timezone:null
+            	});
+            	this.render();
             	
             	
             },
@@ -738,7 +789,7 @@
             },
             updateFlightStats:function(){ // triggered by date changes.. updates duration by calculating distance..
             	var haveOriginAndDesitnation= (this.paths.length>0&&this.paths[0].origin!=null&&this.paths[0].destination!=null);
-                var haveDepartureAndArrival = this.model.get('departure_time')!=null&&this.model.get('arrival_time')!=null;
+                var haveDepartureAndArrival = this.model.get('flights')[0].departure_time!=null&&this.model.get('flights')[0].arrival_time!=null;
                 
                 if(haveOriginAndDesitnation){
 	                $('#edit_flight_stats_distance').html(geolib.getDistance(
@@ -752,7 +803,7 @@
                 if(haveDepartureAndArrival){
                 	//  Updates time from arrival and departure time..
                 	return 
-                	var timeDiff = new Date(this.model.get('arrival_time')).getTime()-new Date(this.model.get('departure_time')).getTime();
+                	var timeDiff = new Date(this.model.get('flights')[i].arrival_time).getTime()-new Date(this.model.get('flights')[i].departure_time).getTime();
                 	$('#edit_flight_stats_duration').html((timeDiff<0?'<span class="fms-invalid-value">':'')+millisecondsToHoursMinutesSecondsString(timeDiff)+(timeDiff<0?'</span>':''));
                 
                 }else{
@@ -772,9 +823,11 @@
             },
             save:function(){
             
+            	/*
             	if(this.model.get('flight_number')==null){
         			bannerAlert('error','<%=__('FormError')%>','<%= __('Invalid Flight Number')%>',$('#flightModal .modal-body'));
-            	}else if(this.model.get('airline')==null){
+            	}else 
+            	if(this.model.get('airline')==null){
         			bannerAlert('error','<%=__('FormError')%>','<%= __('Invalid Airline')%>',$('#flightModal .modal-body'));
             	}else if(this.model.get('origin_airport_code')==null){
         			bannerAlert('error','<%=__('FormError')%>','<%= __('Invalid Origin Airport')%>',$('#flightModal .modal-body'));
@@ -786,7 +839,7 @@
         			bannerAlert('error','<%=__('FormError')%>','<%= __('Invalid Arrival Time')%>',$('#flightModal .modal-body'));
             	}else if(this.model.get('departure_time')>this.model.get('arrival_time')){
         			bannerAlert('error','<%=__('FormError')%>','<%= __('Invalid Arrival or Departure Time')%>',$('#flightModal .modal-body'));
-            	}else{
+            	}else{*/
 	            	socket.get('/flights/save',this.model.toJSON(),function(response){
 	            		if(response.error){
 	            			bannerAlert('error','<%=__('FormError')%>',response.error,$('#flightModal .modal-body'));
@@ -800,7 +853,7 @@
 	            		//alert('some response'+response);
 	            		
 	            	});
-            	}
+            	//}
             },
             passengers : new Backbone.Collection(),
             paths:[],
@@ -820,6 +873,14 @@
 	                //    	return location.reload(); 
 	                //    }
                     //	this.passengers.set(paxs);
+                    
+                    	this.model.set('activeTab',activeTab);
+                    	if(selectedLeg==null&&selectedTempLeg==null){
+                    		if(this.model.get('flights').length>0){
+                    			selectedLeg = this.model.get('flights')[0].id;
+                    		}
+                    	}
+                    
 	                    this.$el.append(this.template(this.model.toJSON()));
 		                this.postRender();
 		                if(typeof(paxs)!='undefined'&&paxs){
@@ -901,7 +962,7 @@
 	        		
 	        	},this));
             },
-            initManifest : function(){
+            initManifest : function(){  //TODO- understand this - contact lookup maybe
             
             	$('#search_contact').isnajaxfield({
             		results:$('#search_contact_results'),
@@ -915,7 +976,7 @@
 	            	},
 	            	template:_.template($('#contacts-search-row-template').html()),
 	            	click:_.bind(function($row){
-	            		socket.get('/manifests/addmanifestdetail',{contact_ID:parseInt($row.attr('contact_id')),flight_ID:this.model.get('id')},function(result){
+	            		socket.get('/manifests/addmanifestdetail',{contact_ID:parseInt($row.attr('contact_id')),flight_ID:this.model.get('flights')[0].flight_id},function(result){
 	            			if(result.error != undefined){  // result
 	                            location.reload(); // result
 	                        }
@@ -960,7 +1021,7 @@
 						socket.removeListener(event,this.manifestEvent);
 					}
 				}
-				socket.on('manifest_'+this.model.get('id'),this.manifestEvent);
+				socket.on('manifest_'+this.model.get('flights')[0].flight_id,this.manifestEvent);
 				
 				//socket.get('/manifests/joinmanifest',this.model.get('
             },
@@ -1004,8 +1065,13 @@
                 }
                 
                 
-				for(var i=0;i<this.model.get('flights').length;i++)(function(i){
-					$('.edit_flight_origin_datepicker[leg='+editFlightView.model.get('flights')[i].id+']').initDateTimePicker({ 
+                $('.edit_flight_origin_datepicker').each($.proxy(function(index,element){
+                	
+                	
+                	var flightindex= getIndexById(this.model.get('flights'),$(element).closest('.flight-wrapper').attr('leg'),$(element).closest('.flight-wrapper').attr('templeg'));
+                	var flight = this.model.get('flights')[flightindex];
+                
+                	$(element).initDateTimePicker({ 
 				        language:'<%=req.session.user.locale%>', 
 				        format:'yyyy-MM-dd hh:mm',
 				        pickTime: true,
@@ -1013,33 +1079,45 @@
 				        widgetAttribute:'edit_flight_origin_datepicker'+Math.floor(Math.random()*99999),
 		        		appendTo:'#flightModal .modal-body',
 				        changeDate:$.proxy(function(e){
-				        	if(this.model.get('origin_timezone')!=null&&$('.edit_flight_origin_datepicker[leg='+this.model.get('flights')[i].id+']').data('datetimepicker').getLocalDate()!=null){
+				        	if(flight.origin_timezone!=null&&$(element).data('datetimepicker').getLocalDate()!=null){
 				        		// Get UTC date and shift back and forth appropriately out of local timezone into airport timezone retreiving relative UTC string.
-					        	var elementDate = $('.edit_flight_origin_datepicker[leg='+this.model.get('flights')[i].id+']').data('datetimepicker').getLocalDate();
+					        	var elementDate = $(element).data('datetimepicker').getLocalDate();
 					        	elementDate.setTime(elementDate.getTime()-(new Date().getTimezoneOffset()*60000));
-					        	elementDate.setTime(elementDate.getTime()-(parseInt(this.model.get('origin_timezone'))*60*60000));
+					        	elementDate.setTime(elementDate.getTime()-(parseInt(flight.origin_timezone)*60*60000));
+					        	
 					        	
 					        	var tflights = this.model.get('flights');
-					        	tflights[i].departure_time = elementDate.toISOString();
+					        	tflights[flightindex].departure_time = elementDate.toISOString();
 					        	this.model.set('flights',tflights);
 					        	this.updateFlightStats();
 				        	}else{
 				        		var tflights = this.model.get('flights');
-					        	tflights[i].departure_time = null;
+					        	tflights[flightindex].departure_time = null;
 					        	this.model.set('flights',tflights);
 			        		}
 				        },editFlightView)
 					});
-					if(editFlightView.model.get('flights')[i].departure_time==null||editFlightView.model.get('flights')[i].origin_airport_code==null){
-						$('.edit_flight_origin_datepicker[leg='+editFlightView.model.get('flights')[i].id+']').data('datetimepicker').disable();
+					
+					if(flight.departure_time==null||flight.origin_airport_code==null){
+						$(element).data('datetimepicker').disable();
 					}else{
-						var elementDate = new Date(editFlightView.model.get('flights')[i].departure_time);
-			        	elementDate.setTime(elementDate.getTime()+(parseInt(editFlightView.model.get('flights')[i].origin_timezone)*60*60000));
+						var elementDate = new Date(flight.departure_time);
+			        	elementDate.setTime(elementDate.getTime()+(parseInt(flight.origin_timezone)*60*60000));
 			        	elementDate.setTime(elementDate.getTime()+(new Date().getTimezoneOffset()*60000));
-						$('.edit_flight_origin_datepicker[leg='+editFlightView.model.get('flights')[i].id+']').data('datetimepicker').setLocalDate(elementDate);
-						editFlightView.updateOrigin($('.edit_origin_airport[leg='+editFlightView.model.get('flights')[i].id+']'),$('.edit_flight_origin_datepicker[leg='+editFlightView.model.get('flights')[i].id+']'),false);
+						$(element).data('datetimepicker').setLocalDate(elementDate);
+						editFlightView.updateOrigin($(element).closest('.flight-wrapper').find('select.edit_origin_airport'),$(element),false);
 					}
-					$('.edit_flight_destination_datepicker[leg='+editFlightView.model.get('flights')[i].id+']').initDateTimePicker({ 
+                },this));
+                
+                
+                
+                
+                $('.edit_flight_destination_datepicker').each($.proxy(function(index,element){
+                
+                	var flightindex= getIndexById(this.model.get('flights'),$(element).closest('.flight-wrapper').attr('leg'),$(element).closest('.flight-wrapper').attr('templeg'));
+                	var flight = this.model.get('flights')[flightindex];
+                	
+                	$(element).initDateTimePicker({ 
 				        language:'<%=req.session.user.locale%>', 
 				        format:'yyyy-MM-dd hh:mm',
 				        pickTime: true,
@@ -1047,38 +1125,37 @@
 				        widgetAttribute:'edit_flight_destination_datepicker'+Math.floor(Math.random()*99999),
 		        		appendTo:'#flightModal .modal-body',
 				        changeDate:$.proxy(function(e){
-				       		if(this.model.get('flights')[i].destination_timezone!=null&&$('.edit_flight_destination_datepicker[leg='+this.model.get('flights')[i].id+']').data('datetimepicker').getLocalDate()!=null){
+				       		if(flight.destination_timezone!=null&&$(element).data('datetimepicker').getLocalDate()!=null){
 				        		// Get UTC date and shift back and forth appropriately out of local timezone into airport timezone retreiving relative UTC string.
-					        	var elementDate = $('.edit_flight_destination_datepicker[leg='+this.model.get('flights')[i].id+']').data('datetimepicker').getLocalDate();
+					        	var elementDate = $(element).data('datetimepicker').getLocalDate();
 					        	elementDate.setTime(elementDate.getTime()-(new Date().getTimezoneOffset()*60000));
-					        	elementDate.setTime(elementDate.getTime()-(parseInt(this.model.get('flights')[i].destination_timezone)*60*60000));
-					        	
-					        	
+					        	elementDate.setTime(elementDate.getTime()-(parseInt(flight.destination_timezone)*60*60000));
 					        	
 					        	var tflights = this.model.get('flights');
-					        	tflights[i].arrival_time = elementDate.toISOString();
+					        	tflights[flightindex].arrival_time = elementDate.toISOString();
 					        	this.model.set('flights',tflights);
 					        	this.updateFlightStats();
 				        	}else{
 				        	
 				        	
 					        	var tflights = this.model.get('flights');
-					        	tflights[i].arrival_time = null;
+					        	tflights[flightindex].arrival_time = null;
 					        	this.model.set('flights',tflights);
 			        		}
 				        },editFlightView)
 					});
-					if(editFlightView.model.get('flights')[i].departure_time==null||editFlightView.model.get('flights')[i].destination_airport_code==null){
-						$('.edit_flight_destination_datepicker[leg='+editFlightView.model.get('flights')[i].id+']').data('datetimepicker').disable();
+					if(flight.departure_time==null||flight.destination_airport_code==null){
+						$(element).data('datetimepicker').disable();
 					}else{
-						var elementDate = new Date(editFlightView.model.get('flights')[i].arrival_time);
-			        	elementDate.setTime(elementDate.getTime()+(parseInt(editFlightView.model.get('flights')[i].destination_timezone)*60*60000));
+						var elementDate = new Date(flight.arrival_time);
+			        	elementDate.setTime(elementDate.getTime()+(parseInt(flight.destination_timezone)*60*60000));
 			        	elementDate.setTime(elementDate.getTime()+(new Date().getTimezoneOffset()*60000));
-						$('.edit_flight_destination_datepicker[leg='+editFlightView.model.get('flights')[i].id+']').data('datetimepicker').setLocalDate(elementDate);
-						editFlightView.updateDestination($('.edit_destination_airport[leg='+editFlightView.model.get('flights')[i].id+']'),$('.edit_flight_destination_datepicker[leg='+editFlightView.model.get('flights')[i].id+']'),false);
+						$(element).data('datetimepicker').setLocalDate(elementDate);
+						editFlightView.updateDestination($(element).closest('.flight-wrapper').find('select.edit_destination_airport'),$(element),false);
 					}
-				})(i);
-				
+                	
+                },this));
+                
 				
 				
 				

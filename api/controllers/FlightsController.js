@@ -77,13 +77,18 @@ module.exports = {
 		Database.dataSproc('FMS_FLIGHTS_GetCompanyResourceSharingByLegId', [ leg.id ], function(err, companies) {
 		    if (err)
 			return cb(err);
-		    if (getIndexById(flightgroups, leg.flight_id) == -1) { // checks and adds flightgroup
+		    if (getIndexById(flightgroups, leg.flight_id) == -1) { // checks
+			// and
+			// adds
+			// flightgroup
 			flightgroups.push({
 			    id : leg.flight_id,
 			    flights : []
 			});
 		    }
-		    var index = getIndexById(flightgroups, leg.flight_id); //gets the index
+		    var index = getIndexById(flightgroups, leg.flight_id); // gets
+		    // the
+		    // index
 		    leg.company_seats = companies
 		    flightgroups[index].flights.push(leg); // adds leg
 
@@ -121,7 +126,7 @@ module.exports = {
 	}
     },
     save : function(req, res) {
-	var flight = req.body;
+	var flightdata = req.body;
 
 	// Updates the companyflight mappings for the flight
 	function updateCompanyMappings(cb) {
@@ -147,49 +152,54 @@ module.exports = {
 	    });
 	}
 
-	if (!flight.id) { // New Flight!
-	    var newFlightId = '@out' + Math.floor((Math.random() * 1000000) + 1);
-	    Database.dataSproc('FMS_FLIGHTS_CreateFlight', [ flight.airline, flight.flight_number, flight.departure_time, flight.arrival_time, flight.origin_airport_code, flight.destination_airport_code, newFlightId ], function(err, response) {
-		if (err) {
-		    console.log(err.toString());
-		    return res.json({
-			error : 'FMS_FLIGHTS_CreateFlight :' + err
-		    }, 500);
-		}
-		Database.dataSproc('FMS_MANIFEST_CreateManifest', [ response[1][newFlightId] ], function(err, response) {
-		    if (err) {
-			console.log(err.toString());
-			return res.json({
-			    error : 'FMS_MANIFEST_CreateManifest :' + err
-			}, 500);
-		    }
-		    res.json({
-			success : 'success'
+	async.each(flightdata.flights, function(flight, cb) {
+	    if (!flight.id) { // New Flight!
+		var newFlightId = '@out' + Math.floor((Math.random() * 1000000) + 1);
+		Database.dataSproc('FMS_FLIGHTS_CreateLeg', [ flight.flight_id, flight.airline, flight.flight_number, flight.departure_time, flight.arrival_time, flight.origin_airport_code, flight.destination_airport_code, newFlightId ], function(err, response) {
+		    if (err)
+			return cb(err);
+		    Database.dataSproc('FMS_MANIFEST_CreateManifest', [ response[1][newFlightId] ], function(err, response) {
+			if (err)
+			    return cb(err);
+			cb(null, response);
 		    });
 		});
-	    });
-	} else {
-	    Database.dataSproc('FMS_FLIGHTS_UpdateFlight', [ flight.id, flight.airline, flight.flight_number, flight.departure_time, flight.arrival_time, flight.origin_airport_code, flight.destination_airport_code ], function(err, response) {
-		if (err) {
-		    console.log(err.toString());
-		    return res.json({
-			error : 'FMS_FLIGHTS_UpdateFlight :' + err
-		    }, 500);
-		}
-		updateCompanyMappings(function(err) {
-		    if (err) {
-			console.log(err.toString());
-			return res.json({
-			    error : 'Failed Updating Company Mappings :' + err
-			}, 500);
-		    }
-		    res.json({
-			success : 'success'
+	    } else if (typeof (flight.is_deleted) == 'undefined') { // if not
+								    // deleted.
+		Database.dataSproc('FMS_FLIGHTS_UpdateFlight', [ flight.id, flight.airline, flight.flight_number, flight.departure_time, flight.arrival_time, flight.origin_airport_code, flight.destination_airport_code ], function(err, response) {
+		    if (err)
+			return cb(err);
+		    updateCompanyMappings(function(err) {
+			if (err)
+			    return cb(err);
+			cb(null, response);
 		    });
 		});
-	    });
 
-	}
+	    } else if (typeof (flight.is_deleted) != 'undefined' && flight.is_deleted) {
+		sails.controllers.manifests.clearManifestByFlightId(flight.id, function(err) {
+		    sails.controllers.flights.clearCompanyFlightMappings(null, flight.id, function(err) {
+			if (err)
+			    return cb(err);
+			Database.dataSproc('FMS_FLIGHTS_DeleteFlight', [ flight.id ], function(err) {
+			    if (err)
+				    return cb(err);
+			    cb(null)
+			});
+		    });
+		});
+	    }
+	}, function(err, data) {
+	    if (err) {
+		return res.json({
+		    error : 'Failed Updating Company Mappings :' + err
+		}, 500);
+	    }
+	    res.json({
+		success : 'success'
+	    });
+	})
+
     },
 
     // / Utility Functions

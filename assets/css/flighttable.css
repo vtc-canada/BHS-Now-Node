@@ -191,3 +191,28 @@ a.progress.ganntbar{
         display:none;
     }
 }
+
+
+.flight-wrapper.is_deleted{
+	display:none;
+}
+
+
+.flight-wrapper:{
+	border: 1px solid #C9C9C9;
+	background: #FCFCFC;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
