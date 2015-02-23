@@ -30,7 +30,7 @@ module.exports = {
 		if(err||typeof(details[0][0])=='undefined')
 		    return res.json({error:'Database Error'+err},500);
 		
-		Database.dataSproc('FMS_MANIFEST_GetManifest',[details[0][0].manifest_ID],function(err, manifest){
+		Database.dataSproc('FMS_MANIFEST_GetManifest',[details[0][0].cur_manifest_id],function(err, manifest){
 			if(err||typeof(manifest[0][0])=='undefined')
 			    return res.json({error:'Database Error'+err},500);
 			
@@ -42,8 +42,7 @@ module.exports = {
 	
     },
     addmanifestdetail:function(req,res){
-	
-	Database.dataSproc('FMS_MANIFEST_GetManifestByFlightId',[req.body.flight_ID],function(err,response){
+	Database.dataSproc('FMS_MANIFEST_GetManifestByLegId',[req.body.leg_ID],function(err,response){
 		if(err)
 		    return res.json({error:'Error:'+err});
 		if(response[0].length==0){  // returns blank if no results
@@ -59,15 +58,12 @@ module.exports = {
 			if(err||typeof(details[0][0])=='undefined')
 			    return res.json({error:'Database Error'+err},500);
 			    
-			sails.io.sockets.emit('manifest_'+req.body.flight_ID, details[0][0]);
+			sails.io.sockets.emit('manifest_'+response[0][0].id, details[0][0]);  // manifestId,
+												// addedrow
 			res.json({success:details[0][0]});
 		    });
 		});
 	    });
-	
-	
-	
-	
     },
     getmanifestdetails : function(req,res){
 	if (typeof (req.params.id) == 'undefined' || isNaN(parseInt(req.params.id))) {
@@ -92,19 +88,19 @@ module.exports = {
 	}
     },
     updaterow : function(req,res){
-	if(typeof(req.body.flight_ID)!='undefined' && !isNaN(parseInt(req.body.flight_ID))) {
+	if(typeof(req.body.row.id)!='undefined' && !isNaN(parseInt(req.body.row.id))) {
 	    
-	    if(req.body.row.deleted){
+	    if(req.body.row.is_deleted){
 		Database.dataSproc('FMS_MANIFEST_DeleteManifestDetails',[req.body.row.id],function(err,result){
 		    if(err)
 			return res.json({error:'Error:'+err},500);
-		    sails.io.sockets.emit('manifest_'+req.body.flight_ID, req.body.row);
+		    sails.io.sockets.emit('manifest_'+req.body.row.cur_manifest_id, req.body.row);
 		});
 	    }else{
 		Database.dataSproc('FMS_MANIFEST_UpdateManifestDetail',[req.body.row.id,req.body.row.checked_in,null],function(err,result){
 		    if(err)
 			return res.json({error:'Error:'+err},500);
-		    sails.io.sockets.emit('manifest_'+req.body.flight_ID, req.body.row);
+		    sails.io.sockets.emit('manifest_'+req.body.row.cur_manifest_id, req.body.row);
 		});
 	    }
 	}
@@ -114,30 +110,30 @@ module.exports = {
 	    Database.dataSproc('FMS_MANIFEST_GetManifestsByFlightId',[parseInt(req.body.id)],function(err,response){
 		if(err)
 		    return res.json({error:'Error:'+err});
+		
 		if(response[0].length==0){  // returns blank if no results
 		    console.log('No such manifest exists under flight ID:'+parseInt(req.body.id));
 		    return res.json([]);
 		}
 		
-		async.each(response[0],function(manifest){
+		async.each(response[0],function(manifest,cb){
 		    Database.dataSproc('FMS_MANIFEST_GetManifestDetails',[manifest.id],function(err, details){
 			    if(err)
-				return cb(err));
-			    res.json(details[0]);
-			    sails.controllers.manifests.subscribetomanifest(req,res,parseInt(req.body.id),function(err,sub){
+				return cb(err);
+			    manifest.details = details[0];
+			    cb(null);
+			    // orphan subscribe.
+			    sails.controllers.manifests.subscribetomanifest(req,res,manifest.id,function(err,sub){
 				if(err)
 				    return console.log('Database Error'+err);
 			    });
-			    
 			}); 
 		},function(err,responses){
-			return res.json({error:'Database Error'+err},500);
-		    
-		})
-		
-		
-		var manifestId = response[0][0].id; 
-		
+		    if(err)
+			
+				return res.json({error:'Database Error'+err},500);
+		    res.json(response[0]);
+		});
 	    });
 	}
     },
@@ -159,7 +155,8 @@ module.exports = {
 	});
     },
     subscribetomanifest:function(req,res,flightId,cb){
-	for(room in sails.io.roomClients[req.socket.id]){
+	for(room in sails.io.roomClients[req.socket.id]){  // leaves all
+							    // manifests.....
 	    if(room.indexOf('/manifest_')==0){
 		req.socket.leave(room);
 	    }

@@ -6,7 +6,7 @@ CREATE PROCEDURE `FMS_MANIFEST_GetManifestDetail`(IN paramManifest_Details_ID IN
 BEGIN
 SELECT
 	cur_manifest_details.id,
-	manifest_ID,
+	cur_manifest_id,
 	contact_ID,
 	cur_contacts.first_name AS 'first_name',
 	cur_contacts.last_name AS 'last_name',
