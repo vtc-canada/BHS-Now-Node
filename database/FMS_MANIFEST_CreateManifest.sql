@@ -4,7 +4,7 @@ DELIMITER $$
 
 CREATE PROCEDURE `FMS_MANIFEST_CreateManifest`(IN paramFlight_ID INT)
 BEGIN
-INSERT INTO cur_manifest (flight_ID, is_deleted) 
+INSERT INTO cur_manifest (cur_legs_id, is_deleted) 
 VALUES (paramFlight_ID,0);
 END$$
 DELIMITER ;

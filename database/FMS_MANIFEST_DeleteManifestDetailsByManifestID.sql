@@ -5,6 +5,6 @@ DELIMITER $$
 CREATE PROCEDURE `FMS_MANIFEST_DeleteManifestDetailsByManifestID`(IN paramManifest_ID INT)
 BEGIN
 DELETE FROM cur_manifest_details
-WHERE manifest_ID = paramManifest_ID;
+WHERE cur_manifest_id = paramManifest_ID;
 END$$
 DELIMITER ;

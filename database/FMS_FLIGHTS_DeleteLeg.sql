@@ -1,0 +1,10 @@
+DROP procedure IF EXISTS `FMS_FLIGHTS_DeleteLeg`;
+
+DELIMITER $$
+CREATE PROCEDURE `FMS_FLIGHTS_DeleteLeg` (IN paramFlight_ID INT)
+BEGIN
+DELETE FROM cur_legs 
+WHERE id = paramFlight_ID;
+END$$
+
+DELIMITER ;

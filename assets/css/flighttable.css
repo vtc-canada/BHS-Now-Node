@@ -193,6 +193,11 @@ a.progress.ganntbar{
 }
 
 
+
+
+.edit_flight_origin_datepicker{
+}
+
 .flight-wrapper.is_deleted{
 	display:none;
 }
@@ -206,11 +211,25 @@ a.progress.ganntbar{
 
 
 
+input.flex-input{
+	max-width:100%;
+}
+
+
+.datepicker-wrapper-padder{
+	padding-right:45px;
+}
+
+
+.combobox-isn-wrapper{
+	position:relative;
+}
 
 
 
-
-
+#edit_flight_body{
+	overflow-x: hidden;
+}
 
 
 

@@ -111,30 +111,38 @@ module.exports = {
     },
     getandjoinmanifestdetailsbyflight : function(req,res){
 	if (typeof (req.body.id) != 'undefined' && !isNaN(parseInt(req.body.id))) {
-	    Database.dataSproc('FMS_MANIFEST_GetManifestByFlightId',[parseInt(req.body.id)],function(err,response){
+	    Database.dataSproc('FMS_MANIFEST_GetManifestsByFlightId',[parseInt(req.body.id)],function(err,response){
 		if(err)
 		    return res.json({error:'Error:'+err});
 		if(response[0].length==0){  // returns blank if no results
 		    console.log('No such manifest exists under flight ID:'+parseInt(req.body.id));
 		    return res.json([]);
 		}
-		var manifestId = response[0][0].id; 
-		Database.dataSproc('FMS_MANIFEST_GetManifestDetails',[manifestId],function(err, details){
-		    if(err)
+		
+		async.each(response[0],function(manifest){
+		    Database.dataSproc('FMS_MANIFEST_GetManifestDetails',[manifest.id],function(err, details){
+			    if(err)
+				return cb(err));
+			    res.json(details[0]);
+			    sails.controllers.manifests.subscribetomanifest(req,res,parseInt(req.body.id),function(err,sub){
+				if(err)
+				    return console.log('Database Error'+err);
+			    });
+			    
+			}); 
+		},function(err,responses){
 			return res.json({error:'Database Error'+err},500);
 		    
-		    res.json(details[0]);
-		    sails.controllers.manifests.subscribetomanifest(req,res,parseInt(req.body.id),function(err,sub){
-			if(err)
-			    return console.log('Database Error'+err);
-		    });
-		    
-		});
+		})
+		
+		
+		var manifestId = response[0][0].id; 
+		
 	    });
 	}
     },
-    clearManifestByFlightId:function(flight_ID,cb){
-	Database.dataSproc('FMS_MANIFEST_GetManifestByFlightId',[flight_ID],function(err,response){
+    clearManifestByLegId:function(leg_ID,cb){
+	Database.dataSproc('FMS_MANIFEST_GetManifestByLegId',[leg_ID],function(err,response){
 	    if(err||typeof(response[0][0])=='undefined')
 		    return cb(err);
 	    var manifestId = response[0][0].id; 

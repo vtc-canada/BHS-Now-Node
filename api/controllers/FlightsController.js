@@ -77,10 +77,7 @@ module.exports = {
 		Database.dataSproc('FMS_FLIGHTS_GetCompanyResourceSharingByLegId', [ leg.id ], function(err, companies) {
 		    if (err)
 			return cb(err);
-		    if (getIndexById(flightgroups, leg.flight_id) == -1) { // checks
-			// and
-			// adds
-			// flightgroup
+		    if (getIndexById(flightgroups, leg.flight_id) == -1) { // checks and adds flightgroup
 			flightgroups.push({
 			    id : leg.flight_id,
 			    flights : []
@@ -103,19 +100,15 @@ module.exports = {
 	});
     },
     destroy : function(req, res) {
-	var flight = req.body;
-	if (flight.id) {
-	    sails.controllers.manifests.clearManifestByFlightId(flight.id, function(err) {
+	var flightdata = req.body;
+	async.each(flightdata.flights, function(flight, cb) {
+	    sails.controllers.manifests.clearManifestByLegId(flight.id, function(err) {
 		sails.controllers.flights.clearCompanyFlightMappings(null, flight.id, function(err) {
 		    if (err)
-			return res.json({
-			    error : 'Error:' + err
-			}, 500);
-		    Database.dataSproc('FMS_FLIGHTS_DeleteFlight', [ flight.id ], function(err) {
+			return cb(err);
+		    Database.dataSproc('FMS_FLIGHTS_DeleteLeg', [ flight.id ], function(err) {
 			if (err)
-			    return res.json({
-				error : 'Error:' + err
-			    }, 500);
+			   return cb(err);
 
 			res.json({
 			    success : 'success'
@@ -123,13 +116,20 @@ module.exports = {
 		    });
 		});
 	    });
-	}
+	},function(err,result){
+	    if(err)
+		return res.json({
+			error : 'Error:' + err
+		    }, 500);
+	    res.json({success:'Success'});
+	});
     },
     save : function(req, res) {
 	var flightdata = req.body;
 
 	// Updates the companyflight mappings for the flight
 	function updateCompanyMappings(cb) {
+	    return cb(null);
 	    sails.controllers.flights.clearCompanyFlightMappings(null, flight.id, function(err) {
 		if (err)
 		    return cb(err);
@@ -152,53 +152,74 @@ module.exports = {
 	    });
 	}
 
-	async.each(flightdata.flights, function(flight, cb) {
-	    if (!flight.id) { // New Flight!
-		var newFlightId = '@out' + Math.floor((Math.random() * 1000000) + 1);
-		Database.dataSproc('FMS_FLIGHTS_CreateLeg', [ flight.flight_id, flight.airline, flight.flight_number, flight.departure_time, flight.arrival_time, flight.origin_airport_code, flight.destination_airport_code, newFlightId ], function(err, response) {
-		    if (err)
-			return cb(err);
-		    Database.dataSproc('FMS_MANIFEST_CreateManifest', [ response[1][newFlightId] ], function(err, response) {
-			if (err)
-			    return cb(err);
-			cb(null, response);
-		    });
-		});
-	    } else if (typeof (flight.is_deleted) == 'undefined') { // if not
-								    // deleted.
-		Database.dataSproc('FMS_FLIGHTS_UpdateFlight', [ flight.id, flight.airline, flight.flight_number, flight.departure_time, flight.arrival_time, flight.origin_airport_code, flight.destination_airport_code ], function(err, response) {
-		    if (err)
-			return cb(err);
-		    updateCompanyMappings(function(err) {
-			if (err)
-			    return cb(err);
-			cb(null, response);
-		    });
-		});
+	// Before iterating through flight legs.. check to see if it's an entirely new flight.
 
-	    } else if (typeof (flight.is_deleted) != 'undefined' && flight.is_deleted) {
-		sails.controllers.manifests.clearManifestByFlightId(flight.id, function(err) {
-		    sails.controllers.flights.clearCompanyFlightMappings(null, flight.id, function(err) {
+	if(flightdata.id==null){  // new flight
+	    Database.dataQuery('SELECT MAX(flight_id) AS flight_id from cur_legs',function(err,response){
+		if(err){
+		    console.log(err.toString());
+		    return res.json(err);
+		}
+		flightdata.id = response[0].flight_id + 1;
+		processLegs();
+	    });
+	}else{
+	    processLegs();
+	}
+	
+	
+	function processLegs() {
+	    async.each(flightdata.flights, function(flight, cb) {
+		if(flight.flight_id==null){ // add missing flight_id
+		    flight.flight_id = flightdata.id;
+		}
+		if (!flight.id) { // New Flight!
+		    var newFlightId = '@out' + Math.floor((Math.random() * 1000000) + 1);
+		    Database.dataSproc('FMS_FLIGHTS_CreateLeg', [ flight.flight_id, flight.airline, flight.flight_number, flight.departure_time, flight.arrival_time, flight.origin_airport_code, flight.destination_airport_code, 1, newFlightId ], function(err, response) {
 			if (err)
 			    return cb(err);
-			Database.dataSproc('FMS_FLIGHTS_DeleteFlight', [ flight.id ], function(err) {
+			Database.dataSproc('FMS_MANIFEST_CreateManifest', [ response[1][newFlightId] ], function(err, response) {
 			    if (err)
-				    return cb(err);
-			    cb(null)
+				return cb(err);
+			    cb(null, response);
 			});
 		    });
+		} else if (typeof (flight.is_deleted) == 'undefined') { // if not
+		    // deleted.
+		    Database.dataSproc('FMS_FLIGHTS_UpdateLeg', [ flight.flight_id, flight.id, flight.airline, flight.flight_number, flight.departure_time, flight.arrival_time, flight.origin_airport_code, flight.destination_airport_code, 1 ], function(err, response) {
+			if (err)
+			    return cb(err);
+			updateCompanyMappings(function(err) {
+			    if (err)
+				return cb(err);
+			    cb(null, response);
+			});
+		    });
+
+		} else if (typeof (flight.is_deleted) != 'undefined' && flight.is_deleted) {
+		    sails.controllers.manifests.clearManifestByLegId(flight.id, function(err) {
+			sails.controllers.flights.clearCompanyFlightMappings(null, flight.id, function(err) {
+			    if (err)
+				return cb(err);
+			    Database.dataSproc('FMS_FLIGHTS_DeleteLeg', [ flight.id ], function(err) {
+				if (err)
+				    return cb(err);
+				cb(null)
+			    });
+			});
+		    });
+		}
+	    }, function(err, data) {
+		if (err) {
+		    return res.json({
+			error : 'Failed Updating Company Mappings :' + err
+		    }, 500);
+		}
+		res.json({
+		    success : 'success'
 		});
-	    }
-	}, function(err, data) {
-	    if (err) {
-		return res.json({
-		    error : 'Failed Updating Company Mappings :' + err
-		}, 500);
-	    }
-	    res.json({
-		success : 'success'
 	    });
-	})
+	}
 
     },
 
