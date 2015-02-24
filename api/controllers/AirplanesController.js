@@ -120,10 +120,6 @@ module.exports = {
 	if(typeof(req.query.order)!='undefined'){	  
 	    	if(req.query.order[0].column==0){
 	    	    orderstring = 'serial_number' +'_'+req.query.order[0].dir;
-	    	}else if(req.query.order[0].column==1){  // Address column
-        	    orderstring = 'serial_number' +'_'+req.query.order[0].dir;
-        	}else if(req.query.order[0].column==4){
-        	    orderstring = 'invalid';
         	}else{
         	    orderstring = req.query.columns[req.query.order[0].column].data +'_'+req.query.order[0].dir;
         	}

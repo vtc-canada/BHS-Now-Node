@@ -23,8 +23,16 @@ BEGIN
 ORDER BY
 	CASE WHEN orderBy='serial_number_asc' THEN cur_airplanes.serial_number END ASC,
 	CASE WHEN orderBy='serial_number_desc' THEN cur_airplanes.serial_number END DESC,
-	CASE WHEN orderBy='company_asc' THEN cur_company.name END ASC,
-	CASE WHEN orderBy='company_desc' THEN cur_company.name  END DESC
+	CASE WHEN orderBy='resource_category_asc' THEN cur_airplanes.resource_category END ASC,
+	CASE WHEN orderBy='resource_category_desc' THEN cur_airplanes.resource_category END DESC,
+	CASE WHEN orderBy='wing_type_asc' THEN cur_airplanes.fixed_wing_type END ASC,
+	CASE WHEN orderBy='wing_type_desc' THEN cur_airplanes.fixed_wing_type END DESC,
+	CASE WHEN orderBy='owner_asc' THEN cur_company.name END ASC,
+	CASE WHEN orderBy='owner_desc' THEN cur_company.name END DESC,
+	CASE WHEN orderBy='call_sign_asc' THEN cur_airplanes.call_sign END ASC,
+	CASE WHEN orderBy='call_sign_desc' THEN cur_airplanes.call_sign END DESC,
+	CASE WHEN orderBy='seats_asc' THEN cur_airplanes.seats END ASC,
+	CASE WHEN orderBy='seats_desc' THEN cur_airplanes.seats  END DESC
 	#CASE WHEN orderBy='' THEN contact_name END ASC
 	LIMIT recordCount OFFSET offsetIndex;
 	SET filteredCount = FOUND_ROWS();
