@@ -27,7 +27,14 @@ module.exports = {
 		    airlines : airlines[0],
 		    airports : airports[0]
 		});
+
 	    });
+	});
+    },
+    watchCompany : function(req, res) {
+	req.socket.join('gantt');
+	res.json({
+	    success : 'joined gantt'
 	});
     },
     getCompanyResourceSharingByFlightId : function(req, res) {
@@ -77,7 +84,10 @@ module.exports = {
 		Database.dataSproc('FMS_FLIGHTS_GetCompanyResourceSharingByLegId', [ leg.id ], function(err, companies) {
 		    if (err)
 			return cb(err);
-		    if (getIndexById(flightgroups, leg.flight_id) == -1) { // checks and adds flightgroup
+		    if (getIndexById(flightgroups, leg.flight_id) == -1) { // checks
+			// and
+			// adds
+			// flightgroup
 			flightgroups.push({
 			    id : leg.flight_id,
 			    flights : []
@@ -108,20 +118,23 @@ module.exports = {
 			return cb(err);
 		    Database.dataSproc('FMS_FLIGHTS_DeleteLeg', [ flight.id ], function(err) {
 			if (err)
-			   return cb(err);
+			    return cb(err);
 
-			res.json({
-			    success : 'success'
-			});
+			cb(null);
 		    });
 		});
 	    });
-	},function(err,result){
-	    if(err)
+	}, function(err, result) {
+	    if (err)
 		return res.json({
-			error : 'Error:' + err
-		    }, 500);
-	    res.json({success:'Success'});
+		    error : 'Error:' + err
+		}, 500);
+	    res.json({
+		success : 'Success'
+	    });
+	    sails.io.sockets.emit('gantt', {
+		success : 'do the update'
+	    });
 	});
     },
     save : function(req, res) {
@@ -152,25 +165,25 @@ module.exports = {
 	    });
 	}
 
-	// Before iterating through flight legs.. check to see if it's an entirely new flight.
+	// Before iterating through flight legs.. check to see if it's an
+	// entirely new flight.
 
-	if(flightdata.id==null){  // new flight
-	    Database.dataQuery('SELECT MAX(flight_id) AS flight_id from cur_legs',function(err,response){
-		if(err){
+	if (flightdata.id == null) { // new flight
+	    Database.dataQuery('SELECT MAX(flight_id) AS flight_id from cur_legs', function(err, response) {
+		if (err) {
 		    console.log(err.toString());
 		    return res.json(err);
 		}
 		flightdata.id = response[0].flight_id + 1;
 		processLegs();
 	    });
-	}else{
+	} else {
 	    processLegs();
 	}
-	
-	
+
 	function processLegs() {
 	    async.each(flightdata.flights, function(flight, cb) {
-		if(flight.flight_id==null){ // add missing flight_id
+		if (flight.flight_id == null) { // add missing flight_id
 		    flight.flight_id = flightdata.id;
 		}
 		if (!flight.id) { // New Flight!
@@ -184,7 +197,8 @@ module.exports = {
 			    cb(null, response);
 			});
 		    });
-		} else if (typeof (flight.is_deleted) == 'undefined') { // if not
+		} else if (typeof (flight.is_deleted) == 'undefined') { // if
+		    // not
 		    // deleted.
 		    Database.dataSproc('FMS_FLIGHTS_UpdateLeg', [ flight.flight_id, flight.id, flight.airline, flight.flight_number, flight.departure_time, flight.arrival_time, flight.origin_airport_code, flight.destination_airport_code, 1 ], function(err, response) {
 			if (err)
@@ -217,6 +231,9 @@ module.exports = {
 		}
 		res.json({
 		    success : 'success'
+		});
+		sails.io.sockets.emit('gantt', {
+		    success : 'do the update'
 		});
 	    });
 	}

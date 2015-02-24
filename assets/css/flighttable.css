@@ -231,7 +231,9 @@ input.flex-input{
 	overflow-x: hidden;
 }
 
-
+.datatable-hidden{
+	display:none;
+}
 
 
 

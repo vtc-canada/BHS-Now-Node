@@ -49,7 +49,7 @@ module.exports = {
 		    console.log('No such manifest exists under flight ID:'+req.body.flight_ID);
 		    return res.json([]);
 		}
-		manifestDetailsId = '@out' + Math.floor((Math.random() * 1000000) + 1);
+		var manifestDetailsId = '@out' + Math.floor((Math.random() * 1000000) + 1);
 		Database.dataSproc('FMS_MANIFEST_CreateManifestDetail',[response[0][0].id, req.body.contact_ID,manifestDetailsId],function(err,manifestdetail){
 		    if(err){
 			return console.log('Error:'+err);
