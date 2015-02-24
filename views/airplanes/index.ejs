@@ -4,23 +4,6 @@
 	</div>
 </div>
 
-    <!-- Modal -  -->
-<div id="exportModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="exportModalLabelgenerate">Passengers Export</h3>
-    </div>
-    <p style="margin:10px;">
-    	Your report is being generated and will be available for 15 minutes.
-    </p>
-    <div class="modal-body" style="overflow:hidden;">
-    </div>
-    <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-        <!--<button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" id="confirmdeletes"><%=  __('Confirm') %></button>-->
-    </div>
-</div>
-
 <div class="row-fluid create-report-controls-wrapper">
     <div class="row">
         <div class="span10 offset2 create-report-controls" style="padding-top: 20px;">
@@ -32,9 +15,9 @@
                    </div>
                </div>
                <div class="row">
-               <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_company"><%= __('Owner') %>:</label></div>
+               <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_owner"><%= __('Owner') %>:</label></div>
                <div class="span8 report-control-right-control">
-                   <input type="text" id="search_company" value="">
+                   <input type="text" id="search_owner" value="">
                </div>
            </div>
            </div>
@@ -44,72 +27,69 @@
 
 <div class="row-fluid" style="margin-top:19px; margin-bottom:25px;">
     <div class="span10 offset1 page-controls-wrapper">
-        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%= __('Passengers') %></span>
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;"><%= __('Airplanes') %></span>
         	<% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="create_airplane"><%= __('Create New User') %></div><% } %>
-        	<% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="export_contacts"><%= __('Export') %></div><% } %>
-        </div>
+         </div>
         <div class="row-fluid key-indicaters-frame" id="iframediv">
             <div class="row-fluid">
-                <table id="contacts" class="display" cellspacing="0" width="100%">
+                <table id="airplanes" class="display" cellspacing="0" width="100%">
 			        <thead>
-			            <tr>
-			            	<th>Id<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
-			                <th><%= __('SerialNumber') %><i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
-			                <th><%= __('ResourceCategory') %><i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
-			                <th><%= __('FixedWingType') %><i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
-			                <th><%= __('CallSign') %><i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
-			                <th><%= __('SerialNumber') %><i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
-			                <th><%= __('Owner') %><i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
-			            </tr>
-			        </thead>			 
+		            <tr>
+		            	<th>Id<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+		                <th><%= __('SerialNumber') %><i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+		                <th><%= __('ResourceCategory') %><i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+		                <th><%= __('WingType') %><i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+		                <th><%= __('CallSign') %><i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+		                <th><%= __('Owner') %><i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+		                <th><%= __('Seats') %><i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+		            </tr>
+		            </thead>		 
 			    </table>
             </div>
         </div>
     </div>
 </div>
-<script type="text/template" id="contact-template">
-	<div class="row-fluid " style="position:relative; cursor:default;" contact_id="{{=contact_id}}">
+<script type="text/template" id="airplane-template">
+	<div class="row-fluid " style="position:relative; cursor:default;" airplane_id="{{=airplane_id}}">
 		<div class="row-fluid building-segment-wrapper">
-		<div class="span5 segment-label"><%= __('RotaryWing') %>:</div>
-			<div class="span7">
-				<select id="resource_category" class="address-input" >
-					<option value="na" {{if(resource_category==''){ }}selected="selected"{{ } }}></option>
-					<option value="Fixed Wing" {{if(resource_category=='Fixed Wing'){ }}selected="selected"{{ } }}>Fixed Wing</option>
-					<option value="Rotary Wing" {{if(resource_category=='Rotary Wing'){ }}selected="selected"{{ } }}>Rotary Wing</option>
-				</select>
+			<div class="span5 segment-label"><%= __('Resource Category') %>:</div>
+			<div class="span7"><select id="resourceCategoryCombobox" class="resourceCategoryCombobox" value=""></select></div>	
 			</div>
 		</div>
-		<div class="row-fluid building-segment-wrapper">
-			<div class="span5 segment-label" style="min-height:40px;"><%= __('FixedWingType') %>:</div>
-			<div class="span7" style="min-height:40px;"><input type="text" id="fixed_wing_type" class="contact_name" value="{{=fixed_wing_type}}"></div>
-		</div>
-		<div class="row-fluid building-segment-wrapper">
-			<div class="span5 segment-label" style="min-height:40px;"><%= __('CallSign') %>:</div>
-			<div class="span7" style="min-height:40px;"><input type="text" id="call_sign" class="contact_name" value="{{=call_sign}}"></div>
-		</div>
-		<div class="row-fluid building-segment-wrapper">
-			<div class="span5 segment-label"><%= __('SerialNumber') %>:</div>
-			<div class="span5"><input type="text" id="serial_number" value="{{=serial_number}}"></div>
-		</div>
-
-
 	</div>
-</script>
-<script type="text/template" id="company-template">
-	<div class="row-fluid company-div building-sale-wrapper building-segment-wrapper companycard{{ if(typeof(dodelete)!='undefined'){ }} user-delete{{ } }}" userid="" company_id="{{=company_id}}">
-		<div class="span4 first-company-value" >{{=company_name}}</div>
-		<div class="span6">{{=address}}</div>
-		<div class="span2 "><% if(req.session.user.policy[req.route.path].update==1){ %>{{ if(typeof(dodelete)=='undefined'){ }}<div class="pull-right btn btn-danger delete-company-mapping">Remove</div>{{ }else{ }}<div class="pull-right btn btn-success cancel-delete-company-mapping">Cancel</div>{{ } }}<% } %></div>
+	<div class="row-fluid building-segment-wrapper">
+		<div class="span5 segment-label" style="min-height:40px;"><%= __('WingType') %>:</div>
+		<div class="span7"><select id="wingTypeCombobox" class="wingTypeCombobox" value=""></select></div>	
 	</div>
+	<div class="row-fluid building-segment-wrapper">
+		<div class="span5 segment-label" style="min-height:40px;"><%= __('CallSign') %>:</div>
+		<div class="span7" style="min-height:40px;"><input type="text" id="call_sign" class="contact_name" value="{{=call_sign}}"></div>
+	</div>
+	<div class="row-fluid building-segment-wrapper">
+		<div class="span5 segment-label"><%= __('SerialNumber') %>:</div>
+		<div class="span5"><input type="text" id="serial_number" value="{{=serial_number}}"></div>
+	</div>
+	<div class="row-fluid building-segment-wrapper">
+		<div class="row-fluid">
+				<div class="row-fluid building-segment-wrapper">
+					<div class="span5 segment-label"><%= __('Owner') %>:</div>
+					<div class="span5"><select id="companyCombobox" class="companyCombobox" value=""></select></div>				
+				</div>
+		</div>
+	</div>
+	<div class="row-fluid building-segment-wrapper">
+		<div class="span5 segment-label"><%= __('NumOfSeats') %>:</div>
+		<div class="span5"><input type="number" id="seats" min="0"  value="{{=seats}}"></div>
+	</div>
+</div>
 </script>
-
 
 <div class="row-fluid edit-item-section" style="display:none; margin-top:19px; margin-bottom:35px;">
     <div class="span10 offset1 page-controls-wrapper">
-        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;" id="building-section-title">Edit airplane Details</span>
-         	<% if(req.session.user.policy[req.route.path].update==1){ %><button style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="save_contact"><i class="only-mobile icon-save"></i><span class="only-desktop">Save</span></button><% } %>
-         	<% if(req.session.user.policy[req.route.path].update==1){ %><button style="margin-right:10px;font-weight: 400;" class="btn btn-danger pull-right save_pull" id="delete_contact"><i class="only-mobile icon-trash"></i><span class="only-desktop">Delete</span></button><% } %>
-         	<button style="margin-right:10px;font-weight: 400;" class="btn pull-right save_pull" id="cancel_contact"><i class="only-mobile icon-circle-arrow-left"></i><span class="only-desktop">Cancel</span></button>
+        <div class="row-fluid" id="reportheader"><span style="padding-left:10px;" id="building-section-title">Edit Contact Details</span>
+         	<% if(req.session.user.policy[req.route.path].update==1){ %><button style="margin-right:10px;font-weight: 400;" class="btn btn-primary pull-right save_pull" id="save_airplane"><i class="only-mobile icon-save"></i><span class="only-desktop">Save</span></button><% } %>
+         	<% if(req.session.user.policy[req.route.path].update==1){ %><button style="margin-right:10px;font-weight: 400;" class="btn btn-danger pull-right save_pull" id="delete_airplane"><i class="only-mobile icon-trash"></i><span class="only-desktop">Delete</span></button><% } %>
+         	<button style="margin-right:10px;font-weight: 400;" class="btn pull-right save_pull" id="cancel_airplane"><i class="only-mobile icon-circle-arrow-left"></i><span class="only-desktop">Cancel</span></button>
          	<% if(req.session.user.policy[req.route.path].update==1){ %><div style="margin-right: 10px; color: rgb(153, 0, 0); font-weight: 400; display: none;" class="pull-right save_pull" id="changes_pending">Changes Pending. &nbsp;</div><% } %>
   		 </div>
         <div class="row-fluid " id="iframediv">
@@ -120,7 +100,7 @@
 							<div class="row-category">
 								<span class="" id="sales_title">
 									<i class="icon-plus-sign" style="margin-right:10px; display:none;"></i>
-									<i class="icon-pencil"></i> &nbsp&nbsp<b>Passenger Information</b>
+									<i class="icon-pencil"></i> &nbsp&nbsp<b>Airplane Information</b>
 								</span>
 								<div class="pull-right" style="height:40px; display:none;">
 									<span  id="delete_mapping" class="row-category-button-wrapper">
@@ -139,24 +119,10 @@
 					</div>
 				</div>
 			
-				<div id="contact_information_section" class="row-fluid">
+				<div id="airplane_information_section" class="row-fluid">
 				</div>
-				<div class="row-fluid">
-					<div class="span12">
-						<div class="row-fluid">
-								<div class="row-fluid building-segment-wrapper">
-									<div class="span5 segment-label"><%= __('Owner') %>:</div>
-									<div class="span5"><select id="companycombobox" class="companycombobox" value=""></select></div>				
-								</div>
-							</div>
-					</div>
-				</div>
-				<div class="row-fluid">
-					<div class="span12" style="min-height:10px;">
-						<div class="row-fluid associated-companies-alert">
-						</div>
-					</div>
-				</div>   		
+					
+ 		
 				<div class="note-wrapper" style="display:none;">				
 	        		<div class="row-fluid">
 						<div class="span12">
@@ -254,56 +220,110 @@
 <script>
 
     $(document).ready(function(){
-    
+	
+        
     	var init_id = <%=typeof(init_id)!='undefined'?init_id:null%>;    	
-    	var curcontactsval = '';
-		var contactssearchtimer;
-		var contactscombobox;
-		var curcompanyval = '';
-		var companysearchtimer;
-		var companycombobox;
+    	var curAirplanesVal = '';
+		var airplanesSearchTimer;
+		var airplanesCombobox;
+		var curOwnerVal = '';
+		var curWingTypeVal = '';
+		var curResourceCategory = '';
+		var companySearchTimer;
+		var companyCombobox;
+		var wingTypeCombobox;
+		var resourceCategoryCombobox;
     	var blockNoteSave = false;
-		
-    	socket.get('/airplanes/getcompaniesbyname',{},function(res){
-    		$('select.companycombobox').append('<option company_name="" company_id=""></option>');
-    		for(var i=0;i<res.length;i++){
-        		if(parseInt(airplane.get('contact_id'))!=parseInt(res[i].contact_id)){
-	        		$('select.companycombobox').append('<option company_name="'+res[i].company_name+'" company_id="'+res[i].company_id+'">'+res[i].company_name+'</option>');
-        		}
-        	}
-        	companycombobox = $('select.companycombobox').combobox();
-        	$('input.companycombobox').on('keyup',function(e){
-        		if(curcompanyval!=$('input.companycombobox').val()&&e.keyCode!=9&&e.keyCode!=13&&e.keyCode!=27){
-    				curcompanyval =  $('input.companycombobox').val();
-        			updateCompanyCombobox();
-    			}
-        		else if(e.keyCode==9||e.keyCode==13||e.keyCode==27){
-        			$('input.companycombobox').change();
-    			}
-    		});
-    		
-		});
-		
-		function updateCompanyCombobox(){
-			clearTimeout(companysearchtimer);
-    		companysearchtimer = setTimeout(function(){
-    			socket.get('/airplanes/getcompaniesbyname',{search: curcompanyval},function(res){
-    				var tempval = $('input.companycombobox').val();
-        			$('select.companycombobox').empty();
-		    		for(var i=0;i<res.length;i++){
-		        		if(parseInt(airplane.get('contact_id'))!=parseInt(res[i].contact_id)){
-			        		$('select.companycombobox').append('<option company_name="'+res[i].company_name+'" company_id="'+res[i].company_id+'">'+res[i].company_name+'</option>');
-		        		}
-		        	}
-        			companycombobox.data('combobox').refresh(); 
-        			$('input.companycombobox').val(tempval);
-        			companycombobox.data('combobox').lookup();
+    	
+	    function LoadOwner(){
+	    	socket.get('/airplanes/getcompaniesbyname',{},function(res){
+	    		$('select.companyCombobox').append('<option value=""></option>');
+	    		for(var i=0;i<res.length;i++){
+	        		$('select.companyCombobox').append('<option value="'+res[i].company_id+'">'+res[i].company_name+'</option>');
+	        		if(airplane.get('owner') == res[i].company_id){
+	        			$('select.companyCombobox').val(res[i].company_id);
+	        		}	
+	        	}
+	        	companyCombobox = $('select.companyCombobox').combobox();
+	        	$('input.companyCombobox').on('keyup',function(e){
+	        		if(curOwnerVal!=$('input.companyCombobox').val()&&e.keyCode!=9&&e.keyCode!=13&&e.keyCode!=27){
+	    				curOwnerVal =  $('input.companyCombobox').val();
+	        		}
+	        		else if(e.keyCode==9||e.keyCode==13||e.keyCode==27){
+	        			$('input.companyCombobox').change();
+	    			}
+	    		});
+	    		
+			});
+	    };
+	    
+	    function LoadWingType(){
+	    	socket.get('/airplanes/getwingtypebyresource',{search: airplane.get('resource_category')},function(res){
+	    		$('select.wingTypeCombobox').append('<option value=""></option>');
+	    		for(var i=0;i<res.length;i++){
+		        		$('select.wingTypeCombobox').append('<option value="'+res[i].type+'">'+res[i].type+'</option>');
+		        		if(airplane.get('wing_type') == res[i].type){
+		        			$('select.wingTypeCombobox').val(res[i].type);
+		        		}		        		
+	        	}
+	    		wingTypeCombobox = $('select.wingTypeCombobox').combobox();
+	        	$('input.wingTypeCombobox').on('keyup',function(e){
+	        		if(curWingTypeVal!=$('input.wingTypeCombobox').val()&&e.keyCode!=9&&e.keyCode!=13&&e.keyCode!=27){
+	        			curWingTypeVal =  $('input.wingTypeCombobox').val();
+	    			}
+	        		else if(e.keyCode==9||e.keyCode==13||e.keyCode==27){
+	        			$('input.wingTypeCombobox').change();
+	    			}
+	    		});
+	    		
+			});
+	    };
+	    
+	    function LoadResourceCategory(){
+	    	socket.get('/airplanes/getresourcecategories',{},function(res){
+	    		$('select.resourceCategoryCombobox').append('<option value=""></option>');
+	    		for(var i=0;i<res.length;i++){
+		        		$('select.resourceCategoryCombobox').append('<option value="'+res[i].category+'">'+res[i].category+'</option>');
+		        		if(airplane.get('resource_category') == res[i].category){
+		        			$('select.resourceCategoryCombobox').val(res[i].category);
+		        		}		        		
+	        	}
+	    		resourceCategoryCombobox = $('select.resourceCategoryCombobox').combobox();
+	        	$('select.resourceCategoryCombobox').on('change',function(e){
+	        		if(curResourceCategory!=$('select.resourceCategoryCombobox').val()&&e.keyCode!=9&&e.keyCode!=13&&e.keyCode!=27){
+	        			curResourceCategory =  $('select.resourceCategoryCombobox').val();
+	        			airplane.set('wing_type')
+	        			airplane.set('wing_type',null);
+	        			UpdateWingTypeCombobox();
+	    			}
+	        		else if(e.keyCode==9||e.keyCode==13||e.keyCode==27){
+	        			$('input.resourceCategoryCombobox').change();
+	    			}
+	    		});
+	    		
+			});
+	    };
+		 
+		function UpdateWingTypeCombobox(){
+			clearTimeout(companySearchTimer);
+    		companySearchTimer = setTimeout(function(){
+    			socket.get('/airplanes/getwingtypebyresource',{search : curResourceCategory},function(res){
+    				$('select.wingTypeCombobox').empty();
+        			$('select.wingTypeCombobox').append('<option value=""></option>');
+        			$('input.wingTypeCombobox').val("");
+    	    		for(var i=0;i<res.length;i++){
+    	    			$('select.wingTypeCombobox').append('<option value="'+res[i].type+'">'+res[i].type+'</option>');
+		        		if(airplane.get('wing_type') == res[i].type){
+		        			$('select.wingTypeCombobox').val(res[i].type);
+		        		}		        		
+    	    		}
+		    		wingTypeCombobox.data('combobox').refresh(); 
     			});
     		},100);
 		}
         	
         		
-		var datatable = $('#contacts').dataTable({
+		var datatable = $('#airplanes').dataTable({
 		        "processing": true,
 		        "serverSide": true,
 		        "dom":"tipr",
@@ -311,7 +331,7 @@
 		        	"url":"/airplanes/searchairplanes",
 	        		"data":function(d){
 	        			d.airplane_search = $("#search_airplane").val();
-	        			d.company_search = $("#search_company").val();
+	        			d.owner_search = $("#search_owner").val();
 	        		},
 	        		error: function(xhr, error, thrown){
 	        			if(error.toString()=='parsererror'){
@@ -335,37 +355,37 @@
 	        		}
 	        	},
 		        "aoColumns":[
-		        	{"mData":"contact_id","visible":false}
-			        ,{"mData":function(data,b){
-			        	return '<b>'+data.serial_number+'</b>';
-			        }
-					}
-			        ,{"mData":"resource_category"}
-			        ,{"mData":"fixed_wing_type"}
-			        ,{"mData":"call_sign"}
-			        ,{"mData":"owner"}
-			        ],
+		 		        	{"mData":"airplane_id","visible":false}
+		 			        ,{"mData":function(data,b){
+		 			        	return '<b>'+data.serial_number+'</b>';
+		 			        }
+		 					}
+		 			        ,{"mData":"resource_category"}
+		 			        ,{"mData":"wing_type"}
+		 			        ,{"mData":"call_sign"}
+		 			        ,{"mData":"owner"}
+		 			        ,{"mData":"seats"}
+		 			        ],
 		        "rowCallback": function( row, data, displayIndex ) {
-					$(row).attr('contact_id',data['contact_id']);
+					$(row).attr('airplane_id',data['airplane_id']);
 					$(row).click(function(){
 						$('.edit-item-section').css('display','');
-						$('#delete_contact').css('display','');
-    					airplane.fetch({id:parseInt($(row).attr('contact_id'))});
-    					
-        				companies.fetch({contact_id:parseInt($(row).attr('contact_id'))});    
+						$('#delete_airplane').css('display','');
+    					airplane.fetch({id:parseInt($(row).attr('airplane_id'))});    					
+        				  
                		});
 		        }
 	    });
 	    $('select[name=contacts_length]').css('margin-top','10px');
 	    $('#contacts_length label').css('margin-bottom','0px');
 	    
-        $('#contacts tbody').on('click', 'tr', function () {
+        $('#airplanes tbody').on('click', 'tr', function () {
         	$(this).siblings().removeClass('selected');
         	$(this).removeClass('selected').addClass('selected');
 	    });
-	    $('#contacts').on('draw.dt',function(event,datatable){
-	     	if(!isNaN(parseInt(airplane.get('contact_id')))){
-	     		$('#contacts tbody tr[contact_id='+airplane.get('contact_id')+']').addClass('selected');
+	    $('#airplanes').on('draw.dt',function(event,datatable){
+	     	if(!isNaN(parseInt(airplane.get('airplane_id')))){
+	     		$('#airplanes tbody tr[airplane_id='+airplane.get('airplane_id')+']').addClass('selected');
 	     	}
     	});
     	
@@ -377,38 +397,22 @@
 			},10);
 		});
 		
-		$('#search_company').keydown(function(){
+		$('#search_owner').keydown(function(){
 			setTimeout(function(){
 				datatable.api().ajax.reload();
 			},10);
 		});
 		
-		$('#export_contacts').click(function(){
-			$('#exportModal .modal-body').html(
-	        '<div style="font-size: 16px; font-weight:400; text-align:right;" class="pull-right"><span class=""><i class="icon icon-cog icon-spin"></i></span>&nbsp;&nbsp;Generating Report...&nbsp;</div>');
-            $('#exportModal').modal('show');
-			socket.get('/airplanes/export',
-				{timezoneoffset : new Date().getTimezoneOffset()
-				,airplane_search : $("#search_airplane").val()
-				},function(url){
-					$('#exportModal .modal-body').html('<a class="pull-right btn btn-success" href="'+url.url+'">Download</a>');
-				
-				
-			});
-		
-		});
 		$('#create_airplane').click(function(){
-			$('#delete_contact').css('display','none');
+			$('#delete_airplane').css('display','none');
 			$('.edit-item-section').css('display','');			
 			notes.reset();
-			airplane = new AirplaneModel({contact_id:'new',resource_category:'',fixed_wing_type:'',call_sign:'',serial_number:'',owner:''});
-			contactView.render();
-			companies.reset();
-			companyView.render();
+			airplane = new AirplaneModel({airplane_id:'new',resource_category:'',wing_type:'',call_sign:'',serial_number:'',owner:'', seats:''});
+			airplaneView.render();
 			if(notesView!=null){
 				notesView.render();
 			}
-     		$('#contacts tbody tr').removeClass('selected');
+     		$('#airplanes tbody tr').removeClass('selected');
      		
             setTimeout(function(){
 				if($('body').width()>979){
@@ -423,17 +427,17 @@
             },100);
 		});
 		
-		$('#cancel_contact').click(function(){
-			$('#delete_contact').css('display','none');
+		$('#cancel_airplane').click(function(){
+			$('#delete_airplane').css('display','none');
 			$('.edit-item-section').css('display','none');	
-     		$('#contacts tbody tr').removeClass('selected');
+     		$('#airplanes tbody tr').removeClass('selected');
 			
 		});
 		
-		$('#delete_contact').click(function(){
-			if(airplane.get('contact_id')!='new'){
-	            $('#myModalLabeldelete').html('Delete airplane');
-	            $('#deleteModal > div.modal-body').html('<p>Are you sure you want to delete <b>'+airplane.get('resource_category')+' '+airplane.get('call_sign')+'</b>?</p>');
+		$('#delete_airplane').click(function(){
+			if(airplane.get('airplane_id')!='new'){
+	            $('#myModalLabeldelete').html('Delete Airplane');
+	            $('#deleteModal > div.modal-body').html('<p>Are you sure you want to delete <b>'+airplane.get('serial_number')+'</b>?</p>');
 	            $('#deleteModal').modal('show');
 			}
 		});
@@ -450,28 +454,26 @@
 		});	
 		
 		$('#confirmdelete').click(function(){
-			socket.get('/airplanes/deletecontact',{contact_id:airplane.get('contact_id')},function(response){
+			socket.get('/airplanes/deleteairplane',{airplane_id:airplane.get('airplane_id')},function(response){
 				datatable.api().ajax.reload(function(){},false);
-				$('#delete_contact').css('display','none');
+				$('#delete_airplane').css('display','none');
 				$('.edit-item-section').css('display','');			
-				airplane = new AirplaneModel({contact_id:'new',resource_category:'',call_sign:'',serial_number:'',owner:''});
-				contactView.render();
-				companies.reset();
-				companyView.render();
-				$('#delete_contact').css('display','none');
+				airplane = new AirplaneModel({airplane_id:'new',resource_category:'',call_sign:'',serial_number:'',owner:'', seats:''});
+				airplaneView.render();
+				$('#delete_airplane').css('display','none');
 				$('.edit-item-section').css('display','none');	
 	           	
 			});
 		});
 		
-    	$('#save_contact').click(function(){
+    	$('#save_airplane').click(function(){
     		$('.alert-success').remove();
     		$('.alert-error').remove();
-    		var wasnew = airplane.get('contact_id')=='new'?true:false;
-    		socket.get('/airplanes/updatecontact/' + airplane.get('contact_id'), {airplane:airplane.toJSON(), companies : companies.toJSON(), notes : notes.toJSON()},function(response){
-    			if(typeof(response.success)!='undefined'){
-    				if(airplane.get('contact_id')=='new'){
-    					airplane.set('contact_id',response.contact_id);
+    		var wasnew = airplane.get('airplane_id')=='new'?true:false;
+    		socket.get('/airplanes/updateairplane/' + airplane.get('airplane_id'), {airplane:airplane.toJSON()},function(response){ //notes : notes.toJSON()},function(response){
+      			if(typeof(response.success)!='undefined'){
+    				if(airplane.get('airplane_id')=='new'){
+    					airplane.set('airplane_id',response.airplane_id);
     				}
 	                $('.page-banner').after('<div class="alert alert-success fade in" style="border-radius:0px;">'+
 	                        '<button type="button" class="close" data-dismiss="alert">×</button>'+
@@ -486,15 +488,13 @@
 					    }, 500);
 					}
 	                
-	                
 	                setTimeout(function(){// wait for database to be ready
 	                	if(wasnew){
 							$('.edit-item-section').css('display','none');
-							$('#delete_contact').css('display','none');
-							airplane.set('contact_id','new');
+							$('#delete_airplane').css('display','none');
+							airplane.set('airplane_id','new');
 	                	}else{
-		                	airplane.fetch({id:parseInt(airplane.get('contact_id'))}); 
-		    				companies.fetch({contact_id:parseInt(airplane.get('contact_id'))});  
+		                	airplane.fetch({id:parseInt(airplane.get('airplane_id'))}); 
 	                	}
 						datatable.api().ajax.reload(function(){},false);  // reloads the datatable- value should still be shown
 	                },100);
@@ -530,10 +530,10 @@
     		if($(this).hasClass('disabled')){
     			return;
     		}
-    		socket.get('/airplanes/updatecontact/' + airplane.get('contact_id'), {airplane:airplane.toJSON(), companies : companies.toJSON(), notes : notes.toJSON()},function(response){
+    		socket.get('/contacts/updatecontact/' + contact.get('contact_id'), {contact:contact.toJSON(), notes : notes.toJSON()},function(response){
     			if(typeof(response.success)!='undefined'){
-    				if(airplane.get('contact_id')=='new'){
-    					airplane.set('contact_id',response.contact_id);
+    				if(contact.get('contact_id')=='new'){
+    					contact.set('contact_id',response.contact_id);
     				}
 	    			$('.alert-success').remove();
 	                $('.page-banner').after('<div class="alert alert-success fade in" style="border-radius:0px;">'+
@@ -549,9 +549,8 @@
 					    }, 500);
 					}
 	                setTimeout(function(){
-	                	airplane.fetch({id:parseInt(airplane.get('contact_id'))}); 
-	    				companies.fetch({contact_id:parseInt(airplane.get('contact_id'))});  
-	                },100);
+	                	contact.fetch({id:parseInt(contact.get('contact_id'))}); 
+	    			},100);
 	                setTimeout(function(){
 	                    setTimeout(function(){
 	                        $('.alert-success').remove();
@@ -577,19 +576,14 @@
     	
     	
 	    	 // just shows the changes are pending, by scanning through the collection to see if that's the case.
-	    function setChangesPending(){
+	    function SetChangesPending(){
 	    	var change = false;
 	    	if(typeof(airplane.get('modified'))!='undefined'){
 	    		change = true;
 	    	}
-	    	companies.each(function(company){
-	    		if(typeof(company.get('dodelete'))!='undefined'||typeof(company.get('new'))!='undefined'){
-	    			change = true;
-	    		}
-	    	});
 
-	        if(typeof($('#save_contact')[0])!='undefined'){
-	        	$('#save_contact')[0].disabled = !change;
+	        if(typeof($('#save_airplane')[0])!='undefined'){
+	        	$('#save_airplane')[0].disabled = !change;
 	        	$('#save_note_admin')[0].disabled = !change;
             }
             if(typeof($('#save_notes')[0])!='undefined'){
@@ -608,9 +602,7 @@
 	            $('#changes_pending_notes').css('display','none');
 	        }
 	    }
-    	
-    	
-    	
+
 		///////////////////////////
 	    /// Airplane        ////////
 	    ///////////////////////////   
@@ -628,7 +620,7 @@
 	                    }
 	                    this.clear();
 	                    this.set(airplane);
-                    	contactView.render();
+                    	airplaneView.render();
 	                    
 	                }, this));
 	            }
@@ -639,98 +631,73 @@
 		
 	    	
 	    ///////////////////////////
-	    /// airplane      View ////
+	    /// Airplane      View ////
 	    ///////////////////////////	
-	    var ContactBackboneView = Backbone.View.extend({
-	        el: '#contact_information_section',
+	    var AirplaneBackboneView = Backbone.View.extend({
+	        el: '#airplane_information_section',
 	        events: {
-	           "keyup input#resource_category":"resource_category",
-	           "keyup input#fixed_wing_type":"fixed_wing_type",
 	           "keyup input#call_sign":"call_sign",
-	           "keyup input#serial_number":"serial_number",	  
-			   "change select#companycombobox":"owner",
-			 
+	           "keyup input#serial_number":"serial_number",
+	           "keyup input#seats":"seats",
+	           "change select#companyCombobox":"owner",
+		       "change select#wingTypeCombobox":"wing_type",
+			   "change select#resourceCategoryCombobox":"resource_category"
+			   
 	        }, 
-	      
 	        resource_category:function(event){
-	        	airplane.set('resource_category',$('input#resource_category').val());
+	        	airplane.set('resource_category',$('select#resourceCategoryCombobox').val());
 	        	airplane.set('modified',true);
-	        	setChangesPending();
+	        	SetChangesPending();
 	        },
-	        fixed_wing_type:function(event){
-	        	airplane.set('fixed_wing_type',$('input#fixed_wing_type').val());
+	        wing_type:function(event){
+	        	airplane.set('wing_type',$('select#wingTypeCombobox').val());
 	        	airplane.set('modified',true);
-	        	setChangesPending();
+	        	SetChangesPending();
 	        },
 	        call_sign:function(event){
 	        	airplane.set('call_sign',$('input#call_sign').val());
 	        	airplane.set('modified',true);
-	        	setChangesPending();
+	        	SetChangesPending();
 	        },
 	        serial_number:function(event){
 	        	airplane.set('serial_number',$('input#serial_number').val());
 	        	airplane.set('modified',true);
-	        	setChangesPending();
+	        	SetChangesPending();
+	        },
+	        seats:function(event){
+	        	airplane.set('seats',$('input#seats').val());
+	        	airplane.set('modified',true);
+	        	SetChangesPending();
 	        },
 	        owner:function(event){
-	        	airplane.set('owner',$('input#companycombobox').val());
+	        	airplane.set('owner',$('select#companyCombobox').val());
 	        	airplane.set('modified',true);
-	        	setChangesPending();
+	        	SetChangesPending();
 	        },
 	        initialize: function () {
 	            //this.render();
 	        },
-	        template: _.template($('#contact-template').html()),
+	        template: _.template($('#airplane-template').html()),
 	        render: function () {
 	    	    this.$el.empty();
 	        	this.$el.append(this.template(airplane.toJSON()));
 	        	
 	        	<% if(req.session.user.policy[req.route.path].update==0){ %>
-	        		$('#contact_information_section input').attr('disabled','disabled');
+	        		$('#airplane_information_section input').attr('disabled','disabled');
 	        	<% } %>
 	        	
-	        	setChangesPending();
+	        	LoadOwner();
+	        	LoadResourceCategory();
+	        	LoadWingType();
+	        	LoadResourceCategory();
+	        	SetChangesPending();
 				
-				notes.fetch({id:airplane.get('contact_id')});
+				//notes.fetch({id:airplane.get('airplane_id')});
 	        }
 	    });
-	    var contactView = new ContactBackboneView();
+	    var airplaneView = new AirplaneBackboneView();
 	   
-	   
-	    //////////////////////
-        // Company   Model  //
-        //////////////////////
-        // Collection to get the companies
-
-        var CompanyModel = Backbone.Model.extend({
-            urlRoot: ''    //not used really
-        });
-
-        var SailsCompanyCollection = Backbone.Collection.extend({
-            sailsCollection: "",
-            socket: null,
-            sync: function(method, model, options){
-                var where = options;
-                if(typeof this.sailsCollection === "string" && this.sailsCollection !== "") {
-                    this.socket = socket;
-                    this.socket.request("/" + this.sailsCollection, where, _.bind(function(tempcompanies){
-                        this.set(tempcompanies);
-                        companyView.render();
-                    }, this));
-
-                }
-            }
-        });
-
-        var CompanyCollection = SailsCompanyCollection.extend({
-            sailsCollection: 'contacts/getcompaniesbycontactid',
-            model: CompanyModel
-        });
-
-        companies = new CompanyCollection();
-
-
-
+	
 
 	   ///////////////////////////
 	    ///  NOTES ////////
@@ -768,7 +735,7 @@
 	    });
 	
 	    var NotesCollection = NotesCollection.extend({
-	        sailsCollection: 'contacts/notes',
+	        sailsCollection: 'airplanes/notes',
 	        model: NotesModel
 	    });
 	
@@ -811,8 +778,8 @@
 		        		if(!blockNoteSave&&trackdetailstyping!=''){
 				        	self.collection.get(noteid).set('note', trackdetailstyping);//$notelement.find('.note-textarea-editable').val());
 			        		self.collection.get(noteid).set('modified', true);
-			        		airplane.set('modified',true);
-			        		setChangesPending();
+			        		contact.set('modified',true);
+			        		SetChangesPending();
 			        		
 		        		}else{
 		        			blockNoteSave = false;
@@ -842,8 +809,8 @@
 	        		this.collection.get(noteid).set('deleted',true);
 	        		this.render();
 	        	}
-	        	airplane.set('modified',true);
-        		setChangesPending();
+	        	contact.set('modified',true);
+        		SetChangesPending();
 	        },
 	        initialize: function () {
 	            this.render();
@@ -852,7 +819,7 @@
 	        render: function () {
 	            this.$el.html("");
 	            
-	        	if(airplane.get('contact_id')!='new'){
+	        	if(contact.get('contact_id')!='new'){
 	        		//$('#building-sales').css('display','')
 	        	}
 	            var tcollection = this.collection.sortBy(function(notes){
@@ -874,7 +841,7 @@
 	            	this.$el.append('<div class="no-notes-remove">No Notes Found.</div>');
 	            }
 	            
-	            if(airplane.get('contact_id')=='new'){
+	            if(contact.get('contact_id')=='new'){
 					$('.note-wrapper').css('display','none');
 	            }else{
 					$('.note-wrapper').css('display','');
@@ -882,9 +849,9 @@
 	            
 	            $('#save_note_admin').unbind();
 	            $('#save_note_admin').click(function(){
-		    		$('#save_contact').click();
+		    		$('#save_airplane').click();
 				});
-	            //setChangesPending();  // recalculates and displays if changes are pending
+	            //SetChangesPending();  // recalculates and displays if changes are pending
 	        }
 	    });
 	    var notesView=null;
