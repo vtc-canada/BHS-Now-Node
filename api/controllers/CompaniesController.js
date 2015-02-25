@@ -42,25 +42,6 @@ module.exports = {
             });
         }
     },
-    getcontactsbyname: function(req, res) {
-        Database.dataSproc('GetContactsByName', [typeof(req.body.search) != 'undefined' ? req.body.search : null], function(err, contacts) {
-            if (err || typeof(contacts[0]) == 'undefined')
-                return res.json({
-                    error: 'Database Error' + err
-                }, 500);
-            res.json(contacts[0]);
-        });
-    },
-    getcontactsbycompanyid: function(req, res) {
-        Database.dataSproc('GetContactsByCompanyId', [req.body.id], function(err, companies) {
-            if (err || typeof(companies[0]) == 'undefined')
-                return res.json({
-                    error: 'Database Error' + err
-                }, 500);
-
-            res.json(companies[0]);
-        });
-    },
     getcompany: function(req, res) {
         if (typeof(req.body.company_id) != 'undefined' && !isNaN(parseInt(req.body.company_id))) {
             Database.dataSproc('GetCompany', [parseInt(req.body.company_id)], function(err, company) {
@@ -99,18 +80,6 @@ module.exports = {
                     });
                 });
             }
-        }
-    },
-    getcontact: function(req, res) {
-        if (typeof(req.params.id) != 'undefined' && !isNaN(parseInt(req.params.id))) {
-            Database.dataSproc('GetContact', [parseInt(req.params.id)], function(err, company) {
-                if (err || typeof(company[0][0]) == 'undefined')
-                    return res.json({
-                        error: 'Database Error' + err
-                    }, 500);
-
-                res.json(company[0][0]);
-            });
         }
     },
     export: function(req, res) {
@@ -179,10 +148,7 @@ module.exports = {
 
     },
     querycompanies: function(req, res, cb) {
-        var address_search = sails.controllers.utilities.prepfulltext(req.query.address_search);
-        var contact_search = sails.controllers.utilities.prepfulltext(req.query.contact_search);
-
-
+        var company_search = sails.controllers.utilities.prepfulltext(req.query.company_search);
         var orderstring = null;
         if (typeof(req.query.order) != 'undefined') {
             if (req.query.order[0].column == 1) { // Address column
@@ -197,7 +163,7 @@ module.exports = {
 
         filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
         totalCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
-        Database.dataSproc('SearchCompanies', [contact_search, address_search, req.query.start, req.query.length, orderstring, filteredCount, totalCount], function(err, responseCompanies) {
+        Database.dataSproc('SearchCompanies', [company_search, req.query.start, req.query.length, orderstring, filteredCount, totalCount], function(err, responseCompanies) {
             if (err) {
                 return res.json({
                     error: 'Database Error:' + err
@@ -231,46 +197,7 @@ module.exports = {
                     company.company_id = responseCreateCompany[1][outcompanyId];
                     return cb();
 
-                    /*
-                    var street_number_end = (company.street_number_end == null || company.street_number_end == 0) ? '' : ' ' + company.street_number_end;
-                    var addressSearch = company.street_number_begin + " " + street_number_end + " " + company.street_name + ', ' + company.city + ', ' + company.province + ', Canada, ' + company.postal_code;
-
-                    var geocoderProvider = 'google';
-                    var httpAdapter = 'http';
-                    // optionnal
-                    var extra = {
-                        // apiKey: 'YOUR_API_KEY', // for map quest
-                        formatter: null
-                            // 'gpx', 'string', ...
-                    };
-
-                    var geocoder = require('node-geocoder').getGeocoder(geocoderProvider, httpAdapter, extra);
-
-                    geocoder.geocode(addressSearch, function(err, responseGeocode) {
-                        var lat = null;
-                        var lng = null;
-                        if (typeof(responseGeocode) != 'undefined' && responseGeocode.length > 0) {
-                            lat = responseGeocode[0].latitude;
-                            lng = responseGeocode[0].longitude;
-                        }
-                        var outaddressId = '@out' + Math.floor((Math.random() * 1000000) + 1);
-                        Database.dataSproc('CreateAddress', [, lat, lng, null, outaddressId], function(err, resAddress) {
-                            if (err)
-                                return res.json({
-                                    error: 'Database Error:' + err
-                                }, 500);
-
-                            Database.dataSproc('CreateCompanyAddressMapping', [company.company_id, resAddress[1][outaddressId], '@paramout'], function(err, resMapping) {
-                                if (err)
-                                    return res.json({
-                                        error: 'Database Error:' + err
-                                    }, 500);
-                                cb();
-                            });
-                        });
-
-
-                    });*/
+  
                 });
             } else {
                 cb();
@@ -445,61 +372,13 @@ module.exports = {
         } else {
             updateCompany(company, function() {
                 processNotes(function() {
-                    function loopContacts(i) {
-                        if (typeof(contacts[i].new) != 'undefined') {
-                            Database.dataSproc('CreateContactCompanyMapping', [contacts[i].contact_id, company.company_id, '@outval'], function(err, resMapping) {
-                                if (err)
-                                    return res.json({
-                                        error: 'Database Error:' + err
-                                    }, 500);
-                                i++;
-                                if (i < contacts.length) {
-                                    loopContacts(i);
-                                } else {
-                                    res.json({
-                                        'success': 'success',
-                                        company_id: company.company_id
-                                    });
-                                }
-
-                            });
-                        } else if (typeof(contacts[i].dodelete) != 'undefined') {
-                            Database.dataSproc('DeleteContactCompanyMapping', [contacts[i].contact_id, company.company_id], function(err, resDel) {
-                                if (err)
-                                    return res.json({
-                                        error: 'Database Error:' + err
-                                    }, 500);
-                                i++;
-                                if (i < contacts.length) {
-                                    loopContacts(i);
-                                } else {
-                                    res.json({
-                                        'success': 'success',
-                                        company_id: company.company_id
-                                    });
-                                }
-                            });
-                        }
-                        i++;
-                        if (i < contacts.length) {
-                            loopContacts(i);
-                        } else {
-                            res.json({
-                                'success': 'success',
-                                company_id: company.company_id
-                            });
-                        }
-
-                    }
-                    if (contacts.length > 0) {
-                        loopContacts(0);
-                    } else {
-                        res.json({
-                            'success': 'success',
-                            company_id: company.company_id
-                        });
-                    }
+                    return res.json({
+                        success: 'success',
+                        company_id: company.company_id
+                    });
                 });
+                
+
             });
         }
 
