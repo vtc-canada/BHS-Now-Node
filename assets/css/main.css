@@ -521,7 +521,13 @@ table.selectable tr{
 .only-mobile{
 	display:none !important;
 }
-	
+
+@media (min-width: 767px){
+	.mobilelabel{
+		display:none !important;
+	}
+}
+
 
 .badge-div{
     position: absolute;
