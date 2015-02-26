@@ -274,12 +274,26 @@
 	    
 	    </div>
 	    <div class="tab-pane  {{if(activeTab=='#tab3'){ }}active{{ } }}" id="tab3">
-	    
-	    	{{ for(var i=0;i<company_mappings.length;i++){ }}
 	    	<div class="row-fluid">
-		    	<div class="span4"><label for="edit_flight_company_mapping{{=company_mappings[i].id}}">{{=company_mappings[i].name}}</label></div>
-		    	<div class="span4"><input type="checkbox" id="edit_flight_company_mapping{{=company_mappings[i].id}}" class="assign-company-checkbox" company_id="{{=company_mappings[i].id}}" {{if(company_mappings[i].assigned){ }}checked="checked"{{ } }} /></div>
+	    	
+		    	<select id="select_companies">
+	      			<option value="">Choose Company</option>
+		    		{{ companies.each(function(company){ }}
+		    			<option value="{{=company.get('id')}}">{{=company.get('name')}}</option>
+		    		{{ }); }}
+		    	</select>
 	    	</div>
+		    	 
+		    {{ for(var flightindex=0;flightindex<flights.length;flightindex++){ }}
+		    	{{ for( var i=0; i< flights[flightindex].company_seats.length; i++){ }}
+		    	
+		    	
+		    	<div class="row-fluid company-seats-row">
+			    	<div class="span4"><label for="edit_company_seats{{=flights[flightindex].company_seats[i].id}}">{{=flights[flightindex].company_seats[i].name}}</label></div>
+			    	<div class="span4"><input type="text" id="edit_company_seats{{=flights[flightindex].company_seats[i].id}}" class="assign-company-checkbox" cur_legs_id="{{=flights[flightindex].company_seats[i].cur_legs_id}}" cur_company_id="{{=flights[flightindex].company_seats[i].cur_company_id}}" value="{{=flights[flightindex].company_seats[i].seats}}"/></div>
+			    	<div class="span4"><button class="btn btn-danger pull-right delete-company-seats">Delete</button></div>
+		    	</div>
+		    	{{ } }}
 	    	{{ } }}
 	    	
 	    </div>
@@ -644,6 +658,11 @@
 				newFlight.flights = _.clone(newFlight.flights); // this clears the flights connection... **********  TODO- reconnect later maybe.. instead of re-calling database possibly.
 				for(var i=0;i<newFlight.flights.length;i++){
 					newFlight.flights[i] = _.clone(newFlight.flights[i]);
+					
+					newFlight.flights[i].company_seats =  _.clone(newFlight.flights[i].company_seats); // moves seats into a collection
+					for(var j=0;j<newFlight.flights[i].company_seats.length;j++){ // disconnects company_seats collection
+						newFlight.flights[i].company_seats[j] = _.clone(newFlight.flights[i].company_seats[j]);
+					}
 				}
 				//if(editFlightView!=null){
 				//	editFlightView.remove();
@@ -1056,19 +1075,23 @@
             	//	if(companies.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
                //     	return location.reload(); // Will boot back to login screen
                 //    }
-                    this.model.set('company_mappings',[]); //companies //TODO..
+                    //this.model.set('company_mappings',[]); //companies //TODO..
                     
-                    addPassengersList(this.model.get('flights')[0].flight_id,_.bind(function(err,paxs){
+                    
+                    addPassengersList(this.model.get('flights')[0].flight_id,_.bind(function(err,responsedata){
+                    	var paxs = responsedata.manifests;
+                    	
 	                    if(paxs!=null&&paxs.error != undefined){ // reloads with flash message or further kicking out user.
 	                    	return location.reload(); 
 	                    }
 	                    
+	                    this.model.set('companies',new Backbone.Collection(responsedata.companies));  // copy in companies.
+	                    
 	                    for(var i=0;i<paxs.length;i++){
 	                    	paxs[i].details = new Backbone.Collection(paxs[i].details);
-	                    	paxs[i].company_seats = new Backbone.Collection(paxs[i].company_seats);
+	                    	//paxs[i].company_seats = new Backbone.Collection(paxs[i].company_seats);
 	                    }
-	                    paxs.companies = new Backbone.Collection(paxs.companies);
-	                    
+	                    //this.model.set('company_seats',_.clone(paxs[i].company_seats));
 	                    this.manifests.set(paxs);
                     	//this.passengers.set(paxs);
                     
