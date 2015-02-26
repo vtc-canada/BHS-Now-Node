@@ -91,7 +91,7 @@ module.exports = {
 		    if (err)
 			return cb(err);
 		    var index = getIndexById(flightgroups, leg.flight_id); // gets the index
-		    leg.company_seats = companies
+		    leg.company_seats = companies[0]
 		    flightgroups[index].flights.push(leg); // adds leg
 		    cb(null);
 		});
