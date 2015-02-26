@@ -13,6 +13,8 @@
 				            <tr>
 				            	<th>Id</th>
 				                <th>Username</th>
+				                <th>Name</th>
+				                <th><%= __('Phone') %></th>
 				                <th>Email</th>
 				                <th>Login Attempts</th>
 				                <th>Active</th>
@@ -98,6 +100,18 @@
 			</div>
 			{{ } }}
 			<div class="row-fluid form-segment-wrapper">
+				<div class="span5 segment-label"><%= __('FirstName') %>:</div>
+				<div class="span7 segment-value"><input type="text" key="first_name" value="{{=first_name}}"></div>
+			</div>
+			<div class="row-fluid form-segment-wrapper">
+				<div class="span5 segment-label"><%= __('LastName') %>:</div>
+				<div class="span7 segment-value"><input type="text" key="last_name" value="{{=last_name}}"></div>
+			</div>
+			<div class="row-fluid form-segment-wrapper">
+				<div class="span5 segment-label"><%= __('Phone') %>:</div>
+				<div class="span7 segment-value"><input type="text" key="phone_number" value="{{=phone_number}}"></div>
+			</div>
+			<div class="row-fluid form-segment-wrapper">
 				<div class="span5 segment-label">Email:</div>
 				<div class="span7 segment-value"><input type="text" key="email" value="{{=email}}"></div>
 			</div>
@@ -153,6 +167,8 @@ $(function(){
 		        	return '<b>'+data.username+'</b>';
 		        }
 				}
+		        ,{"mData":"name"}
+		        ,{"mData":"phone_number"}
 		        ,{"mData":"email"}
 		        ,{"mData":"loginattempts"}
 		        ,{"mData":"active"}
@@ -189,7 +205,7 @@ $(function(){
 			for(key in securitygroups){
 				securitygroups[key].member = 0;
 			}
-			user.set({id:'new','username':null,'password':null,'email':null,'loginattempts':0,'active':1,locale:'en','groups':securitygroups});
+			user.set({id:'new','username':null,'password':null,'first_name':null,'last_name':null,'phone_number':null,'email':null,'loginattempts':0,'active':1,locale:'en','groups':securitygroups});
 			userView.render();
 		});
 	});
@@ -235,6 +251,7 @@ $(function(){
 				if(user.get('id')=='new'){
 					datatable.api().ajax.reload();
 				}else{
+					datatable.api().ajax.reload();
 					$('#datatable tbody tr.selected').click();
 				}
 			}

@@ -115,7 +115,7 @@ module.exports = {
 		var hasher = require("password-hash");
 		user.password = hasher.generate(user.password);
 		var paramCreateId = '@out' + Math.floor((Math.random() * 1000000) + 1);
-		Database.localSproc('NMS_BASE_CreateUser',[user.username, user.password, user.email, user.active, user.active==1?0:user.loginattempts, user.locale, paramCreateId],function(err,responseuser){
+		Database.localSproc('NMS_BASE_CreateUser',[user.username, user.password, user.phone_number,user.email, user.active, user.active==1?0:user.loginattempts, user.locale, paramCreateId],function(err,responseuser){
         	    if(err){
         		return callback(err);
         	    }
@@ -134,7 +134,7 @@ module.exports = {
 		    var hasher = require("password-hash");
 		    user.password = hasher.generate(user.password);
 		}
-        	Database.localSproc('NMS_BASE_UpdateUser',[user.id, user.password, user.email, user.active, user.active==1?0:user.loginattempts, user.locale],function(err,responseuser){
+        	Database.localSproc('NMS_BASE_UpdateUser',[user.id, user.password, user.phone_number, user.email, user.active, user.active==1?0:user.loginattempts, user.locale],function(err,responseuser){
         	    if(err){
         		return callback(err);
         	    }
@@ -191,7 +191,7 @@ module.exports = {
 		var hasher = require("password-hash");
 		user.password = hasher.generate(user.password);
 		var paramCreateId = '@out' + Math.floor((Math.random() * 1000000) + 1);
-		Database.localSproc('NMS_BASE_CreateUser',[user.username, user.password, user.email, user.active, user.active==1?0:user.loginattempts, user.locale, paramCreateId],function(err,responseuser){
+		Database.localSproc('NMS_BASE_CreateUser',[user.username,user.first_name, user.last_name, user.password, user.phone_number,user.email, user.active, user.active==1?0:user.loginattempts, user.locale, paramCreateId],function(err,responseuser){
         	    if(err){
         		return callback(err);
         	    }
@@ -210,7 +210,7 @@ module.exports = {
 		    var hasher = require("password-hash");
 		    user.password = hasher.generate(user.password);
 		}
-        	Database.localSproc('NMS_BASE_UpdateUser',[user.id, user.password, user.email, user.active, user.active==1?0:user.loginattempts, user.locale],function(err,responseuser){
+        	Database.localSproc('NMS_BASE_UpdateUser',[user.id,user.first_name, user.last_name, user.password,user.phone_number,user.email, user.active, user.active==1?0:user.loginattempts, user.locale],function(err,responseuser){
         	    if(err){
         		return callback(err);
         	    }

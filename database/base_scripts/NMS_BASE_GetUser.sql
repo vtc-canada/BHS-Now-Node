@@ -5,6 +5,9 @@ CREATE PROCEDURE `NMS_BASE_GetUser` (IN userId INT)
 BEGIN
 	SELECT 
 		username
+		,first_name
+		,last_name
+		,phone_number
 		,password
 		,email
 		,active
