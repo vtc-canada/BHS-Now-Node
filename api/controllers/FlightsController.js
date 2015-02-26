@@ -80,17 +80,34 @@ module.exports = {
 
 	    var flightgroups = [];
 
-	    async.eachSeries(flights[0], function(leg, cb) {  // ordered by departure time.. means it will fill up the first groups properly
-		if (getIndexById(flightgroups, leg.flight_id) == -1) { // checks and adds flightgroup
+	    async.eachSeries(flights[0], function(leg, cb) { // ordered by
+								// departure
+								// time.. means
+								// it will fill
+								// up the first
+								// groups
+								// properly
+		if (getIndexById(flightgroups, leg.flight_id) == -1) { // checks
+									// and
+									// adds
+									// flightgroup
 		    flightgroups.push({
 			id : leg.flight_id,
 			flights : []
 		    });
 		}
-		Database.dataSproc('FMS_FLIGHTS_GetCompanyResourceSharingByLegId', [ leg.id ], function(err, companies) {  // these will come back out of order.
+		Database.dataSproc('FMS_FLIGHTS_GetCompanyResourceSharingByLegId', [ leg.id ], function(err, companies) { // these
+															    // will
+															    // come
+															    // back
+															    // out
+															    // of
+															    // order.
 		    if (err)
 			return cb(err);
-		    var index = getIndexById(flightgroups, leg.flight_id); // gets the index
+		    var index = getIndexById(flightgroups, leg.flight_id); // gets
+									    // the
+									    // index
 		    leg.company_seats = companies[0]
 		    flightgroups[index].flights.push(leg); // adds leg
 		    cb(null);
@@ -107,7 +124,7 @@ module.exports = {
 	var flightdata = req.body;
 	async.each(flightdata.flights, function(flight, cb) {
 	    sails.controllers.manifests.clearManifestByLegId(flight.id, function(err) {
-		sails.controllers.flights.clearCompanyFlightMappings(null, flight.id, function(err) {
+		sails.controllers.flights.clearCompanyFlightMappings(flight.id, function(err) {
 		    if (err)
 			return cb(err);
 		    Database.dataSproc('FMS_FLIGHTS_DeleteLeg', [ flight.id ], function(err) {
@@ -135,27 +152,36 @@ module.exports = {
 	var flightdata = req.body;
 
 	// Updates the companyflight mappings for the flight
-	function updateCompanyMappings(cb) {
-	    return cb(null);
-	    sails.controllers.flights.clearCompanyFlightMappings(null, flight.id, function(err) {
-		if (err)
-		    return cb(err);
-		async.each(flight.company_mappings, function(company_mapping, callback) {
-		    if (company_mapping.assigned == 0) { // skip making the
-			// mapping if it's
-			// not assigned
-			return callback(null);
-		    }
-		    sails.controllers.flights.createCompanyFlightMapping(company_mapping.id, flight.id, function(err) {
+	function updateCompanyMappings(flight, cb) {
+	    async.each(flight.company_seats, function(company_seat, callback) {
+		if (!company_seat.id) { // New Seats! id is null..
+		    // var newSeatId = '@out' + Math.floor((Math.random() *
+		    // 1000000) + 1);
+		    Database.dataSproc('FMS_FLIGHTS_CreateCompanyResourceSharing', [ flight.id, company_seat.cur_company_id, company_seat.seats ], function(err, response) {
 			if (err)
 			    return callback(err);
 			callback(null);
 		    });
-		}, function(err) {
-		    if (err)
-			return cb(err);
-		    cb(null);
-		});
+		} else if (typeof (company_seat.is_deleted) == 'undefined') { // if
+										// not
+										// deleted.
+		    Database.dataSproc('FMS_FLIGHTS_UpdateCompanyResourceSharing', [ flight.id, company_seat.cur_company_id, company_seat.seats, company_seat.id ], function(err, response) {
+			if (err)
+			    return callback(err);
+			callback(null);
+		    });
+
+		} else if (typeof (company_seat.is_deleted) != 'undefined' && company_seat.is_deleted) { // deleted
+		    Database.dataSproc('FMS_FLIGHTS_DeleteCompanyResourceSharing', [ company_seat.id ], function(err, response) {
+			if (err)
+			    return callback(err);
+			callback(null);
+		    });
+		}
+	    }, function(err) {
+		if (err)
+		    return cb(err);
+		cb(null);
 	    });
 	}
 
@@ -185,10 +211,16 @@ module.exports = {
 		    Database.dataSproc('FMS_FLIGHTS_CreateLeg', [ flight.flight_id, flight.airline, flight.flight_number, flight.departure_time, flight.arrival_time, flight.origin_airport_code, flight.destination_airport_code, 1, newFlightId ], function(err, response) {
 			if (err)
 			    return cb(err);
+			flight.id = response[1][newFlightId]; // creates new
+								// leg Id.
 			Database.dataSproc('FMS_MANIFEST_CreateManifest', [ response[1][newFlightId] ], function(err, response) {
 			    if (err)
 				return cb(err);
-			    cb(null, response);
+			    updateCompanyMappings(flight, function(err) {
+				if (err)
+				    return cb(err);
+				cb(null, response);
+			    });
 			});
 		    });
 		} else if (typeof (flight.is_deleted) == 'undefined') { // if
@@ -197,7 +229,7 @@ module.exports = {
 		    Database.dataSproc('FMS_FLIGHTS_UpdateLeg', [ flight.flight_id, flight.id, flight.airline, flight.flight_number, flight.departure_time, flight.arrival_time, flight.origin_airport_code, flight.destination_airport_code, 1 ], function(err, response) {
 			if (err)
 			    return cb(err);
-			updateCompanyMappings(function(err) {
+			updateCompanyMappings(flight, function(err) {
 			    if (err)
 				return cb(err);
 			    cb(null, response);
@@ -206,7 +238,7 @@ module.exports = {
 
 		} else if (typeof (flight.is_deleted) != 'undefined' && flight.is_deleted) {
 		    sails.controllers.manifests.clearManifestByLegId(flight.id, function(err) {
-			sails.controllers.flights.clearCompanyFlightMappings(null, flight.id, function(err) {
+			sails.controllers.flights.clearCompanyFlightMappings(flight.id, function(err) {
 			    if (err)
 				return cb(err);
 			    Database.dataSproc('FMS_FLIGHTS_DeleteLeg', [ flight.id ], function(err) {
@@ -235,10 +267,10 @@ module.exports = {
     },
 
     // / Utility Functions
-    clearCompanyFlightMappings : function(company_ID, flight_ID, cb) {
-	Database.dataSproc('FMS_FLIGHTS_ClearCfgCompanyFlightMappings', [ company_ID, flight_ID ], function(err, result) {
+    clearCompanyFlightMappings : function(legId, cb) {
+	Database.dataSproc('FMS_FLIGHTS_ClearCompanyResourceSharingByLegId', [ legId ], function(err, result) {
 	    if (err) {
-		console.log('FMS_FLIGHTS_ClearCfgCompanyFlightMappings Error' + err);
+		console.log('FMS_FLIGHTS_ClearCompanyResourceSharingByLegId Error' + err);
 		return cb(err);
 	    }
 	    cb(null);

@@ -235,5 +235,15 @@ input.flex-input{
 	display:none;
 }
 
+.flight-seats-hidden{
+	display:none;
+}
 
+.company-seats-row.is_deleted{
+	display:none;
+}
+
+#flightModal{
+	z-index:10000;
+}
 

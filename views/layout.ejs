@@ -44,7 +44,7 @@
 		<!-- Pre-Minimized assets are loaded here -->
 		<script type="text/javascript" src="/js/dependencies/sails.io.js"></script>
 		<script type="text/javascript" src="/js/jquery.js"></script>
-		<script src="//cdn.jsdelivr.net/mobile-detect.js/0.4.2/mobile-detect.min.js"></script>
+		<script type="text/javascript" src="/js/mobile-detect.min.js"></script>
 		<script type="text/javascript" src="/js/bootstrap-combobox.js"></script>
 		<script type="text/javascript" src="/js/bootstrap.js"></script>
 		<script type="text/javascript">
@@ -252,37 +252,42 @@
 		};
 		var users;
 		var fulluserIDselected=0;
-		var socket = io.connect();
-		socket.on("connect",function(){
-			socket.get('/auth/joinrooms');
-			socket.on('<%=req.session.user.id%>',function(data){
-				if(data.message){
-				  var message = data.message;
-				  if(message.fromUserId == <%=req.session.user.id%>){    // if the message is from YOUrself
-                      // if OPEN or CLOSED AND screen != fulluserIDselected
-                      if(showList.indexOf('chatbox_'+message.toUserId)!=-1||(showList.indexOf('chatbox_'+message.toUserId)==-1&&message.toUserId!=fulluserIDselected ))
-                      {
-                          chatboxManager.addBox('chatbox_'+message.toUserId,{first_name : users.get(message.toUserId).get('username'), last_name:""});
-                          $("#chatbox_" + message.toUserId).chatbox("option", "boxManager").addMsg('You', message.message,message.id);
-                      }
-                  }
-                  else     // if the message was from someone else
-                  {
-                      if(showList.indexOf('chatbox_'+message.fromUserId)!=-1||(showList.indexOf('chatbox_'+message.fromUserId)==-1&&message.fromUserId!=fulluserIDselected ))
-                      {
-                          chatboxManager.addBox('chatbox_'+message.fromUserId,{first_name : users.get(message.fromUserId).get('username'), last_name:""});
-                          $("#chatbox_" + message.fromUserId).chatbox("option", "boxManager").addMsg(users.get(message.fromUserId).get('username'), message.message,message.id);
-                          users.get(message.fromUserId).set('unreadmessages',true);    
-                      }
-                  }
-
-                  savechatboxestosession();   //Saves open chatboxes to serverside session variable
-                  updateBadge();              // updates the badge to alert new messages
-                  setchatboxstatuses();       // Updates online/offline
-				}
-			
+		var socket = null;
+		
+    	//$(function(){
+			var socket = io.connect();
+		
+			socket.on("connect",function(){
+				socket.get('/auth/joinrooms');
+				socket.on('<%=req.session.user.id%>',function(data){
+					if(data.message){
+					  var message = data.message;
+					  if(message.fromUserId == <%=req.session.user.id%>){    // if the message is from YOUrself
+	                      // if OPEN or CLOSED AND screen != fulluserIDselected
+	                      if(showList.indexOf('chatbox_'+message.toUserId)!=-1||(showList.indexOf('chatbox_'+message.toUserId)==-1&&message.toUserId!=fulluserIDselected ))
+	                      {
+	                          chatboxManager.addBox('chatbox_'+message.toUserId,{first_name : users.get(message.toUserId).get('username'), last_name:""});
+	                          $("#chatbox_" + message.toUserId).chatbox("option", "boxManager").addMsg('You', message.message,message.id);
+	                      }
+	                  }
+	                  else     // if the message was from someone else
+	                  {
+	                      if(showList.indexOf('chatbox_'+message.fromUserId)!=-1||(showList.indexOf('chatbox_'+message.fromUserId)==-1&&message.fromUserId!=fulluserIDselected ))
+	                      {
+	                          chatboxManager.addBox('chatbox_'+message.fromUserId,{first_name : users.get(message.fromUserId).get('username'), last_name:""});
+	                          $("#chatbox_" + message.fromUserId).chatbox("option", "boxManager").addMsg(users.get(message.fromUserId).get('username'), message.message,message.id);
+	                          users.get(message.fromUserId).set('unreadmessages',true);    
+	                      }
+	                  }
+	
+	                  savechatboxestosession();   //Saves open chatboxes to serverside session variable
+	                  updateBadge();              // updates the badge to alert new messages
+	                  setchatboxstatuses();       // Updates online/offline
+					}
+				
+				});
 			});
-		});
+		//});
 		var bannertimer = null;
 		
 		$(window).resize(function(){
