@@ -7,6 +7,8 @@ BEGIN
 (resourceId, securityGroupId, resourcesecuritygroupmappings.create, resourcesecuritygroupmappings.read, resourcesecuritygroupmappings.update, resourcesecuritygroupmappings.delete, createdAt, updatedAt) 
 VALUES 
 (paramResourceId, paramSecurityGroupId, paramCreate, paramRead, paramUpdate, paramDelete, UTC_TIMESTAMP(), UTC_TIMESTAMP());
-END
+END$$
+
+DELIMITER ;
 
 

@@ -20,4 +20,6 @@ BEGIN
 			DESC 
 		 ) AS T2 
 	GROUP BY joinuserId;
-END
+END$$
+
+DELIMITER ;

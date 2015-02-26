@@ -5,5 +5,7 @@ BEGIN
 	INSERT INTO `messages` (`fromUserId`, `toUserId`, `message`, `status`, `seen`, `createdAt`, `updatedAt`) 
 VALUES (paramFromUserId, paramToUserId, paramMessage, paramStatus, paramSeen, UTC_TIMESTAMP(), UTC_TIMESTAMP());
 SET messageId = LAST_INSERT_ID();
-END
+END$$
+
+DELIMITER ;
 
