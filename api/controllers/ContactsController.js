@@ -204,7 +204,8 @@ module.exports = {
         	}
 	}
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
-	Database.dataSproc('SearchContacts',[contact_search,company_search,req.query.start, req.query.length, orderstring,filteredCount],function(err,responseContacts){
+	Database.dataSproc('SearchContacts',[contact_search,company_search,req.query.start, req.query.length, orderstring
+	                                     ,Security.resourceAccess(req,'default',{create:1,read:1,update:1,delete:1}),req.session.user.id,filteredCount],function(err,responseContacts){
 	    if(err){
 		return res.json({error:'Database Error:'+err},500);
 	    }
