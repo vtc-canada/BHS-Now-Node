@@ -167,13 +167,7 @@ module.exports.views = {
 	    return this.translate[req.session.user.locale][word];
 	},
 	resourceAccess:function(req,page,requestAccess){
-	    var policy = {create:0,read:0,update:0,delete:0};
-	    if(typeof(req.session.user.policy[page])!='undefined'){
-		policy = req.session.user.policy[page]; 
-	    }else if(typeof(req.session.user.policy[page+'/:id?'])!='undefined'){
-		policy = req.session.user.policy[page+'/:id?']; 
-	    }
-	    return (policy.create>=requestAccess.create&&policy.read>=requestAccess.read&&policy.update>=requestAccess.update&&policy.delete>=requestAccess.delete);
+	    return Security.resourceAccess(req,page,requestAccess);
 	},
 	templateHelper:{
 	    hasChildPage:function(navpage,url){
