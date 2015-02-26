@@ -344,6 +344,14 @@
 	    }
 	    
 	    
+	    function getPropertybyId(array,prop,id){
+	        for(var i=0;i<array.length;i++){
+	            if(array[i].id == id){
+	                return array[i][prop];
+	            }
+	        }
+	    }
+	    
 	    function getIndexById(array,id,tempId){
 	    	for(var i=0;i<array.length;i++){
 	    		if(array[i].id==id){

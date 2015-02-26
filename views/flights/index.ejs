@@ -681,11 +681,11 @@
                         }
                         var inflightgroup = false;
                         for(var k = 0; k < tcollection[i].get('flights').length;k++){
-	                        if((getPropertybyId(ref_airline_code,'IATA_2_digit_ID',tcollection[i].get('flights')[k].airline).toString()+tcollection[i].get('flights')[k].flight_number.toString()).toLowerCase().indexOf(terms[j].toString().toLowerCase())==-1
-	                                &&("mu"+tcollection[i].get('flights')[k].virtual_early_dest.toString()).indexOf(terms[j].toString().toLowerCase())==-1
+	                        if((getPropertybyId(airlines,'IATA_2_digit_ID',tcollection[i].get('flights')[k].airline).toString()+tcollection[i].get('flights')[k].flight_number.toString()).toLowerCase().indexOf(terms[j].toString().toLowerCase())==-1
+	                               /* &&("mu"+tcollection[i].get('flights')[k].virtual_early_dest.toString()).indexOf(terms[j].toString().toLowerCase())==-1
 	                                &&("mu"+tcollection[i].get('flights')[k].virtual_late_dest.toString()).indexOf(terms[j].toString().toLowerCase())==-1
 	                                &&("mu"+tcollection[i].get('flights')[k].virtual_locked_out_dest.toString()).indexOf(terms[j].toString().toLowerCase())==-1
-	                                &&("mu"+tcollection[i].get('flights')[k].virtual_on_time_dest.toString()).indexOf(terms[j].toString().toLowerCase())==-1){
+	                                &&("mu"+tcollection[i].get('flights')[k].virtual_on_time_dest.toString()).indexOf(terms[j].toString().toLowerCase())==-1*/){
 	                                
 	                        }else{
 	                        	inflightgroup = true; //one of em should turn it true - found
@@ -704,9 +704,15 @@
                 $('#add_flight').css('display','block');
                 
                 
+                
+                //
+                // used for updating flights, manfests, mappings, seats. etc.
     			if($('#flightModal').css('display')!='none'&&$('#flightModal').attr('flight_id')){ //then we'll need to redraw the entire - fetching while open!!
     				this.doGanttClick($('#flightModal').attr('flight_id'),true);
     			}
+    			
+    			
+    			
     			
     			
                 /*$('#save_flights').unbind();
@@ -1059,7 +1065,9 @@
 	                    
 	                    for(var i=0;i<paxs.length;i++){
 	                    	paxs[i].details = new Backbone.Collection(paxs[i].details);
+	                    	paxs[i].company_seats = new Backbone.Collection(paxs[i].company_seats);
 	                    }
+	                    paxs.companies = new Backbone.Collection(paxs.companies);
 	                    
 	                    this.manifests.set(paxs);
                     	//this.passengers.set(paxs);
@@ -1430,6 +1438,10 @@
     	
     	$('#delete_edit_flight').click(function(){
     		editFlightView.remove();
+    	});
+    	
+    	$('#searchgantt').on('keyup',function(e){
+    		ganttView.render();
     	});
 		
 		

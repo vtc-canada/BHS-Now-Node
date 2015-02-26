@@ -80,25 +80,19 @@ module.exports = {
 
 	    var flightgroups = [];
 
-	    async.each(flights[0], function(leg, cb) {
-		Database.dataSproc('FMS_FLIGHTS_GetCompanyResourceSharingByLegId', [ leg.id ], function(err, companies) {
+	    async.eachSeries(flights[0], function(leg, cb) {  // ordered by departure time.. means it will fill up the first groups properly
+		if (getIndexById(flightgroups, leg.flight_id) == -1) { // checks and adds flightgroup
+		    flightgroups.push({
+			id : leg.flight_id,
+			flights : []
+		    });
+		}
+		Database.dataSproc('FMS_FLIGHTS_GetCompanyResourceSharingByLegId', [ leg.id ], function(err, companies) {  // these will come back out of order.
 		    if (err)
 			return cb(err);
-		    if (getIndexById(flightgroups, leg.flight_id) == -1) { // checks
-			// and
-			// adds
-			// flightgroup
-			flightgroups.push({
-			    id : leg.flight_id,
-			    flights : []
-			});
-		    }
-		    var index = getIndexById(flightgroups, leg.flight_id); // gets
-		    // the
-		    // index
+		    var index = getIndexById(flightgroups, leg.flight_id); // gets the index
 		    leg.company_seats = companies
 		    flightgroups[index].flights.push(leg); // adds leg
-
 		    cb(null);
 		});
 	    }, function(err, result) {
