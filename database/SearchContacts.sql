@@ -9,7 +9,7 @@ BEGIN
 		,CONCAT_WS(' ',CONCAT_WS(', ',cur_contacts.last_name,cur_contacts.first_name), cur_contacts.middle_name) as 'contact_name'
 		,cur_contacts.phone_number as 'phone'
 		,cur_contacts.email
-		,cur_contacts.date_of_birth
+		,DATE_FORMAT(cur_contacts.date_of_birth	,'%m-%d-%Y') as 'date_of_birth'
 		,cur_contacts.drivers_license
 		,cur_contacts.passport_no
 		,cur_contacts.nationality
@@ -17,8 +17,7 @@ BEGIN
 		,cur_contacts.id
 		,cur_contacts.gender
 	FROM cur_contacts
-	LEFT JOIN cur_contact_company_mapping ON (cur_contact_company_mapping.cur_contacts_id = cur_contacts.id)
-	LEFT JOIN cur_company ON (cur_company.id = cur_contact_company_mapping.cur_company_id and cur_company.is_deleted = 0)
+	LEFT JOIN cur_company ON (cur_company.id = cur_contacts.cur_company_id and cur_company.is_deleted = 0)
 	WHERE 
 		cur_contacts.is_deleted = 0
 		AND (contactSearchTerms IS NULL OR MATCH (cur_contacts.first_name,cur_contacts.last_name,cur_contacts.middle_name
@@ -34,6 +33,10 @@ ORDER BY
 	CASE WHEN orderBy='phone_desc' THEN cur_contacts.phone_number END DESC,
 	CASE WHEN orderBy='email_asc' THEN email END ASC,
 	CASE WHEN orderBy='email_desc' THEN email END DESC,
+	CASE WHEN orderBy='nationality_asc' THEN nationality END ASC,
+	CASE WHEN orderBy='nationality_desc' THEN nationality END DESC,
+	CASE WHEN orderBy='date_of_birth_asc' THEN date_of_birth END ASC,
+	CASE WHEN orderBy='date_of_birth_desc' THEN date_of_birth END DESC,
 	CASE WHEN orderBy='' THEN contact_name END ASC
 	LIMIT recordCount OFFSET offsetIndex;
 	SET filteredCount = FOUND_ROWS();

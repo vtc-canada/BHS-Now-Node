@@ -12,6 +12,7 @@ SELECT
 		,cur_company.city
 		,cur_company.postal_code
 		,cur_company.province
+		,'John Smith 555-555-5555' AS 'travel_coordinator'
 
 FROM cur_company
 WHERE cur_company.id = companyId;

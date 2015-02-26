@@ -42,186 +42,107 @@ module.exports = {
 	    });
 	}
     },
-    getcontactsbyname : function(req,res){
-	Database.dataSproc('GetContactsByName',[typeof (req.body.search) != 'undefined' ?  req.body.search  : null],function(err, contacts){
-	    if(err||typeof(contacts[0])=='undefined')
-		return res.json({error:'Database Error'+err},500);
-	    res.json(contacts[0]);
-	});
+    getwingtypebyresource : function(req,res){
+		Database.dataSproc('GetWingTypeByResource',[typeof (req.body.resource) != 'undefined' ?  req.body.resource  : null
+				,typeof (req.body.search) != 'undefined' ?  req.body.search  : null],function(err, wingTypes){
+			if(err||typeof(wingTypes[0])=='undefined')
+			    return res.json({error:'Database Error'+err},500);			
+			res.json(wingTypes[0]);
+		    });
     },
-    getcompany : function(req,res){
-	if (typeof (req.params.id) != 'undefined' && !isNaN(parseInt(req.params.id))) {
-	   Database.dataSproc('GetCompany',[parseInt(req.params.id)],function(err, company){
-		if(err||typeof(company[0][0])=='undefined')
-		    return res.json({error:'Database Error'+err},500);
-		
-		res.json(company[0][0]);
-	    });
-	}
+    getresourcecategories : function(req,res){
+		Database.dataSproc('GetResourceCategories',[],function(err, resourceCategory){
+			if(err||typeof(resourceCategory[0])=='undefined')
+			    return res.json({error:'Database Error'+err},500);			
+			res.json(resourceCategory[0]);
+		    });
     },
     getcompaniesbyname : function(req,res){
 			Database.dataSproc('GetCompaniesByName',[typeof (req.body.search) != 'undefined' ?  req.body.search  : null],function(err, companies){
-		if(err||typeof(companies[0])=='undefined')
-		    return res.json({error:'Database Error'+err},500);
-		
-		res.json(companies[0]);
-	    });
+			if(err||typeof(companies[0])=='undefined')
+			    return res.json({error:'Database Error'+err},500);			
+			res.json(companies[0]);
+		    });
     },
-    getcompaniesbycontactid : function(req,res){
-	   Database.dataSproc('GetCompaniesByContactId',[req.body.contact_id],function(err, companies){
-		if(err||typeof(companies[0])=='undefined')
-		    return res.json({error:'Database Error'+err},500);
-		
-		res.json(companies[0]);
-	    });
-    },
-    getaddressbycompanyid : function(req,res){
-	if (typeof (req.params.id) != 'undefined' && !isNaN(parseInt(req.params.id))) {
-	   Database.dataSproc('GetAddressByCompanyId',[parseInt(req.params.id)],function(err, address){
-		if(err)
-		    return res.json({error:'Database Error'+err},500);
-		if(address[0].length!=1){
-		    res.json({address_id:'new',street_number_begin:'',street_number_end:null,street_name:'', postal_code:'', city:'',address_type_id:2,province:'',latitude:'',longitude:''});
-		}else{
-		    res.json(address[0][0]);
-		}
-	    });
-	}
-    },
-    getaddress : function(req,res){
-	if (typeof (req.params.id) != 'undefined' && !isNaN(parseInt(req.params.id))) {
-	   Database.dataSproc('GetAddress',[parseInt(req.params.id)],function(err, address){
-		if(err||typeof(address[0][0])=='undefined')
-		    return res.json({error:'Database Error'+err},500);
-		
-		res.json(address[0][0]);
-	    });
-	}
-    },
-    export:function(req,res){
-	req.query = req.body;
-	req.query.length = 999999;
-	req.query.start = 0;
-	sails.controllers.airplanes.querycontacts(req,res,function(responseContacts){
-	    if(typeof(responseContacts[0])!='undefined'){
-		results = responseContacts[0];
-	    }
-	    var bodystring = 'Contact Name,Phone Number,Email,Associated Companies\r\n';
-	    for(var i=0;i<results.length;i++){
-		bodystring+='"'+(results[i].contact_name==null?'':results[i].contact_name)+'"';
-		bodystring+=',"'+(results[i].phone==null?'':results[i].phone)+'"';
-		bodystring+=',"'+(results[i].email==null?'':results[i].email)+'"';
-		bodystring+=',"'+(results[i].company==null?'':results[i].company) + '"';
-		bodystring+='\r\n';
-	    }
-
-	    var AWS = require('aws-sdk'); 
-	    AWS.config.update({ "accessKeyId": "AKIAJ7AKNL3ASNPN3IBA", "secretAccessKey": "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", "region": "us-west-2" });
-	    
-
-	    var s3 = new AWS.S3(); 
-
-	     // s3.createBucket({Bucket: 'myBucket'}, function() {
-
-	    var crypto = require("crypto");
-	    var current_date = (new Date()).valueOf().toString();
-	    var random = Math.random().toString();
-	    var filename = crypto.createHash('sha1').update(current_date + random).digest('hex')+'.csv';
-	    var params = {Bucket: 'credcsv', Key: filename, Body: bodystring};
-
-	    s3.putObject(params, function(err, data) {
-	    	if (err){       
-	        	return console.log(err);  
-	    	}
-	        var params = {Bucket: 'credcsv', Key: filename};
-	        s3.getSignedUrl('getObject', params, function (err, url) {
-	             res.json({url:url});
-	        }); 
-	     });
-	});
-    },
+   
     searchairplanes: function(req,res){
-	sails.controllers.airplanes.querycontacts(req,res,function(responseContacts,responseContactsCount){
-	    if(typeof(responseContacts[0])=='undefined'){
+	sails.controllers.airplanes.queryairplanes(req,res,function(responseAirplanes,responseAirplanesCount){
+	    if(typeof(responseAirplanes[0])=='undefined'){
 		return res.json({error:'Database err'});
 	    }
 	    res.json({
 		draw : req.query.draw,
-		recordsTotal : responseContactsCount[0][0].number_of_contact_mappings,
-		recordsFiltered : responseContacts[1][filteredCount],
-		data : responseContacts[0]
+		recordsTotal : responseAirplanesCount[0][0].number_of_contact_mappings,
+		recordsFiltered : responseAirplanes[1][filteredCount],
+		data : responseAirplanes[0]
 	    });
 	});
     },
-    querycontacts:function(req,res,cb){
+    queryairplanes:function(req,res,cb){
 	var airplane_search = null;
-	var company_search = null;
-    /** Parse Contact Search **/
-	if (req.query.airplane_search != '') {
-	    airplane_search = req.query.airplane_search.trim().split(" ");
-	    airplane = req.query.airplane_search.trim().split(" ");
-	    airplane_search = '';
-	
-	    for(var i=0;i<airplane.length;i++){
-	    	airplane[i] = airplane[i].trim().replace(/[~@%*()\-+<>"]/g, "");
-		if(airplane[i].trim()!=''){
-		    airplane_search=airplane_search+ "+"+airplane[i]+"* ";
+	var owner_search = null;
+    /** Parse Airplane Search **/
+		if (req.query.airplane_search != '') {
+			airplane_search = req.query.airplane_search.trim().split(" ");
+		    airplane = req.query.airplane_search.trim().split(" ");
+		    airplane_search = '';
+		
+		    for(var i=0;i<airplane.length;i++){
+		    	airplane[i] = airplane[i].trim().replace(/[~@%*()\-+<>"]/g, "");
+				if(airplane[i].trim()!=''){
+					airplane_search=airplane_search+ "+"+airplane[i]+"* ";
+				}
+		    }
+		    airplane_search = airplane_search.trim();
+		    if(airplane_search==''){
+		    	airplane_search = null;
 		}
-	    }
-	    airplane_search = airplane_search.trim();
-	    if(airplane_search==''){
-		airplane_search = null;
-	    }
 	}
 	
-	/** Parse Company - TODO - this is pretty much the same as function above, should be cleaned up **/
-	if (req.query.company_search != '') {
-	    company_search = req.query.company_search.trim().split(" ");
-	    company = req.query.company_search.trim().split(" ");
-	    company_search = '';
-	
-	    for(var i=0;i<company.length;i++){
-	    	company[i] = company[i].trim().replace(/[~@%*()\-+<>"]/g, "");
-		if(company[i].trim()!=''){
-			company_search=company_search+ "+"+company[i]+"* ";
+		/** Parse Company - TODO - this is pretty much the same as function above, should be cleaned up **/
+		if (req.query.owner_search != '') {
+			owner_search = req.query.owner_search.trim().split(" ");
+		    owner = req.query.owner_search.trim().split(" ");
+		    owner_search = '';
+		
+		    for(var i=0;i<owner.length;i++){
+		    	owner[i] = owner[i].trim().replace(/[~@%*()\-+<>"]/g, "");
+				if(owner[i].trim()!=''){
+					owner_search=owner_search+ "+"+owner[i]+"* ";
+				}
+		    }
+		    owner_search = owner_search.trim();
+		    if(owner_search==''){
+		    	owner_search = null;
+		    }
 		}
-	    }
-	    company_search = company_search.trim();
-	    if(company_search==''){
-	    	company_search = null;
-	    }
-	}
 	var orderstring = null;
 	if(typeof(req.query.order)!='undefined'){	  
 	    	if(req.query.order[0].column==0){
-	    	    orderstring = 'contact_name' +'_'+req.query.order[0].dir;
-	    	}else if(req.query.order[0].column==1){  // Address column
-        	    orderstring = 'contact_name' +'_'+req.query.order[0].dir;
-        	}else if(req.query.order[0].column==4){
-        	    orderstring = 'invalid';
+	    	    orderstring = 'serial_number' +'_'+req.query.order[0].dir;
         	}else{
         	    orderstring = req.query.columns[req.query.order[0].column].data +'_'+req.query.order[0].dir;
         	}
 	}
 	filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
-	Database.dataSproc('SearchAirplanes',[airplane_search,company_search,req.query.start, req.query.length, orderstring,filteredCount],function(err,responseContacts){
+	Database.dataSproc('SearchAirplanes',[airplane_search,owner_search,req.query.start, req.query.length, orderstring,filteredCount],function(err,responseAirplanes){
 	    if(err){
 		return res.json({error:'Database Error:'+err},500);
 	    }
-	   Database.dataSproc('GetContactsCount',[],function(err,responseContactsCount){
+	   Database.dataSproc('GetAirplanesCount',[],function(err,responseAirplanesCount){
 		if(err){
 		   return res.json({error:'Database Error:'+err},500);
 		}
-		cb(responseContacts,responseContactsCount);
-	    })
+		cb(responseAirplanes,responseAirplanesCount);
+	    });
 	});
 	
     },
-    deletecontact:function(req,res){
+    deleteairplane:function(req,res){
 	if(req.session.user.policy[req.route.path].delete==1){  // Delete access on
 															// this route?
-        	if(typeof(req.body.contact_id)!='undefined'&&!isNaN(parseInt(req.body.contact_id))){
-        	   Database.dataSproc('DeleteContact',[parseInt(req.body.contact_id)],function(err,resultDelete){
+        	if(typeof(req.body.airplane_id)!='undefined'&&!isNaN(parseInt(req.body.airplane_id))){
+        	   Database.dataSproc('DeleteAirplane',[parseInt(req.body.airplane_id)],function(err,resultDelete){
         		if(err)
         		    return res.json({error:'Database Error:'+err},500);	
         		res.json({success:'success'});
@@ -230,24 +151,23 @@ module.exports = {
         	}
 	}
     },
-    updatecontact:function(req,res){
-	contact = req.body.contact;
-	companies = req.body.companies;
+    updateairplane:function(req,res){
+	airplane = req.body.airplane;
 	notes = req.body.notes;
-	function updateContact(contact,cb){
-	    if(contact.contact_id != 'new'&&typeof(contact.modified)!='undefined'){
-		Database.dataSproc('UpdateContact',[contact.contact_id,contact.first_name,contact.middle_name,contact.last_name,contact.email,contact.phone_number,contact.date_of_birth,contact.drivers_license,contact.passport_no,contact.nationality, contact.gender],function(err,resContact){
+	function updateAirplane(airplane,cb){
+	    if(airplane.airplane_id != 'new'&&typeof(airplane.modified)!='undefined'){
+		Database.dataSproc('UpdateAirplane',[airplane.airplane_id,airplane.resource_category,airplane.wing_type,airplane.call_sign,airplane.serial_number,airplane.owner, airplane.seats],function(err,resAirplane){
 		    if(err){
-		    	return res.json({error:err},500);
+		    	 return res.json({error:'Database Error:'+err},500);	
 		    }
 		    cb();
 		});
-	    }else if(contact.contact_id == 'new'){
-		var outcontactId = '@out' + Math.floor((Math.random() * 1000000) + 1);
-		Database.dataSproc('CreateContact',[contact.first_name,contact.middle_name,contact.last_name,contact.email,contact.phone_number,contact.date_of_birth,contact.drivers_license,contact.passport_no,contact.nationality,contact.gender,outcontactId],function(err, responseCreateContact){
+	    }else if(airplane.airplane_id == 'new'){
+		var outAirplaneId = '@out' + Math.floor((Math.random() * 1000000) + 1);
+		Database.dataSproc('CreateAirplane',[airplane.serial_number,airplane.resource_category,airplane.wing_type,airplane.call_sign,airplane.owner,airplane.seats,outAirplaneId],function(err, responseCreateAirplane){
 		    if(err)
-    			return res.json({error:err.toString()},500);
-		    contact.contact_id = responseCreateContact[1][outcontactId];
+		    	return res.json({error:'Database Error:'+err},500);
+		    airplane.airplane_id = responseCreateAirplane[1][outAirplaneId];
 		    cb(); 
 		});
 	    }else{
@@ -257,16 +177,15 @@ module.exports = {
 	
 	function processNotes(cb){
 	    function loopNotes(i){
-		if (notes[i].id.toString().indexOf('new')>-1) { // new
-									// Note!
+		if (notes[i].id.toString().indexOf('new')>-1) { // new Note!
 		    var tempOutNoteVar = '@out' + Math.floor((Math.random() * 1000000) + 1);
-		   Database.dataSproc('CreateNote', [ notes[i].note, req.session.user.username, 'NOW()',tempOutNoteVar], function(err, responseNote) {
+		    Database.dataSproc('CreateNote', [ notes[i].note, req.session.user.username, 'NOW()',tempOutNoteVar], function(err, responseNote) {
 			if (err)
 			    return res.json({
 				error : err.toString()
 			    }, 500);
 			
-			Database.dataSproc('CreateNoteMapping',[contact.contact_id, responseNote[1][tempOutNoteVar], 1,'@outId'],function(err,responseNoteMapping){
+			Database.dataSproc('CreateNoteMapping',[airplane.airplane_id, responseNote[1][tempOutNoteVar], 1,'@outId'],function(err,responseNoteMapping){
 			    if (err)
 				return res.json({
 					error : err.toString()
@@ -323,103 +242,11 @@ module.exports = {
 	    }
 	}
 		
-	function processReadOnlyNotes(cb){
-	    function loopNotes(i){
-		if (notes[i].id.toString().indexOf('new')>-1) { // new
-									// Note!
-		    var tempOutNoteVar = '@out' + Math.floor((Math.random() * 1000000) + 1);
-		   Database.dataSproc('CreateNote', [ notes[i].note, req.session.user.username, 'NOW()',tempOutNoteVar], function(err, responseNote) {
-			if (err)
-			    return res.json({
-				error : err.toString()
-			    }, 500);
-			
-			Database.dataSproc('CreateNoteMapping',[contact.contact_id, responseNote[1][tempOutNoteVar], 1,'@outId'],function(err,responseNoteMapping){
-			    if (err)
-				return res.json({
-					error : err.toString()
-				    }, 500);
-			    
-				i++;
-				if (i < notes.length) {
-				    loopNotes(i);
-				} else {
-				    cb();
-				}
-			});
-			
-		    });
-		}else if (typeof (notes[i].deleted) != 'undefined') { // delete
-		   Database.dataSproc('GetNote',[notes[i].id],function(err,resultMyNote){
-			if(err)
-			    return console.log('Note error');
-			if(resultMyNote[0].length!=1){
-			    return console.log('error verifying note');
-			}
-			if(resultMyNote[0][0].user==req.session.user.username){
-        		   Database.dataSproc('DeleteNote', [ notes[i].id ], function(err, responseNote) {
-        			if (err)
-        			    return res.json({
-        				error : err.toString()
-        			    }, 500);
-        			i++;
-        			if (i < notes.length) {
-        			    loopNotes(i);
-        			} else {
-        			    cb();
-        			}
-        		    });
-			}
-		    });
-		} else if (typeof (notes[i].modified) != 'undefined') {
-		   Database.dataSproc('GetNote',[notes[i].id],function(err,resultMyNote){
-			if(err)
-			    return console.log('Note error');
-			if(resultMyNote[0].length!=1){
-			    return console.log('error verifying note');
-			}
-			if(resultMyNote[0][0].user==req.session.user.username){
-        		   Database.dataSproc('UpdateNote', [ notes[i].id, notes[i].note, notes[i].user, 'NOW()' ], function(err, responseNote) {
-        			if (err)
-        			    return res.json({
-        				error : err.toString()
-        			    }, 500);
-        			i++;
-        			if (i < notes.length) {
-        			    loopNotes(i);
-        			} else {
-        			    cb();
-        			}
-        		    });
-			}
-		    });
-		} else {
-		    i++;
-		    if (i < notes.length) {
-			loopNotes(i);
-		    } else {
-			cb();
-		    }
-		}
-	    }
-	    if(notes.length>0){
-		loopNotes(0);
-	    }else{
-		cb();
-	    }
-	}
 	
-	if(req.session.user.policy[req.route.path].update==0){  // readonly account
-															// Notes update.
-	    processReadOnlyNotes(function(){
-		    return res.json({
-			success : 'success',
-			contact_id : contact.contact_id
-		    });
-	    });
-	}else{
-        	updateContact(contact,function(){
-        	    processNotes(function(){
+        	updateAirplane(airplane,function(){
+        		res.json({'success':'success', airplane_id:airplane.airplane_id});
+        	}); 
+        	  /*  processNotes(function(){
                 	    function loopCompanies(i)
                 	    {
                 		if(typeof(companies[i].new)!='undefined'){
@@ -459,9 +286,9 @@ module.exports = {
                 	    }else{
                 		res.json({'success':'success', contact_id:contact.contact_id});
                 	    }
-        	    });
-        	});
-	}
+        	    });*/
+
+	
 	
     }
 
@@ -479,8 +306,6 @@ function toUTCDateTimeString(date){
 	date = new Date();
     }else if(typeof(date)!=='object'){
 	date = new Date(date);
-	// date = new Date(date.setMinutes(date.getMinutes() -
-	// date.getTimezoneOffset()));
     }
     
     return date.getUTCFullYear()+'-'+padLeft((date.getUTCMonth()+1).toString(),2)+'-'+ padLeft(date.getUTCDate(),2) + ' ' + padLeft(date.getUTCHours(),2)+':'+padLeft(date.getUTCMinutes(),2)+':'+padLeft(date.getUTCSeconds(),2);

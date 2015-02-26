@@ -3,7 +3,7 @@ DROP PROCEDURE if EXISTS `UpdateContact` ;
 DELIMITER $$
 CREATE PROCEDURE `UpdateContact`(IN contactID INT, IN firstName VARCHAR(256), IN middleName VARCHAR(256),
 			IN lastName VARCHAR(256), IN email VARCHAR(64), IN phoneNumber VARCHAR(64),
-			IN dateOfBirth DATE,IN driversLicense VARCHAR(64),IN passport VARCHAR(64),IN nationality VARCHAR(64), IN gender VARCHAR(64))
+			IN dateOfBirth DATE,IN driversLicense VARCHAR(64),IN passport VARCHAR(64),IN nationality VARCHAR(64), IN gender VARCHAR(64), IN companyID INT)
 BEGIN
 	UPDATE cur_contacts
 		SET first_name = firstName
@@ -16,6 +16,7 @@ BEGIN
 		,passport_no = passport
 		,nationality = nationality
 		,gender = gender
+		,cur_company_id = companyID
 	WHERE
 		id = contactID;
 END$$

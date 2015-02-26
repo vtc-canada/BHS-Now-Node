@@ -61,13 +61,12 @@ module.exports = {
 	}
     },
     getcompaniesbyname : function(req,res){
-			Database.dataSproc('GetCompaniesByName',[typeof (req.body.search) != 'undefined' ?  req.body.search  : null],function(err, companies){
+		Database.dataSproc('GetCompaniesByName',[typeof (req.body.search) != 'undefined' ?  req.body.search  : null],function(err, companies){
 		if(err||typeof(companies[0])=='undefined')
-		    return res.json({error:'Database Error'+err},500);
-		
+		    return res.json({error:'Database Error'+err},500);			
 		res.json(companies[0]);
 	    });
-    },
+},
     getcompaniesbycontactid : function(req,res){
 	   Database.dataSproc('GetCompaniesByContactId',[req.body.contact_id],function(err, companies){
 		if(err||typeof(companies[0])=='undefined')
@@ -196,11 +195,11 @@ module.exports = {
 	if(typeof(req.query.order)!='undefined'){	  
 	    	if(req.query.order[0].column==0){
 	    	    orderstring = 'contact_name' +'_'+req.query.order[0].dir;
-	    	}else if(req.query.order[0].column==1){  // Address column
+	    	}else if(req.query.order[0].column==1){  // name column
         	    orderstring = 'contact_name' +'_'+req.query.order[0].dir;
-        	}else if(req.query.order[0].column==4){
-        	    orderstring = 'invalid';
-        	}else{
+	    	}else if(req.query.order[0].column==4){  // Birthdate column
+        	    orderstring = 'date_of_birth' +'_'+req.query.order[0].dir;
+	    	}else{
         	    orderstring = req.query.columns[req.query.order[0].column].data +'_'+req.query.order[0].dir;
         	}
 	}
@@ -211,7 +210,7 @@ module.exports = {
 	    }
 	   Database.dataSproc('GetContactsCount',[],function(err,responseContactsCount){
 		if(err){
-		   return res.json({error:'Database Error:'+err},500);
+		    return res.json({error:'Database Error'+err},500);		
 		}
 		cb(responseContacts,responseContactsCount);
 	    });
@@ -237,17 +236,19 @@ module.exports = {
 	notes = req.body.notes;
 	function updateContact(contact,cb){
 	    if(contact.contact_id != 'new'&&typeof(contact.modified)!='undefined'){
-		Database.dataSproc('UpdateContact',[contact.contact_id,contact.first_name,contact.middle_name,contact.last_name,contact.email,contact.phone_number,contact.date_of_birth,contact.drivers_license,contact.passport_no,contact.nationality, contact.gender],function(err,resContact){
+		Database.dataSproc('UpdateContact',[contact.contact_id,contact.first_name,contact.middle_name,contact.last_name,contact.email,contact.phone_number,contact.date_of_birth
+		                                    	,contact.drivers_license,contact.passport_no,contact.nationality, contact.gender, contact.company_id],function(err,resContact){
 		    if(err){
-		    	return res.json({error:err},500);
+			    return res.json({error:'Database Error'+err},500);		
 		    }
 		    cb();
 		});
 	    }else if(contact.contact_id == 'new'){
 		var outcontactId = '@out' + Math.floor((Math.random() * 1000000) + 1);
-		Database.dataSproc('CreateContact',[contact.first_name,contact.middle_name,contact.last_name,contact.email,contact.phone_number,contact.date_of_birth,contact.drivers_license,contact.passport_no,contact.nationality,contact.gender,outcontactId],function(err, responseCreateContact){
+		Database.dataSproc('CreateContact',[contact.first_name,contact.middle_name,contact.last_name,contact.email,contact.phone_number,contact.date_of_birth
+		                                    	,contact.drivers_license,contact.passport_no,contact.nationality,contact.gender, contact.company_id,outcontactId],function(err, responseCreateContact){
 		    if(err)
-    			return res.json({error:err.toString()},500);
+			    return res.json({error:'Database Error'+err},500);		
 		    contact.contact_id = responseCreateContact[1][outcontactId];
 		    cb(); 
 		});
@@ -421,45 +422,11 @@ module.exports = {
 	}else{
         	updateContact(contact,function(){
         	    processNotes(function(){
-                	    function loopCompanies(i)
-                	    {
-                		if(typeof(companies[i].new)!='undefined'){
-                		   Database.dataSproc('CreateContactCompanyMapping',[contact.contact_id,companies[i].company_id,'@outval'],function(err,resMapping){
-                			    if(err)
-                				return res.json({error:'Database Error:'+err},500);
-                			    i++;	
-                			    if(i<companies.length){
-                				loopCompanies(i);
-                			    }else{
-                				res.json({'success':'success', contact_id:contact.contact_id});
-                			    }
-                			    
-                		    });
-                		}else if(typeof(companies[i].dodelete)!='undefined'){
-                		   Database.dataSproc('DeleteContactCompanyMapping',[contact.contact_id, companies[i].company_id],function(err,resDel){
-                			    if(err)
-                				return res.json({error:'Database Error:'+err},500);
-                			    i++;
-                			    if(i<companies.length){
-                				loopCompanies(i);
-                			    }else{
-                				res.json({'success':'success', contact_id:contact.contact_id});
-                			    }
-                		    });
-                		}
-                		i++;
-                		if(i<companies.length){
-                		    loopCompanies(i);
-                		}else{
-                		    res.json({'success':'success', contact_id:contact.contact_id});
-                		}
-                		
-                	    }
-                	    if(companies.length>0){
-                		loopCompanies(0);
-                	    }else{
-                		res.json({'success':'success', contact_id:contact.contact_id});
-                	    }
+        		    return res.json({
+        				success : 'success',
+        				contact_id : contact.contact_id
+        		    });
+
         	    });
         	});
 	}

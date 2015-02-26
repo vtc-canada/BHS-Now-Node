@@ -3,7 +3,7 @@ DROP PROCEDURE if EXISTS `CreateContact` ;
 DELIMITER $$
 CREATE PROCEDURE `CreateContact`(IN firstName VARCHAR(256),IN middleName VARCHAR(256), IN lastName VARCHAR(256),IN email VARCHAR(64), 
 				IN phoneNumber VARCHAR(64),IN dateOfBirth DATE,IN driversLicense VARCHAR(64),IN passport VARCHAR(64),
-				IN nationality VARCHAR(64), IN gender VARCHAR(64),OUT id INT)
+				IN nationality VARCHAR(64), IN gender VARCHAR(64), IN companyID INT, OUT id INT)
 BEGIN
 	INSERT INTO cur_contacts(first_name
 		,middle_name
@@ -15,6 +15,7 @@ BEGIN
 		,passport_no
 		,nationality
 		,gender
+		,cur_company_id
 		,is_deleted) 
 	VALUES (firstName
 		,middleName
@@ -26,6 +27,7 @@ BEGIN
 		,passport
 		,nationality
 		,gender
+		,companyID
 		,0);
 	SET id = LAST_INSERT_ID();
 END$$

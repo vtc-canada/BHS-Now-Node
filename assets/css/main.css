@@ -475,6 +475,10 @@ table.selectable tr{
 	color:red;
 }
 
+.required-value{
+	color:#bd362f;
+}
+
 @media (min-width: 980px){
     body {
         /* padding-top: 41px; 60px to make the container go all the way to the bottom of the topbar */
@@ -521,7 +525,13 @@ table.selectable tr{
 .only-mobile{
 	display:none !important;
 }
-	
+
+@media (min-width: 767px){
+	.mobilelabel{
+		display:none !important;
+	}
+}
+
 
 .badge-div{
     position: absolute;
