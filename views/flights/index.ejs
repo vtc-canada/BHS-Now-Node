@@ -148,7 +148,7 @@
 	    <li {{if(activeTab == null||activeTab=='#tab1'){ }}class="active"{{ } }}><a href="#tab1" data-toggle="tab">General</a></li>
 	    <li {{if(activeTab=='#tab2'){ }}class="active"{{ } }}><a href="#tab2" data-toggle="tab">Route Details</a></li>
 	    <li {{if(activeTab=='#tab3'){ }}class="active"{{ } }}><a href="#tab3" data-toggle="tab">Assigned Companies</a></li>
-	    <li {{if(activeTab=='#tab4'){ }}class="active"{{ } }}><a href="#tab4" data-toggle="tab">Passengers</a></li>
+	    {{ if(flights[0].flight_id!=null){ }}<li {{if(activeTab=='#tab4'){ }}class="active"{{ } }}><a href="#tab4" data-toggle="tab">Passengers</a></li>{{ } }}
 	  </ul>
 	  <div class="tab-content">
 	    <div class="tab-pane {{if(activeTab == null||activeTab=='#tab1'){ }}active{{ } }}" id="tab1">
@@ -276,28 +276,30 @@
 	    <div class="tab-pane  {{if(activeTab=='#tab3'){ }}active{{ } }}" id="tab3">
 	    	<div class="row-fluid">
 	    	
-		    	<select id="select_companies">
+		    	<select id="select_company_seats">
 	      			<option value="">Choose Company</option>
 		    		{{ companies.each(function(company){ }}
-		    			<option value="{{=company.get('id')}}">{{=company.get('name')}}</option>
+		    			<option value="{{=company.get('id')}}" name="{{=company.get('name')}}">{{=company.get('name')}}</option>
 		    		{{ }); }}
 		    	</select>
+		    	<button class="btn btn-success pull-right" id="add_company_seats">Add Company</button>
 	    	</div>
 		    	 
 		    {{ for(var flightindex=0;flightindex<flights.length;flightindex++){ }}
+		    <div class="company-seats-wrapper {{ if((selectedLeg!=null&&selectedLeg!=flights[flightindex].id )||(selectedTempLeg !=null && selectedTempLeg!=flights[flightindex].tempId)){ }}flight-seats-hidden{{ } }}" leg="{{= flights[flightindex].id }}" {{ if(typeof(flights[flightindex].tempId)!='undefined'){ }}templeg="{{= flights[flightindex].tempId }}"{{ } }}>	
 		    	{{ for( var i=0; i< flights[flightindex].company_seats.length; i++){ }}
 		    	
-		    	
-		    	<div class="row-fluid company-seats-row">
+		    	<div class="row-fluid company-seats-row {{ if(typeof(flights[flightindex].company_seats[i].is_deleted)!='undefined'&&flights[flightindex].company_seats[i].is_deleted){ }}is_deleted{{ } }}" id="{{=flights[flightindex].company_seats[i].id}}" tempId="{{=flights[flightindex].company_seats[i].tempId}}" flight_id="{{=flights[flightindex].flight_id}}" cur_legs_id="{{=flights[flightindex].company_seats[i].cur_legs_id}}" temp_cur_legs_id="{{=flights[flightindex].company_seats[i].temp_cur_legs_id}}" cur_company_id="{{=flights[flightindex].company_seats[i].cur_company_id}}" >
 			    	<div class="span4"><label for="edit_company_seats{{=flights[flightindex].company_seats[i].id}}">{{=flights[flightindex].company_seats[i].name}}</label></div>
-			    	<div class="span4"><input type="text" id="edit_company_seats{{=flights[flightindex].company_seats[i].id}}" class="assign-company-checkbox" cur_legs_id="{{=flights[flightindex].company_seats[i].cur_legs_id}}" cur_company_id="{{=flights[flightindex].company_seats[i].cur_company_id}}" value="{{=flights[flightindex].company_seats[i].seats}}"/></div>
+			    	<div class="span4"><input type="text" id="edit_company_seats{{=flights[flightindex].company_seats[i].id}}" class="edit-company-seats" value="{{=flights[flightindex].company_seats[i].seats}}"/></div>
 			    	<div class="span4"><button class="btn btn-danger pull-right delete-company-seats">Delete</button></div>
 		    	</div>
 		    	{{ } }}
+		    </div>
 	    	{{ } }}
 	    	
 	    </div>
-	    
+	    {{ if(flights[0].flight_id!=null){ }}
 	    <div class="tab-pane {{if(activeTab=='#tab4'){ }}active{{ } }}" id="tab4">
 	    	
 	    	<div class="row-fluid isnajaxfield-parent">
@@ -340,6 +342,7 @@
 		    </div>
 	    	{{ } }}
 	    </div>
+    	{{ } }}
 	  </div>
 	</div>
 	
@@ -774,10 +777,36 @@
                 'change input[model-attribute]':'changeAttribute',// ="flight_number" 
                 'change #edit_airline':'airlineChanged',
                 'change #edit_flight_number' : 'editFlightNumber',
-                'change .assign-company-checkbox':'assignCompany',
+                'change .edit-company-seats':'editCompanySeats',
                 'click #add_pax':'addPassenger',
                 'click #add_flight_leg' : 'addFlightLeg',
-                'click .delete_flight_leg':'deleteFlightLeg'
+                'click .delete_flight_leg':'deleteFlightLeg',
+                'click #add_company_seats':'addCompanySeats',
+                'click .delete-company-seats':'deleteCompanySeats'
+            },
+            deleteCompanySeats:function(event){
+            	var company_seats = this.model.get('flights')[getIndexById(this.model.get('flights'),selectedLeg,selectedTempLeg)].company_seats;
+            	seatsIndex = getIndexById(company_seats,$(event.currentTarget).closest('.company-seats-row').attr('id'),$(event.currentTarget).closest('.company-seats-row').attr('tempId'));
+            	if(company_seats[seatsIndex].id==null){
+            		company_seats.splice(seatsIndex,1);
+            	}else{
+            		company_seats[seatsIndex].is_deleted = true;
+            	}
+            	this.render();
+            },
+            editCompanySeats:function(event){
+            	//console.log('edit first');
+            	//$(event.currentTarget).closest('.company-seats-row').attr('cur_leg
+            	var company_seats = this.model.get('flights')[getIndexById(this.model.get('flights'),selectedLeg,selectedTempLeg)].company_seats;
+            	seatsIndex = getIndexById(company_seats,$(event.currentTarget).closest('.company-seats-row').attr('id'),$(event.currentTarget).closest('.company-seats-row').attr('tempId'));
+            	company_seats[seatsIndex].seats = parseInt($(event.currentTarget).val());
+            },
+            addCompanySeats:function(event){
+            	var company_id = parseInt($('#select_company_seats').val());
+            	if(!isNaN(company_id)){
+            		this.model.get('flights')[getIndexById(this.model.get('flights'),selectedLeg,selectedTempLeg)].company_seats.push({id:null, tempId: Math.floor(Math.random()*99999), cur_company_id:company_id, cur_legs_id : selectedLeg, temp_cur_legs_id : selectedTempLeg, name:$('#select_company_seats option:selected').attr('name')});
+            		this.render();
+            	}
             },
             deleteFlightLeg:function(event){
             	
@@ -954,6 +983,15 @@
 	            	}else{
 	            		$('.passengers-datatable-wrapper[templeg='+selectedTempLeg+']').removeClass('datatable-hidden');
 	            	}
+
+	            	$('.company-seats-wrapper').each(function(){
+	            		$(this).addClass('flight-seats-hidden');
+	            	});
+	            	if(selectedLeg!=null){
+	            		$('.company-seats-wrapper[leg='+selectedLeg+']').removeClass('flight-seats-hidden');
+	            	}else{
+	            		$('.company-seats-wrapper[templeg='+selectedTempLeg+']').removeClass('flight-seats-hidden');
+	            	}
 	            });
             	
             	
@@ -1123,9 +1161,9 @@
                 
                 
                 function addPassengersList(flightId, cb){   /// THIS 
-                	if(flightId==null){
-                    	return cb(null,[]);
-                    }
+                	//if(flightId==null){
+                    //	return cb(null,{manifests:[]});
+                    //}
                 	socket.get('/manifests/getandjoinmanifestdetailsbyflight',{id:flightId},function(paxs){
                 		if(paxs.error != undefined){ 
 	                    	return location.reload(); 

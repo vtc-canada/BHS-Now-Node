@@ -106,56 +106,59 @@ module.exports = {
 	}
     },
     getandjoinmanifestdetailsbyflight : function(req,res){
-	if (typeof (req.body.id) != 'undefined' && !isNaN(parseInt(req.body.id))) {
-	    Database.dataSproc('FMS_MANIFEST_GetManifestsByFlightId',[parseInt(req.body.id)],function(err,response){
+	var tcompanies = [];
+	Database.dataSproc('FMS_MANIFESTS_GetCompanies',[],function(err,companies){
 		if(err)
-		    return res.json({error:'Error:'+err});
-		
-		if(response[0].length==0){  // returns blank if no results
-		    console.log('No such manifest exists under flight ID:'+parseInt(req.body.id));
-		    return res.json([]);
-		}
-		
-		async.each(response[0],function(manifest,cb){
-		    
-		    //async.parallel(
-		    //[function(dcb){
-			Database.dataSproc('FMS_MANIFEST_GetManifestDetails',[manifest.id],function(err, details){
-			    if(err)
-				return dcb(err);
-			    manifest.details = details[0];
-			    cb(null);
-			    // orphan subscribe.
-			    sails.controllers.manifests.subscribetomanifest(req,res,manifest.id,function(err,sub){
-				if(err)
-				    return console.log('Database Error'+err);
-			    });
-			}); 
-		    //},
-		    //function(dcb){
-		//	Database.dataSproc('FMS_MANIFESTS_GetCompanySeats', [manifest.cur_legs_id],function(err,company_seats){
-		//	    if(err)
-		//		return dcb(err);
-		//	    manifest.company_seats = company_seats[0];
-		//	    dcb(null);
-		//	});		
-		//    }],function(err,results){
-		//	cb(err,results);
-		//    });
-		    
-		},function(err,responses){
-		    if(err)
 			return res.json({error:'Database Error'+err},500);
-		    
-		    Database.dataSproc('FMS_MANIFESTS_GetCompanies',[],function(err,companies){
-			if(err)
-				return res.json({error:'Database Error'+err},500);
-
-			res.json({manifests:response[0], companies:companies[0]});
-		    });
-		});
-	    });
-	}
+		tcompanies = companies[0];
+		
+        	if (typeof (req.body.id) != 'undefined' && !isNaN(parseInt(req.body.id))) {
+        	    Database.dataSproc('FMS_MANIFEST_GetManifestsByFlightId',[parseInt(req.body.id)],function(err,response){
+        		if(err)
+        		    return res.json({error:'Error:'+err});
+        		
+        		if(response[0].length==0){  // returns blank if no results
+        		    console.log('No such manifest exists under flight ID:'+parseInt(req.body.id));
+                	    return res.json({manifests:[], companies:tcompanies});
+        		}
+        		
+        		async.each(response[0],function(manifest,cb){
+        		    
+        		    //async.parallel(
+        		    //[function(dcb){
+        			Database.dataSproc('FMS_MANIFEST_GetManifestDetails',[manifest.id],function(err, details){
+        			    if(err)
+        				return dcb(err);
+        			    manifest.details = details[0];
+        			    cb(null);
+        			    // orphan subscribe.
+        			    sails.controllers.manifests.subscribetomanifest(req,res,manifest.id,function(err,sub){
+        				if(err)
+        				    return console.log('Database Error'+err);
+        			    });
+        			}); 
+        		    //},
+        		    //function(dcb){
+        		//	Database.dataSproc('FMS_MANIFESTS_GetCompanySeats', [manifest.cur_legs_id],function(err,company_seats){
+        		//	    if(err)
+        		//		return dcb(err);
+        		//	    manifest.company_seats = company_seats[0];
+        		//	    dcb(null);
+        		//	});		
+        		//    }],function(err,results){
+        		//	cb(err,results);
+        		//    });
+        		    
+        		},function(err,responses){
+        		    if(err)
+        			return res.json({error:'Database Error'+err},500);
+        		    res.json({manifests:response[0], companies:tcompanies});
+        		});
+        	    });
+        	}else{
+        	    res.json({manifests:[], companies:tcompanies}); 
+        	}
+	});
     },
     clearManifestByLegId:function(leg_ID,cb){
 	Database.dataSproc('FMS_MANIFEST_GetManifestByLegId',[leg_ID],function(err,response){
