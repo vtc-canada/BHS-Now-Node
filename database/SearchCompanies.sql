@@ -13,7 +13,7 @@ BEGIN
 		,cur_company.postal_code
 		,cur_company.city
 		,cur_company.province
-		,GROUP_CONCAT(users.first_name,users.last_name,' (P):',users.phone_number SEPARATOR ',') as 'travel_coordinator'
+		,GROUP_CONCAT(users.first_name,' ',users.last_name,' (P):',users.phone_number SEPARATOR ',') as 'travel_coordinator'
 	FROM cur_company
 	LEFT JOIN cur_user_company_mapping ON (cur_user_company_mapping.company_ID = cur_company.id AND cur_user_company_mapping.user_ID = userID)	
 	LEFT JOIN cur_user_company_mapping AS travel_coordinator ON (travel_coordinator.company_ID = cur_company.id)

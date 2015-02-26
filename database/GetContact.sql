@@ -18,7 +18,7 @@ SELECT
 	,cur_contacts.nationality
 	,cur_contacts.gender
 	,cur_contacts.cur_company_id AS 'company_id'
-	,GROUP_CONCAT(users.first_name,users.last_name,' (P):',users.phone_number SEPARATOR ',') as 'travel_coordinator'
+	,GROUP_CONCAT(users.first_name,' ',users.last_name,' (P):',users.phone_number SEPARATOR ',') as 'travel_coordinator'
 FROM cur_contacts
 	LEFT JOIN cur_user_company_mapping AS travel_coordinator ON (travel_coordinator.company_ID = cur_contacts.cur_company_id)
 	LEFT JOIN users ON (users.id = travel_coordinator.user_ID AND users.id IN (SELECT users.id
