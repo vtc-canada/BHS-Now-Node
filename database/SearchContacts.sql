@@ -2,7 +2,7 @@ DROP PROCEDURE if EXISTS `SearchContacts` ;
 
 DELIMITER $$
 CREATE PROCEDURE `SearchContacts`(IN contactSearchTerms VARCHAR(128), IN companySearchTerms VARCHAR(128)
-							,IN offsetIndex int, IN recordCount INT, IN orderBy VARCHAR (255), OUT filteredCount INT)
+							,IN offsetIndex int, IN recordCount INT, IN orderBy VARCHAR (255),IN isAdmin BOOLEAN, IN userID INT, OUT filteredCount INT)
 BEGIN
 	SELECT
 		SQL_CALC_FOUND_ROWS cur_contacts.id as 'contact_id'
@@ -18,11 +18,13 @@ BEGIN
 		,cur_contacts.gender
 	FROM cur_contacts
 	LEFT JOIN cur_company ON (cur_company.id = cur_contacts.cur_company_id and cur_company.is_deleted = 0)
+	LEFT JOIN cur_user_company_mapping ON (cur_user_company_mapping.company_ID = cur_company.id AND cur_user_company_mapping.user_ID = userID)
 	WHERE 
 		cur_contacts.is_deleted = 0
 		AND (contactSearchTerms IS NULL OR MATCH (cur_contacts.first_name,cur_contacts.last_name,cur_contacts.middle_name
 				,cur_contacts.email, cur_contacts.phone_number,cur_contacts.nationality, cur_contacts.gender) AGAINST (contactSearchTerms IN BOOLEAN MODE))
 		AND (companySearchTerms IS NULL OR MATCH (cur_company.name) AGAINST (companySearchTerms IN BOOLEAN MODE))
+		AND (isAdmin = true OR cur_user_company_mapping.company_ID IS NOT NULL)
 	GROUP BY cur_contacts.id
 ORDER BY
 	CASE WHEN orderBy='contact_name_asc' THEN last_name END ASC,
