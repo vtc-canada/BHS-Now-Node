@@ -54,8 +54,8 @@ module.exports.views = {
      **************************************************************************/
     locals : {
 	logo:{
-	    desktop:'/img/ISN-International-Airport-4.png',
-	    mobile:'/img/ISN-International-Airport-3.png'
+	    desktop:'/img/NCA-desktop.png',
+	    mobile:'/img/NCA-mobile.png'
 	},
 	messaging : true,
 	search:{
