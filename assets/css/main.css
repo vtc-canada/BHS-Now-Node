@@ -154,6 +154,10 @@ a.isys-a{
     padding-top: 42px;
     height:37px !important;
 }
+img.isys-img {
+	max-height: 100% !important;
+	max-width: 100% !important;
+}
 a.isys-a.small{
     display:none;
 }

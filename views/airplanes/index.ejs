@@ -35,13 +35,13 @@
                 <table id="airplanes" class="display" cellspacing="0" width="100%">
 			        <thead>
 		            <tr>
-		            	<th>Id<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
-		                <th><%= __('SerialNumber') %><i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
-		                <th><%= __('ResourceCategory') %><i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
-		                <th><%= __('WingType') %><i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
-		                <th><%= __('CallSign') %><i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
-		                <th><%= __('Owner') %><i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
-		                <th><%= __('Seats') %><i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+		            	<th>Id</th>
+		                <th><%= __('SerialNumber') %></th>
+		                <th><%= __('ResourceCategory') %></th>
+		                <th><%= __('WingType') %></th>
+		                <th><%= __('CallSign') %></th>
+		                <th><%= __('Owner') %></th>
+		                <th><%= __('Seats') %></th>
 		            </tr>
 		            </thead>		 
 			    </table>
@@ -50,13 +50,11 @@
     </div>
 </div>
 <script type="text/template" id="airplane-template">
-	<div class="row-fluid " style="position:relative; cursor:default;" airplane_id="{{=airplane_id}}">
+	<div class="row-fluid form-segment-wrapper" style="position:relative; cursor:default;" airplane_id="{{=airplane_id}}">
 		<div class="row-fluid building-segment-wrapper">
 			<div class="span5 segment-label"><%= __('Resource Category') %>:</div>
 			<div class="span7"><select id="resourceCategoryCombobox" class="resourceCategoryCombobox" value=""></select></div>	
-			</div>
 		</div>
-	</div>
 	<div class="row-fluid building-segment-wrapper">
 		<div class="span5 segment-label" style="min-height:40px;"><%= __('WingType') %>:</div>
 		<div class="span7"><select id="wingTypeCombobox" class="wingTypeCombobox" value=""></select></div>	
