@@ -7,7 +7,7 @@ BEGIN
 SELECT
 	cur_manifest.id
 ,cur_manifest.cur_legs_id
-,cur_manifest.flight_no
+,cur_legs.flight_number
 ,cur_manifest.regn_no
 ,cur_manifest.max_leg_payload
 ,cur_manifest.max_resource_payload

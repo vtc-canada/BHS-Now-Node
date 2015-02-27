@@ -14,8 +14,14 @@ SELECT
 	,baggage_pieces
 	,baggage_weight
 	,boarded
+	,originAirportDef.ICAO AS 'origin_name'
+	,destinationAirportDef.ICAO AS 'destination_name'
 FROM cur_manifest_details
+INNER JOIN cur_manifest ON (cur_manifest.id = cur_manifest_details.cur_manifest_id)
 INNER JOIN cur_contacts ON (cur_contacts.id = cur_manifest_details.contact_ID)
+INNER JOIN cur_legs ON (cur_manifest.cur_legs_id = cur_legs.id)
+INNER JOIN ref_airport_def AS originAirportDef ON (originAirportDef.id = cur_legs.origin_airport_code)
+INNER JOIN ref_airport_def AS destinationAirportDef ON (destinationAirportDef.id = cur_legs.destination_airport_code)
 WHERE 
 	cur_manifest_details.cur_manifest_id = manifestId
 GROUP BY cur_contacts.id;

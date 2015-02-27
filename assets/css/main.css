@@ -555,10 +555,6 @@ input.isn-datepicker{
 	font-weight:500;	
 }
 
-#editmap_preview_wrapper{
-	/* min-height:240px; */	
-	margin: 2px;
-}
 
 .dropdown-menu.typeahead{
 	min-width:218px;

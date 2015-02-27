@@ -92,27 +92,46 @@
 	<div class="row-fluid flight-selector-details-wrapper page-controls-wrapper">
 	
         <div class="row-fluid" id="reportheader">
-        	<span style="padding-left:10px;">Users</span>
+        	<span style="padding-left:10px;">Flight Details</span>
         	<select id="leg_combobox" class="pull-right" style="margin-right:10px;font-weight: 400; float:right;" >
 	    	{{ for(var flightindex=0;flightindex<flights.length;flightindex++){ }}
 	    		{{ if(typeof(flights[flightindex].is_deleted)=='undefined'){ }}
-	    		<option value="{{=flights[flightindex].id}}"  {{ if(typeof(flights[flightindex].tempId)!='undefined'){ }}templeg="{{= flights[flightindex].tempId }}"{{ } }}  {{ if((selectedLeg!=null&&selectedLeg==flights[flightindex].id )|| (typeof(flights[flightindex].tempId)!='undefined'&&selectedTempLeg==flights[flightindex].tempId)){ }}selected="selected"{{ } }}>{{= (flights[flightindex].origin_airport_code==null?'':getAirportById(flights[flightindex].origin_airport_code).IATAFAA) + ' to ' + (flights[flightindex].destination_airport_code==null?'':getAirportById(flights[flightindex].destination_airport_code).IATAFAA)}}</option>
+	    		<option value="{{=flights[flightindex].id}}"  {{ if(typeof(flights[flightindex].tempId)!='undefined'){ }}templeg="{{= flights[flightindex].tempId }}"{{ } }}  {{ if((selectedLeg!=null&&selectedLeg==flights[flightindex].id )|| (typeof(flights[flightindex].tempId)!='undefined'&&selectedTempLeg==flights[flightindex].tempId)){ }}selected="selected"{{ } }}>{{= (flights[flightindex].origin_airport_code==null?'':getAirportById(flights[flightindex].origin_airport_code).ICAO) + ' to ' + (flights[flightindex].destination_airport_code==null?'':getAirportById(flights[flightindex].destination_airport_code).ICAO)}}</option>
 	    		{{ } }}
 	    	{{ } }}
 			</select>
         </div>
-        <div class="row-fluid key-indicaters-frame" id="iframediv">
-            <div class="row-fluid">
-            	<div class="span5">
+        <div class="row-fluid flight-details-frame" id="iframediv">
+            <div class="row-fluid form-segment-wrapper">
+            	<div class="span6">
+					<!--<div class="row-fluid">
+						<div class="span7 segment-label">Flight Id / temp Id:</div>
+						<div class="span5 segment-value" id="">{{=flight.id}} / {{=flight.tempId}}</div>
+					</div>-->
 					<div class="row-fluid">
-						<div class="span3">Distance:</div>
-						<div class="span9" id="edit_flight_stats_distance">{{=flight.id}}</div>
+						<div class="span7 segment-label">Flight Number:</div>
+						<div class="span5 segment-value" id="">{{=(flight.airline!=null?airlines.get(flight.airline).get('IATA_2_digit_ID'):'')}} {{=flight.flight_number}}</div>
 					</div>
 					<div class="row-fluid">
-						<div class="span3">Duration:</div>
-						<div class="span9" id="edit_flight_stats_duration">{{=flight.tempId}}</div>
+						<div class="span7 segment-label">Distance:</div>
+						<div class="span5 segment-value" id="edit_flight_stats_distance">{{=flight.distance}}</div>
+					</div>
+					<div class="row-fluid">
+						<div class="span7 segment-label">Duration:</div>
+						<div class="span5 segment-value" id="edit_flight_stats_duration">{{=flight.duration}}</div>
 					</div>
             	</div>
+            	<div class="span6">
+					<div class="row-fluid">
+						<div class="span7 segment-label">Passengers Checked In:</div>
+						<div class="span5 segment-value " id=""><span class="large-value">{{=flight.passenger_checked_in_count}}/{{=flight.passenger_count}}</span> <i class="icon-group"></i></div>
+					</div>
+					<div class="row-fluid">
+						<div class="span7 segment-label">Passengers Boarded:</div>
+						<div class="span5 segment-value " id=""><span class="large-value">{{=flight.passenger_boarded_count}}/{{=flight.passenger_count}}</span> <i class="icon-group"></i></div>
+					</div>
+				</div>
+            	
             </div>
         </div>
 	
@@ -161,8 +180,8 @@
 		    	<div class="span4">
 		    	<select id="edit_airline">
 	      			<option IATA_code="" IATA_2_digit_ID="" value="">Choose Airline</option>
-		    		{{for(var i=0;i<airlines.length;i++){ }}
-		    			<option IATA_code="{{=airlines[i].IATA_code}}" IATA_2_digit_ID="{{=airlines[i].IATA_2_digit_ID}}" value="{{=airlines[i].id}}" {{if(airlines[i].id == flights[0].airline){ }}selected="selected"{{ } }}>{{=airlines[i].IATA_2_digit_ID}} - {{=airlines[i].carrier}}</option>
+		    		{{for(var i=0;i<airlines.toJSON().length;i++){ }}
+		    			<option IATA_code="{{=airlines.toJSON()[i].IATA_code}}" IATA_2_digit_ID="{{=airlines.toJSON()[i].IATA_2_digit_ID}}" value="{{=airlines.toJSON()[i].id}}" {{if(airlines.toJSON()[i].id == flights[0].airline){ }}selected="selected"{{ } }}>{{=airlines.toJSON()[i].IATA_2_digit_ID}} - {{=airlines.toJSON()[i].carrier}}</option>
 		    		{{ } }}
 		    	</select>
 		    	</div>
@@ -205,9 +224,9 @@
 						    		</div>
 						    		<div class="span6 input-append ">
 							    		<select class="edit_origin_airport flex-input flex-input-width" leg="{{= flights[flightindex].id }}">
-							      			<option IATAFAA="" ICAO="" value="">Choose Origin</option>
+							      			<option ICAO="" value="">Choose Origin</option>
 								    		{{for(var i=0;i<airports.length;i++){ }}
-								    			<option airport_code="{{=airports[i].id}}" timezone="{{=airports[i].timezone}}" latitude="{{=airports[i].latitude}}" longitude="{{=airports[i].longitude}}" IATAFAA="{{=airports[i].IATAFAA}}" ICAO="{{=airports[i].ICAO}}" value="{{=airports[i].id}}" {{if(airports[i].id == flights[flightindex].origin_airport_code){ }}selected="selected"{{ } }}>{{=airports[i].IATAFAA}} - {{=airports[i].name}}</option>
+								    			<option airport_code="{{=airports[i].id}}" timezone="{{=airports[i].timezone}}" latitude="{{=airports[i].latitude}}" longitude="{{=airports[i].longitude}}" ICAO="{{=airports[i].ICAO}}" value="{{=airports[i].id}}" {{if(airports[i].id == flights[flightindex].origin_airport_code){ }}selected="selected"{{ } }}>{{=airports[i].ICAO}} - {{=airports[i].name}}</option>
 								    		{{ } }}
 								    	</select>
 						    		</div>
@@ -235,9 +254,9 @@
 							    		</div>
 							    		<div class="span6 input-append">
 								      		<select class="edit_destination_airport flex-input flex-input-width" leg="{{= flights[flightindex].id }}">
-								      			<option IATAFAA="" ICAO="" value="">Choose Destination</option>
+								      			<option ICAO="" value="">Choose Destination</option>
 									    		{{for(var i=0;i<airports.length;i++){ }}
-									    			<option airport_code="{{=airports[i].id}}" timezone="{{=airports[i].timezone}}" latitude="{{=airports[i].latitude}}" longitude="{{=airports[i].longitude}}" IATAFAA="{{=airports[i].IATAFAA}}" ICAO="{{=airports[i].ICAO}}" value="{{=airports[i].id}}" {{if(airports[i].id == flights[flightindex].destination_airport_code){ }}selected="selected"{{ } }}>{{=airports[i].IATAFAA}} - {{=airports[i].name}}</option>
+									    			<option airport_code="{{=airports[i].id}}" timezone="{{=airports[i].timezone}}" latitude="{{=airports[i].latitude}}" longitude="{{=airports[i].longitude}}"  ICAO="{{=airports[i].ICAO}}" value="{{=airports[i].id}}" {{if(airports[i].id == flights[flightindex].destination_airport_code){ }}selected="selected"{{ } }}>{{=airports[i].ICAO}} - {{=airports[i].name}}</option>
 									    		{{ } }}
 									    	</select>
 							    		</div>
@@ -331,9 +350,12 @@
 		    	<table id="passengers_{{=flights[flightindex].id}}" class="display fms-table" style="" cellspacing="0" width="100%">
 			        <thead>
 			            <tr>
-			            	<th>Id<i class="icon-caret-down"></i><i class="icon-caret-up"></i></th>
+			            	<th>Id</th>
 			                <th>Passenger</th>
+			                <th>Origin</th>
+			                <th>Destination</th>
 			                <th>Checked In</th>
+			                <th>Passenger Weight</th>
 			                <th></th>
 			                <th></th>
 			            </tr>
@@ -476,7 +498,7 @@
 
 <script type="text/javascript">
 
-	var airlines = <%-JSON.stringify(airlines)%>;
+	var airlines = new Backbone.Collection(<%-JSON.stringify(airlines)%>);
 	var airports = <%-JSON.stringify(airports)%>;
 
 	function getAirportById(airportId){
@@ -644,11 +666,11 @@
             },
             ganttClick:function(event){
                 //do_popover(event,false);
-                this.doGanttClick($(event.target).attr('flight_id'));
+                this.doGanttClick($(event.target).attr('flight_id'),$(event.target).attr('leg_id'));
                 
 				
             },
-            doGanttClick : function(flight_id, tryHold){
+            doGanttClick : function(flight_id, leg_id, blockModal){
             	if(typeof(this.collection.get(flight_id))=='undefined'){  // most-likely deleted.
 					selectedLeg = null;
 					selectedTempLeg = null;
@@ -656,6 +678,8 @@
 					$('#flightModal').modal('hide');
 					return;
             	}
+            	
+            	
             	var newFlight = _.clone(this.collection.get(flight_id).toJSON());
 				
 				newFlight.flights = _.clone(newFlight.flights); // this clears the flights connection... **********  TODO- reconnect later maybe.. instead of re-calling database possibly.
@@ -673,13 +697,17 @@
 				
 				//editFlightView.model.clear();
 				editFlightView.model.set(newFlight);
+				if(typeof(blockModal)=='undefined'){
+					selectedLeg = leg_id;
+					selectedTempLeg = null;
+				}
 				
 				editFlightView.render();
 				$('#myModalFlightLabel').html('<%=__('Flight')%> '+editFlightView.model.get('flights')[0].flight_number);
 				
-				if(typeof(tryHold)=='undefined'){  // if new
-					selectedLeg = null;
-					selectedTempLeg = null;
+				if(typeof(blockModal)=='undefined'){  // if new
+					//selectedLeg = null;
+					//selectedTempLeg = null;
 					$('#flightModal').modal('show'); //make new one
 				}
 				
@@ -703,7 +731,7 @@
                         }
                         var inflightgroup = false;
                         for(var k = 0; k < tcollection[i].get('flights').length;k++){
-	                        if((getPropertybyId(airlines,'IATA_2_digit_ID',tcollection[i].get('flights')[k].airline).toString()+tcollection[i].get('flights')[k].flight_number.toString()).toLowerCase().indexOf(terms[j].toString().toLowerCase())==-1
+	                        if((getPropertybyId(airlines.toJSON(),'IATA_2_digit_ID',tcollection[i].get('flights')[k].airline).toString()+tcollection[i].get('flights')[k].flight_number.toString()).toLowerCase().indexOf(terms[j].toString().toLowerCase())==-1
 	                               /* &&("mu"+tcollection[i].get('flights')[k].virtual_early_dest.toString()).indexOf(terms[j].toString().toLowerCase())==-1
 	                                &&("mu"+tcollection[i].get('flights')[k].virtual_late_dest.toString()).indexOf(terms[j].toString().toLowerCase())==-1
 	                                &&("mu"+tcollection[i].get('flights')[k].virtual_locked_out_dest.toString()).indexOf(terms[j].toString().toLowerCase())==-1
@@ -729,8 +757,9 @@
                 
                 //
                 // used for updating flights, manfests, mappings, seats. etc.
+                // RECOVERY ON FORCED UPDATE!
     			if($('#flightModal').css('display')!='none'&&$('#flightModal').attr('flight_id')){ //then we'll need to redraw the entire - fetching while open!!
-    				this.doGanttClick($('#flightModal').attr('flight_id'),true);
+    				this.doGanttClick($('#flightModal').attr('flight_id'),selectedLeg, true);
     			}
     			
     			
@@ -884,7 +913,7 @@
                 for(var i=0;i<tflights.length;i++){
                 	tflights[i].airline = $(event.target).val()==''?null:$(event.target).val();
                 }
-                
+                this.render();
             	//this.model.set('airline',$(event.target).val()==''?null:$(event.target).val());
             },
             editFlightNumber : function(event){
@@ -892,6 +921,7 @@
                 for(var i=0;i<tflights.length;i++){
                 	tflights[i].flight_number = $(event.target).val()==''?null:$(event.target).val();
                 }
+                this.render();
             },
             updateOrigin:function($location,$datetimepicker, updateModel){ // called when origin is updated
             	var timezone = parseInt($location.find('option:selected').attr('timezone'));
@@ -966,6 +996,29 @@
             	$('#flight_selector_details_wrapper').empty();
             	var flightindex= getIndexById(this.model.get('flights'),selectedLeg,selectedTempLeg);
                 var flight = this.model.get('flights')[flightindex];
+                flight.duration = this.getDuration();
+                flight.distance = this.getDistance();
+                
+                flight.passenger_count = 0;
+                flight.passenger_checked_in_count = 0;
+                flight.passenger_boarded_count = 0;
+                //flight.pax_
+                
+                var manifest = this.manifests.findWhere({cur_legs_id:flight.id});
+                if(typeof(manifest)!='undefined'){
+	                manifest.get('details').each(function(row){
+	                	flight.passenger_count++;
+	                	if(row.get('checked_in')){
+	                		flight.passenger_checked_in_count++;
+	                	}
+	                	if(row.get('boarded')){
+	                		flight.passenger_boarded_count++;
+	                	}
+	                });
+                }
+                
+                
+                
             	$('#flight_selector_details_wrapper').append(this.templatedetails({flight: flight, flights: this.model.get('flights')}));
             	
             	$('select#leg_combobox').on('change',function(e){
@@ -1031,6 +1084,30 @@
                 $map.append(this.staticMapTemplate({paths:this.paths}));
             	setTimeout(function(){$map.css('min-height','')},1000);
                 //this.updateFlightStats();
+            },
+            getLegByIds:function(id,tempId){
+            	var flightindex= getIndexById(this.model.get('flights'),id,tempId);
+                return this.model.get('flights')[flightindex];
+            },
+            getDistance:function(){
+            	var haveOriginAndDestination= (this.paths.length>0&&this.paths[0].origin!=null&&this.paths[0].destination!=null);
+                if(haveOriginAndDestination && typeof(this.paths[0].destination.latitude)!='undefined' && typeof(this.paths[0].origin.latitude)!='undefined'){
+	                return geolib.getDistance(
+					    {latitude: this.paths[0].origin.latitude, longitude: this.paths[0].origin.longitude}, 
+					    {latitude: this.paths[0].destination.latitude, longitude: this.paths[0].destination.longitude}
+					);
+                }
+                return null;
+            },
+            getDuration:function(){
+            	var flight = this.getLegByIds(selectedLeg, selectedTempLeg);
+                var haveDepartureAndArrival = flight.departure_time!=null&&flight.arrival_time!=null;
+            	if(haveDepartureAndArrival){
+                	//  Updates time from arrival and departure time..
+                	var timeDiff = new Date(flight.arrival_time).getTime()-new Date(flight.departure_time).getTime();
+                	return (timeDiff<0?'<span class="fms-invalid-value">':'')+millisecondsToHoursMinutesSecondsString(timeDiff)+(timeDiff<0?'</span>':'');
+                }
+                return null;
             },
             updateFlightStats:function(){ // triggered by date changes.. updates duration by calculating distance..
             	return;
@@ -1194,6 +1271,17 @@
 	        		});
 	        	},this));
 	        	
+	        	$(row).find('.pax-weight').unbind('change');
+	        	$(row).find('.pax-weight').on('change',_.partial(function(self){
+	        		self.manifests.get(manifestId).get('details').get(manifestDetailsId).set('pax_weight',parseInt($(this).val()));
+	        		socket.get('/manifests/updaterow',{row:self.manifests.get(manifestId).get('details').get(manifestDetailsId).toJSON()},function(result){
+		        		if(result.error != undefined){
+                            location.reload();
+                        }
+	        		});
+	        	},this));
+	        	
+	        	
 	        	$(row).find('.remove-pax').unbind('click');
 	        	$(row).find('.remove-pax').click(_.partial(function(self){
 	        		//alert('hjere');
@@ -1249,7 +1337,7 @@
 	            	click:_.bind(function($row){
 	            		if($('#add_all_legs').is(':checked')){
 		            		editFlightView.manifests.each(function(manifest){
-			            		socket.get('/manifests/addmanifestdetail',{contact_ID:parseInt($row.attr('contact_id')),flight_ID:null, leg_ID:manifest.get('cur_legs_id')},function(result){
+			            		socket.get('/manifests/addmanifestdetail',{contact_ID:parseInt($row.attr('contact_id')), pax_weight:240, flight_ID:null, leg_ID:manifest.get('cur_legs_id')},function(result){
 			            			if(result.error != undefined){  // result
 			                            location.reload(); // result
 			                        }
@@ -1291,11 +1379,17 @@
 				         	,{"mData":function(data,b){ 
 				         		return data.contact_name; }
 					        },{"mData":function(data,b){ 
+				         		return data.origin_name; }
+					        },{"mData":function(data,b){ 
+				         		return data.destination_name; }
+					        },{"mData":function(data,b){ 
 					        	return "<input type=\"checkbox\" "+(data.checked_in?' checked="checked" ':'')+"class=\"checked-in\">"; }
 					        },{"mData":function(data,b){ 
-					        	return '<div class="btn btn-danger remove-pax">Remove</div>'; }
+					        	return "<input type=\"number\" value=\""+data.pax_weight+"\"  class=\"pax-weight\">"; }
 					        },{"mData":function(data,b){ 
 					        	return '<div class="btn btn-success print-pass">Print Boarding Pass</div>'; }
+					        },{"mData":function(data,b){ 
+					        	return '<div class="btn btn-danger remove-pax">Remove</div>'; }
 					        }
 				        ],
 				        "rowCallback": _.bind(function( row, data, displayIndex ) {
@@ -1344,9 +1438,9 @@
             		}
             	}else if(typeof(updateRow)=='undefined'){  //Adding new passenger (not in list)
             	
-            		update.contact_name = update.last_name + ', ' + update.first_name;
-            		delete update.last_name;
-            		delete update.first_name;
+            		//update.contact_name = update.contact_name;//last_name + ', ' + update.first_name;
+            		//delete update.last_name;
+            		//delete update.first_name;
             		editFlightView.manifests.get(update.cur_manifest_id).get('details').add(update);
             		editFlightView.passengersDatatables[update.cur_manifest_id].api().row.add(editFlightView.manifests.get(update.cur_manifest_id).get('details').get(update.id).toJSON()).draw();
             	}
@@ -1513,7 +1607,7 @@
 	function resizeComboBoxes(){
 	
 		var padding = 45;
-		console.log($('.flex-input-width').length);
+		//console.log($('.flex-input-width').length);
 		$('.flex-input-width').each(function(){
 			if($(this).parent().parent().width()<180 + padding){
 				$(this).width($(this).parent().parent().width()-padding);
