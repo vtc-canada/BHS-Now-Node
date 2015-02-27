@@ -30,13 +30,13 @@ module.exports = {
 		if(err||typeof(details[0][0])=='undefined')
 		    return res.json({error:'Database Error'+err},500);
 		
-		Database.dataSproc('FMS_MANIFEST_GetManifest',[details[0][0].cur_manifest_id],function(err, manifest){
-			if(err||typeof(manifest[0][0])=='undefined')
-			    return res.json({error:'Database Error'+err},500);
+		//Database.dataSproc('FMS_MANIFEST_GetManifest',[details[0][0].cur_manifest_id],function(err, manifest){
+		//	if(err||typeof(manifest[0][0])=='undefined')
+		//	    return res.json({error:'Database Error'+err},500);
 			
-			sails.io.sockets.emit('manifest_' + manifest[0][0].flight_ID, details[0][0]);
+			sails.io.sockets.emit('manifest_' + details[0][0].cur_manifest_id, details[0][0]);
 			res.json({success:details[0][0]});
-		   });
+		//   });
 	    });
 	});
 	

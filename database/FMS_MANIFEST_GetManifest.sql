@@ -6,7 +6,7 @@ CREATE PROCEDURE `FMS_MANIFEST_GetManifest`(IN paramManifest_ID INT)
 BEGIN
 SELECT
 	id,
-	flight_ID,
+	cur_legs_id,
 	manifest_id
 FROM cur_manifest
 WHERE 

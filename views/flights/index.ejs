@@ -130,6 +130,10 @@
 						<div class="span7 segment-label">Passengers Boarded:</div>
 						<div class="span5 segment-value " id=""><span class="large-value">{{=flight.passenger_boarded_count}}/{{=flight.passenger_count}}</span> <i class="icon-group"></i></div>
 					</div>
+					<div class="row-fluid">
+						<div class="span7 segment-label">Passenger Weight:</div>
+						<div class="span5 segment-value " id="">{{=flight.pax_weight}}</div>
+					</div>
 				</div>
             	
             </div>
@@ -1002,12 +1006,13 @@
                 flight.passenger_count = 0;
                 flight.passenger_checked_in_count = 0;
                 flight.passenger_boarded_count = 0;
-                //flight.pax_
+                flight.pax_weight = 0;
                 
                 var manifest = this.manifests.findWhere({cur_legs_id:flight.id});
                 if(typeof(manifest)!='undefined'){
 	                manifest.get('details').each(function(row){
 	                	flight.passenger_count++;
+	                	flight.pax_weight  = flight.pax_weight + parseInt(row.get('pax_weight'));
 	                	if(row.get('checked_in')){
 	                		flight.passenger_checked_in_count++;
 	                	}
@@ -1413,6 +1418,8 @@
             },
             manifestEvent:function(update){
             	var updateRow = editFlightView.manifests.get(update.cur_manifest_id).get('details').get(update.id);
+            	
+            	
             	if(typeof(updateRow)!='undefined'&&!_.isEqual(updateRow.toJSON(),update)){
             		if(update.is_deleted){
             			editFlightView.manifests.get(update.cur_manifest_id).get('details').remove(update.id);
@@ -1443,6 +1450,12 @@
             		//delete update.first_name;
             		editFlightView.manifests.get(update.cur_manifest_id).get('details').add(update);
             		editFlightView.passengersDatatables[update.cur_manifest_id].api().row.add(editFlightView.manifests.get(update.cur_manifest_id).get('details').get(update.id).toJSON()).draw();
+            	}
+            	
+            	if(selectedLeg!=null&&editFlightView.manifests.get(update.cur_manifest_id).get('cur_legs_id')==selectedLeg){
+            		//this.updateFlightSelectorDetails();
+            		editFlightView.updateFlightSelectorDetails();
+            		// Update the details if the manifest is updated.. // TODO further checks to pair down this frequency
             	}
             },
             postRender:function(){

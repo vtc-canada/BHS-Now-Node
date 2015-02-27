@@ -288,3 +288,29 @@ input.flex-input{
 .pax-weight{
 	width:120px;
 }
+
+
+table.fms-table td{
+	text-align:center;
+}
+
+table.fms-table td:first-child{
+	text-align:left;
+}
+
+table.fms-table th:first-child{
+	text-align:left;
+}
+
+#leg_combobox{
+	margin-bottom:0px;
+}
+
+table.fms-table tbody tr.boarded{
+	background: rgb(173, 224, 173) !important;
+}
+
+input.pax-weight{
+	margin-top:3px;
+	margin-bottom:4px;
+}
