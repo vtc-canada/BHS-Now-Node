@@ -19,8 +19,8 @@ BEGIN
 	INNER JOIN ref_airline_code ON (ref_airline_code.id = cur_legs.airline)
 	INNER JOIN ref_airport_def AS origin_airport ON origin_airport.id = origin_airport_code
 	INNER JOIN ref_airport_def AS destination_airport ON destination_airport.id = destination_airport_code
-	WHERE (departure_time < maxDate AND departure_time > maxDate) 
-		OR (arrival_time < minDate AND arrival_time > minDate)
+	WHERE (departure_time < maxDate AND departure_time > minDate) 
+		OR (arrival_time < maxDate AND arrival_time > minDate)
 	ORDER BY departure_time;
 END$$
 DELIMITER ;
