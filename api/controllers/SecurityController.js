@@ -35,7 +35,7 @@ module.exports = {
 		var username = sails.config.autogenerate.user.username;
 		var hasher = require("password-hash");
 		var password = hasher.generate(sails.config.autogenerate.user.password);
-		Database.localSproc('NMS_BASE_CreateUser', [ username, password, null, 1, 0, 'en','@outCreateUser'], function(err, user) {
+			Database.localSproc('NMS_BASE_CreateUser', [ username,null,null, password, null,null, 1, 0, 'en','@outCreateUser'], function(err, user) {		      
 		    if (err) {
 			console.log('createUser Error' + err);
 			return cb(err);

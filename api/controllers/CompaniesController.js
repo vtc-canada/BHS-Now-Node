@@ -164,7 +164,7 @@ module.exports = {
         filteredCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
         totalCount = '@out' + Math.floor((Math.random() * 1000000) + 1);
         Database.dataSproc('SearchCompanies', [company_search, req.query.start, req.query.length, orderstring
-                                               ,Security.resourceAccess(req,'default',{create:1,read:1,update:1,delete:1}),req.session.user.id
+                                               ,Security.resourceAccess(req,'/admin/users/:id?',{create:1,read:1,update:1,delete:1}),req.session.user.id
                                                ,filteredCount, totalCount], function(err, responseCompanies) {
             if (err) {
                 return res.json({
