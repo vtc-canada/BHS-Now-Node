@@ -257,20 +257,39 @@ input.flex-input{
 #flightModal{
 	/*z-index:10000;*/
 }
-.flight-segment-wrapper .segment-label-left {
+
+.segment-label-left-small,
+.segment-label-left {
 	display: inline-block;
 	text-align: left;
-	font-size: 16px;
-	line-height: 28px;
+
 	font-weight:600;
 	color: black;
 }
-.flight-segment-wrapper .segment-label-right {
-	text-align: right;
-	font-size: 16px;
+
+.segment-label-left {
 	line-height: 28px;
-	font-weight:600;
-	color: black;
+	font-size: 16px;
+}
+
+.segment-label-left-small {
+	line-height: 16px;
+	font-size: 12px;
+}
+
+.segment-label-right-small,
+.segment-label-right {
+	text-align: right !important;
+	line-height: 28px;
+	font-weight:600 !important;
+	color: black !important;
+}
+
+.segment-label-right {
+	font-size: 16px;
+}
+.segment-label-right-small{
+	font-size: 12px;
 }
 
 .report-control-left-label{
@@ -280,12 +299,42 @@ input.flex-input{
 	line-height: 28px;
 }
 
+.section-header-small,
+.section-header-large,
 .section-header{
 	padding-left: 10px;
-	font-size: 24px;
 	font-weight:600 !important;
 	line-height: 28px;
     color: #717171 !important;
+}
+.section-header-large{
+	padding-top: 5px;
+	font-size:20px;
+}
+.section-header-small{
+	font-size:14px;
+}
+.section-header{
+	font-size:16px;
+}
+
+.flight-leg-header-large,
+.flight-leg-header{
+	color: #717171 !important;
+	margin-left : 30px;	
+}
+
+.flight-leg-header{
+	font-weight:600 !important;
+	font-size:24px;
+	margin-left:20px !important;
+	margin-bottom:5px !important;
+}
+
+.flight-leg-header-large{
+	font-weight:600 !important;
+	font-size:900% !important;	
+	margin-top: 60px;
 }
 
 .flight-header {
@@ -295,18 +344,48 @@ input.flex-input{
     border-bottom: 1px solid rgb(185, 185, 185);
     border-radius: 7px 7px 0px 0px;
     background: linear-gradient(to bottom, #FFF 0%, #F2F2F2 100%) repeat scroll 0% 0% transparent;
+    padding-top: 6px;
+    padding-bottom: 6px;
+
+}
+
+
+.flight-leg-divider {
+    line-height: 30px;
+    margin-right:5px;
+    margin-left:5px;
+    border: 1px solid rgb(185, 185, 185);
+    background: linear-gradient(to bottom, #FFF 0%, #F2F2F2 100%) repeat scroll 0% 0% transparent;
     font-weight: bold;
     padding-top: 6px;
     padding-bottom: 6px;
+    color: #006DCC !important;
+}
+
+.flight-leg-details {
+    margin-top:10px;
+    border-left: 1px solid rgb(185, 185, 185);
+	padding-left: 10px;
 }
 
 #flight_selector_details_wrapper{
-	margin-right:30px !important;
+	margin-right:10px !important;
+}
+
+.flight-tab{
+	margin-left:10px;
+	margin-right:10px;
+	border: 1px solid rgb(185, 185, 185);
 }
 
 .button-spacing{
-	margin-right:4px;
-	margin-left:4px
+	margin-top:5px;
+	margin-bottom:10px;
+	margin-right:10px;
+}
+
+.delete_flight_leg{
+		margin-right:10px;
 }
 
 .leg-map{
@@ -324,6 +403,15 @@ input.flex-input{
 	font-weight:600;
 	color: black;
 	
+}
+
+.flight-leg-title{
+	display: inline-block;
+	color: black;
+	font-size:18px;
+	line-height: 28px;
+	font-weight:600;
+	margin-bottom: 5px;
 }
 
 .flight-details-frame{
@@ -379,6 +467,7 @@ table.fms-table td{
 
 table.fms-table td:first-child{
 	text-align:left;
+	font-weight:bold;
 }
 
 table.fms-table th:first-child{

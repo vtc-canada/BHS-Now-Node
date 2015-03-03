@@ -62,7 +62,7 @@ module.exports.views = {
 	    enabled:true,
 	    url:'/search'
 	},
-	i18nEnabled:true,
+	i18nEnabled:false,
 	alertDuration:300,
 	navpages : {
 	    '/dashboard':{

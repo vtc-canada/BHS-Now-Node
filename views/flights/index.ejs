@@ -91,7 +91,7 @@
 <script type="text/template" id="flight_selector_details">
 	<div class="row-fluid flight-selector-details-wrapper page-controls-wrapper">
 		<div class="row-fluid" id="reportheader">
-	        <div class="span3 report-control-left-label">Flight Details</div>
+	        <div class="span3 section-header">Flight Details</div>
 	        <div class="span6 pull-right">
 		        <div class="report-control-right-label segment-label-right">Flight Selected: 
 		        	<select id="leg_combobox"  style="margin-right:10px;font-weight: 600; font-size:16px; float:right; color:black;" >
@@ -190,14 +190,14 @@
 	
 	</div>
 		
-	<div class="tabbable"> <!-- Only required for left/right tabs -->
-	  <ul class="nav nav-tabs" style="margin-bottom:0px;">
+	<div class="tabbable "> <!-- Only required for left/right tabs -->
+	  <ul class="nav nav-tabs" style="margin-bottom:0px; margin-left:30px;margin-right:30px;">
 	    <li {{if(activeTab == null||activeTab=='#tab1'){ }}class="active"{{ } }}><a href="#tab1" data-toggle="tab">General</a></li>
 	    <li {{if(activeTab=='#tab2'){ }}class="active"{{ } }}><a href="#tab2" data-toggle="tab">Route Details</a></li>
 	    <li {{if(activeTab=='#tab3'){ }}class="active"{{ } }}><a href="#tab3" data-toggle="tab">Assigned Companies</a></li>
 	    {{ if(flights[0].flight_id!=null){ }}<li {{if(activeTab=='#tab4'){ }}class="active"{{ } }}><a href="#tab4" data-toggle="tab">Passengers</a></li>{{ } }}
 	  </ul>
-	  <div class="tab-content">
+	  <div class="tab-content flight-tab">
 	    <div class="tab-pane {{if(activeTab == null||activeTab=='#tab1'){ }}active{{ } }}" id="tab1">
 	    	<div class="row-fluid">
 		    	<div class="span4"><label for="edit_flight_number">Flight Number:</label></div>
@@ -218,7 +218,7 @@
 	    
 	    <div class="tab-pane  {{if(activeTab=='#tab2'){ }}active{{ } }}" id="tab2">
 	    	<div  class="row-fluid flight-header">
-	    		<div class="span6 section-header">
+	    		<div class="span6 section-header-large">
 	    			Route Details
 	    		</div>
 	    		<div class="span6">
@@ -229,26 +229,31 @@
 	    	
 	    	
 	    	{{ for(var flightindex=0;flightindex<flights.length;flightindex++){ }}
+			{{ if(flightindex>0){ }}
+			<div class="flight-leg-divider">
+				<i class="icon-circle-arrow-down icon-2x" style="margin-left:50%;"/>
+			</div>
+			{{ } }}
 	    	<div class="flight-wrapper {{ if(typeof(flights[flightindex].is_deleted)!='undefined'&&flights[flightindex].is_deleted){ }}is_deleted{{ } }}" leg="{{= flights[flightindex].id }}" {{ if(typeof(flights[flightindex].tempId)!='undefined'){ }}templeg="{{= flights[flightindex].tempId }}"{{ } }}>
 		    	<div class="row-fluid">
-		    		<div class="span6">
+		    		<div class="span6 ">
 		    			<div class="row-fluid">
-		    				<div class="span3 leg-map">
-		    				
-		    				</div>
-		    			</div>
-		    		 leg {{= flights[flightindex].id }}
+		    				<div class="span3 leg-map">	
+			    			</div>
+				    			<label class="row-fluid flight-leg-header-large">{{=flightindex+1}}</label>
+			    		</div>
+			    		<label class="flight-leg-header" >Flight Leg</label>
 		    		</div>
 		    	
-		    		<div class="span6">
+		    		<div class="span6 flight-leg-details">
 		    			<div class="row-fluid">
-				    		<div class="span6">
-					    		<div class="row-fluid flight-leg-title">Origin:</div>
+				    		<div class="span6" >
+					    		<div class="row-fluid flight-leg-title">Origin</div>
 								
 								
 								<div class="row-fluid">
 									<div class="span6">
-						    			<label for="edit_origin_airport">Airport:</label>
+						    			<label for="edit_origin_airport" class="segment-label-left-small">Airport:</label>
 						    		</div>
 						    		<div class="span6 input-append ">
 							    		<select class="edit_origin_airport flex-input flex-input-width" leg="{{= flights[flightindex].id }}">
@@ -262,7 +267,7 @@
 								
 								<div class="row-fluid">
 						    		<div class="span6">
-						    			<label for="edit_flight_origin_datepicker">Scheduled Departure:<span class="origin-timezone"></span></label>
+						    			<label for="edit_flight_origin_datepicker" class="segment-label-left-small">Scheduled Departure: <br><span class="origin-timezone"></span></label>
 						    		</div>
 									<div leg="{{= flights[flightindex].id }}" class="edit_flight_origin_datepicker input-append span6 datepicker-wrapper-padder">
 									
@@ -275,10 +280,14 @@
 							</div>
 							<div class="span6">
 								<div class="row-fluid">
-									<div class="row-fluid flight-leg-title">Destination:</div>
+									<div class="row-fluid flight-leg-title">Destination
+										{{ if(flightindex>0){ }}
+											<button class="btn btn-danger pull-right delete_flight_leg" leg="{{= flights[flightindex].id }}" {{ if(typeof(flights[flightindex].tempId)!='undefined'){ }}templeg="{{= flights[flightindex].tempId }}"{{ } }}>Delete</button>
+										{{ } }}
+									</div>
 									<div class="row-fluid">
 										<div class="span6">
-							    			<label for="edit_destination_airport">Airport:</label>
+							    			<label for="edit_destination_airport" class="segment-label-left-small">Airport:</label>
 							    		</div>
 							    		<div class="span6 input-append">
 								      		<select class="edit_destination_airport flex-input flex-input-width" leg="{{= flights[flightindex].id }}">
@@ -292,7 +301,7 @@
 									
 									<div class="row-fluid">
 							    		<div class="span6">
-							    			<label for="edit_flight_destination_datepicker">Scheduled Arrival:<span class="destination-timezone"></span></label>
+							    			<label for="edit_flight_destination_datepicker" class="segment-label-left-small">Scheduled Arrival:<br><span class="destination-timezone"></span></label>
 							    		</div>
 										<div leg="{{= flights[flightindex].id }}" class="edit_flight_destination_datepicker input-append span6 datepicker-wrapper-padder">
 							                <input data-format="yyyy-MM-dd" class="isn-datepicker flex-input" type="text" value="">
@@ -306,11 +315,7 @@
 						</div>
 					</div>	
 				</div>
-				{{ if(flightindex>0){ }}
-				<div class="row-fluid">
-					<button class="btn btn-danger pull-right delete_flight_leg" leg="{{= flights[flightindex].id }}" {{ if(typeof(flights[flightindex].tempId)!='undefined'){ }}templeg="{{= flights[flightindex].tempId }}"{{ } }}>Delete Flight Leg</button>
-				</div>
-				{{ } }}
+
 			</div>
 	    	{{ } }}
 	    	
@@ -321,7 +326,7 @@
 	    
 	    </div>
 	    <div class="tab-pane  {{if(activeTab=='#tab3'){ }}active{{ } }}" id="tab3">
-	    	<div class="row-fluid">
+	    	<div class="row-fluid flight-header">
 	    	
 		    	<select id="select_company_seats">
 	      			<option value="">Choose Company</option>
@@ -329,7 +334,7 @@
 		    			<option value="{{=company.get('id')}}" name="{{=company.get('name')}}">{{=company.get('name')}}</option>
 		    		{{ }); }}
 		    	</select>
-		    	<button class="btn btn-success pull-right" id="add_company_seats">Add Company</button>
+		    	<button class="btn btn-primary button-spacing pull-right" id="add_company_seats">Add Company</button>
 	    	</div>
 		    	 
 		    {{ for(var flightindex=0;flightindex<flights.length;flightindex++){ }}
@@ -350,27 +355,23 @@
 	    <div class="tab-pane {{if(activeTab=='#tab4'){ }}active{{ } }}" id="tab4">
 	    	
 	    	<div class="row-fluid isnajaxfield-parent">
-              <!-- <div class="row">
-                   <div class="span3 report-control-left-label"  style="min-height: 30px;padding-top: 5px;"><label for="search_contact"><%= __('Passenger Details') %></label></div>
-                   <div class="span8 report-control-right-control">
-                   </div>
-               </div>-->
-               <div class="row-fluid" style="position:relative">
-               
+               <div class="row-fluid" style="position:relative">               
 	               <div class="row-fluid search-contact-ajax-wrapper">
-	               		<div class="inner-search-contact-wrapper span3 offset1">
-	               			<input type="text" id="search_contact" value="" placeholder="Add Passenger">
-	               		</div>
-	               		<div class="span3">
-	               			Add to All Legs: <input type="checkbox" id="add_all_legs" checked="checked">
-	               		</div>
-              			<div class="btn btn-primary pull-right" style="position:absolute; right:4px; top:4px" >Last Minute Pax</div>
-               			<div class="btn btn-primary pull-right" style="position:absolute; right:140px; top:4px">Excel Import</div>
-	               </div>
+	   	        	<div class="span4 section-header-large">Passenger Bookings
+	               			<input type="text" class="offset1" id="search_contact" value="" placeholder="Add Passenger">
+	               	</div>
+               		<div class="span3 segment-label-left" style="margin-top:10px">
+               			Add to All Legs: <input type="checkbox" id="add_all_legs" checked="checked">
+               		</div>
+               		<div class="span3 pull-right">
+           				<div class="btn btn-primary button-spacing pull-right">Excel Import</div>
+              			<div class="btn btn-primary button-spacing pull-right">Last Minute Pax</div>
+
+               		</div>
+	              </div>
 
                </div>
-               <div id="search_contact_results" ></div>
-               
+               <div id="search_contact_results" ></div>               
            </div>
            
 	    	
@@ -378,13 +379,14 @@
 	    	{{ for(var flightindex=0;flightindex<flights.length;flightindex++){ }}
 	    	<div class="row-fluid passengers-datatable-wrapper {{ if((selectedLeg!=null&&selectedLeg!=flights[flightindex].id )||(selectedTempLeg !=null && selectedTempLeg!=flights[flightindex].tempId)){ }}datatable-hidden{{ } }}"  leg="{{= flights[flightindex].id }}" {{ if(typeof(flights[flightindex].tempId)!='undefined'){ }}templeg="{{= flights[flightindex].tempId }}"{{ } }}   >
 		    	<table id="passengers_{{=flights[flightindex].id}}" class="display fms-table" style="" cellspacing="0" width="100%">
-			        <thead>
+			        <thead class="section-header-small">
 			            <tr>
 			            	<th>Id</th>
-			                <th>Passenger</th>
+			                <th>Passenger Name</th>
+			                <th>Company</th>
 			                <th>Origin</th>
 			                <th>Destination</th>
-			                <th>Checked In</th>
+			                <th>Checked-In</th>
 			                <th>Passenger Weight (lbs)</th>
 			                <th>No. of Bags</th>
 			                <th>Bag Weight (lbs)</th>
@@ -402,9 +404,7 @@
 	
 	
 	
-	<div data-toggle="collapse" data-target="#preview_flight_summary" id="preview_flight_summary_collapse_handle">
-		<i class="icon-collapse-alt icon-2x"></i>
-	</div>
+
 </script>
 
 <div class="row-fluid ">
@@ -499,6 +499,9 @@
 
 <div id="flightModal" class="modal modal-lg hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header">
+		<div data-toggle="collapse" data-target="#preview_flight_summary" id="preview_flight_summary_collapse_handle">
+		<i class="icon-collapse-alt icon-2x" style="margin-right:40px;"></i>
+		</div>
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times</button>
         <h3 id="myModalFlightLabel"><%= __('Create Flight') %></h3>
     </div>
@@ -1431,7 +1434,7 @@
             		this.passengersDatatables[manifest.get('id')] = $('#passengers_'+manifest.get('cur_legs_id')).dataTable( {
 			            language: {
 	        				search: "",
-					        searchPlaceholder: "Filter Manifest"
+					        searchPlaceholder: "Filter Passenger Details"
 					    },
 					    cur_legs_id : manifest.get('cur_legs_id'),
 					    cur_manifest_id : manifest.get('id'),
@@ -1443,6 +1446,8 @@
 				        	{"mData":"cur_manifest_id","visible":false}
 				         	,{"mData":function(data,b){ 
 				         		return data.contact_name; }
+					        },{"mData":function(data,b){ 
+				         		return data.company; }
 					        },{"mData":function(data,b){ 
 				         		return data.origin_name; }
 					        },{"mData":function(data,b){ 
