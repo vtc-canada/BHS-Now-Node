@@ -257,6 +257,74 @@ input.flex-input{
 #flightModal{
 	/*z-index:10000;*/
 }
+.flight-segment-wrapper .segment-label-left {
+	display: inline-block;
+	text-align: left;
+	font-size: 16px;
+	line-height: 28px;
+	font-weight:600;
+	color: black;
+}
+.flight-segment-wrapper .segment-label-right {
+	text-align: right;
+	font-size: 16px;
+	line-height: 28px;
+	font-weight:600;
+	color: black;
+}
+
+.report-control-left-label{
+	padding-left: 10px;
+	font-size: 16px;
+	font-weight:600 !important;
+	line-height: 28px;
+}
+
+.section-header{
+	padding-left: 10px;
+	font-size: 24px;
+	font-weight:600 !important;
+	line-height: 28px;
+    color: #717171 !important;
+}
+
+.flight-header {
+    margin-top: 0px;
+    line-height: 30px;
+    padding-left: 0px;
+    border-bottom: 1px solid rgb(185, 185, 185);
+    border-radius: 7px 7px 0px 0px;
+    background: linear-gradient(to bottom, #FFF 0%, #F2F2F2 100%) repeat scroll 0% 0% transparent;
+    font-weight: bold;
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+#flight_selector_details_wrapper{
+	margin-right:30px !important;
+}
+
+.button-spacing{
+	margin-right:4px;
+	margin-left:4px
+}
+
+.leg-map{
+	margin-left:10px !important;
+	margin-top:10px;
+	margin-bottom:10px;
+}
+
+.report-control-right-label{
+	float: right;
+	display: inline-block;
+	text-align: right;
+	font-size: 16px;
+	line-height: 28px;
+	font-weight:600;
+	color: black;
+	
+}
 
 .flight-details-frame{
 	padding-bottom: 0px !important;
@@ -271,11 +339,22 @@ input.flex-input{
 }
 
 .flight-details-frame .segment-value{
+	display: inline-block;
 	color: black;
-	font-size:24px;
+	font-size:16px;
+	line-height: 28px;
+	font-weight:600;
+}
+.flight-details-frame .segment-value-green{
+	display: inline-block;
+	color: #5BB75B;
+	font-size:20px;
+	line-height: 28px;
 	font-weight:600;
 }
 .flight-details-frame .segment-value > span.large-value{
+	display: block;
+	text-align: right;
 	font-size:42px;
 	font-weight:600;
 }
@@ -285,10 +364,14 @@ input.flex-input{
 	margin-bottom:2px;
 }
 
+.bag-weight,
 .pax-weight{
-	width:120px;
+	width:80px;
 }
 
+.baggage-pieces{
+	width:40px;
+}
 
 table.fms-table td{
 	text-align:center;
@@ -304,6 +387,7 @@ table.fms-table th:first-child{
 
 #leg_combobox{
 	margin-bottom:0px;
+	margin-left:5px;
 }
 
 table.fms-table tbody tr.boarded{
@@ -314,3 +398,5 @@ input.pax-weight{
 	margin-top:3px;
 	margin-bottom:4px;
 }
+
+

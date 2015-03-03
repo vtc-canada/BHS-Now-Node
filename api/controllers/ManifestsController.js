@@ -23,7 +23,7 @@ module.exports = {
 	res.view('',{});
     },
     board:function(req,res){	
-	Database.dataSproc('FMS_MANIFEST_UpdateManifestDetail',[req.params.id,null,null,1],function(err,result){
+	Database.dataSproc('FMS_MANIFEST_UpdateManifestDetail',[req.params.id,null,null,null,null,1],function(err,result){
 	    if(err)
 		return res.json({error:'Error:'+err},500);
 	    Database.dataSproc('FMS_MANIFEST_GetManifestDetail',[req.params.id],function(err,details){
@@ -97,7 +97,8 @@ module.exports = {
 		    sails.io.sockets.emit('manifest_'+req.body.row.cur_manifest_id, req.body.row);
 		});
 	    }else{
-		Database.dataSproc('FMS_MANIFEST_UpdateManifestDetail',[req.body.row.id,req.body.row.checked_in, req.body.row.pax_weight, null],function(err,result){
+		Database.dataSproc('FMS_MANIFEST_UpdateManifestDetail',[req.body.row.id,req.body.row.checked_in
+		                                                        , req.body.row.pax_weight,req.body.row.baggage_pieces,req.body.row.baggage_weight, null],function(err,result){
 		    if(err)
 			return res.json({error:'Error:'+err},500);
 		    sails.io.sockets.emit('manifest_'+req.body.row.cur_manifest_id, req.body.row);

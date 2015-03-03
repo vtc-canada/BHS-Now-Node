@@ -90,49 +90,73 @@
 
 <script type="text/template" id="flight_selector_details">
 	<div class="row-fluid flight-selector-details-wrapper page-controls-wrapper">
-	
-        <div class="row-fluid" id="reportheader">
-        	<span style="padding-left:10px;">Flight Details</span>
-        	<select id="leg_combobox" class="pull-right" style="margin-right:10px;font-weight: 400; float:right;" >
-	    	{{ for(var flightindex=0;flightindex<flights.length;flightindex++){ }}
-	    		{{ if(typeof(flights[flightindex].is_deleted)=='undefined'){ }}
-	    		<option value="{{=flights[flightindex].id}}"  {{ if(typeof(flights[flightindex].tempId)!='undefined'){ }}templeg="{{= flights[flightindex].tempId }}"{{ } }}  {{ if((selectedLeg!=null&&selectedLeg==flights[flightindex].id )|| (typeof(flights[flightindex].tempId)!='undefined'&&selectedTempLeg==flights[flightindex].tempId)){ }}selected="selected"{{ } }}>{{= (flights[flightindex].origin_airport_code==null?'':getAirportById(flights[flightindex].origin_airport_code).ICAO) + ' to ' + (flights[flightindex].destination_airport_code==null?'':getAirportById(flights[flightindex].destination_airport_code).ICAO)}}</option>
-	    		{{ } }}
-	    	{{ } }}
-			</select>
-        </div>
+		<div class="row-fluid" id="reportheader">
+	        <div class="span3 report-control-left-label">Flight Details</div>
+	        <div class="span6 pull-right">
+		        <div class="report-control-right-label segment-label-right">Flight Selected: 
+		        	<select id="leg_combobox"  style="margin-right:10px;font-weight: 600; font-size:16px; float:right; color:black;" >
+			    	{{ for(var flightindex=0;flightindex<flights.length;flightindex++){ }}
+			    		{{ if(typeof(flights[flightindex].is_deleted)=='undefined'){ }}
+			    		<option value="{{=flights[flightindex].id}}"  
+			    		{{ if(typeof(flights[flightindex].tempId)!='undefined'){ }}templeg="{{= flights[flightindex].tempId }}"{{ } }}  {{ if((selectedLeg!=null&&selectedLeg==flights[flightindex].id )|| (typeof(flights[flightindex].tempId)!='undefined'&&selectedTempLeg==flights[flightindex].tempId)){ }}selected="selected"{{ } }}>{{= (flights[flightindex].IATA_2_digit_ID==null?'':flights[flightindex].IATA_2_digit_ID) +' '+(flights[flightindex].flight_number==null?'':flights[flightindex].flight_number) + ' ' + (flights[flightindex].origin_airport_code==null?'':getAirportById(flights[flightindex].origin_airport_code).ICAO) + ' - ' + (flights[flightindex].destination_airport_code==null?'':getAirportById(flights[flightindex].destination_airport_code).ICAO)}}</option>
+			    		{{ } }}
+			    	{{ } }}
+					</select>
+				</div>
+			</div>
+		</div>
         <div class="row-fluid flight-details-frame" id="iframediv">
-            <div class="row-fluid form-segment-wrapper">
+            <div class="row-fluid flight-segment-wrapper">
             	<div class="span6">
 					<!--<div class="row-fluid">
-						<div class="span7 segment-label">Flight Id / temp Id:</div>
-						<div class="span5 segment-value" id="">{{=flight.id}} / {{=flight.tempId}}</div>
+						<div class="segment-label-left">Flight Id / temp Id:</div>
+						<div class="segment-value" id="">{{=flight.id}} / {{=flight.tempId}}</div>
 					</div>-->
 					<div class="row-fluid">
-						<div class="span7 segment-label">Flight Number:</div>
-						<div class="span5 segment-value" id="">{{=(flight.airline!=null?airlines.get(flight.airline).get('IATA_2_digit_ID'):'')}} {{=flight.flight_number}}</div>
+						<div class="segment-label-left">Flight Number:</div>
+						<div class="segment-value" id="">{{=(flight.airline!=null?airlines.get(flight.airline).get('IATA_2_digit_ID'):'')}} {{=flight.flight_number}}</div>
 					</div>
 					<div class="row-fluid">
-						<div class="span7 segment-label">Distance:</div>
-						<div class="span5 segment-value" id="edit_flight_stats_distance">{{=flight.distance}}</div>
+						<div class="segment-label-left">Route:</div>
+						<div class="segment-value-green" id="">{{= (flight.origin_airport_code==null?'':getAirportById(flight.origin_airport_code).ICAO) + ' - ' + (flight.destination_airport_code==null?'':getAirportById(flight.destination_airport_code).ICAO)}}</div>
 					</div>
 					<div class="row-fluid">
-						<div class="span7 segment-label">Duration:</div>
-						<div class="span5 segment-value" id="edit_flight_stats_duration">{{=flight.duration}}</div>
+						<div class="segment-label-left">Distance:</div>
+						<div class="segment-value" id="edit_flight_stats_distance">{{=Math.floor(flight.distance/1000)}}km</div>
+					</div>
+					<div class="row-fluid">
+						<div class="segment-label-left">Departure Time:</div>
+						<div class="segment-value" id="">{{=flight.departure_time_only}} (Local GMT {{=flight.origin_timezone}})</div>
+					</div>
+					<div class="row-fluid">
+						<div class="segment-label-left">Arrival Time:</div>
+						<div class="segment-value" id="">{{=flight.arrival_time_only}} (Local GMT {{=flight.destination_timezone}})</div>
+					</div>
+					<div class="row-fluid">
+						<div class="segment-label-left">Duration:</div>
+						<div class="segment-value" id="edit_flight_stats_duration">{{=flight.duration}}</div>
 					</div>
             	</div>
             	<div class="span6">
 					<div class="row-fluid">
-						<div class="span7 segment-label">Passengers Checked In:</div>
-						<div class="span5 segment-value " id=""><span class="large-value">{{=flight.passenger_checked_in_count}}/{{=flight.passenger_count}}</span> <i class="icon-group"></i></div>
+						<div class="span7 segment-label-right">Passengers Checked In:</div>
+						<div class="span5 segment-value " id=""><span class="large-value">{{=flight.passenger_checked_in_count}}/{{=flight.passenger_count}}<i class="icon-group"></i></span> </div>
 					</div>
 					<div class="row-fluid">
-						<div class="span7 segment-label">Passengers Boarded:</div>
-						<div class="span5 segment-value " id=""><span class="large-value">{{=flight.passenger_boarded_count}}/{{=flight.passenger_count}}</span> <i class="icon-group"></i></div>
+						<div class="span7 segment-label-right">Passengers Boarded:</div>
+						<div class="span5 segment-value " id=""><span class="large-value">{{=flight.passenger_boarded_count}}/{{=flight.passenger_count}}<i class="icon-group"></i></div>
 					</div>
 					<div class="row-fluid">
-						<div class="span7 segment-label">Passenger Weight:</div>
+						<div class="span7 segment-label-right">Passenger Weight (lbs):</div>
 						<div class="span5 segment-value " id="">{{=flight.pax_weight}}</div>
+					</div>
+					<div class="row-fluid">
+						<div class="span7 segment-label-right">Baggage Weight (lbs):</div>
+						<div class="span5 segment-value " id="">{{=flight.baggage_weight}}</div>
+					</div>
+					<div class="row-fluid">
+						<div class="span7 segment-label-right">Total Weight (lbs):</div>
+						<div class="span5 segment-value " id="">{{=flight.baggage_weight+flight.pax_weight}}</div>
 					</div>
 				</div>
             	
@@ -155,7 +179,7 @@
 		
 		<!--<img src="//maps.googleapis.com/maps/api/staticmap?path=geodesic:true|color:0x0000ff|weight:5|51.1139,-114.02|47.6186,-52.7519&size=320x240" alt=""/>-->
 		</div>
-		<div class="span8" id="flight_selector_details_wrapper">
+		<div class="span8 pull-right" id="flight_selector_details_wrapper">
 			
 		</div>
 	</div>
@@ -193,12 +217,12 @@
 	    </div>
 	    
 	    <div class="tab-pane  {{if(activeTab=='#tab2'){ }}active{{ } }}" id="tab2">
-	    	<div class="row-fluid">
-	    		<div class="span6">
+	    	<div  class="row-fluid flight-header">
+	    		<div class="span6 section-header">
 	    			Route Details
 	    		</div>
 	    		<div class="span6">
-	    			<button class="btn btn-primary pull-right" id="add_flight_leg">Add Flight Leg</button>
+	    			<button class="btn btn-primary pull-right button-spacing" id="add_flight_leg">Add Flight Leg</button>
 	    		</div>
 	    		
 	    	</div>
@@ -338,10 +362,12 @@
 	               			<input type="text" id="search_contact" value="" placeholder="Add Passenger">
 	               		</div>
 	               		<div class="span3">
-	               			<input type="checkbox" id="add_all_legs" checked="checked">
+	               			Add to All Legs: <input type="checkbox" id="add_all_legs" checked="checked">
 	               		</div>
+              			<div class="btn btn-primary pull-right" style="position:absolute; right:4px; top:4px" >Last Minute Pax</div>
+               			<div class="btn btn-primary pull-right" style="position:absolute; right:140px; top:4px">Excel Import</div>
 	               </div>
-	               <div class="btn btn-success pull-right" style="position:absolute; right:4px; top:4px">Import Excel</div>
+
                </div>
                <div id="search_contact_results" ></div>
                
@@ -359,7 +385,9 @@
 			                <th>Origin</th>
 			                <th>Destination</th>
 			                <th>Checked In</th>
-			                <th>Passenger Weight</th>
+			                <th>Passenger Weight (lbs)</th>
+			                <th>No. of Bags</th>
+			                <th>Bag Weight (lbs)</th>
 			                <th></th>
 			                <th></th>
 			            </tr>
@@ -707,7 +735,12 @@
 				}
 				
 				editFlightView.render();
-				$('#myModalFlightLabel').html('<%=__('Flight')%> '+editFlightView.model.get('flights')[0].flight_number);
+				$('#myModalFlightLabel').html(editFlightView.model.get('flights')[0].flight_number);
+						//editFlightView.model.get('flights')[0].IATA_2_digit_ID +' '+
+						//editFlightView.model.get('flights')[0].flight_number + ' '+
+						//editFlightView.model.get('flights')[0].origin_airport_code + ' - '+						
+						//editFlightView.model.get('flights')[0].destination_airport_code);
+				//{{= (editFlightView.model.get('flights')[0].IATA_2_digit_ID==null?'':flights[flightindex].IATA_2_digit_ID) +' '+(flights[flightindex].flight_number==null?'':flights[flightindex].flight_number) + ' ' + (flights[flightindex].origin_airport_code==null?'':getAirportById(flights[flightindex].origin_airport_code).ICAO) + ' - ' + (flights[flightindex].destination_airport_code==null?'':getAirportById(flights[flightindex].destination_airport_code).ICAO)}}
 				
 				if(typeof(blockModal)=='undefined'){  // if new
 					//selectedLeg = null;
@@ -1007,12 +1040,15 @@
                 flight.passenger_checked_in_count = 0;
                 flight.passenger_boarded_count = 0;
                 flight.pax_weight = 0;
+                flight.baggage_weight = 0;
+                
                 
                 var manifest = this.manifests.findWhere({cur_legs_id:flight.id});
                 if(typeof(manifest)!='undefined'){
 	                manifest.get('details').each(function(row){
 	                	flight.passenger_count++;
 	                	flight.pax_weight  = flight.pax_weight + parseInt(row.get('pax_weight'));
+	                	flight.baggage_weight  = flight.baggage_weight + parseInt(row.get('baggage_weight'));
 	                	if(row.get('checked_in')){
 	                		flight.passenger_checked_in_count++;
 	                	}
@@ -1115,7 +1151,7 @@
                 return null;
             },
             updateFlightStats:function(){ // triggered by date changes.. updates duration by calculating distance..
-            	return;
+            	//return;
             	var haveOriginAndDesitnation= (this.paths.length>0&&this.paths[0].origin!=null&&this.paths[0].destination!=null);
                 var haveDepartureAndArrival = this.model.get('flights')[0].departure_time!=null&&this.model.get('flights')[0].arrival_time!=null;
                 
@@ -1133,7 +1169,7 @@
                 	return 
                 	var timeDiff = new Date(this.model.get('flights')[i].arrival_time).getTime()-new Date(this.model.get('flights')[i].departure_time).getTime();
                 	$('#edit_flight_stats_duration').html((timeDiff<0?'<span class="fms-invalid-value">':'')+millisecondsToHoursMinutesSecondsString(timeDiff)+(timeDiff<0?'</span>':''));
-                
+                	$('#edit_flight_departure').text('rob');
                 }else{
                 	$('#edit_flight_stats_duration').html('');
                 }
@@ -1266,6 +1302,10 @@
             	var manifestId = data['cur_manifest_id'];
             	
             	$(row).attr('manifest_id',manifestDetailsId);
+            	$(row).find('.checked-in').unbind('keypress');
+            	$(row).find('.checked-in').keypress(function(e){
+            		$(row).find('.checked-in').click();
+            	});
 				$(row).find('.checked-in').unbind('click');
 	        	$(row).find('.checked-in').click(_.partial(function(self){
 	        		self.manifests.get(manifestId).get('details').get(manifestDetailsId).set('checked_in',($(this).is(':checked')?1:0));
@@ -1279,6 +1319,26 @@
 	        	$(row).find('.pax-weight').unbind('change');
 	        	$(row).find('.pax-weight').on('change',_.partial(function(self){
 	        		self.manifests.get(manifestId).get('details').get(manifestDetailsId).set('pax_weight',parseInt($(this).val()));
+	        		socket.get('/manifests/updaterow',{row:self.manifests.get(manifestId).get('details').get(manifestDetailsId).toJSON()},function(result){
+		        		if(result.error != undefined){
+                            location.reload();
+                        }
+	        		});
+	        	},this));
+	        	
+	        	$(row).find('.baggage-pieces').unbind('change');
+	        	$(row).find('.baggage-pieces').on('change',_.partial(function(self){
+	        		self.manifests.get(manifestId).get('details').get(manifestDetailsId).set('baggage_pieces',parseInt($(this).val()));
+	        		socket.get('/manifests/updaterow',{row:self.manifests.get(manifestId).get('details').get(manifestDetailsId).toJSON()},function(result){
+		        		if(result.error != undefined){
+                            location.reload();
+                        }
+	        		});
+	        	},this));
+	        	
+	        	$(row).find('.bag-weight').unbind('change');
+	        	$(row).find('.bag-weight').on('change',_.partial(function(self){
+	        		self.manifests.get(manifestId).get('details').get(manifestDetailsId).set('baggage_weight',parseInt($(this).val()));
 	        		socket.get('/manifests/updaterow',{row:self.manifests.get(manifestId).get('details').get(manifestDetailsId).toJSON()},function(result){
 		        		if(result.error != undefined){
                             location.reload();
@@ -1342,7 +1402,7 @@
 	            	click:_.bind(function($row){
 	            		if($('#add_all_legs').is(':checked')){
 		            		editFlightView.manifests.each(function(manifest){
-			            		socket.get('/manifests/addmanifestdetail',{contact_ID:parseInt($row.attr('contact_id')), pax_weight:240, flight_ID:null, leg_ID:manifest.get('cur_legs_id')},function(result){
+			            		socket.get('/manifests/addmanifestdetail',{contact_ID:parseInt($row.attr('contact_id')), pax_weight:225, flight_ID:null, leg_ID:manifest.get('cur_legs_id')},function(result){
 			            			if(result.error != undefined){  // result
 			                            location.reload(); // result
 			                        }
@@ -1391,6 +1451,10 @@
 					        	return "<input type=\"checkbox\" "+(data.checked_in?' checked="checked" ':'')+"class=\"checked-in\">"; }
 					        },{"mData":function(data,b){ 
 					        	return "<input type=\"number\" value=\""+data.pax_weight+"\"  class=\"pax-weight\">"; }
+					        },{"mData":function(data,b){ 
+					        	return "<input type=\"number\" value=\""+data.baggage_pieces+"\"  class=\"baggage-pieces\">"; }
+					        },{"mData":function(data,b){ 
+					        	return "<input type=\"number\" value=\""+data.baggage_weight+"\"  class=\"bag-weight\">"; }
 					        },{"mData":function(data,b){ 
 					        	return '<div class="btn btn-success print-pass">Print Boarding Pass</div>'; }
 					        },{"mData":function(data,b){ 
