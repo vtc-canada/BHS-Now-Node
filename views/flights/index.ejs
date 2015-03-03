@@ -1307,7 +1307,9 @@
             	$(row).attr('manifest_id',manifestDetailsId);
             	$(row).find('.checked-in').unbind('keypress');
             	$(row).find('.checked-in').keypress(function(e){
-            		$(row).find('.checked-in').click();
+            		if(e.which == 13){
+            			$(row).find('.checked-in').click();
+            		}
             	});
 				$(row).find('.checked-in').unbind('click');
 	        	$(row).find('.checked-in').click(_.partial(function(self){
