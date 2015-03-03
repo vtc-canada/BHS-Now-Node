@@ -197,7 +197,7 @@
 	    <li {{if(activeTab=='#tab3'){ }}class="active"{{ } }}><a href="#tab3" data-toggle="tab">Assigned Companies</a></li>
 	    {{ if(flights[0].flight_id!=null){ }}<li {{if(activeTab=='#tab4'){ }}class="active"{{ } }}><a href="#tab4" data-toggle="tab">Passengers</a></li>{{ } }}
 	  </ul>
-	  <div class="tab-content flight-tab">
+	  <div class="tab-content flight-tab" style="overflow:hidden;">
 	    <div class="tab-pane {{if(activeTab == null||activeTab=='#tab1'){ }}active{{ } }}" id="tab1">
 	    	<div class="row-fluid">
 		    	<div class="span4"><label for="edit_flight_number">Flight Number:</label></div>
