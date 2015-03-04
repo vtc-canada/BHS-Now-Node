@@ -131,8 +131,20 @@ a.progress.ganntbar{
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
+	font-size: 12px;
+	font-weight: bold;
+	color: rgb(84, 84, 84);
+	text-align: center;
+	line-height: 36px;
+	overflow:hidden;
 }
 
+.pretimeblocktext{
+	line-height: 21px;
+	text-align: center;
+	padding-top: 5px;
+	overflow:hidden;
+}
 
 #ganttrows .ganttrow{
 	border-left: 1px solid gray;

@@ -4,7 +4,7 @@
     {{ if (deleted){ return; } }}
     
     <div class="ganttpostrow">
-    
+    	{{= flights[0].flight_number}}
     </div>
     <div class="ganttpostrow">
     
@@ -526,8 +526,8 @@
                         <div class="clockblock"><div class="timeblock">03:00</div></div>
                     </div>
                 	<div id="postgantttimescale" class="span12">
-                		<div class="preclockblock"><div class="pretimeblock"></div></div>
-                		<div class="preclockblock"><div class="pretimeblock"></div></div>
+                		<div class="preclockblock"><div class="pretimeblock"><div class="pretimeblocktext">Flight Number</div></div></div>
+                		<div class="preclockblock"><div class="pretimeblock"><div class="pretimeblocktext"></div></div></div>
                 	</div>
 
                     <div id="ganttrows" class="row-fluid">
