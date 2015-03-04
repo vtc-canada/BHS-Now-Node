@@ -202,23 +202,49 @@
 	    <li {{if(activeTab=='#tab3'){ }}class="active"{{ } }}><a href="#tab3" data-toggle="tab">Assigned Companies</a></li>
 	    {{ if(flights[0].flight_id!=null){ }}<li {{if(activeTab=='#tab4'){ }}class="active"{{ } }}><a href="#tab4" data-toggle="tab">Passengers</a></li>{{ } }}
 	  </ul>
-	  <div class="tab-content flight-tab" style="overflow:hidden;">
+	  <div class="tab-content flight-tab page-controls-wrapper" style="overflow:hidden;">
 	    <div class="tab-pane {{if(activeTab == null||activeTab=='#tab1'){ }}active{{ } }}" id="tab1">
-	    	<div class="row-fluid">
-		    	<div class="span4"><label for="edit_flight_number">Flight Number:</label></div>
-		    	<div class="span4"><input type="text" id="edit_flight_number" model-attribute="flight_number" value="{{=flights[0].flight_number}}"/></div>
+	    	<div class="row-fluid flight-header">
+    			<div class="span6 section-header-large">
+    				General Flight Information
+				</div>
 	    	</div>
-	    	<div class="row-fluid">
-		    	<div class="span4"><label for="edit_airline">Airline:</label></div>
-		    	<div class="span4">
-		    	<select id="edit_airline">
-	      			<option IATA_code="" IATA_2_digit_ID="" value="">Choose Airline</option>
-		    		{{for(var i=0;i<airlines.toJSON().length;i++){ }}
-		    			<option IATA_code="{{=airlines.toJSON()[i].IATA_code}}" IATA_2_digit_ID="{{=airlines.toJSON()[i].IATA_2_digit_ID}}" value="{{=airlines.toJSON()[i].id}}" {{if(airlines.toJSON()[i].id == flights[0].airline){ }}selected="selected"{{ } }}>{{=airlines.toJSON()[i].IATA_2_digit_ID}} - {{=airlines.toJSON()[i].carrier}}</option>
-		    		{{ } }}
-		    	</select>
-		    	</div>
-	    	</div>
+	    	
+	    	<div class="row-fluid form-segment-wrapper">
+	    		<div class="row-fluid building-segment-wrapper" style="margin-top:10px;">
+					<div class="span5 segment-label" style="min-height:40px;">Flight Number:</div>
+					<div class="span7 required-value" style="min-height:40px;"><input type="text" id="edit_flight_number" model-attribute="flight_number" value="{{=flights[0].flight_number}}"/>&nbsp;&nbsp;<%= __('Required') %></div>
+				</div>
+				<div class="row-fluid building-segment-wrapper">
+					<div class="span5 segment-label" style="min-height:40px;">Airline:</div>
+					<div class="span7 required-value" style="min-height:40px;">	
+						<div style="width: 220px; height: 40px;float: left;">
+							<select id="edit_airline">
+								<option IATA_code="" IATA_2_digit_ID="" value="">Choose Airline</option>
+									{{for(var i=0;i<airlines.toJSON().length;i++){ }}
+									<option IATA_code="{{=airlines.toJSON()[i].IATA_code}}" IATA_2_digit_ID="{{=airlines.toJSON()[i].IATA_2_digit_ID}}" value="{{=airlines.toJSON()[i].id}}" {{if(airlines.toJSON()[i].id == flights[0].airline){ }}selected="selected"{{ } }}>{{=airlines.toJSON()[i].IATA_2_digit_ID}} - {{=airlines.toJSON()[i].carrier}}</option>
+									{{ } }}
+	  						</select>  		
+  						</div><div style="margin-top:10px;">&nbsp;&nbsp;<%= __('Required') %></div>
+  					</div>
+				</div>
+				<div class="row-fluid building-segment-wrapper">
+					<div class="span5 segment-label" style="min-height:40px;">Resource Category:</div>
+					<div class="span7 required-value" style="min-height:40px;">
+						<select id="edit_resource">
+							<option>To Be Added...</option>
+						</select>&nbsp;&nbsp;<%= __('Required') %>  
+					</div>
+				</div>
+				<div class="row-fluid building-segment-wrapper">
+					<div class="span5 segment-label" style="min-height:40px;">Wing Type:</div>
+					<div class="span7 required-value" style="min-height:40px;">
+						<select id="edit_wing_type">
+							<option>To Be Added...</option>
+						</select>&nbsp;&nbsp;<%= __('Required') %>  						
+					</div>
+				</div>
+			</div>
 	    </div>
 	    
 	    <div class="tab-pane  {{if(activeTab=='#tab2'){ }}active{{ } }}" id="tab2">
