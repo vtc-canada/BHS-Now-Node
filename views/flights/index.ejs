@@ -49,13 +49,13 @@
 			{{ if(widthtemp<=0){ }}
 				{{ continue; }}
 			{{ } }}
-	        <a class="progress ganntbar"  leg_id="{{= flights[i].id}}" flight_id="{{= flights[i].flight_id }}"  style="top:7px; left:{{= lefttemp }}%; width:{{= widthtemp }}%; {{ if(lefttemp==0){ }} border-radius:0px 4px 4px 0px; {{ }else if(lefttemp+prewidthtemp>100){ }} border-radius:4px 0px 0px 4px; {{ } }}">
+	        <a class="progress ganntbar"  leg_id="{{= flights[i].id}}" left="{{= lefttemp }}" width="{{= widthtemp }}"  flight_id="{{= flights[i].flight_id }}"  style="top:7px; left:{{= lefttemp }}%; width:{{= widthtemp }}%; {{ if(lefttemp==0){ }} border-radius:0px 4px 4px 0px; {{ }else if(lefttemp+prewidthtemp>100){ }} border-radius:4px 0px 0px 4px; {{ } }}">
 	
 	            <div leg_id="{{= flights[i].id}}" flight_id="{{= flights[i].flight_id }}" class="bar progress-bar-success gantt-flightname-div" style="width:{{= 100 }}%;">{{= flights[i].IATA_2_digit_ID+' '+flights[i].flight_number }}</div>
 	
 	        </a>
 	        
-	        <i class="icon-plane gantt-plane icon-rotate-45" style="left:{{= lefttemp }}%;"></i>
+	        <i class="icon-plane gantt-plane icon-rotate-45" leg_id="{{= flights[i].id}}" style="left:{{= lefttemp }}%;"></i>
 	        
         {{ } }}
     </div>
@@ -1726,14 +1726,25 @@
         var today_date = new Date();
         if(selectedDate.getFullYear() == today_date.getFullYear()&&selectedDate.getMonth() == today_date.getMonth()&&selectedDate.getDate() == today_date.getDate()){
             var heit = $('#ganttwrapper').height();
-            $('#ganttwrapper').append('<div class="current-time-line" style=" height:'+ heit+'px; left:'+ 100*(today_date.getTime() - yesterday9pm)/(tomorrow3am- yesterday9pm)+'%;"></div>');
-            $('#ganttwrapper').append('<div class="current-time-block" style="width:40px; left:' + (100*(today_date.getTime() - yesterday9pm)/(tomorrow3am- yesterday9pm))+'%;"><div class="time-spot">'+padLeft(today_date.getHours(),2)+':'+padLeft(today_date.getMinutes(),2)+'</div><div class="icon-spot"><i class="icon-circle-arrow-down"></i></div></div>');
+            var timepositionleft = 100*(today_date.getTime() - yesterday9pm)/(tomorrow3am- yesterday9pm);
+            
+            $('#ganttwrapper').append('<div class="current-time-line" style=" height:'+ heit+'px; left:'+ timepositionleft +'%;"></div>');
+            $('#ganttwrapper').append('<div class="current-time-block" style="width:40px; left:' + timepositionleft+'%;"><div class="time-spot">'+padLeft(today_date.getHours(),2)+':'+padLeft(today_date.getMinutes(),2)+'</div><div class="icon-spot"><i class="icon-circle-arrow-down"></i></div></div>');
+            
+	        $('#ganttrows .ganttrow i.gantt-plane').each(function(row){
+	        	var ganttleft = parseFloat($(this).siblings('a.ganntbar[leg_id='+$(this).attr('leg_id')+']').attr('left'));
+	        	var ganttwidth = parseFloat($(this).siblings('a.ganntbar[leg_id='+$(this).attr('leg_id')+']').attr('width'));
+	        	
+	        	if(timepositionleft>ganttleft&&(timepositionleft<ganttleft + ganttwidth)){ // flight in progress
+	        		$(this).css('left', (timepositionleft)+'%');
+	        	}
+	        	else if(timepositionleft>ganttleft){
+	        		$(this).css('left', (ganttleft + ganttwidth)+'%');
+	        	}
+	        	//$(this).css('left',0);
+	        });
         }
         
-        $('#ganttrows .ganttrow i.gantt-plane').each(function(row){
-        	console.log(this);
-        	//$(this).css('left',0);
-        });
         
     }
     
