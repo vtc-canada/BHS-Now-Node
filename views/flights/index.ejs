@@ -349,37 +349,40 @@
 
 			</div>
 	    	{{ } }}
-	    	
-	    	
-			
-			
-			
-	    
 	    </div>
 	    <div class="tab-pane  {{if(activeTab=='#tab3'){ }}active{{ } }}" id="tab3">
-	    	<div class="row-fluid flight-header">
-	    	
-		    	<select id="select_company_seats">
-	      			<option value="">Choose Company</option>
-		    		{{ companies.each(function(company){ }}
-		    			<option value="{{=company.get('id')}}" name="{{=company.get('name')}}">{{=company.get('name')}}</option>
-		    		{{ }); }}
-		    	</select>
-		    	<button class="btn btn-primary button-spacing pull-right" id="add_company_seats">Add Company</button>
+	    	<div class="row-fluid flight-header"> 
+	    		<div class="span2 section-header-large">
+	    			Resource Sharing
+	    		</div>
+	    		<div class = "span4">
+			    	<select id="select_company_seats">
+		      			<option value="">Choose Company</option>
+			    		{{ companies.each(function(company){ }}
+			    			<option value="{{=company.get('id')}}" name="{{=company.get('name')}}">{{=company.get('name')}}</option>
+			    		{{ }); }}
+		    		</select>
+	    		</div>
+	    		<div class="span6">
+	    			<button class="btn btn-primary button-spacing pull-right" id="add_company_seats">Add Company</button>
+	    		</div>
 	    	</div>
-		    	 
+	    	
+	    	<div class="row-fluid form-segment-wrapper">
+		
 		    {{ for(var flightindex=0;flightindex<flights.length;flightindex++){ }}
-		    <div class="company-seats-wrapper {{ if((selectedLeg!=null&&selectedLeg!=flights[flightindex].id )||(selectedTempLeg !=null && selectedTempLeg!=flights[flightindex].tempId)){ }}flight-seats-hidden{{ } }}" leg="{{= flights[flightindex].id }}" {{ if(typeof(flights[flightindex].tempId)!='undefined'){ }}templeg="{{= flights[flightindex].tempId }}"{{ } }}>	
+		    <div class="row-fluid building-segment-wrapper {{ if((selectedLeg!=null&&selectedLeg!=flights[flightindex].id )||(selectedTempLeg !=null && selectedTempLeg!=flights[flightindex].tempId)){ }}flight-seats-hidden{{ } }}" leg="{{= flights[flightindex].id }}" {{ if(typeof(flights[flightindex].tempId)!='undefined'){ }}templeg="{{= flights[flightindex].tempId }}"{{ } }} style="margin-top:10px;">	
 		    	{{ for( var i=0; i< flights[flightindex].company_seats.length; i++){ }}
 		    	
 		    	<div class="row-fluid company-seats-row {{ if(typeof(flights[flightindex].company_seats[i].is_deleted)!='undefined'&&flights[flightindex].company_seats[i].is_deleted){ }}is_deleted{{ } }}" id="{{=flights[flightindex].company_seats[i].id}}" tempId="{{=flights[flightindex].company_seats[i].tempId}}" flight_id="{{=flights[flightindex].flight_id}}" cur_legs_id="{{=flights[flightindex].company_seats[i].cur_legs_id}}" temp_cur_legs_id="{{=flights[flightindex].company_seats[i].temp_cur_legs_id}}" cur_company_id="{{=flights[flightindex].company_seats[i].cur_company_id}}" >
-			    	<div class="span4"><label for="edit_company_seats{{=flights[flightindex].company_seats[i].id}}">{{=flights[flightindex].company_seats[i].name}}</label></div>
-			    	<div class="span4"><input type="text" id="edit_company_seats{{=flights[flightindex].company_seats[i].id}}" class="edit-company-seats" value="{{=flights[flightindex].company_seats[i].seats}}"/></div>
-			    	<div class="span4"><button class="btn btn-danger pull-right delete-company-seats">Delete</button></div>
+			    	<div class="span4"><label class="segment-label" for="edit_company_seats{{=flights[flightindex].company_seats[i].id}}">{{=flights[flightindex].company_seats[i].name}}</label></div>
+			    	<div class="span3 segment-label"><input type="text" id="edit_company_seats{{=flights[flightindex].company_seats[i].id}}" class="edit-company-seats segment-label" value="{{=flights[flightindex].company_seats[i].seats}}"/># of Seats</div>
+			    	<div class="span2"><button class="btn btn-danger delete-company-seats">Delete</button></div>
 		    	</div>
 		    	{{ } }}
 		    </div>
 	    	{{ } }}
+			</div>
 	    	
 	    </div>
 	    {{ if(flights[0].flight_id!=null){ }}
