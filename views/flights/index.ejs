@@ -834,6 +834,8 @@
                         this.$el.append(this.template(tcollection[i].toJSON()));
                         if(this.$el.find('.ganttrow:last').find('a.ganntbar').length==0){
                         	this.$el.find('.ganttrow:last').remove();
+                        	this.$el.find('.ganttpostrow:last').remove();
+                        	this.$el.find('.ganttpostrow:last').remove();
                         }
                     }
                 }
