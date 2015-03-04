@@ -1414,7 +1414,7 @@
 			            		});
 		            		});
 	            		}else{
-	            			socket.get('/manifests/addmanifestdetail',{contact_ID:parseInt($row.attr('contact_id')),flight_ID:this.model.get('flights')[0].flight_id, leg_ID:selectedLeg},function(result){
+	            			socket.get('/manifests/addmanifestdetail',{contact_ID:parseInt($row.attr('contact_id')),pax_weight:225, flight_ID:this.model.get('flights')[0].flight_id, leg_ID:selectedLeg},function(result){
 		            			if(result.error != undefined){  // result
 		                            location.reload(); // result
 		                        }
