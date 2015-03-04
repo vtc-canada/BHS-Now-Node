@@ -1758,14 +1758,19 @@
             $('#ganttwrapper').append('<div class="current-time-block" style="width:40px; left:' + timepositionleft+'%;"><div class="time-spot">'+padLeft(today_date.getHours(),2)+':'+padLeft(today_date.getMinutes(),2)+'</div><div class="icon-spot"><i class="icon-circle-arrow-down"></i></div></div>');
             
 	        $('#ganttrows .ganttrow i.gantt-plane').each(function(row){
-	        	var ganttleft = parseFloat($(this).siblings('a.ganntbar[leg_id='+$(this).attr('leg_id')+']').attr('left'));
-	        	var ganttwidth = parseFloat($(this).siblings('a.ganntbar[leg_id='+$(this).attr('leg_id')+']').attr('width'));
+	        	$ganntbar = $(this).siblings('a.ganntbar[leg_id='+$(this).attr('leg_id')+']');
+	        	var ganttleft = parseFloat($ganntbar.attr('left'));
+	        	var ganttwidth = parseFloat($ganntbar.attr('width'));
 	        	
 	        	if(timepositionleft>ganttleft&&(timepositionleft<ganttleft + ganttwidth)){ // flight in progress
 	        		$(this).css('left', (timepositionleft)+'%');
+	        		$ganntbar.removeClass('future').removeClass('present').removeClass('past').addClass('present');
 	        	}
-	        	else if(timepositionleft>ganttleft){
+	        	else if(timepositionleft>ganttleft){  // otherwise it's the past
 	        		$(this).css('left', (ganttleft + ganttwidth)+'%');
+	        		$ganntbar.removeClass('future').removeClass('present').removeClass('past').addClass('past');
+	        	}else{ // otherwise it's the future
+	        		$ganntbar.removeClass('future').removeClass('present').removeClass('past').addClass('future');
 	        	}
 	        	//$(this).css('left',0);
 	        });
