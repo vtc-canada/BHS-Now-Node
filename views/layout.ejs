@@ -164,6 +164,9 @@
   				<% if(!navpages[navpage].enabled||(typeof(navpages[navpage].children)=='undefined'&&!resourceAccess(req,navpage,{create:0,read:1,update:0,delete:0}))){ %>
   					<% continue; %>
   				<% } %>
+  				<% if(typeof(navpages[navpage].children)!='undefined'&& !templateHelper.securityHasChildPage(req,navpages[navpage])){ %>
+  					<% continue; %>
+  				<% } %>
   				<li class="<% if(typeof(navpages[navpage].children)!='undefined'){ %>dark-nav<% } %> <% if((req.url==navpage)||templateHelper.hasChildPage(navpages[navpage],req.url)){ %>active<% } %>">
   				  <span class="glow"></span>   
 	              <a <% if(typeof(navpages[navpage].children)!='undefined'){ %>class="accordion-toggle" data-toggle="collapse" href="#navmenu<%=templateHelper.replaceAll(navpage,'/','_')%>"<% }else{ %> href="<%=navpage%>" <% } %>>

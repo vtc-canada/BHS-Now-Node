@@ -53,137 +53,145 @@ module.exports.views = {
      * 'layouts/internal' * *
      **************************************************************************/
     locals : {
-	logo:{
-	    desktop:'/img/NCA-desktop.png',
-	    mobile:'/img/NCA-mobile.png'
+	logo : {
+	    desktop : '/img/NCA-desktop.png',
+	    mobile : '/img/NCA-mobile.png'
 	},
 	messaging : true,
-	search:{
-	    enabled:true,
-	    url:'/search'
+	search : {
+	    enabled : true,
+	    url : '/search'
 	},
-	i18nEnabled:false,
-	alertDuration:300,
+	i18nEnabled : false,
+	alertDuration : 300,
 	navpages : {
-	    '/dashboard':{
-		enabled:false,
-		banner:true,
-		icon:'icon-dashboard',
-		footer:true
+	    '/dashboard' : {
+		enabled : false,
+		banner : true,
+		icon : 'icon-dashboard',
+		footer : true
 	    },
-	    '/messages':{
-		enabled:false,
-		banner:true,
-		icon:'icon-envelope-alt',
-		footer:false
+	    '/messages' : {
+		enabled : false,
+		banner : true,
+		icon : 'icon-envelope-alt',
+		footer : false
 	    },
-	    '/overview':{
-		enabled:false,
-		banner:false,
-		icon:'icon-sitemap',
-		footer:true
+	    '/overview' : {
+		enabled : false,
+		banner : false,
+		icon : 'icon-sitemap',
+		footer : true
 	    },
-	    '/contacts':{
-		enabled:true,
-		banner:true,
-		icon:'icon-group',
-		footer:true
+	    '/contacts' : {
+		enabled : true,
+		banner : true,
+		icon : 'icon-group',
+		footer : true
 	    },
-	    '/companies':{
-		enabled:true,
-		banner:true,
-		icon:'icon-briefcase',
-		footer:true
+	    '/companies' : {
+		enabled : true,
+		banner : true,
+		icon : 'icon-briefcase',
+		footer : true
 	    },
-	    '/flighttable':{
-		enabled:false,
-		banner:true,
-		icon:'icon-calendar',
-		footer:true
+	    '/flighttable' : {
+		enabled : false,
+		banner : true,
+		icon : 'icon-calendar',
+		footer : true
 	    },
-	    '/flights':{
-		enabled:true,
-		banner:true,
-		icon:'icon-calendar',
-		footer:true
+	    '/flights' : {
+		enabled : true,
+		banner : true,
+		icon : 'icon-calendar',
+		footer : true
 	    },
-	    '/reports':{
-		enabled:true,
-		banner:true,
-		icon:'icon-copy',
-		footer:true
+	    '/reports' : {
+		enabled : true,
+		banner : true,
+		icon : 'icon-copy',
+		footer : true
 	    },
-	    '/airplanes':{
-		enabled:true,
-		banner:true,
-		icon:'icon-plane',
-		footer:true
-		},
-	    '/search':{
-		enabled:false,
-		banner:true,
-		icon:'icon-suitcase',
-		footer:true
+	    '/airplanes' : {
+		enabled : true,
+		banner : true,
+		icon : 'icon-plane',
+		footer : true
+	    },
+	    '/search' : {
+		enabled : false,
+		banner : true,
+		icon : 'icon-suitcase',
+		footer : true
 	    },
 
-	    '/systemconfig':{
-		enabled:true,
-		icon:'icon-cogs',
-		children:{
-		    '/admin/users':{
-			enabled:true,
-			banner:true,
-			icon:'icon-group',
-			footer:true
+	    '/systemconfig' : {
+		enabled : true,
+		icon : 'icon-cogs',
+		children : {
+		    '/admin/users' : {
+			enabled : true,
+			banner : true,
+			icon : 'icon-group',
+			footer : true
 		    },
-		    '/airlineconfiguration':{
-			enabled:true,
-			banner:true,
-			icon:'icon-plane',
-			footer:true
+		    '/airlineconfiguration' : {
+			enabled : true,
+			banner : true,
+			icon : 'icon-plane',
+			footer : true
 		    },
-		    '/virtual2physical':{
-			enabled:true,
-			banner:false,
-			icon:'icon-sitemap',
-			footer:true
+		    '/virtual2physical' : {
+			enabled : true,
+			banner : false,
+			icon : 'icon-sitemap',
+			footer : true
 		    },
-		    '/engineering':{
-			enabled:true,
-			banner:true,
-			icon:'icon-wrench',
-			footer:true
+		    '/engineering' : {
+			enabled : true,
+			banner : true,
+			icon : 'icon-wrench',
+			footer : true
 		    },
-		    '/admin/securitygroups':{
-			enabled:true,
-			banner:true,
-			icon:'icon-lock',
-			footer:true
+		    '/admin/securitygroups' : {
+			enabled : true,
+			banner : true,
+			icon : 'icon-lock',
+			footer : true
 		    }
 		}
 	    }
 	},
-	i18n:function(req,word){
+	i18n : function(req, word) {
 	    return this.translate[req.session.user.locale][word];
 	},
-	resourceAccess:function(req,page,requestAccess){
-	    return Security.resourceAccess(req,page,requestAccess);
+	resourceAccess : function(req, page, requestAccess) {
+	    return Security.resourceAccess(req, page, requestAccess);
 	},
-	templateHelper:{
-	    hasChildPage:function(navpage,url){
-		if(typeof(navpage.children)!='undefined'){
-		    for(childpage in navpage.children){
-			if(childpage==url){
+	templateHelper : {
+	    securityHasChildPage : function(req, navpage) {
+		for (childpage in navpage.children) {
+		    if(typeof(req.session.user.policy[childpage+'/:id?'])!='undefined'&&req.session.user.policy[childpage+'/:id?'].read){  //if we have rights to read any of the child pages.
+			return true;
+		    }
+		}
+		return false;
+	    },
+	    hasChildPage : function(navpage, url) {
+		if (typeof (navpage.children) != 'undefined') {
+		    for (childpage in navpage.children) {
+			if (childpage == url) {
 			    return true;
 			}
 		    }
 		}
 		return false;
 	    },
-	    passVal:function(val){
+	    passVal : function(val) {
 		return val;
 	    },
-	    replaceAll:function(string, find, replace){
+	    replaceAll : function(string, find, replace) {
 		return string.replace(new RegExp(find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1"), 'g'), replace);
 	    }
 	}
