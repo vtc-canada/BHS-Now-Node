@@ -488,4 +488,19 @@ input.pax-weight{
 	margin-bottom:4px;
 }
 
+.tabbable ul.nav-tabs{
+	border-bottom:none;
+}
 
+
+
+.ganttrow .gantt-plane{
+	position:absolute;
+	top:16px;
+	-ms-transform: rotate(45deg); /* IE 9 */
+    -webkit-transform: rotate(45deg); /* Chrome, Safari, Opera */
+    transform: rotate(45deg);
+    color:black;
+    font-size:20px;
+	margin-left: -8px;
+}

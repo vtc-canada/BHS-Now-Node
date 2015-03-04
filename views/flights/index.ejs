@@ -46,12 +46,17 @@
 	        {{ var prewidthtemp = widthtemp; }}
 	        {{ if(lefttemp < 0){ widthtemp = widthtemp + lefttemp; lefttemp =0; } }}
 	        {{ if(lefttemp + widthtemp > 100){ widthtemp = 100-lefttemp; } }}
-	
+			{{ if(widthtemp<=0){ }}
+				{{ continue; }}
+			{{ } }}
 	        <a class="progress ganntbar"  leg_id="{{= flights[i].id}}" flight_id="{{= flights[i].flight_id }}"  style="top:7px; left:{{= lefttemp }}%; width:{{= widthtemp }}%; {{ if(lefttemp==0){ }} border-radius:0px 4px 4px 0px; {{ }else if(lefttemp+prewidthtemp>100){ }} border-radius:4px 0px 0px 4px; {{ } }}">
 	
 	            <div leg_id="{{= flights[i].id}}" flight_id="{{= flights[i].flight_id }}" class="bar progress-bar-success gantt-flightname-div" style="width:{{= 100 }}%;">{{= flights[i].IATA_2_digit_ID+' '+flights[i].flight_number }}</div>
 	
 	        </a>
+	        
+	        <i class="icon-plane gantt-plane icon-rotate-45" style="left:{{= lefttemp }}%;"></i>
+	        
         {{ } }}
     </div>
 </script>
@@ -1721,7 +1726,15 @@
             $('#ganttwrapper').append('<div class="current-time-line" style=" height:'+ heit+'px; left:'+ 100*(today_date.getTime() - yesterday9pm)/(tomorrow3am- yesterday9pm)+'%;"></div>');
             $('#ganttwrapper').append('<div class="current-time-block" style="width:40px; left:' + (100*(today_date.getTime() - yesterday9pm)/(tomorrow3am- yesterday9pm))+'%;"><div class="time-spot">'+padLeft(today_date.getHours(),2)+':'+padLeft(today_date.getMinutes(),2)+'</div><div class="icon-spot"><i class="icon-circle-arrow-down"></i></div></div>');
         }
+        
+        $('#ganttrows .ganttrow i.gantt-plane').each(function(row){
+        	//console.log(this);
+        	//$(this).css('left',0);
+        });
+        
     }
+    
+    
     setInterval(doDate,60000);
     
     
