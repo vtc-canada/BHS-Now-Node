@@ -2,7 +2,8 @@ DROP PROCEDURE IF EXISTS `FMS_FLIGHTS_GetFlightsByDateRange`;
 DELIMITER $$
 CREATE PROCEDURE `FMS_FLIGHTS_GetFlightsByDateRange`(IN minDate DATETIME, IN maxDate DATETIME,IN isAdmin BOOLEAN, IN userID INT)
 BEGIN
-	SELECT cur_legs.id,flight_id
+	SELECT cur_legs.id
+		,flight_id
 		,airline
 		,flight_number
 		,departure_time
@@ -19,11 +20,15 @@ BEGIN
 		INNER JOIN ref_airline_code ON (ref_airline_code.id = cur_legs.airline)
 		INNER JOIN ref_airport_def AS origin_airport ON origin_airport.id = origin_airport_code
 		INNER JOIN ref_airport_def AS destination_airport ON destination_airport.id = destination_airport_code
-		INNER JOIN cur_leg_resource_sharing ON cur_leg_resource_sharing.cur_legs_id = cur_legs.id
+		LEFT JOIN cur_leg_resource_sharing ON cur_leg_resource_sharing.cur_legs_id = cur_legs.id
 		LEFT JOIN cur_company ON (cur_company.id = cur_leg_resource_sharing.cur_company_id)
 		LEFT JOIN cur_user_company_mapping ON (cur_user_company_mapping.company_ID = cur_company.id AND cur_user_company_mapping.user_ID = userID)
 	WHERE ((departure_time < maxDate AND departure_time > minDate) 
-		OR (arrival_time < maxDate AND arrival_time > minDate))
+		OR (arrival_time < maxDate AND arrival_time > minDate)
+		OR flight_id IN (SELECT DISTINCT(flight_ID)
+						FROM cur_legs
+						WHERE (departure_time < maxDate AND departure_time > minDate) 
+							OR (arrival_time < maxDate AND arrival_time > minDate)))
 		AND (isAdmin = true OR cur_user_company_mapping.company_ID IS NOT NULL)
 	GROUP BY cur_legs.id
 	ORDER BY departure_time;
