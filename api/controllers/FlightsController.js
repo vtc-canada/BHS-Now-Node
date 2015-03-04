@@ -70,7 +70,9 @@ module.exports = {
 	    return -1;
 	}
 
-	Database.dataSproc('FMS_FLIGHTS_GetFlightsByDateRange', [ new Date(req.body.minDate), new Date(req.body.maxDate) ], function(err, flights) {
+	Database.dataSproc('FMS_FLIGHTS_GetFlightsByDateRange', [ new Date(req.body.minDate), new Date(req.body.maxDate)
+															,Security.resourceAccess(req,'/admin/users/:id?',{create:1,read:1,update:1,delete:1})
+		                                                    ,req.session.user.id ], function(err, flights) {
 	    if (err) {
 		console.log('FMS_FLIGHTS_GetFlightsByDateRange :' + err);
 		return res.json({

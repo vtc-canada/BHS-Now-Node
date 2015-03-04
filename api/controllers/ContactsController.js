@@ -44,7 +44,8 @@ module.exports = {
     },
     getcontactsbyname : function(req,res){
 	req.body.search = sails.controllers.utilities.prepfulltext(req.body.search);
-	Database.dataSproc('GetContactsByName',[typeof (req.body.search) != 'undefined' ?  req.body.search  : null],function(err, contacts){
+	Database.dataSproc('GetContactsByName',[typeof (req.body.search) != 'undefined' ?  req.body.search  : null,
+			Security.resourceAccess(req,'/admin/users/:id?',{create:1,read:1,update:1,delete:1}),req.session.user.id],function(err, contacts){
 	    if(err||typeof(contacts[0])=='undefined')
 		return res.json({error:'Database Error'+err},500);
 	    res.json(contacts[0]);

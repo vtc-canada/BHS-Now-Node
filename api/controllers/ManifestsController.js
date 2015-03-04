@@ -70,7 +70,8 @@ module.exports = {
 	    return console.log('Missing Manifest Id');
 	}
 	
-	Database.dataSproc('FMS_MANIFEST_GetManifestDetails',[parseInt(req.params.id)],function(err,details){
+	Database.dataSproc('FMS_MANIFEST_GetManifestDetails',[parseInt(req.params.id),Security.resourceAccess(req,'/admin/users/:id?',{create:1,read:1,update:1,delete:1})
+	                                                      ,req.session.user.id],function(err,details){
 	    if(err||typeof(details[0][0])=='undefined')
 		    return res.json({error:'Database Error'+err},500);
 		
@@ -127,7 +128,8 @@ module.exports = {
         		    
         		    //async.parallel(
         		    //[function(dcb){
-        			Database.dataSproc('FMS_MANIFEST_GetManifestDetails',[manifest.id],function(err, details){
+        			Database.dataSproc('FMS_MANIFEST_GetManifestDetails',[manifest.id,Security.resourceAccess(req,'/admin/users/:id?',{create:1,read:1,update:1,delete:1})
+        			                                                      ,req.session.user.id],function(err, details){
         			    if(err)
         				return dcb(err);
         			    manifest.details = details[0];
@@ -212,7 +214,8 @@ module.exports = {
     getcontactsbyname : function(req,res){
 	req.body.search = sails.controllers.utilities.prepfulltext(req.body.search);
 	
-	Database.dataSproc('GetContactsByName',[typeof (req.body.search) != 'undefined' ?  req.body.search  : null],function(err, contacts){
+	Database.dataSproc('GetContactsByName',[typeof (req.body.search) != 'undefined' ?  req.body.search  : null,
+			Security.resourceAccess(req,'/admin/users/:id?',{create:1,read:1,update:1,delete:1}),req.session.user.id],function(err, contacts){
 	    if(err||typeof(contacts[0])=='undefined')
 		return res.json({error:'Database Error'+err},500);
 	    res.json(contacts[0]);
