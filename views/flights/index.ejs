@@ -2,6 +2,13 @@
 <!-- This is the template for each gantt row -->
 <script type="text/template" id="ganttrows-template">
     {{ if (deleted){ return; } }}
+    
+    <div class="ganttpostrow">
+    
+    </div>
+    <div class="ganttpostrow">
+    
+    </div>
     <div class="span12 ganttrow">
         
         <div class="clockblock"><div class="gantblock" style="border-top:none;"></div></div>
@@ -59,6 +66,7 @@
 	        
         {{ } }}
     </div>
+    
 </script>
 
 <script type="text/template" id="contacts-search-row-template">
@@ -460,7 +468,6 @@
             <div class="gantt-outer-wrapper">
                 <div id="ganttwrapper" class="row-fluid">
                     <div id="gantttimescale" class="span12">
-
                         <div class="clockblock"><div class="timeblock">22:00</div></div>
                         <div class="clockblock"><div class="timeblock">23:00</div></div>
                         <div class="clockblock"><div class="timeblock">00:00</div></div>
@@ -492,6 +499,10 @@
                         <div class="clockblock"><div class="timeblock">02:00</div></div>
                         <div class="clockblock"><div class="timeblock">03:00</div></div>
                     </div>
+                	<div id="postgantttimescale" class="span12">
+                		<div class="preclockblock"><div class="pretimeblock"></div></div>
+                		<div class="preclockblock"><div class="pretimeblock"></div></div>
+                	</div>
 
                     <div id="ganttrows" class="row-fluid">
 
@@ -1728,8 +1739,9 @@
             var heit = $('#ganttwrapper').height();
             var timepositionleft = 100*(today_date.getTime() - yesterday9pm)/(tomorrow3am- yesterday9pm);
             
-            $('#ganttwrapper').append('<div class="current-time-line" style=" height:'+ heit+'px; left:'+ timepositionleft +'%;"></div>');
-            $('#ganttwrapper').append('<div class="current-time-block" style="width:40px; left:' + timepositionleft+'%;"><div class="time-spot">'+padLeft(today_date.getHours(),2)+':'+padLeft(today_date.getMinutes(),2)+'</div><div class="icon-spot"><i class="icon-circle-arrow-down"></i></div></div>');
+            var adjustedleft = (timepositionleft*88/100) + 12;
+            $('#ganttwrapper').append('<div class="current-time-line" style=" height:'+ heit+'px; left:'+ adjustedleft +'%;"></div>');
+            $('#ganttwrapper').append('<div class="current-time-block" style="width:40px; left:' + adjustedleft+'%;"><div class="time-spot">'+padLeft(today_date.getHours(),2)+':'+padLeft(today_date.getMinutes(),2)+'</div><div class="icon-spot"><i class="icon-circle-arrow-down"></i></div></div>');
             
 	        $('#ganttrows .ganttrow i.gantt-plane').each(function(row){
 	        	$ganntbar = $(this).siblings('a.ganntbar[leg_id='+$(this).attr('leg_id')+']');
