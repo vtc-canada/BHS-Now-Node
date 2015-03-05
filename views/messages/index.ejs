@@ -139,8 +139,7 @@
     //////////////////////////
     ////// DOCUMENT READY  ///
     //////////////////////////
-    //$(document).ready(function () {
-      function initialize(){
+    $(document).ready(function () {
          var loadpreviousID=0; // coordinates with layout, tracking the selected user
 
         $('#newMessageButton').click(function(){
@@ -175,14 +174,14 @@
             sync: function (method, model, options) {
                 if (typeof this.sailsCollection === "string" && this.sailsCollection !== "") {
                     this.socket = socket;
-                    //this.socket.on("connect", _.bind(function () {
+                    this.socket.on("connect", _.bind(function () {
                         this.socket.get("/" + this.sailsCollection, options, _.bind(function (msglist) {
                             if(msglist.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
                                 location.reload(); // Will boot back to login screen
                             }
                             this.set(msglist);
                         }, this));
-                    //}, this));
+                    }, this));
                 }
             }
         });
@@ -422,16 +421,16 @@
                 $('#fullmessagetextarea').val('');
             }
         });
-		var resizemessages = function (){
-	        $('#messagesFullWrapper').height($(window).height()-$('#messagesFullWrapper').offset().top-163);
-	
-	    }
-        resizemessages();
-		$(window).resize(function(){resizemessages()});
-	    //Resize - keeps the conversation window the right height compared to the screen - layout patch-work
-	    
-    };
 
-    
+        resizemessages();
+
+    });
+
+    $(window).resize(function(){resizemessages()});
+    //Resize - keeps the conversation window the right height compared to the screen - layout patch-work
+    resizemessages = function (){
+        $('#messagesFullWrapper').height($(window).height()-$('#messagesFullWrapper').offset().top-163);
+
+    }
 
 </script>

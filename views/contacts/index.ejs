@@ -252,7 +252,7 @@
 
 <script>
 
-    function initialize(){
+    $(document).ready(function(){
     
     	var init_id = <%=typeof(init_id)!='undefined'?init_id:null%>;    	
     	var curcontactsval = '';
@@ -865,5 +865,5 @@
 	    var notesView=null;
 	   
 	   
-    };
+    });
 </script>

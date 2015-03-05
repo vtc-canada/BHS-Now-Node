@@ -108,8 +108,7 @@
 </script>
 
 <script type="text/javascript">
-function initialize(){
-
+$(function(){
 	var datatable = $('#datatable').dataTable({
 			"ajax": {
 	        	"url":"/securitygroups/findAll",
@@ -216,7 +215,7 @@ function initialize(){
         socket:null,
         sync:function(method,model,options){
             if(typeof this.urlRoot === "string" && this.urlRoot !== "") {
-                this.socket = socket;
+                this.socket = io.socket;
                 this.socket.get(this.urlRoot, options, _.bind(function(securitygroup){
                     if(securitygroup.error != undefined){  // USER NO LONGER LOGGED IN!!!!!
                         location.reload(); // Will boot back to login screen
@@ -307,6 +306,6 @@ function initialize(){
 	}
 	
 	
-}
+});
     	
 </script>

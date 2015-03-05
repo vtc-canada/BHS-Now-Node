@@ -65,9 +65,9 @@
 
     var defaultdestinations;          // Collection for airline configuration rows
     var ref_sort_destinations = new Array();      // sort_destinations, lookup, populated on page startup
-//    $(document).ready(function(){
-//    	socket.on('connect',initialize);
-//    });
+    $(document).ready(function(){
+    	socket.on('connect',initialize);
+    });
     function initialize(){
 
            ///once it sets up the sort_destinations, it fetches the collection
