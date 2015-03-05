@@ -49,12 +49,12 @@ module.exports.sockets = {
   * flashsockets by adding 'flashsocket' to this list:                       *
   *                                                                          *
   ***************************************************************************/
-   transports: [
+  // transports: [
   //   'websocket',
-     'htmlfile',
-     'xhr-polling',
-     'jsonp-polling'
-   ],
+  //   'htmlfile',
+  //   'xhr-polling',
+  //   'jsonp-polling'
+  // ],
 
   /***************************************************************************
   *                                                                          *
