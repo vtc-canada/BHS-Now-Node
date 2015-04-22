@@ -28,7 +28,7 @@ SET locale = '{"columns":[
 			{"width":"0","locale":{"en":"device_ID","es":"device_ID"},"lastrow":{"type":"custom","value":"device","bold":true,"bordertop":false},"hidden":true},
 			{"width":"50","locale":{"en":"Device","es":"Dispositivo"},"lastrow":{"type":"custom","value":"Total","bold":true,"bordertop":true}},
 			{"width":"25","locale":{"en":"Jams","es":"Jams"},"lastrow":{"type":"sum","bold":true,"bordertop":true,"decimalplaces":2}},
-			{"width":"25","locale":{"en":"Total","es":"Total"},"lastrow":{"type":"max","bold":true,"bordertop":true,"decimalplaces":2}}
+			{"width":"25","locale":{"en":"Total","es":"Total"},"lastrow":{"type":"sum","bold":true,"bordertop":true,"decimalplaces":2}}
 		]}';
 END $$
 DELIMITER ;
