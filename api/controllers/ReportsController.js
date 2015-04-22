@@ -685,18 +685,24 @@ module.exports = {
     		    var foundinput = false;
     		    var foundoutput = false;
     		    for(var i=0;i<resultThroughputs.length;i++){
-    		    	if(resultThroughputs[i].count == "INPUT THROUGHPUT COUNT"){
+    		    	if(resultThroughputs[i].count == "MU1 THROUGHPUT COUNT"){
     		    		foundinput = true;
     		    	}
-    		    	if(resultThroughputs[i].count == "OUTPUT THROUGHPUT COUNT"){
+    		    	if(resultThroughputs[i].count == "MU2 THROUGHPUT COUNT"){
+    		    		foundinput = true;
+    		    	}
+    		    	if(resultThroughputs[i].count == "TC1 THROUGHPUT COUNT"){
     		    		foundoutput = true;
     		    	}
     		    }
     		    if(!foundinput){
-    		    	resultThroughputs.splice(0,0,{count:"INPUT THROUGHPUT COUNT",throughput:0});
+    		    	resultThroughputs.splice(0,0,{count:"MU1 THROUGHPUT COUNT",throughput:0});
+    		    }
+    		    if(!foundinput){
+    		    	resultThroughputs.splice(0,0,{count:"MU2 THROUGHPUT COUNT",throughput:0});
     		    }
     		    if(!foundoutput){
-    		    	resultThroughputs.splice(1,0,{count:"OUTPUT THROUGHPUT COUNT",throughput:0});
+    		    	resultThroughputs.splice(1,0,{count:"TC1 THROUGHPUT COUNT",throughput:0});
     		    }
     		    
     		    if (resultThroughputs.length > 0) {
