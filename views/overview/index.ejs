@@ -236,9 +236,9 @@
     	/** Firedoor and Labels **/
     	overview.append(conveyor_label_plain({text:'SD/TC1',  rotation:0, left:53, top:78}));
     	overview.append(firedoor({tagname:'C_SD_TC1_STATUS',length:2.2, rotation:0, left:42, top:80}));
-    	overview.append(conveyor_label_plain({text:'SD/MU1',  rotation:0, left:29, top:0}));
+    	overview.append(conveyor_label_plain({text:'FD/MU1',  rotation:0, left:29, top:0}));
     	overview.append(firedoor({tagname:'C_FD_MU1_STATUS',length:2.2, rotation:90, left:28, top:13.5}));
-    	overview.append(conveyor_label_plain({text:'SD/MU2',  rotation:0, left:62, top:0}));
+    	overview.append(conveyor_label_plain({text:'FD/MU2',  rotation:0, left:62, top:0}));
     	overview.append(firedoor({tagname:'C_FD_MU2_STATUS',length:2.2, rotation:90, left:61, top:13.5}));
 
     	
@@ -253,14 +253,14 @@
     	overview.append(estop_label({tagname:'F_MCP_01_CS_ESTOP_ACT', text:'E', rotation:0, left:41.0, top:56}));    	
        	overview.append(estop({tagname:'F_SS1_01_CS_ESTOP_ACT',length:4, rotation:0, left:51, top:68}));
     	overview.append(estop_label({tagname:'F_SS1_01_CS_ESTOP_ACT', text:'E', rotation:0, left:52.0, top:68})); 
-      	overview.append(estop({tagname:'F_MU1_03_CS_ESTOP_ACT',length:4, rotation:0, left:24, top:2.5}));
-    	overview.append(estop_label({tagname:'F_MU1_03_CS_ESTOP_ACT', text:'E', rotation:0, left:25.0, top:2.5})); 
-      	overview.append(estop({tagname:'F_FD_MU1_CS_ESTOP_ACT',length:4, rotation:0, left:35, top:20.5}));
-    	overview.append(estop_label({tagname:'F_FD_MU1_CS_ESTOP_ACT', text:'E', rotation:0, left:36.0, top:20.5})); 
-    	overview.append(estop({tagname:'F_FD_MU2_CS_ESTOP_ACT',length:4, rotation:0, left:61, top:20.5}));
-    	overview.append(estop_label({tagname:'F_FD_MU2_CS_ESTOP_ACT', text:'E', rotation:0, left:62.0, top:20.5})); 
-    	overview.append(estop({tagname:'F_MU2_02_CS_ESTOP_ACT',length:4, rotation:0, left:72, top:2.5}));
-    	overview.append(estop_label({tagname:'F_MU2_02_CS_ESTOP_ACT', text:'E', rotation:0, left:73.0, top:2.5})); 
+      	overview.append(estop({tagname:'F_FD_MU1_CS_ESTOP_ACT',length:4, rotation:0, left:28, top:2.5}));
+    	overview.append(estop_label({tagname:'F_FD_MU1_CS_ESTOP_ACT', text:'E', rotation:0, left:29.0, top:2.5}));     	
+      	overview.append(estop({tagname:'F_MU1_02_CS_ESTOP_ACT',length:4, rotation:0, left:35, top:20.5}));
+    	overview.append(estop_label({tagname:'F_MU1_02_CS_ESTOP_ACT', text:'E', rotation:0, left:36.0, top:20.5}));    	
+    	overview.append(estop({tagname:'F_MU2_01_CS_ESTOP_ACT',length:4, rotation:0, left:61, top:20.5}));
+    	overview.append(estop_label({tagname:'F_MU2_01_CS_ESTOP_ACT', text:'E', rotation:0, left:62.0, top:20.5}));  	
+       	overview.append(estop({tagname:'F_FD_MU2_CS_ESTOP_ACT',length:4, rotation:0, left:68, top:2.5}));
+    	overview.append(estop_label({tagname:'F_FD_MU2_CS_ESTOP_ACT', text:'E', rotation:0, left:69.0, top:2.5})); 
       
     	
     	for(var i=0;i<alarm_legend.length;i++){
