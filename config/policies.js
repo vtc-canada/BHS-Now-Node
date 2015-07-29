@@ -34,6 +34,9 @@ module.exports.policies = {
 	'*' : 'RoutePolicy',
 	'pushAlarms' : true
     },
+	'alarms':{
+		'pushAlarms':true
+	},
     'engineering' : {
 	'*' : 'RoutePolicy',
 	'pushHOA' : true
